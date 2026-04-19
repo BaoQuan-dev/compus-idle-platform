@@ -227,7 +227,8 @@ const Auth = {
         USERS: 'hnau_users',
         LOGIN_STATE: 'hnau_login_state',
         GOODS: 'hnau_goods',
-        COLLECTS: 'hnau_collects'
+        COLLECTS: 'hnau_collects',
+        PENDING_AUTHS: 'hnau_pending_auths'  // 【新增】待审核认证列表
     },
 
     // 认证状态常量
@@ -439,8 +440,50 @@ const Auth = {
      * @param {Object} info - 认证信息
      */
     submitVerify(info) {
+        // 【关键修改】同时更新 pendingAuthList
         Storage.set(this.KEYS.VERIFY_INFO, info);
         Storage.set(this.KEYS.VERIFY_STATE, this.VERIFY_STATE.PENDING);
+        
+        // 将认证申请添加到待审核列表
+        const pendingList = this.getPendingAuths();
+        // 添加唯一标识和时间戳
+        const authRecord = {
+            id: Date.now().toString(),  // 唯一ID
+            studentId: info.studentId,
+            campus: info.campus,
+            subCampus: info.subCampus || '',
+            college: info.college,
+            studentCardImage: info.studentCardImage,
+            submitTime: info.submitTime || new Date().toISOString(),
+            status: 'pending'  // pending | approved | rejected
+        };
+        pendingList.push(authRecord);
+        Storage.set(this.KEYS.PENDING_AUTHS, pendingList);
+        
+        console.log('[Auth] 认证申请已提交，pendingAuths 数量:', pendingList.length);
+    },
+    
+    /**
+     * 【新增】获取待审核认证列表
+     * @returns {Array}
+     */
+    getPendingAuths() {
+        return Storage.get(this.KEYS.PENDING_AUTHS, []);
+    },
+    
+    /**
+     * 【新增】从待审核列表中移除申请
+     * @param {string} studentId - 学号
+     * @param {string} newStatus - 新状态
+     */
+    updatePendingAuth(studentId, newStatus) {
+        const pendingList = this.getPendingAuths();
+        const index = pendingList.findIndex(a => a.studentId === studentId && a.status === 'pending');
+        if (index !== -1) {
+            pendingList[index].status = newStatus;
+            pendingList[index].updateTime = new Date().toISOString();
+            Storage.set(this.KEYS.PENDING_AUTHS, pendingList);
+        }
     },
 
     /**

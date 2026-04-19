@@ -18,7 +18,8 @@ const ADMIN_KEYS = {
     VERIFY_STATE: 'hnau_verify_state',
     USERS: 'hnau_users',
     GOODS: 'hnau_goods',
-    COLLECTS: 'hnau_collects'
+    COLLECTS: 'hnau_collects',
+    PENDING_AUTHS: 'hnau_pending_auths'  // 【新增】待审核认证列表
 };
 
 // ========== 认证状态常量 ==========
@@ -374,17 +375,43 @@ const AdminModule = {
 
     // ---------- 数据获取函数 ----------
     /**
-     * 获取待审核数量
+     * 【修复】获取待审核数量 - 从 pendingAuthList 读取
      * @returns {number}
      */
     getPendingCount() {
         try {
-            const verifyState = localStorage.getItem(ADMIN_KEYS.VERIFY_STATE);
-            console.log('[Admin] 读取认证状态:', verifyState);
-            return verifyState === VERIFY_STATES.PENDING ? 1 : 0;
+            // 【关键修改】从 pendingAuthList 读取待审核申请
+            const pendingAuthsStr = localStorage.getItem(ADMIN_KEYS.PENDING_AUTHS);
+            let pendingAuths = [];
+            if (pendingAuthsStr) {
+                pendingAuths = JSON.parse(pendingAuthsStr);
+            }
+            
+            // 只统计状态为 pending 的申请
+            const pendingList = pendingAuths.filter(a => a.status === 'pending');
+            const count = pendingList.length;
+            console.log('[Admin] 待审核认证数量:', count, '(从 pendingAuthList)');
+            return count;
         } catch (e) {
-            console.error('[Admin] 读取认证状态失败:', e);
+            console.error('[Admin] 获取待审核数量失败:', e);
             return 0;
+        }
+    },
+    
+    /**
+     * 【新增】获取待审核认证列表
+     * @returns {Array}
+     */
+    getPendingAuths() {
+        try {
+            const pendingAuthsStr = localStorage.getItem(ADMIN_KEYS.PENDING_AUTHS);
+            if (!pendingAuthsStr) return [];
+            const pendingAuths = JSON.parse(pendingAuthsStr);
+            // 只返回 pending 状态的申请
+            return pendingAuths.filter(a => a.status === 'pending');
+        } catch (e) {
+            console.error('[Admin] 获取待审核列表失败:', e);
+            return [];
         }
     },
 
@@ -423,30 +450,17 @@ const AdminModule = {
      * 渲染认证审核列表
      * @returns {string} HTML字符串
      */
+    /**
+     * 【修复】渲染认证审核列表 - 从 pendingAuthList 读取
+     * @returns {string} HTML字符串
+     */
     renderVerifyList() {
-        let pendingVerify = null;
-
-        try {
-            const verifyState = localStorage.getItem(ADMIN_KEYS.VERIFY_STATE);
-            console.log('[Admin] renderVerifyList - 认证状态:', verifyState);
-            
-            if (verifyState === VERIFY_STATES.PENDING) {
-                const verifyInfoStr = localStorage.getItem(ADMIN_KEYS.VERIFY_INFO);
-                console.log('[Admin] renderVerifyList - 认证信息:', verifyInfoStr ? '存在' : '不存在');
-                
-                if (verifyInfoStr) {
-                    pendingVerify = JSON.parse(verifyInfoStr);
-                    console.log('[Admin] renderVerifyList - 解析后数据:', pendingVerify);
-                }
-            } else {
-                console.log('[Admin] renderVerifyList - 状态不是 pending，无需渲染列表');
-            }
-        } catch (e) {
-            console.error('[Admin] renderVerifyList - 读取认证信息失败:', e);
-        }
+        // 【关键修改】从 pendingAuthList 获取待审核申请
+        const pendingAuths = this.getPendingAuths();
+        console.log('[Admin] renderVerifyList - 待审核列表:', pendingAuths);
 
         // 无待审核数据
-        if (!pendingVerify) {
+        if (pendingAuths.length === 0) {
             return `
                 <div class="empty-state" style="padding: 60px 20px;">
                     <div class="empty-state-icon" style="font-size: 64px;">✅</div>
@@ -462,62 +476,69 @@ const AdminModule = {
                 <table class="list-table" style="min-width: 800px;">
                     <thead>
                         <tr>
-                            <th style="width: 120px;">学号</th>
-                            <th style="width: 100px;">校区</th>
-                            <th style="width: 100px;">子校区</th>
-                            <th style="width: 150px;">学院</th>
-                            <th style="width: 100px;">学生证</th>
-                            <th style="width: 150px;">提交时间</th>
-                            <th style="width: 150px;">操作</th>
+                            <th style="width: 100px;">学号</th>
+                            <th style="width: 90px;">校区</th>
+                            <th style="width: 90px;">子校区</th>
+                            <th style="width: 130px;">学院</th>
+                            <th style="width: 90px;">学生证</th>
+                            <th style="width: 140px;">提交时间</th>
+                            <th style="width: 140px;">操作</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr data-studentid="${this.escapeHtml(pendingVerify.studentId)}">
-                            <td>
-                                <span style="font-weight: 600; color: var(--primary-color);">
-                                    ${this.escapeHtml(pendingVerify.studentId)}
-                                </span>
-                            </td>
-                            <td>${this.escapeHtml(pendingVerify.campus)}</td>
-                            <td>${pendingVerify.subCampus ? this.escapeHtml(pendingVerify.subCampus) : '-'}</td>
-                            <td>${this.escapeHtml(pendingVerify.college)}</td>
-                            <td>
-                                ${pendingVerify.studentCardImage ? `
-                                    <img 
-                                        src="${pendingVerify.studentCardImage}" 
-                                        alt="学生证" 
-                                        class="verify-image"
-                                        title="点击查看大图"
-                                        style="cursor: pointer; width: 50px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);"
-                                    >
-                                ` : '<span style="color: var(--text-hint);">未上传</span>'}
-                            </td>
-                            <td>
-                                <span style="font-size: 13px; color: var(--text-secondary);">
-                                    ${this.formatDate(pendingVerify.submitTime)}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="list-table-actions" style="gap: 8px;">
-                                    <button 
-                                        class="btn btn-sm approve-btn" 
-                                        data-id="${this.escapeHtml(pendingVerify.studentId)}"
-                                        style="background: #198754; color: white; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: all 0.2s;"
-                                    >
-                                        ✅ 通过
-                                    </button>
-                                    <button 
-                                        class="btn btn-sm reject-btn" 
-                                        data-id="${this.escapeHtml(pendingVerify.studentId)}"
-                                        style="background: #DC3545; color: white; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: all 0.2s;"
-                                    >
-                                        ❌ 拒绝
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                        ${pendingAuths.map(auth => `
+                            <tr data-id="${auth.id}" data-studentid="${this.escapeHtml(auth.studentId)}">
+                                <td>
+                                    <span style="font-weight: 600; color: var(--primary-color);">
+                                        ${this.escapeHtml(auth.studentId)}
+                                    </span>
+                                </td>
+                                <td>${this.escapeHtml(auth.campus)}</td>
+                                <td>${auth.subCampus ? this.escapeHtml(auth.subCampus) : '-'}</td>
+                                <td>${this.escapeHtml(auth.college)}</td>
+                                <td>
+                                    ${auth.studentCardImage ? `
+                                        <img 
+                                            src="${auth.studentCardImage}" 
+                                            alt="学生证" 
+                                            class="verify-image"
+                                            title="点击查看大图"
+                                            style="cursor: pointer; width: 50px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);"
+                                        >
+                                    ` : '<span style="color: var(--text-hint);">未上传</span>'}
+                                </td>
+                                <td>
+                                    <span style="font-size: 13px; color: var(--text-secondary);">
+                                        ${this.formatDate(auth.submitTime)}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="list-table-actions" style="gap: 8px;">
+                                        <button 
+                                            class="btn btn-sm approve-btn" 
+                                            data-id="${auth.id}"
+                                            data-studentid="${this.escapeHtml(auth.studentId)}"
+                                            style="background: #198754; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;"
+                                        >
+                                            ✅ 通过
+                                        </button>
+                                        <button 
+                                            class="btn btn-sm reject-btn" 
+                                            data-id="${auth.id}"
+                                            data-studentid="${this.escapeHtml(auth.studentId)}"
+                                            style="background: #DC3545; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;"
+                                        >
+                                            ❌ 拒绝
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
                     </tbody>
                 </table>
+            </div>
+            <div style="margin-top: 16px; padding: 12px 16px; background: var(--bg-light); border-radius: 8px; font-size: 13px; color: var(--text-secondary);">
+                <span>📌</span> 共 ${pendingAuths.length} 条待审核申请 | 数据来源: pendingAuthList
             </div>
         `;
     },
@@ -1036,11 +1057,12 @@ const AdminModule = {
             // ========== 通过认证 ==========
             const approveBtn = target.closest('.approve-btn');
             if (approveBtn) {
-                const studentId = approveBtn.getAttribute('data-id');
+                const authId = approveBtn.getAttribute('data-id');
+                const studentId = approveBtn.getAttribute('data-studentid');
                 this.showConfirm(
                     '通过认证',
                     `确定要通过学号「${studentId}」的认证申请吗？通过后该用户可以发布商品。`,
-                    () => this.approveVerify(studentId)
+                    () => this.approveVerify(authId)
                 );
                 return;
             }
@@ -1048,11 +1070,12 @@ const AdminModule = {
             // ========== 拒绝认证 ==========
             const rejectBtn = target.closest('.reject-btn');
             if (rejectBtn) {
-                const studentId = rejectBtn.getAttribute('data-id');
+                const authId = rejectBtn.getAttribute('data-id');
+                const studentId = rejectBtn.getAttribute('data-studentid');
                 this.showConfirm(
                     '拒绝认证',
                     `确定要拒绝学号「${studentId}」的认证申请吗？拒绝后该用户需要重新提交认证。`,
-                    () => this.rejectVerify()
+                    () => this.rejectVerify(authId)
                 );
                 return;
             }
@@ -1179,6 +1202,10 @@ const AdminModule = {
      * 【新增】绑定认证审核面板内的事件
      * 用于刷新列表后重新绑定按钮事件
      */
+    /**
+     * 【新增】绑定认证审核面板内的事件
+     * 用于刷新列表后重新绑定按钮事件
+     */
     bindVerifyPanelEvents() {
         const container = document.getElementById('adminContent');
         if (!container) return;
@@ -1187,11 +1214,12 @@ const AdminModule = {
         container.querySelectorAll('.approve-btn').forEach(btn => {
             btn.onclick = null;
             btn.addEventListener('click', () => {
-                const studentId = btn.getAttribute('data-id');
+                const authId = btn.getAttribute('data-id');
+                const studentId = btn.getAttribute('data-studentid');
                 this.showConfirm(
                     '通过认证',
                     `确定要通过学号「${studentId}」的认证申请吗？`,
-                    () => this.approveVerify(studentId)
+                    () => this.approveVerify(authId)
                 );
             });
         });
@@ -1200,10 +1228,12 @@ const AdminModule = {
         container.querySelectorAll('.reject-btn').forEach(btn => {
             btn.onclick = null;
             btn.addEventListener('click', () => {
+                const authId = btn.getAttribute('data-id');
+                const studentId = btn.getAttribute('data-studentid');
                 this.showConfirm(
                     '拒绝认证',
-                    `确定要拒绝该认证申请吗？`,
-                    () => this.rejectVerify()
+                    `确定要拒绝学号「${studentId}」的认证申请吗？`,
+                    () => this.rejectVerify(authId)
                 );
             });
         });
@@ -1220,13 +1250,48 @@ const AdminModule = {
     },
 
     /**
-     * 通过认证
-     * @param {string} studentId - 学号
+     * 【修复】通过认证 - 从 pendingAuthList 移除并更新状态
+     * @param {string} authId - 认证申请ID
      */
-    approveVerify(studentId) {
+    approveVerify(authId) {
         try {
-            localStorage.setItem(ADMIN_KEYS.VERIFY_STATE, VERIFY_STATES.APPROVED);
-            this.showToast(`学号 ${studentId} 的认证已通过`, 'success');
+            // 【关键修改】从 pendingAuthList 中更新状态
+            const pendingAuthsStr = localStorage.getItem(ADMIN_KEYS.PENDING_AUTHS);
+            if (pendingAuthsStr) {
+                let pendingAuths = JSON.parse(pendingAuthsStr);
+                const index = pendingAuths.findIndex(a => a.id === authId);
+                if (index !== -1) {
+                    const auth = pendingAuths[index];
+                    auth.status = 'approved';
+                    auth.updateTime = new Date().toISOString();
+                    localStorage.setItem(ADMIN_KEYS.PENDING_AUTHS, JSON.stringify(pendingAuths));
+                    
+                    // 更新全局认证状态
+                    localStorage.setItem(ADMIN_KEYS.VERIFY_STATE, VERIFY_STATES.APPROVED);
+                    
+                    // 更新认证信息（保持向后兼容）
+                    localStorage.setItem(ADMIN_KEYS.VERIFY_INFO, JSON.stringify({
+                        studentId: auth.studentId,
+                        campus: auth.campus,
+                        subCampus: auth.subCampus,
+                        college: auth.college,
+                        studentCardImage: auth.studentCardImage,
+                        submitTime: auth.submitTime,
+                        approvedTime: auth.updateTime
+                    }));
+                    
+                    console.log('[Admin] 认证已通过:', auth.studentId);
+                    this.showToast(`学号 ${auth.studentId} 的认证已通过`, 'success');
+                } else {
+                    console.error('[Admin] 未找到认证申请:', authId);
+                    this.showToast('未找到认证申请', 'error');
+                }
+            } else {
+                // 兼容旧逻辑
+                localStorage.setItem(ADMIN_KEYS.VERIFY_STATE, VERIFY_STATES.APPROVED);
+                this.showToast('认证已通过', 'success');
+            }
+            
             this.render();
             this.bindEvents();
         } catch (e) {
@@ -1236,13 +1301,34 @@ const AdminModule = {
     },
 
     /**
-     * 拒绝认证
+     * 【修复】拒绝认证 - 从 pendingAuthList 移除
      */
-    rejectVerify() {
+    rejectVerify(authId) {
         try {
-            localStorage.removeItem(ADMIN_KEYS.VERIFY_INFO);
-            localStorage.setItem(ADMIN_KEYS.VERIFY_STATE, VERIFY_STATES.UNSUBMITTED);
-            this.showToast('认证申请已拒绝', 'success');
+            // 【关键修改】从 pendingAuthList 中更新状态
+            const pendingAuthsStr = localStorage.getItem(ADMIN_KEYS.PENDING_AUTHS);
+            if (pendingAuthsStr) {
+                let pendingAuths = JSON.parse(pendingAuthsStr);
+                const index = pendingAuths.findIndex(a => a.id === authId);
+                if (index !== -1) {
+                    const auth = pendingAuths[index];
+                    auth.status = 'rejected';
+                    auth.updateTime = new Date().toISOString();
+                    localStorage.setItem(ADMIN_KEYS.PENDING_AUTHS, JSON.stringify(pendingAuths));
+                    
+                    console.log('[Admin] 认证已拒绝:', auth.studentId);
+                    this.showToast('认证申请已拒绝', 'success');
+                } else {
+                    console.error('[Admin] 未找到认证申请:', authId);
+                    this.showToast('未找到认证申请', 'error');
+                }
+            } else {
+                // 兼容旧逻辑
+                localStorage.removeItem(ADMIN_KEYS.VERIFY_INFO);
+                localStorage.setItem(ADMIN_KEYS.VERIFY_STATE, VERIFY_STATES.UNSUBMITTED);
+                this.showToast('认证申请已拒绝', 'success');
+            }
+            
             this.render();
             this.bindEvents();
         } catch (e) {
