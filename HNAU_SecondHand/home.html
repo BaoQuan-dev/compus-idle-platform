@@ -179,12 +179,12 @@
             top: -50px;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(135deg, #0a2818 0%, #1a4a28 100%);
-            border: 1px solid #00ff88;
+            background: linear-gradient(135deg, #0a2015 0%, #1a3525 100%);
+            border: 1px solid #40ffaa;
             border-radius: 10px;
             padding: 8px 14px;
             max-width: 180px;
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+            box-shadow: 0 0 15px rgba(64, 255, 170, 0.3);
             z-index: 10;
             animation: hnau-cat-bi 0.3s ease;
         }
@@ -197,11 +197,11 @@
             transform: translateX(-50%);
             border-left: 7px solid transparent;
             border-right: 7px solid transparent;
-            border-top: 7px solid #1a4a28;
+            border-top: 7px solid #1a3525;
         }
         
         .hnau-cat-bubble-txt {
-            color: #00ff88;
+            color: #40ffaa;
             font-size: 11px;
             text-align: center;
             line-height: 1.4;
@@ -226,15 +226,15 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            background: rgba(10, 40, 24, 0.9);
+            background: rgba(10, 32, 21, 0.9);
             padding: 3px 8px;
             border-radius: 8px;
-            border: 1px solid rgba(0, 255, 136, 0.3);
+            border: 1px solid rgba(64, 255, 170, 0.3);
         }
         
         .hnau-cat-dot {
             width: 5px; height: 5px;
-            background: #00ff88;
+            background: #40ffaa;
             border-radius: 50%;
             animation: hnau-cat-blink 1s ease-in-out infinite;
         }
@@ -350,161 +350,235 @@
         function createCat() {
             catGroup = new THREE.Group();
             
-            // 发光部件材质
+            // 绿色全息材质（统一色调）
+            var holoColor = 0x40ffaa;  // 柔和绿色
+            
             function createGlowMat(opacity) {
                 return new THREE.MeshBasicMaterial({
-                    color: 0x00ff88,
+                    color: holoColor,
                     transparent: true,
-                    opacity: opacity || 0.3,
+                    opacity: opacity || 0.35,
                     wireframe: true
                 });
             }
             
-            function createSolidMat(opacity, color) {
+            function createSolidMat(opacity) {
                 return new THREE.MeshBasicMaterial({
-                    color: color || 0x00ff88,
+                    color: holoColor,
                     transparent: true,
-                    opacity: opacity || 0.8
+                    opacity: opacity || 0.7
                 });
             }
             
-            // 头部
-            var headGeo = new THREE.SphereGeometry(0.5, 16, 12);
-            var head = new THREE.Mesh(headGeo, createGlowMat(0.25));
-            head.scale.set(1, 0.9, 0.85);
-            head.position.y = 1.8;
+            // ===== 头部（椭圆形，更自然）=====
+            var headGeo = new THREE.SphereGeometry(0.48, 20, 16);
+            var head = new THREE.Mesh(headGeo, createGlowMat(0.3));
+            head.scale.set(1.1, 0.95, 0.9);  // 宽一点，更像猫头
+            head.position.y = 1.75;
             head.name = 'head';
             glowParts.push(head);
             catGroup.add(head);
             
-            // 头顶全息光晕
-            var holoGeo = new THREE.SphereGeometry(0.25, 8, 6, 0, Math.PI * 2, 0, Math.PI / 2);
-            var holo = new THREE.Mesh(holoGeo, createGlowMat(0.4));
-            holo.position.y = 2.15;
-            holo.name = 'holo';
-            glowParts.push(holo);
-            catGroup.add(holo);
+            // 头顶小角（装饰，替代全息光晕）
+            var hornGeo = new THREE.ConeGeometry(0.06, 0.15, 6);
+            var horn = new THREE.Mesh(hornGeo, createSolidMat(0.6));
+            horn.position.set(0, 2.25, 0);
+            horn.name = 'horn';
+            glowParts.push(horn);
+            catGroup.add(horn);
             
-            // 耳朵
-            var earGeo = new THREE.ConeGeometry(0.18, 0.35, 4);
-            var earL = new THREE.Mesh(earGeo, createGlowMat(0.25));
-            earL.position.set(-0.35, 2.25, 0);
-            earL.rotation.z = 0.3;
+            // ===== 耳朵（三角形，更尖锐）=====
+            var earGeo = new THREE.ConeGeometry(0.16, 0.4, 4);
+            var earL = new THREE.Mesh(earGeo, createGlowMat(0.3));
+            earL.position.set(-0.32, 2.15, 0.05);
+            earL.rotation.z = 0.25;
+            earL.rotation.x = 0.1;
             earL.name = 'earL';
             glowParts.push(earL);
             catGroup.add(earL);
             
-            var earR = new THREE.Mesh(earGeo, createGlowMat(0.25));
-            earR.position.set(0.35, 2.25, 0);
-            earR.rotation.z = -0.3;
+            var earR = new THREE.Mesh(earGeo, createGlowMat(0.3));
+            earR.position.set(0.32, 2.15, 0.05);
+            earR.rotation.z = -0.25;
+            earR.rotation.x = 0.1;
             earR.name = 'earR';
             glowParts.push(earR);
             catGroup.add(earR);
             
-            // 眼睛（核心发光部件）
-            var eyeGeo = new THREE.SphereGeometry(0.12, 8, 6);
+            // ===== 脸部轮廓（椭圆形眼窝）=====
+            // 左眼窝
+            var eyeSocketGeo = new THREE.SphereGeometry(0.16, 12, 8);
+            var eyeSocket = new THREE.Mesh(eyeSocketGeo, createSolidMat(0.15));
+            eyeSocket.position.set(-0.2, 1.78, 0.38);
+            eyeSocket.scale.set(1.3, 0.8, 0.5);
+            catGroup.add(eyeSocket);
+            
+            // 右眼窝
+            var eyeSocket2 = eyeSocket.clone();
+            eyeSocket2.position.set(0.2, 1.78, 0.38);
+            catGroup.add(eyeSocket2);
+            
+            // ===== 眼睛（猫眼形状 - 椭圆形）=====
+            var eyeGeo = new THREE.SphereGeometry(0.1, 12, 8);
             var eyeMat = createSolidMat(0.9);
-            eyeMat.name = 'eyeMat';
             
             var eyeL = new THREE.Mesh(eyeGeo, eyeMat.clone());
-            eyeL.position.set(-0.18, 1.85, 0.4);
+            eyeL.scale.set(1.4, 0.7, 0.6);  // 椭圆形
+            eyeL.position.set(-0.2, 1.78, 0.4);
             eyeL.name = 'eyeL';
             glowParts.push(eyeL);
             catGroup.add(eyeL);
             
             var eyeR = new THREE.Mesh(eyeGeo, eyeMat.clone());
-            eyeR.position.set(0.18, 1.85, 0.4);
+            eyeR.scale.set(1.4, 0.7, 0.6);
+            eyeR.position.set(0.2, 1.78, 0.4);
             eyeR.name = 'eyeR';
             glowParts.push(eyeR);
             catGroup.add(eyeR);
             
-            // 鼻子
-            var noseGeo = new THREE.SphereGeometry(0.06, 6, 4);
-            var nose = new THREE.Mesh(noseGeo, createSolidMat(0.9, 0xff6b9d));
-            nose.position.set(0, 1.7, 0.48);
+            // 瞳孔（细长）
+            var pupilGeo = new THREE.SphereGeometry(0.04, 6, 4);
+            var pupilMat = new THREE.MeshBasicMaterial({ color: 0x003322, transparent: true, opacity: 0.8 });
+            
+            var pupilL = new THREE.Mesh(pupilGeo, pupilMat);
+            pupilL.scale.set(1, 2.5, 0.5);
+            pupilL.position.set(-0.2, 1.78, 0.46);
+            catGroup.add(pupilL);
+            
+            var pupilR = pupilL.clone();
+            pupilR.position.set(0.2, 1.78, 0.46);
+            catGroup.add(pupilR);
+            
+            // ===== 鼻子（倒三角，更像猫）=====
+            var noseGeo = new THREE.ConeGeometry(0.06, 0.08, 3);
+            var noseMat = new THREE.MeshBasicMaterial({ color: holoColor, transparent: true, opacity: 0.9 });
+            var nose = new THREE.Mesh(noseGeo, noseMat);
+            nose.rotation.x = Math.PI;
+            nose.position.set(0, 1.62, 0.45);
             catGroup.add(nose);
             
-            // 身体
-            var bodyGeo = new THREE.SphereGeometry(0.55, 12, 10);
-            var body = new THREE.Mesh(bodyGeo, createGlowMat(0.25));
-            body.scale.set(0.9, 1.1, 0.75);
-            body.position.y = 1.0;
+            // ===== 嘴巴（倒V形）=====
+            var mouthCurve = new THREE.QuadraticBezierCurve3(
+                new THREE.Vector3(-0.12, 1.55, 0.42),
+                new THREE.Vector3(0, 1.52, 0.44),
+                new THREE.Vector3(0.12, 1.55, 0.42)
+            );
+            var mouthGeo = new THREE.TubeGeometry(mouthCurve, 8, 0.012, 4, false);
+            var mouth = new THREE.Mesh(mouthGeo, createSolidMat(0.5));
+            catGroup.add(mouth);
+            
+            // ===== 胡须（6根）=====
+            var whiskerMat = createSolidMat(0.35);
+            
+            // 左胡须
+            for (var i = 0; i < 3; i++) {
+                var wGeo = new THREE.CylinderGeometry(0.006, 0.003, 0.25, 4);
+                var wL = new THREE.Mesh(wGeo, whiskerMat.clone());
+                wL.position.set(-0.22 - i * 0.03, 1.58 - (i - 1) * 0.04, 0.4);
+                wL.rotation.z = Math.PI / 2 + (i - 1) * 0.15;
+                catGroup.add(wL);
+            }
+            
+            // 右胡须
+            for (var i = 0; i < 3; i++) {
+                var wGeo = new THREE.CylinderGeometry(0.006, 0.003, 0.25, 4);
+                var wR = new THREE.Mesh(wGeo, whiskerMat.clone());
+                wR.position.set(0.22 + i * 0.03, 1.58 - (i - 1) * 0.04, 0.4);
+                wR.rotation.z = Math.PI / 2 - (i - 1) * 0.15;
+                catGroup.add(wR);
+            }
+            
+            // ===== 身体（椭圆形卧姿）=====
+            var bodyGeo = new THREE.SphereGeometry(0.52, 16, 12);
+            var body = new THREE.Mesh(bodyGeo, createGlowMat(0.28));
+            body.scale.set(0.95, 0.85, 0.8);  // 扁圆形
+            body.position.y = 0.95;
             body.name = 'body';
             glowParts.push(body);
             catGroup.add(body);
             
-            // 能量核心（脉冲发光）
-            var coreGeo = new THREE.SphereGeometry(0.15, 8, 6);
-            var coreMat = createSolidMat(0.8);
-            coreMat.name = 'coreMat';
-            var core = new THREE.Mesh(coreGeo, coreMat);
-            core.position.set(0, 1.0, 0.35);
-            core.name = 'core';
-            glowParts.push(core);
-            catGroup.add(core);
+            // 肚子（略亮）
+            var bellyGeo = new THREE.SphereGeometry(0.35, 12, 8);
+            var belly = new THREE.Mesh(bellyGeo, createSolidMat(0.2));
+            belly.scale.set(0.8, 0.6, 0.5);
+            belly.position.set(0, 0.88, 0.28);
+            catGroup.add(belly);
             
-            // 尾巴
-            var tailCurve = new THREE.CatmullRomCurve3([
-                new THREE.Vector3(0, 0.8, -0.4),
-                new THREE.Vector3(0.3, 0.6, -0.6),
-                new THREE.Vector3(0.5, 0.9, -0.5),
-                new THREE.Vector3(0.4, 1.2, -0.3)
-            ]);
-            var tailGeo = new THREE.TubeGeometry(tailCurve, 12, 0.06, 6, false);
-            var tail = new THREE.Mesh(tailGeo, createGlowMat(0.3));
-            tail.name = 'tail';
-            glowParts.push(tail);
-            catGroup.add(tail);
-            
-            // 爪子
-            var pawGeo = new THREE.SphereGeometry(0.12, 6, 4);
+            // ===== 前爪（收在身前）=====
+            var pawGeo = new THREE.CapsuleGeometry(0.08, 0.15, 4, 8);
             var pawMat = createSolidMat(0.5);
-            pawMat.name = 'pawMat';
             
             var pawL = new THREE.Mesh(pawGeo, pawMat.clone());
-            pawL.position.set(-0.25, 0.35, 0.2);
-            pawL.scale.set(1, 0.6, 1.3);
+            pawL.position.set(-0.22, 0.6, 0.3);
+            pawL.rotation.x = Math.PI / 2;
+            pawL.rotation.z = 0.3;
             pawL.name = 'pawL';
             glowParts.push(pawL);
             catGroup.add(pawL);
             
             var pawR = new THREE.Mesh(pawGeo, pawMat.clone());
-            pawR.position.set(0.25, 0.35, 0.2);
-            pawR.scale.set(1, 0.6, 1.3);
+            pawR.position.set(0.22, 0.6, 0.3);
+            pawR.rotation.x = Math.PI / 2;
+            pawR.rotation.z = -0.3;
             pawR.name = 'pawR';
             glowParts.push(pawR);
             catGroup.add(pawR);
             
-            // 底座光环
-            var ringGeo = new THREE.TorusGeometry(0.6, 0.025, 8, 32);
+            // ===== 后腿（卧姿弯曲）=====
+            var legGeo = new THREE.CapsuleGeometry(0.1, 0.2, 4, 8);
+            
+            var legL = new THREE.Mesh(legGeo, createGlowMat(0.3));
+            legL.position.set(-0.35, 0.5, -0.1);
+            legL.rotation.x = 0.8;
+            legL.rotation.z = 0.4;
+            glowParts.push(legL);
+            catGroup.add(legL);
+            
+            var legR = new THREE.Mesh(legGeo, createGlowMat(0.3));
+            legR.position.set(0.35, 0.5, -0.1);
+            legR.rotation.x = 0.8;
+            legR.rotation.z = -0.4;
+            glowParts.push(legR);
+            catGroup.add(legR);
+            
+            // ===== 尾巴（卷曲上扬）=====
+            var tailCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0, 0.7, -0.35),
+                new THREE.Vector3(-0.15, 0.5, -0.5),
+                new THREE.Vector3(-0.2, 0.85, -0.4),
+                new THREE.Vector3(-0.1, 1.15, -0.25),
+                new THREE.Vector3(0.05, 1.35, -0.2)
+            ]);
+            var tailGeo = new THREE.TubeGeometry(tailCurve, 16, 0.07, 8, false);
+            var tail = new THREE.Mesh(tailGeo, createGlowMat(0.35));
+            tail.name = 'tail';
+            glowParts.push(tail);
+            catGroup.add(tail);
+            
+            // 尾巴尖
+            var tailTipGeo = new THREE.SphereGeometry(0.08, 8, 6);
+            var tailTip = new THREE.Mesh(tailTipGeo, createSolidMat(0.6));
+            tailTip.position.set(0.05, 1.35, -0.2);
+            glowParts.push(tailTip);
+            catGroup.add(tailTip);
+            
+            // ===== 底座光环（简化）=====
+            var ringGeo = new THREE.TorusGeometry(0.55, 0.02, 8, 32);
             var ringMat = createSolidMat(0.4);
-            ringMat.name = 'ringMat';
             var ring = new THREE.Mesh(ringGeo, ringMat);
             ring.rotation.x = Math.PI / 2;
-            ring.position.y = 0.15;
+            ring.position.y = 0.12;
             ring.name = 'ring';
             glowParts.push(ring);
             catGroup.add(ring);
             
-            // 内圈光环
-            var ring2Geo = new THREE.TorusGeometry(0.45, 0.015, 8, 32);
-            var ring2Mat = createSolidMat(0.25);
-            ring2Mat.name = 'ring2Mat';
-            var ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
-            ring2.rotation.x = Math.PI / 2;
-            ring2.position.y = 0.16;
-            ring2.name = 'ring2';
-            glowParts.push(ring2);
-            catGroup.add(ring2);
-            
             // 发光圆盘
-            var discGeo = new THREE.CircleGeometry(0.5, 32);
-            var discMat = createSolidMat(0.12);
+            var discGeo = new THREE.CircleGeometry(0.45, 32);
+            var discMat = createSolidMat(0.1);
             discMat.side = THREE.DoubleSide;
-            discMat.name = 'discMat';
             var disc = new THREE.Mesh(discGeo, discMat);
             disc.rotation.x = -Math.PI / 2;
-            disc.position.y = 0.16;
+            disc.position.y = 0.13;
             disc.name = 'disc';
             glowParts.push(disc);
             catGroup.add(disc);
@@ -527,7 +601,7 @@
                 positions[i * 3 + 1] = Math.random() * 2.5 + 0.3;
                 positions[i * 3 + 2] = (Math.random() - 0.5) * 2.5;
                 
-                colors[i * 3] = 0; colors[i * 3 + 1] = 1; colors[i * 3 + 2] = 0.53;
+                colors[i * 3] = 0.25; colors[i * 3 + 1] = 1; colors[i * 3 + 2] = 0.67;
             }
             
             geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -607,27 +681,20 @@
                     
                     mat.opacity = Math.min(intensity, 1);
                     
-                    // 点击时颜色变白
+                    // 点击时颜色变亮
                     if (clickGlow > 0.3 && isEye) {
-                        mat.color.setHex(0x88ffff);
+                        mat.color.setHex(0x88ffcc);
                     } else {
-                        mat.color.setHex(0x00ff88);
+                        mat.color.setHex(0x40ffaa);
                     }
                 }
             });
             
             // 全息头冠脉冲
-            var holo = catGroup.getObjectByName('holo');
-            if (holo) {
-                var pulse = 0.4 + Math.sin(time * 0.003) * 0.2;
-                holo.material.opacity = glowIntensity + pulse * 0.3;
-            }
-            
-            // 核心脉冲
-            var core = catGroup.getObjectByName('core');
-            if (core) {
-                var scale = 1 + Math.sin(time * 0.005) * 0.15 + clickGlow * 0.3;
-                core.scale.set(scale, scale, scale);
+            var horn = catGroup.getObjectByName('horn');
+            if (horn) {
+                var pulse = 0.5 + Math.sin(time * 0.003) * 0.2;
+                horn.material.opacity = glowIntensity * pulse;
             }
         }
         
@@ -653,7 +720,7 @@
             scene.add(ambient);
             
             // 点光源
-            var point = new THREE.PointLight(0x00ff88, 0.8, 10);
+            var point = new THREE.PointLight(0x40ffaa, 0.8, 10);
             point.position.set(0, 3, 2);
             scene.add(point);
             
