@@ -179,12 +179,12 @@
             top: -50px;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 100%);
-            border: 1px solid #00d4ff;
+            background: linear-gradient(135deg, #0a2818 0%, #1a4a28 100%);
+            border: 1px solid #00ff88;
             border-radius: 10px;
             padding: 8px 14px;
             max-width: 180px;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
             z-index: 10;
             animation: hnau-cat-bi 0.3s ease;
         }
@@ -197,11 +197,11 @@
             transform: translateX(-50%);
             border-left: 7px solid transparent;
             border-right: 7px solid transparent;
-            border-top: 7px solid #1a2a4a;
+            border-top: 7px solid #1a4a28;
         }
         
         .hnau-cat-bubble-txt {
-            color: #00d4ff;
+            color: #00ff88;
             font-size: 11px;
             text-align: center;
             line-height: 1.4;
@@ -226,10 +226,10 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            background: rgba(10, 22, 40, 0.9);
+            background: rgba(10, 40, 24, 0.9);
             padding: 3px 8px;
             border-radius: 8px;
-            border: 1px solid rgba(0, 212, 255, 0.3);
+            border: 1px solid rgba(0, 255, 136, 0.3);
         }
         
         .hnau-cat-dot {
@@ -353,7 +353,7 @@
             // 发光部件材质
             function createGlowMat(opacity) {
                 return new THREE.MeshBasicMaterial({
-                    color: 0x00d4ff,
+                    color: 0x00ff88,
                     transparent: true,
                     opacity: opacity || 0.3,
                     wireframe: true
@@ -362,7 +362,7 @@
             
             function createSolidMat(opacity, color) {
                 return new THREE.MeshBasicMaterial({
-                    color: color || 0x00d4ff,
+                    color: color || 0x00ff88,
                     transparent: true,
                     opacity: opacity || 0.8
                 });
@@ -527,7 +527,7 @@
                 positions[i * 3 + 1] = Math.random() * 2.5 + 0.3;
                 positions[i * 3 + 2] = (Math.random() - 0.5) * 2.5;
                 
-                colors[i * 3] = 0; colors[i * 3 + 1] = 0.83; colors[i * 3 + 2] = 1;
+                colors[i * 3] = 0; colors[i * 3 + 1] = 1; colors[i * 3 + 2] = 0.53;
             }
             
             geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -611,7 +611,7 @@
                     if (clickGlow > 0.3 && isEye) {
                         mat.color.setHex(0x88ffff);
                     } else {
-                        mat.color.setHex(0x00d4ff);
+                        mat.color.setHex(0x00ff88);
                     }
                 }
             });
@@ -653,7 +653,7 @@
             scene.add(ambient);
             
             // 点光源
-            var point = new THREE.PointLight(0x00d4ff, 0.8, 10);
+            var point = new THREE.PointLight(0x00ff88, 0.8, 10);
             point.position.set(0, 3, 2);
             scene.add(point);
             
