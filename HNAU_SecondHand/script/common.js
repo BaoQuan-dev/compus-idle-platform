@@ -440,7 +440,7 @@ const Auth = {
      * @param {Object} info - 认证信息
      */
     submitVerify(info) {
-        // 【关键修改】同时更新 pendingAuthList
+        // 同时更新 pendingAuthList
         Storage.set(this.KEYS.VERIFY_INFO, info);
         Storage.set(this.KEYS.VERIFY_STATE, this.VERIFY_STATE.PENDING);
         
@@ -459,6 +459,12 @@ const Auth = {
         };
         pendingList.push(authRecord);
         Storage.set(this.KEYS.PENDING_AUTHS, pendingList);
+        
+        // 【关键修改】同步更新当前登录用户的认证状态
+        const loginState = this.getLoginState();
+        if (loginState.isLogin && loginState.curUser) {
+            this.updateUserAuthStatus(loginState.curUser, 'pending');
+        }
         
         console.log('[Auth] 认证申请已提交，pendingAuths 数量:', pendingList.length);
     },
@@ -484,6 +490,34 @@ const Auth = {
             pendingList[index].updateTime = new Date().toISOString();
             Storage.set(this.KEYS.PENDING_AUTHS, pendingList);
         }
+    },
+    
+    /**
+     * 【新增】根据用户名更新用户的认证状态
+     * @param {string} username - 用户名
+     * @param {string} authStatus - 认证状态 (unsubmitted/pending/approved/rejected)
+     */
+    updateUserAuthStatus(username, authStatus) {
+        const users = this.getUsers();
+        const userIndex = users.findIndex(u => u.username === username);
+        if (userIndex !== -1) {
+            users[userIndex].authStatus = authStatus;
+            Storage.set(this.KEYS.USERS, users);
+            console.log('[Auth] 用户认证状态已更新:', username, '->', authStatus);
+            return true;
+        }
+        return false;
+    },
+    
+    /**
+     * 【新增】获取用户的认证状态
+     * @param {string} username - 用户名
+     * @returns {string} 认证状态
+     */
+    getUserAuthStatus(username) {
+        const users = this.getUsers();
+        const user = users.find(u => u.username === username);
+        return user ? (user.authStatus || 'unsubmitted') : 'unsubmitted';
     },
 
     /**

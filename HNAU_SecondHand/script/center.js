@@ -52,7 +52,9 @@ const CenterModule = {
         this.state.isLoggedIn = loginState.isLogin;
         this.state.user = loginState.curUser;
         this.state.verifyInfo = Auth.getVerifyInfo();
-        this.state.verifyState = Auth.getVerifyState();
+        
+        // 【关键修改】优先读取用户数据中的 authStatus，其次读取全局认证状态
+        this.state.verifyState = Auth.getUserAuthStatus(this.state.user) || Auth.getVerifyState();
 
         // 我的发布
         const allGoods = Auth.getGoods();
@@ -123,10 +125,12 @@ const CenterModule = {
      * 渲染基本信息
      */
     renderInfo() {
+        // 【关键修改】添加 rejected 状态
         const statusMap = {
             'unsubmitted': { text: '未提交', class: 'pending' },
-            'pending': { text: '审核中', class: 'pending' },
-            'approved': { text: '已认证', class: 'approved' }
+            'pending': { text: '待审核', class: 'pending' },
+            'approved': { text: '已认证', class: 'approved' },
+            'rejected': { text: '已拒绝', class: 'rejected' }
         };
 
         const status = statusMap[this.state.verifyState] || statusMap['unsubmitted'];
@@ -163,10 +167,12 @@ const CenterModule = {
      * 渲染认证管理
      */
     renderVerify() {
+        // 【关键修改】添加 rejected 状态
         const statusMap = {
             'unsubmitted': { text: '未提交认证', class: 'pending', icon: '📝' },
             'pending': { text: '认证待审核', class: 'pending', icon: '⏳' },
-            'approved': { text: '认证已通过', class: 'approved', icon: '✅' }
+            'approved': { text: '认证已通过', class: 'approved', icon: '✅' },
+            'rejected': { text: '认证已拒绝', class: 'rejected', icon: '❌' }
         };
 
         const status = statusMap[this.state.verifyState] || statusMap['unsubmitted'];

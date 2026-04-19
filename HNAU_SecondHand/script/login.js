@@ -439,11 +439,12 @@ const LoginModule = {
                 return;
             }
 
-            // 创建用户
+            // 创建用户 - 【关键修改】添加 authStatus 字段
             const userInfo = {
                 username: username,
                 password: password,
-                regTime: Utils.formatDate(new Date())
+                regTime: Utils.formatDate(new Date()),
+                authStatus: 'unsubmitted'  // 新增：认证状态 (unsubmitted/pending/approved/rejected)
             };
 
             Auth.registerUser(userInfo);
