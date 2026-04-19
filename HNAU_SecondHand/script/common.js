@@ -447,14 +447,16 @@ const Auth = {
      * @param {Object} info - 认证信息
      */
     submitVerify(info) {
-        // 【修复】只更新用户数据中的认证状态，不更新全局状态
-        Storage.set(this.KEYS.VERIFY_INFO, info);
-        
         // 将认证申请添加到待审核列表
         const pendingList = this.getPendingAuths();
         // 添加唯一标识和时间戳
+        
+        // 获取当前登录用户名用于关联
+        const loginState = this.getLoginState();
+        
         const authRecord = {
             id: Date.now().toString(),  // 唯一ID
+            username: loginState.curUser,  // 【修复】关联用户名
             studentId: info.studentId,
             campus: info.campus,
             subCampus: info.subCampus || '',
@@ -466,13 +468,24 @@ const Auth = {
         pendingList.push(authRecord);
         Storage.set(this.KEYS.PENDING_AUTHS, pendingList);
         
-        // 【关键修改】同步更新当前登录用户的认证状态
-        const loginState = this.getLoginState();
+        // 【修复】同步更新当前登录用户的认证状态和关联信息
         if (loginState.isLogin && loginState.curUser) {
             this.updateUserAuthStatus(loginState.curUser, 'pending');
+            // 同时更新用户数据中的学号、校区、学院
+            const users = this.getUsers();
+            const userIndex = users.findIndex(u => u.username === loginState.curUser);
+            if (userIndex !== -1) {
+                users[userIndex].studentId = info.studentId;
+                users[userIndex].campus = info.campus;
+                users[userIndex].college = info.college;
+                Storage.set(this.KEYS.USERS, users);
+            }
         }
         
-        console.log('[Auth] 认证申请已提交，pendingAuths 数量:', pendingList.length);
+        // 保存认证信息（可选，用于兼容）
+        Storage.set(this.KEYS.VERIFY_INFO, info);
+        
+        console.log('[Auth] 认证申请已提交，用户:', loginState.curUser, '| 学号:', info.studentId);
     },
     
     /**

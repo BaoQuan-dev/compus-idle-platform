@@ -571,24 +571,16 @@ const AdminModule = {
             `;
         }
 
-        // 获取认证信息用于关联显示
-        let verifyInfo = null;
-        let verifyState = VERIFY_STATES.UNSUBMITTED;
-
-        try {
-            verifyState = localStorage.getItem(ADMIN_KEYS.VERIFY_STATE) || VERIFY_STATES.UNSUBMITTED;
-            const verifyInfoStr = localStorage.getItem(ADMIN_KEYS.VERIFY_INFO);
-            if (verifyInfoStr) {
-                verifyInfo = JSON.parse(verifyInfoStr);
-            }
-        } catch (e) {}
-
-        const stateMap = {
-            [VERIFY_STATES.UNSUBMITTED]: { text: '未认证', class: 'pending', bg: '#FFF3CD', color: '#856404' },
-            [VERIFY_STATES.PENDING]: { text: '审核中', class: 'pending', bg: '#FFF3CD', color: '#856404' },
-            [VERIFY_STATES.APPROVED]: { text: '已认证', class: 'approved', bg: '#D4EDDA', color: '#155724' }
+        // 【修复】认证状态映射 - 每个用户独立状态
+        const getStateInfo = (authStatus) => {
+            const stateMap = {
+                'unsubmitted': { text: '未认证', bg: '#FFF3CD', color: '#856404' },
+                'pending': { text: '审核中', bg: '#FFF3CD', color: '#856404' },
+                'approved': { text: '已认证', bg: '#D4EDDA', color: '#155724' },
+                'rejected': { text: '已拒绝', bg: '#F8D7DA', color: '#721C24' }
+            };
+            return stateMap[authStatus] || stateMap['unsubmitted'];
         };
-        const state = stateMap[verifyState] || stateMap[VERIFY_STATES.UNSUBMITTED];
 
         return `
             <div class="list-table-wrapper" style="overflow-x: auto;">
@@ -604,33 +596,35 @@ const AdminModule = {
                         </tr>
                     </thead>
                     <tbody>
-                        ${users.map(user => `
+                        ${users.map(user => {
+                            const stateInfo = getStateInfo(user.authStatus);
+                            return `
                             <tr>
                                 <td>
                                     <span style="font-weight: 500;">
                                         ${this.escapeHtml(user.username)}
                                     </span>
                                 </td>
-                                <td>${verifyInfo ? this.escapeHtml(verifyInfo.studentId) : '-'}</td>
-                                <td>${verifyInfo ? this.escapeHtml(verifyInfo.campus) : '-'}</td>
-                                <td>${verifyInfo ? this.escapeHtml(verifyInfo.college) : '-'}</td>
+                                <td>${user.studentId ? this.escapeHtml(user.studentId) : '-'}</td>
+                                <td>${user.campus ? this.escapeHtml(user.campus) : '-'}</td>
+                                <td>${user.college ? this.escapeHtml(user.college) : '-'}</td>
                                 <td>
                                     <span style="font-size: 13px; color: var(--text-secondary);">
                                         ${this.formatDate(user.regTime)}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="status-badge" style="background: ${state.bg}; color: ${state.color}; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">
-                                        ${state.text}
+                                    <span class="status-badge" style="background: ${stateInfo.bg}; color: ${stateInfo.color}; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">
+                                        ${stateInfo.text}
                                     </span>
                                 </td>
                             </tr>
-                        `).join('')}
+                        `}).join('')}
                     </tbody>
                 </table>
             </div>
             <div style="margin-top: 16px; padding: 12px 16px; background: var(--bg-light); border-radius: 8px; font-size: 13px; color: var(--text-secondary);">
-                <span>📌</span> 共 ${users.length} 位注册用户 | 认证状态为全局状态，与单个用户关联显示
+                <span>📌</span> 共 ${users.length} 位注册用户 | 认证状态与单个用户独立绑定
             </div>
         `;
     },
