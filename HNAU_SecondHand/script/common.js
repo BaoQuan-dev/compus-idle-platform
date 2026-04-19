@@ -383,9 +383,9 @@ const Auth = {
 
             setTimeout(() => {
                 if (result.tab) {
-                    Utils跳转(result.redirect, result.tab, result.prefillUser);
+                    Utils.跳转(result.redirect, result.tab, result.prefillUser);
                 } else {
-                    Utils跳转(result.redirect);
+                    Utils.跳转(result.redirect);
                 }
             }, result.type === 'error' ? 1000 : 1500);
 
@@ -406,7 +406,7 @@ const Auth = {
         if (!this.isLoggedIn()) {
             Toast.show('请先登录', 'info', 1500);
             setTimeout(() => {
-                Utils跳转('user_login.html', 'login');
+                Utils.跳转('user_login.html', 'login');
             }, 1500);
             return false;
         }
