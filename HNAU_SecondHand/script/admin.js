@@ -1273,6 +1273,11 @@ const AdminModule = {
                             users[userIndex].authStatus = 'approved';
                             localStorage.setItem(ADMIN_KEYS.USERS, JSON.stringify(users));
                             console.log('[Admin] 用户认证状态已更新:', users[userIndex].username, '-> approved');
+                            
+                            // 【新增】发送通知给用户
+                            if (typeof NotificationSystem !== 'undefined') {
+                                NotificationSystem.notifyAuthApprove(users[userIndex].username, auth.studentId);
+                            }
                         } else {
                             console.warn('[Admin] 未找到学号对应的用户:', auth.studentId);
                         }
@@ -1336,6 +1341,11 @@ const AdminModule = {
                             users[userIndex].authStatus = 'rejected';
                             localStorage.setItem(ADMIN_KEYS.USERS, JSON.stringify(users));
                             console.log('[Admin] 用户认证状态已更新:', users[userIndex].username, '-> rejected');
+                            
+                            // 【新增】发送通知给用户
+                            if (typeof NotificationSystem !== 'undefined') {
+                                NotificationSystem.notifyAuthReject(users[userIndex].username, auth.studentId, '认证信息不符合要求');
+                            }
                         }
                     }
                     

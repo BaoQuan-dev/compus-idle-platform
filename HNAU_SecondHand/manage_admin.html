@@ -2,10 +2,131 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="河南农业大学管理员后台">
     <title>管理员后台 - 农大闲置</title>
     <link rel="stylesheet" href="./style/main.css">
+    <link rel="stylesheet" href="./css/mobile.css">
+    <style>
+        /* 通知面板样式 */
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #dc3545;
+            color: white;
+            font-size: 10px;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .notification-panel {
+            position: fixed;
+            top: 60px;
+            right: 16px;
+            width: 360px;
+            max-height: 480px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            z-index: 1001;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .notification-panel.show {
+            display: flex;
+        }
+        .notification-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .notification-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        .notification-list {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+        .notification-item {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .notification-item:hover {
+            background: var(--hover-bg);
+        }
+        .notification-item.unread {
+            background: rgba(37, 166, 73, 0.05);
+        }
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: #25a649;
+            border-radius: 50%;
+        }
+        .notification-item {
+            position: relative;
+        }
+        .notification-icon {
+            font-size: 20px;
+            margin-right: 12px;
+        }
+        .notification-content {
+            flex: 1;
+        }
+        .notification-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .notification-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .notification-time {
+            font-size: 11px;
+            color: var(--text-hint);
+            margin-top: 4px;
+        }
+        .notification-empty {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--text-hint);
+        }
+        .notification-empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+        }
+        .notification-overlay.show {
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <!-- 导航栏 -->
@@ -38,7 +159,15 @@
 
             <!-- 用户操作 -->
             <div class="navbar-actions">
-                <!-- JS渲染 -->
+                <!-- 主题切换按钮 -->
+                <button class="header-btn" id="themeToggleBtn" title="切换主题" style="background: rgba(255,255,255,0.2); border: none; cursor: pointer;">
+                    🌞
+                </button>
+                <!-- 通知按钮 -->
+                <button class="header-btn" id="notificationBtn" title="消息通知" style="background: rgba(255,255,255,0.2); border: none; cursor: pointer; position: relative;">
+                    🔔
+                    <span class="notification-badge" id="notificationBadge">0</span>
+                </button>
             </div>
 
             <!-- 汉堡菜单按钮（移动端） -->
@@ -65,6 +194,26 @@
         <div class="navbar-overlay"></div>
     </nav>
 
+    <!-- 通知面板遮罩 -->
+    <div class="notification-overlay" id="notificationOverlay"></div>
+    
+    <!-- 通知面板 -->
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+            <h3>📬 消息通知</h3>
+            <div>
+                <button class="btn-link" id="markAllReadBtn" style="background: none; border: none; color: #25a649; cursor: pointer; font-size: 13px;">全部已读</button>
+                <button class="btn-link" id="clearAllBtn" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 13px; margin-left: 12px;">清空</button>
+            </div>
+        </div>
+        <div class="notification-list" id="notificationList">
+            <div class="notification-empty">
+                <div class="notification-empty-icon">📭</div>
+                <p>暂无消息通知</p>
+            </div>
+        </div>
+    </div>
+    
     <!-- 主内容区域 -->
     <main class="main-content">
         <!-- 页面标题 -->
@@ -75,8 +224,13 @@
             </div>
         </div>
 
+        <!-- 数据可视化区域 -->
+        <section class="container" style="padding-top: 20px;">
+            <div id="chartContainer"></div>
+        </section>
+
         <!-- 管理员内容区 -->
-        <section class="container" style="padding-top: 30px; padding-bottom: 30px;">
+        <section class="container" style="padding-top: 20px; padding-bottom: 30px;">
             <div id="adminContent">
                 <!-- JS渲染 -->
             </div>
@@ -92,10 +246,15 @@
 
     <!-- 脚本 -->
     <script src="./script/common.js"></script>
+    <script src="./script/toast.js"></script>
+    <script src="./script/theme.js"></script>
+    <script src="./script/notification.js"></script>
+    <script src="./script/visualization.js"></script>
     <script src="./script/admin.js"></script>
     <script>
-        // 移动端发布按钮
+        // 页面初始化
         document.addEventListener('DOMContentLoaded', function() {
+            // 移动端发布按钮
             var mobileReleaseBtn = document.getElementById('mobileReleaseBtn');
             if (mobileReleaseBtn) {
                 mobileReleaseBtn.addEventListener('click', function() {
@@ -104,7 +263,134 @@
                     });
                 });
             }
+            
+            // 初始化主题
+            ThemeManager.init();
+            
+            // 初始化通知系统
+            initNotificationSystem();
+            
+            // 初始化数据可视化
+            setTimeout(function() {
+                DataVisualization.init('chartContainer');
+            }, 100);
         });
+        
+        // 通知系统初始化
+        function initNotificationSystem() {
+            var notificationBtn = document.getElementById('notificationBtn');
+            var notificationPanel = document.getElementById('notificationPanel');
+            var notificationOverlay = document.getElementById('notificationOverlay');
+            var markAllReadBtn = document.getElementById('markAllReadBtn');
+            var clearAllBtn = document.getElementById('clearAllBtn');
+            
+            // 显示/隐藏通知面板
+            if (notificationBtn) {
+                notificationBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var isShow = notificationPanel.classList.contains('show');
+                    notificationPanel.classList.toggle('show');
+                    notificationOverlay.classList.toggle('show');
+                    if (!isShow) {
+                        renderNotificationList();
+                    }
+                });
+            }
+            
+            // 点击遮罩关闭
+            if (notificationOverlay) {
+                notificationOverlay.addEventListener('click', function() {
+                    notificationPanel.classList.remove('show');
+                    notificationOverlay.classList.remove('show');
+                });
+            }
+            
+            // 全部已读
+            if (markAllReadBtn) {
+                markAllReadBtn.addEventListener('click', function() {
+                    NotificationSystem.markAllAsRead();
+                    renderNotificationList();
+                });
+            }
+            
+            // 清空全部
+            if (clearAllBtn) {
+                clearAllBtn.addEventListener('click', function() {
+                    NotificationSystem.clearAll();
+                    renderNotificationList();
+                });
+            }
+            
+            // 更新红点
+            NotificationSystem.updateBadge();
+            
+            // 监听消息变化
+            window.addEventListener('notificationschange', function() {
+                NotificationSystem.updateBadge();
+                if (notificationPanel.classList.contains('show')) {
+                    renderNotificationList();
+                }
+            });
+        }
+        
+        // 渲染通知列表
+        function renderNotificationList() {
+            var notificationList = document.getElementById('notificationList');
+            if (!notificationList) return;
+            
+            var data = NotificationSystem.getList(1, 20);
+            
+            if (data.list.length === 0) {
+                notificationList.innerHTML = `
+                    <div class="notification-empty">
+                        <div class="notification-empty-icon">📭</div>
+                        <p>暂无消息通知</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            var html = '';
+            data.list.forEach(function(item) {
+                var typeConfig = NotificationSystem.types[item.type] || NotificationSystem.types.system;
+                var timeAgo = formatTimeAgo(item.timestamp);
+                
+                html += `
+                    <div class="notification-item ${item.read ? '' : 'unread'}" data-id="${item.id}">
+                        <span class="notification-icon">${typeConfig.icon}</span>
+                        <div class="notification-content">
+                            <div class="notification-title">${item.title}</div>
+                            <div class="notification-text">${item.content}</div>
+                            <div class="notification-time">${timeAgo}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            notificationList.innerHTML = html;
+            
+            // 绑定点击事件
+            notificationList.querySelectorAll('.notification-item').forEach(function(el) {
+                el.addEventListener('click', function() {
+                    var id = this.dataset.id;
+                    NotificationSystem.markAsRead(id);
+                    this.classList.remove('unread');
+                });
+            });
+        }
+        
+        // 格式化时间
+        function formatTimeAgo(timestamp) {
+            var date = new Date(timestamp);
+            var now = new Date();
+            var diff = Math.floor((now - date) / 1000);
+            
+            if (diff < 60) return '刚刚';
+            if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
+            if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
+            if (diff < 604800) return Math.floor(diff / 86400) + '天前';
+            return date.toLocaleDateString();
+        }
     </script>
 </body>
 </html>
