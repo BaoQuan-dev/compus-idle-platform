@@ -53,8 +53,8 @@ const CenterModule = {
         this.state.user = loginState.curUser;
         this.state.verifyInfo = Auth.getVerifyInfo();
         
-        // 【关键修改】优先读取用户数据中的 authStatus，其次读取全局认证状态
-        this.state.verifyState = Auth.getUserAuthStatus(this.state.user) || Auth.getVerifyState();
+        // 【修复】只从用户数据中读取当前登录用户的 authStatus
+        this.state.verifyState = Auth.getUserAuthStatus(this.state.user);
 
         // 我的发布
         const allGoods = Auth.getGoods();

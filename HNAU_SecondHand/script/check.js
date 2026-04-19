@@ -43,7 +43,9 @@ const CheckModule = {
      * 加载状态
      */
     loadState() {
-        this.state.verifyState = Auth.getVerifyState();
+        // 【修复】只从用户数据中读取当前登录用户的认证状态
+        const loginState = Auth.getLoginState();
+        this.state.verifyState = Auth.getUserAuthStatus(loginState.curUser);
         this.state.verifyInfo = Auth.getVerifyInfo();
     },
 
@@ -234,9 +236,10 @@ const CheckModule = {
      * 绑定事件
      */
     bindEvents() {
-        // 监听认证状态变化，实时更新页面
+        // 【修复】监听认证状态变化，实时更新页面
+        const loginState = Auth.getLoginState();
         this.intervalId = setInterval(() => {
-            const newState = Auth.getVerifyState();
+            const newState = Auth.getUserAuthStatus(loginState.curUser);
             if (newState !== this.state.verifyState) {
                 this.loadState();
                 this.render();

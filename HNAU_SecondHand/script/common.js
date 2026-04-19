@@ -239,11 +239,17 @@ const Auth = {
     },
 
     /**
-     * 获取认证状态
+     * 【修复】获取认证状态 - 从用户数据读取，不使用全局状态
+     * @param {string} username - 用户名（可选，默认取当前登录用户）
      * @returns {string} 认证状态
      */
-    getVerifyState() {
-        return Storage.get(this.KEYS.VERIFY_STATE, this.VERIFY_STATE.UNSUBMITTED);
+    getVerifyState(username) {
+        // 如果没有传入用户名，使用当前登录用户
+        if (!username) {
+            const loginState = this.getLoginState();
+            username = loginState.curUser;
+        }
+        return this.getUserAuthStatus(username);
     },
 
     /**
@@ -296,11 +302,15 @@ const Auth = {
     },
 
     /**
-     * 检查认证是否通过
+     * 【修复】检查认证是否通过 - 从用户数据读取
      * @returns {boolean}
      */
     isVerified() {
-        return this.getVerifyState() === this.VERIFY_STATE.APPROVED;
+        const loginState = this.getLoginState();
+        if (!loginState.isLogin || !loginState.curUser) {
+            return false;
+        }
+        return this.getUserAuthStatus(loginState.curUser) === 'approved';
     },
 
     /**
@@ -437,9 +447,8 @@ const Auth = {
      * @param {Object} info - 认证信息
      */
     submitVerify(info) {
-        // 同时更新 pendingAuthList
+        // 【修复】只更新用户数据中的认证状态，不更新全局状态
         Storage.set(this.KEYS.VERIFY_INFO, info);
-        Storage.set(this.KEYS.VERIFY_STATE, this.VERIFY_STATE.PENDING);
         
         // 将认证申请添加到待审核列表
         const pendingList = this.getPendingAuths();
@@ -538,20 +547,64 @@ const Auth = {
     },
 
     /**
-     * 更新认证状态
+     * 【新增】根据学号更新用户的认证状态（管理员审核用）
+     * @param {string} studentId - 学号
+     * @param {string} authStatus - 认证状态
+     */
+    updateUserAuthStatusByStudentId(studentId, authStatus) {
+        const users = this.getUsers();
+        // 找到学号匹配且当前是待审核状态的用户
+        const userIndex = users.findIndex(u => 
+            u.studentId === studentId && u.authStatus === 'pending'
+        );
+        if (userIndex !== -1) {
+            users[userIndex].authStatus = authStatus;
+            Storage.set(this.KEYS.USERS, users);
+            console.log('[Auth] 根据学号更新用户认证状态:', studentId, '->', authStatus);
+            return true;
+        }
+        
+        // 如果没找到待审核用户，尝试匹配所有用户
+        const anyUserIndex = users.findIndex(u => u.studentId === studentId);
+        if (anyUserIndex !== -1) {
+            users[anyUserIndex].authStatus = authStatus;
+            Storage.set(this.KEYS.USERS, users);
+            console.log('[Auth] 根据学号更新用户认证状态:', studentId, '->', authStatus);
+            return true;
+        }
+        
+        console.warn('[Auth] 未找到学号对应的用户:', studentId);
+        return false;
+    },
+
+    /**
+     * 【修复】更新认证状态 - 更新用户数据中的认证状态
      * @param {string} state - 新状态
      * @param {string} studentId - 学号（用于定位用户）
      */
     updateVerifyState(state, studentId) {
-        Storage.set(this.KEYS.VERIFY_STATE, state);
+        // 【修复】根据学号找到用户并更新其认证状态
+        if (studentId) {
+            this.updateUserAuthStatusByStudentId(studentId, state);
+        } else {
+            // 如果没有学号，更新当前登录用户的状态
+            const loginState = this.getLoginState();
+            if (loginState.curUser) {
+                this.updateUserAuthStatus(loginState.curUser, state);
+            }
+        }
     },
 
     /**
      * 重置认证状态
      */
     resetVerify() {
+        // 【修复】重置当前登录用户的认证状态
+        const loginState = this.getLoginState();
+        if (loginState.curUser) {
+            this.updateUserAuthStatus(loginState.curUser, 'unsubmitted');
+        }
         Storage.remove(this.KEYS.VERIFY_INFO);
-        Storage.remove(this.KEYS.VERIFY_STATE);
     },
 
     /**

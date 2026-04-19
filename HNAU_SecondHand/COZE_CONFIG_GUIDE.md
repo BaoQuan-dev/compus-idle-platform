@@ -1,56 +1,44 @@
-# 农大闲置 - 发布权限校验系统（修复版）
+# 农大闲置 - 用户数据隔离方案（修复版）
 
-## 一、权限校验流程（正确逻辑）
+## 一、问题根因
 
-```
-点击「发布闲置」
-    ↓
-校验0：是否登录？
-    ├─ 否 → 提示"请先登录"，跳转登录页
-    └─ 是 → 继续校验1
-            ↓
-        校验1：authStatus === 'approved'？
-            ├─ approved → 进入发布页 ✅
-            ├─ pending → 提示"等待审核"，跳转个人中心
-            ├─ rejected → 提示"重新认证"，跳转认证页
-            └─ unsubmitted → 提示"先认证"，跳转认证页
-```
+**问题**：认证状态存在全局变量 `hnau_verify_state`，导致所有用户共用同一个状态。
 
-## 二、认证状态说明
+**后果**：
+- 用户A认证通过后，所有用户都显示"已认证"
+- 用户B提交认证，用户A的个人中心显示"待审核"
+- 不同用户之间状态互相串扰
 
-| 状态值 | 用户看到的文案 | 说明 |
-|--------|---------------|------|
-| `unsubmitted` | 未提交 | 注册后默认状态，需主动提交认证 |
-| `pending` | 待审核 | 已提交认证，等待管理员审核 |
-| `approved` | 已认证 | 管理员审核通过，可发布商品 |
-| `rejected` | 已拒绝 | 认证被拒，需重新提交 |
+## 二、修复方案
 
-## 三、正确流程
+### 2.1 核心原则
+
+**认证状态必须绑定到用户数据中**，每个用户独立存储自己的认证状态：
 
 ```
-注册账号 ──authStatus='unsubmitted'──→ 登录 ──提交认证──→ 待审核 ──管理员通过──→ 已认证
-   │                                                                              ↓
-   └─── 退出登录 ─────────────────────────────────────────────────────────────→ 发布商品 ✅
+hnau_users (用户列表)
+├── user1: { username: "张三", authStatus: "approved" }
+├── user2: { username: "李四", authStatus: "pending" }
+└── user3: { username: "王五", authStatus: "unsubmitted" }
 ```
 
-## 四、localStorage 键名规范
+### 2.2 localStorage 键名规范
 
-| 键名 | 说明 | 数据示例 |
+| 键名 | 用途 | 数据结构 |
 |------|------|----------|
-| `hnau_login_state` | 登录状态 | `{isLogin:true, curUser:"张三"}` |
-| `hnau_users` | 用户列表 | `[{username:"张三", authStatus:"approved", studentId:"2021001"}]` |
-| `hnau_pending_auths` | 待审核列表 | `[{studentId:"2021001", status:"approved"}]` |
-| `hnau_verify_info` | 认证信息 | `{studentId:"2021001", campus:"东校区"}` |
-| `hnau_verify_state` | 全局认证状态 | `"pending"` |
+| `hnau_users` | 用户列表 | `[{username, password, authStatus, studentId, ...}]` |
+| `hnau_login_state` | 当前登录 | `{isLogin, curUser}` |
+| `hnau_pending_auths` | 待审核列表 | `[{id, studentId, status, ...}]` |
+| `hnau_verify_info` | 认证信息（可选） | `{studentId, campus, ...}` |
 
-**重要**：校验发布权限时，**只读取 `hnau_users` 中用户的 `authStatus`**，不读取全局状态！
+**重要**：不再使用 `hnau_verify_state` 全局状态！
 
-## 五、Coze 低代码平台配置
+## 三、Coze 配置代码
 
-### 5.1 发布按钮点击事件
+### 3.1 发布按钮点击事件
 
 ```javascript
-// ========== 发布权限校验（核心逻辑）==========
+// ========== 发布权限校验（数据隔离版）==========
 
 // 1. 获取登录状态
 const loginState = STORAGE.get('hnau_login_state') || {};
@@ -62,31 +50,32 @@ if (!loginState.isLogin || !loginState.curUser) {
   return;
 }
 
-// 3. 获取用户认证状态（只从用户数据读取，不读全局状态）
+// 3. 【关键】只从当前用户数据中读取认证状态
 const users = STORAGE.get('hnau_users') || [];
-const user = users.find(u => u.username === loginState.curUser);
-const authStatus = user?.authStatus || 'unsubmitted';
+const currentUser = users.find(u => u.username === loginState.curUser);
+const authStatus = currentUser?.authStatus || 'unsubmitted';
+
+console.log('当前用户:', loginState.curUser, '| 认证状态:', authStatus);
 
 // 4. 校验1：认证状态
 if (authStatus === 'approved') {
-  // 校验通过，跳转发布页
-  PAGE.navigate('publish.html');
+  PAGE.navigate('publish.html');  // 通过，跳转发布页
 } else if (authStatus === 'pending') {
   TOAST.show('您的认证正在审核中，请等待审核通过');
   PAGE.navigate('user_center.html');
 } else if (authStatus === 'rejected') {
-  TOAST.show('您的认证申请被拒绝，请重新提交认证信息');
+  TOAST.show('您的认证申请被拒绝，请重新提交');
   PAGE.navigate('stu_check.html');
 } else {
-  TOAST.show('发布商品需先完成校园认证');
+  TOAST.show('请先完成校园认证');
   PAGE.navigate('stu_check.html');
 }
 ```
 
-### 5.2 注册按钮点击事件
+### 3.2 注册按钮点击事件
 
 ```javascript
-// ========== 注册逻辑（修复版）==========
+// ========== 注册逻辑（数据隔离版）==========
 
 const username = INPUT.regUsername;
 const password = INPUT.regPassword;
@@ -97,7 +86,6 @@ if (!username || !password) {
   TOAST.show('请填写用户名和密码', 'error');
   return;
 }
-
 if (password !== confirmPassword) {
   TOAST.show('两次密码输入不一致', 'error');
   return;
@@ -110,13 +98,13 @@ if (users.find(u => u.username === username)) {
   return;
 }
 
-// 3. 【关键】创建用户 - 注册时authStatus必须为'unsubmitted'
+// 3. 【关键】创建用户 - authStatus 独立存储
 const newUser = {
   username: username,
   password: password,
   regTime: new Date().toISOString(),
-  authStatus: 'unsubmitted',  // 【重要】注册时默认未提交！
-  studentId: '',               // 认证通过后关联
+  authStatus: 'unsubmitted',  // 每个用户独立状态
+  studentId: '',
   campus: '',
   college: ''
 };
@@ -124,17 +112,17 @@ const newUser = {
 users.push(newUser);
 STORAGE.set('hnau_users', users);
 
-// 4. 登录并跳转
+// 4. 自动登录
 STORAGE.set('hnau_login_state', { isLogin: true, curUser: username });
 
 TOAST.show('注册成功！', 'success');
 PAGE.navigate('user_center.html');
 ```
 
-### 5.3 提交认证按钮点击事件
+### 3.3 提交认证按钮点击事件
 
 ```javascript
-// ========== 提交认证逻辑 ==========
+// ========== 提交认证逻辑（数据隔离版）==========
 
 const studentId = INPUT.studentId;
 const campus = SELECT.campus;
@@ -148,7 +136,7 @@ if (!studentId || !campus || !college || !studentCard) {
 
 // 1. 获取当前登录用户
 const loginState = STORAGE.get('hnau_login_state');
-if (!loginState || !loginState.curUser) {
+if (!loginState?.curUser) {
   TOAST.show('请先登录', 'error');
   PAGE.navigate('user_login.html');
   return;
@@ -162,39 +150,36 @@ pendingList.push({
   campus: campus,
   college: college,
   studentCardImage: studentCard,
+  username: loginState.curUser,  // 关联用户名
   submitTime: new Date().toISOString(),
   status: 'pending'
 });
 STORAGE.set('hnau_pending_auths', pendingList);
 
-// 3. 【关键】更新用户认证状态为'pending'
+// 3. 【关键】只更新当前用户的认证状态
 const users = STORAGE.get('hnau_users') || [];
 const userIndex = users.findIndex(u => u.username === loginState.curUser);
 if (userIndex !== -1) {
-  users[userIndex].authStatus = 'pending';
-  users[userIndex].studentId = studentId;  // 关联学号
+  users[userIndex].authStatus = 'pending';  // 只更新当前用户
+  users[userIndex].studentId = studentId;
   users[userIndex].campus = campus;
   users[userIndex].college = college;
   STORAGE.set('hnau_users', users);
 }
 
-// 4. 保存认证信息
-STORAGE.set('hnau_verify_info', { studentId, campus, college, studentCardImage: studentCard });
-STORAGE.set('hnau_verify_state', 'pending');
-
 TOAST.show('认证申请已提交，请等待管理员审核', 'success');
 PAGE.navigate('user_center.html');
 ```
 
-### 5.4 管理员「通过」按钮点击事件
+### 3.4 管理员「通过」按钮点击事件
 
 ```javascript
-// ========== 管理员通过认证 ==========
+// ========== 管理员通过认证（数据隔离版）==========
 
 const authId = EVENT.target.dataset.id;
 const studentId = EVENT.target.dataset.studentid;
 
-// 1. 更新待审核列表状态
+// 1. 更新待审核列表
 const pendingList = STORAGE.get('hnau_pending_auths') || [];
 const pendingIndex = pendingList.findIndex(a => a.id === authId);
 if (pendingIndex !== -1) {
@@ -203,32 +188,28 @@ if (pendingIndex !== -1) {
   STORAGE.set('hnau_pending_auths', pendingList);
 }
 
-// 2. 【关键】找到申请者并更新其认证状态
+// 2. 【关键】只更新对应用户的认证状态（通过学号匹配）
 const users = STORAGE.get('hnau_users') || [];
-// 根据学号查找用户
-const userIndex = users.findIndex(u => u.studentId === studentId && u.authStatus === 'pending');
+const userIndex = users.findIndex(u => u.studentId === studentId);
 if (userIndex !== -1) {
   users[userIndex].authStatus = 'approved';
   STORAGE.set('hnau_users', users);
+  console.log('用户状态已更新:', users[userIndex].username, '-> approved');
 }
 
-// 3. 更新全局状态
-STORAGE.set('hnau_verify_state', 'approved');
-
-// 4. 刷新页面
-TOAST.show('已通过认证申请', 'success');
+TOAST.show('认证已通过', 'success');
 PAGE.reload();
 ```
 
-### 5.5 管理员「拒绝」按钮点击事件
+### 3.5 管理员「拒绝」按钮点击事件
 
 ```javascript
-// ========== 管理员拒绝认证 ==========
+// ========== 管理员拒绝认证（数据隔离版）==========
 
 const authId = EVENT.target.dataset.id;
 const studentId = EVENT.target.dataset.studentid;
 
-// 1. 更新待审核列表状态
+// 1. 更新待审核列表
 const pendingList = STORAGE.get('hnau_pending_auths') || [];
 const pendingIndex = pendingList.findIndex(a => a.id === authId);
 if (pendingIndex !== -1) {
@@ -237,85 +218,110 @@ if (pendingIndex !== -1) {
   STORAGE.set('hnau_pending_auths', pendingList);
 }
 
-// 2. 【关键】更新用户认证状态
+// 2. 【关键】只更新对应用户的认证状态
 const users = STORAGE.get('hnau_users') || [];
-const userIndex = users.findIndex(u => u.studentId === studentId && u.authStatus === 'pending');
+const userIndex = users.findIndex(u => u.studentId === studentId);
 if (userIndex !== -1) {
   users[userIndex].authStatus = 'rejected';
   STORAGE.set('hnau_users', users);
 }
 
-// 3. 重置全局状态
-STORAGE.set('hnau_verify_state', 'unsubmitted');
-STORAGE.remove('hnau_verify_info');
-
-TOAST.show('已拒绝认证申请', 'success');
+TOAST.show('认证已拒绝', 'success');
 PAGE.reload();
 ```
 
-## 六、个人中心显示逻辑
+### 3.6 个人中心 - 获取认证状态
 
 ```javascript
-// ========== 个人中心 - 获取认证状态 ==========
+// ========== 个人中心数据加载（数据隔离版）==========
 
-// 只从用户数据读取认证状态
-const loginState = STORAGE.get('hnau_login_state');
+// 1. 获取登录状态
+const loginState = STORAGE.get('hnau_login_state') || {};
+
+// 2. 【关键】只从当前用户数据中读取认证状态
 const users = STORAGE.get('hnau_users') || [];
-const user = users.find(u => u.username === loginState.curUser);
-const verifyState = user?.authStatus || 'unsubmitted';
+const currentUser = users.find(u => u.username === loginState.curUser);
+const verifyState = currentUser?.authStatus || 'unsubmitted';
 
-// 渲染状态文案
+// 3. 渲染状态文案
 const statusMap = {
-  'unsubmitted': '未提交',
-  'pending': '待审核',
-  'approved': '已认证',
-  'rejected': '已拒绝'
+  'unsubmitted': { text: '未提交', class: 'pending', icon: '📝' },
+  'pending': { text: '待审核', class: 'pending', icon: '⏳' },
+  'approved': { text: '已认证', class: 'approved', icon: '✅' },
+  'rejected': { text: '已拒绝', class: 'rejected', icon: '❌' }
 };
 
-TEXT.verifyStatusText = statusMap[verifyState] || '未提交';
+TEXT.verifyStatusText = statusMap[verifyState]?.text || '未提交';
+TEXT.verifyStatusIcon = statusMap[verifyState]?.icon || '📝';
 ```
 
-## 七、常见错误修复
+## 四、数据隔离验证
 
-### 错误1：注册后自动显示已认证
-**原因**：注册时把 `authStatus` 设为 `'approved'`
-**修复**：注册时必须设为 `'unsubmitted'`
+### 4.1 测试场景
 
-```javascript
-// ❌ 错误
-authStatus: verifyInfo ? 'approved' : 'unsubmitted'
-
-// ✅ 正确
-authStatus: 'unsubmitted'
-```
-
-### 错误2：校验时用全局状态覆盖用户状态
-**原因**：代码中用 `globalVerifyState` 覆盖了用户的 `authStatus`
-**修复**：严格只读取用户数据中的 `authStatus`
-
-```javascript
-// ❌ 错误
-if (!verifyState || verifyState === 'unsubmitted') {
-  const globalVerifyState = this.getVerifyState();
-  if (globalVerifyState !== 'unsubmitted') {
-    verifyState = globalVerifyState;  // 覆盖了用户状态！
-  }
-}
-
-// ✅ 正确
-const verifyState = this.getUserAuthStatus(username);  // 只读用户状态
-```
-
-## 八、测试用例
-
-| 步骤 | 操作 | 预期结果 |
+| 用户 | 操作 | 预期结果 |
 |------|------|----------|
-| 1 | 注册新账号 | authStatus='unsubmitted' |
-| 2 | 登录后查看个人中心 | 显示"未提交" |
-| 3 | 点击发布 | 跳转认证页 |
-| 4 | 提交认证 | authStatus='pending' |
-| 5 | 查看个人中心 | 显示"待审核" |
-| 6 | 点击发布 | 提示等待审核 |
-| 7 | 管理员审核通过 | authStatus='approved' |
-| 8 | 查看个人中心 | 显示"已认证" |
-| 9 | 点击发布 | 进入发布页 ✅ |
+| 张三 | 注册 | authStatus = 'unsubmitted' |
+| 张三 | 登录 | 显示"未提交" |
+| 李四 | 注册 | authStatus = 'unsubmitted'（独立） |
+| 张三 | 提交认证 | 张三 authStatus = 'pending' |
+| 李四 | 查看个人中心 | 仍显示"未提交"（不受影响） |
+| 张三 | 管理员审核通过 | 张三 authStatus = 'approved' |
+| 李四 | 查看个人中心 | 仍显示"未提交"（不受影响） |
+| 李四 | 提交认证 | 李四 authStatus = 'pending' |
+| 王五 | 注册 | authStatus = 'unsubmitted'（独立） |
+
+### 4.2 验证命令
+
+在浏览器控制台执行：
+
+```javascript
+// 查看所有用户状态
+console.log('所有用户:', JSON.parse(localStorage.getItem('hnau_users')));
+
+// 查看待审核列表
+console.log('待审核:', JSON.parse(localStorage.getItem('hnau_pending_auths')));
+
+// 验证数据隔离
+const users = JSON.parse(localStorage.getItem('hnau_users'));
+const currentUser = users.find(u => u.username === '当前用户名');
+console.log('当前用户状态:', currentUser?.authStatus);
+```
+
+## 五、常见错误修复
+
+### 错误1：使用全局状态
+```javascript
+// ❌ 错误 - 使用全局状态
+const verifyState = STORAGE.get('hnau_verify_state');
+
+// ✅ 正确 - 从用户数据读取
+const users = STORAGE.get('hnau_users') || [];
+const currentUser = users.find(u => u.username === loginState.curUser);
+const verifyState = currentUser?.authStatus || 'unsubmitted';
+```
+
+### 错误2：批量更新所有用户状态
+```javascript
+// ❌ 错误 - 更新所有待审核用户
+users.forEach(user => {
+  if (user.authStatus === 'pending') {
+    user.authStatus = 'approved';
+  }
+});
+
+// ✅ 正确 - 只更新对应用户
+const userIndex = users.findIndex(u => u.studentId === studentId);
+if (userIndex !== -1) {
+  users[userIndex].authStatus = 'approved';
+}
+```
+
+### 错误3：使用 || 作为备选导致状态被覆盖
+```javascript
+// ❌ 错误 - 用全局状态覆盖用户状态
+const authStatus = user.authStatus || STORAGE.get('hnau_verify_state');
+
+// ✅ 正确 - 直接使用用户状态
+const authStatus = user?.authStatus || 'unsubmitted';
+```

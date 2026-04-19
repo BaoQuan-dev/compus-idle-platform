@@ -1250,7 +1250,7 @@ const AdminModule = {
     },
 
     /**
-     * 【修复】通过认证 - 从 pendingAuthList 移除并更新状态
+     * 【修复】通过认证 - 只更新对应用户的认证状态
      * @param {string} authId - 认证申请ID
      */
     approveVerify(authId) {
@@ -1266,32 +1266,21 @@ const AdminModule = {
                     auth.updateTime = new Date().toISOString();
                     localStorage.setItem(ADMIN_KEYS.PENDING_AUTHS, JSON.stringify(pendingAuths));
                     
-                    // 更新全局认证状态
-                    localStorage.setItem(ADMIN_KEYS.VERIFY_STATE, VERIFY_STATES.APPROVED);
-                    
-                    // 【关键修改】同步更新用户的认证状态，并关联用户名
+                    // 【修复】只更新对应用户（通过学号匹配）的认证状态
                     const usersStr = localStorage.getItem(ADMIN_KEYS.USERS);
                     if (usersStr) {
                         let users = JSON.parse(usersStr);
-                        let updated = false;
-                        users.forEach(user => {
-                            // 如果用户认证状态不是 approved，说明是待审核用户
-                            if (user.authStatus === 'pending') {
-                                user.authStatus = 'approved';
-                                // 如果 pendingAuth 中有用户名，关联到用户
-                                if (auth.username) {
-                                    user.username = auth.username;
-                                }
-                                updated = true;
-                            }
-                            // 如果用户学号匹配，也更新
-                            if (user.studentId === auth.studentId) {
-                                user.authStatus = 'approved';
-                            }
-                        });
-                        if (updated) {
+                        // 根据学号找到该用户并更新状态
+                        const userIndex = users.findIndex(u => 
+                            u.studentId === auth.studentId || 
+                            (auth.username && u.username === auth.username)
+                        );
+                        if (userIndex !== -1) {
+                            users[userIndex].authStatus = 'approved';
                             localStorage.setItem(ADMIN_KEYS.USERS, JSON.stringify(users));
-                            console.log('[Admin] 用户认证状态已更新:', authStatus);
+                            console.log('[Admin] 用户认证状态已更新:', users[userIndex].username, '-> approved');
+                        } else {
+                            console.warn('[Admin] 未找到学号对应的用户:', auth.studentId);
                         }
                     }
                     
@@ -1313,9 +1302,7 @@ const AdminModule = {
                     this.showToast('未找到认证申请', 'error');
                 }
             } else {
-                // 兼容旧逻辑
-                localStorage.setItem(ADMIN_KEYS.VERIFY_STATE, VERIFY_STATES.APPROVED);
-                this.showToast('认证已通过', 'success');
+                this.showToast('未找到待审核列表', 'error');
             }
             
             this.render();
@@ -1327,70 +1314,8 @@ const AdminModule = {
     },
 
     /**
-     * 【新增】根据学号更新用户的认证状态
-     * 注意：需要通过认证信息中的 studentId 找到对应用户
-     * @param {string} studentId - 学号
-     * @param {string} authStatus - 认证状态
-     */
-    updateUserAuthStatusByStudentId(studentId, authStatus) {
-        try {
-            // 获取认证信息，获取学院信息来匹配用户
-            const verifyInfoStr = localStorage.getItem(ADMIN_KEYS.VERIFY_INFO);
-            if (!verifyInfoStr) {
-                console.warn('[Admin] 未找到认证信息，无法更新用户状态');
-                return false;
-            }
-            
-            // 尝试从 pendingAuths 中获取关联的用户名
-            const pendingAuthsStr = localStorage.getItem(ADMIN_KEYS.PENDING_AUTHS);
-            if (pendingAuthsStr) {
-                const pendingAuths = JSON.parse(pendingAuthsStr);
-                const auth = pendingAuths.find(a => a.studentId === studentId && a.status !== 'pending');
-                if (auth && auth.username) {
-                    // 如果 pendingAuth 记录中存有用户名，直接更新
-                    const usersStr = localStorage.getItem(ADMIN_KEYS.USERS);
-                    if (usersStr) {
-                        let users = JSON.parse(usersStr);
-                        const userIndex = users.findIndex(u => u.username === auth.username);
-                        if (userIndex !== -1) {
-                            users[userIndex].authStatus = authStatus;
-                            localStorage.setItem(ADMIN_KEYS.USERS, JSON.stringify(users));
-                            console.log('[Admin] 用户认证状态已更新:', auth.username, '->', authStatus);
-                            return true;
-                        }
-                    }
-                }
-            }
-            
-            // 备选方案：遍历所有用户，更新所有未认证/待审核用户的认证状态
-            // 这是一个简化的方案，假设系统只有一个活跃用户
-            const usersStr = localStorage.getItem(ADMIN_KEYS.USERS);
-            if (usersStr) {
-                let users = JSON.parse(usersStr);
-                let updated = false;
-                users.forEach(user => {
-                    // 如果用户认证状态不是 approved，说明是待审核用户
-                    if (user.authStatus === 'pending') {
-                        user.authStatus = authStatus;
-                        updated = true;
-                    }
-                });
-                if (updated) {
-                    localStorage.setItem(ADMIN_KEYS.USERS, JSON.stringify(users));
-                    console.log('[Admin] 批量更新用户认证状态为:', authStatus);
-                    return true;
-                }
-            }
-            
-            return false;
-        } catch (e) {
-            console.error('[Admin] 更新用户认证状态失败:', e);
-            return false;
-        }
-    },
-
-    /**
-     * 【修复】拒绝认证 - 从 pendingAuthList 移除
+     * 【修复】拒绝认证 - 只更新对应用户的认证状态
+     * @param {string} authId - 认证申请ID
      */
     rejectVerify(authId) {
         try {
@@ -1405,24 +1330,29 @@ const AdminModule = {
                     auth.updateTime = new Date().toISOString();
                     localStorage.setItem(ADMIN_KEYS.PENDING_AUTHS, JSON.stringify(pendingAuths));
                     
-                    // 【关键修改】同步更新用户的认证状态
-                    this.updateUserAuthStatusByStudentId(auth.studentId, 'rejected');
-                    
-                    // 重置全局认证状态
-                    localStorage.removeItem(ADMIN_KEYS.VERIFY_INFO);
-                    localStorage.setItem(ADMIN_KEYS.VERIFY_STATE, VERIFY_STATES.UNSUBMITTED);
+                    // 【修复】只更新对应用户（通过学号匹配）的认证状态
+                    const usersStr = localStorage.getItem(ADMIN_KEYS.USERS);
+                    if (usersStr) {
+                        let users = JSON.parse(usersStr);
+                        const userIndex = users.findIndex(u => 
+                            u.studentId === auth.studentId || 
+                            (auth.username && u.username === auth.username)
+                        );
+                        if (userIndex !== -1) {
+                            users[userIndex].authStatus = 'rejected';
+                            localStorage.setItem(ADMIN_KEYS.USERS, JSON.stringify(users));
+                            console.log('[Admin] 用户认证状态已更新:', users[userIndex].username, '-> rejected');
+                        }
+                    }
                     
                     console.log('[Admin] 认证已拒绝:', auth.studentId);
-                    this.showToast('认证申请已拒绝', 'success');
+                    this.showToast(`学号 ${auth.studentId} 的认证已拒绝`, 'success');
                 } else {
                     console.error('[Admin] 未找到认证申请:', authId);
                     this.showToast('未找到认证申请', 'error');
                 }
             } else {
-                // 兼容旧逻辑
-                localStorage.removeItem(ADMIN_KEYS.VERIFY_INFO);
-                localStorage.setItem(ADMIN_KEYS.VERIFY_STATE, VERIFY_STATES.UNSUBMITTED);
-                this.showToast('认证申请已拒绝', 'success');
+                this.showToast('未找到待审核列表', 'error');
             }
             
             this.render();
