@@ -144,69 +144,67 @@
         });
     </script>
 
-    <!-- ========== 3D科技风宠物猫组件 ========== -->
-    <div id="hnau-cat-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; pointer-events: auto;">
-        <!-- 消息气泡 -->
-        <div id="hnau-cat-bubble" class="hnau-cat-bubble" style="display: none;">
-            <div class="hnau-cat-bubble-content"></div>
-            <div class="hnau-cat-bubble-arrow"></div>
+    <!-- ========== 轻量化3D科技风宠物猫组件 ========== -->
+    <!-- 
+        ┌─────────────────────────────────────────────────────────┐
+        │  配置说明（可直接修改以下变量）                            │
+        │  • hnau-cat-position: 位置，默认 bottom:25px right:25px  │
+        │  • hnau-cat-size: 尺寸，默认 190x270px                  │
+        │  • hnau-cat-bubble-1: 新商品提醒气泡文字                  │
+        │  • hnau-cat-bubble-2: 发布引导气泡文字                    │
+        │  • hnau-cat-sound: 是否启用音效，true/false              │
+        └─────────────────────────────────────────────────────────┘
+    -->
+    <div id="hnau-cat-box" style="
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        width: 190px;
+        height: 270px;
+        z-index: 999;
+        pointer-events: auto;
+    ">
+        <!-- 气泡层 -->
+        <div id="hnau-cat-bubble" class="hnau-cat-bubble" style="display:none;">
+            <div class="hnau-cat-bubble-txt"></div>
         </div>
         
-        <!-- 快捷菜单 -->
-        <div id="hnau-cat-menu" class="hnau-cat-menu" style="display: none;">
-            <div class="hnau-cat-menu-item" data-action="publish">📦 发布闲置</div>
-            <div class="hnau-cat-menu-item" data-action="favorites">❤️ 我的收藏</div>
-            <div class="hnau-cat-menu-item" data-action="center">👤 个人中心</div>
-        </div>
-        
-        <!-- 粒子特效层 -->
-        <canvas id="hnau-cat-particles" class="hnau-cat-particles"></canvas>
+        <!-- 粒子画布 -->
+        <canvas id="hnau-cat-canvas" class="hnau-cat-canvas"></canvas>
         
         <!-- 猫咪主体 -->
-        <div id="hnau-cat-body" class="hnau-cat-body">
-            <!-- 底座光环 -->
+        <div id="hnau-cat-main" class="hnau-cat-main">
+            <!-- 底座 -->
             <div class="hnau-cat-base">
-                <div class="hnau-cat-base-ring"></div>
-                <div class="hnau-cat-base-glow"></div>
+                <div class="hnau-cat-ring"></div>
+                <div class="hnau-cat-glow"></div>
             </div>
             
-            <!-- 猫咪3D容器 -->
+            <!-- 猫咪容器 -->
             <div class="hnau-cat-scene">
-                <!-- 猫咪头部 -->
+                <!-- 头部 -->
                 <div class="hnau-cat-head">
-                    <!-- 全息头顶 -->
                     <div class="hnau-cat-holo"></div>
-                    <!-- 耳朵 -->
-                    <div class="hnau-cat-ear hnau-cat-ear-left"></div>
-                    <div class="hnau-cat-ear hnau-cat-ear-right"></div>
-                    <!-- 面部 -->
+                    <div class="hnau-cat-ear hnau-cat-el"></div>
+                    <div class="hnau-cat-ear hnau-cat-er"></div>
                     <div class="hnau-cat-face">
-                        <!-- 眼睛 -->
-                        <div class="hnau-cat-eye hnau-cat-eye-left">
+                        <div class="hnau-cat-eye hnau-cat-eyel">
                             <div class="hnau-cat-pupil"></div>
-                            <div class="hnau-cat-glint"></div>
                         </div>
-                        <div class="hnau-cat-eye hnau-cat-eye-right">
+                        <div class="hnau-cat-eye hnau-cat-eyer">
                             <div class="hnau-cat-pupil"></div>
-                            <div class="hnau-cat-glint"></div>
                         </div>
-                        <!-- 鼻子 -->
                         <div class="hnau-cat-nose"></div>
-                        <!-- 嘴巴 -->
                         <div class="hnau-cat-mouth"></div>
-                        <!-- 腮须 -->
-                        <div class="hnau-cat-whiskers"></div>
+                        <div class="hnau-cat-whisk"></div>
                     </div>
-                    <!-- 数据流 -->
-                    <div class="hnau-cat-dataflow"></div>
+                    <div class="hnau-cat-lines"></div>
                 </div>
                 
                 <!-- 身体 -->
-                <div class="hnau-cat-torso">
-                    <!-- 能量核心 -->
+                <div class="hnau-cat-body">
                     <div class="hnau-cat-core"></div>
-                    <!-- 扫描线 -->
-                    <div class="hnau-cat-scanline"></div>
+                    <div class="hnau-cat-scan"></div>
                 </div>
                 
                 <!-- 尾巴 -->
@@ -214,123 +212,79 @@
                 
                 <!-- 爪子 -->
                 <div class="hnau-cat-paws">
-                    <div class="hnau-cat-paw hnau-cat-paw-left"></div>
-                    <div class="hnau-cat-paw hnau-cat-paw-right"></div>
+                    <div class="hnau-cat-paw"></div>
+                    <div class="hnau-cat-paw"></div>
                 </div>
             </div>
         </div>
         
-        <!-- 状态指示器 -->
+        <!-- 状态 -->
         <div class="hnau-cat-status">
-            <span class="hnau-cat-status-dot"></span>
-            <span class="hnau-cat-status-text">在线</span>
+            <span class="hnau-cat-dot"></span>
+            <span class="hnau-cat-stxt">在线</span>
         </div>
     </div>
     
     <!-- 宠物猫组件样式 -->
-    <style>
-        /* ===== 容器与基础 ===== */
-        #hnau-cat-container {
-            width: 200px;
-            height: 300px;
-            position: relative;
-            cursor: pointer;
-            user-select: none;
+    <style id="hnau-cat-style">
+        /* ===== 隔离容器 ===== */
+        #hnau-cat-box * {
+            box-sizing: border-box !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
         
-        /* ===== 消息气泡 ===== */
+        /* ===== 气泡 ===== */
         .hnau-cat-bubble {
             position: absolute;
-            top: -60px;
+            top: -50px;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 1px solid #00d4ff;
-            border-radius: 12px;
-            padding: 10px 16px;
-            max-width: 200px;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
-            animation: hnau-cat-bubble-in 0.3s ease;
+            background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 100%);
+            border: 1px solid #4fc3f7;
+            border-radius: 10px;
+            padding: 8px 14px;
+            max-width: 180px;
+            box-shadow: 0 0 15px rgba(79, 195, 247, 0.3);
             z-index: 10;
+            animation: hnau-cat-bi 0.3s ease;
         }
         
-        .hnau-cat-bubble::before {
+        .hnau-cat-bubble::after {
             content: '';
             position: absolute;
-            bottom: -8px;
+            bottom: -7px;
             left: 50%;
             transform: translateX(-50%);
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid #16213e;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 7px solid #1a2a4a;
         }
         
-        .hnau-cat-bubble-content {
-            color: #00d4ff;
-            font-size: 12px;
+        .hnau-cat-bubble-txt {
+            color: #4fc3f7;
+            font-size: 11px;
             text-align: center;
             line-height: 1.4;
+            white-space: nowrap;
         }
         
-        @keyframes hnau-cat-bubble-in {
-            from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+        @keyframes hnau-cat-bi {
+            from { opacity: 0; transform: translateX(-50%) translateY(8px); }
             to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
         
-        /* ===== 快捷菜单 ===== */
-        .hnau-cat-menu {
-            position: absolute;
-            bottom: 80px;
-            right: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 1px solid #00d4ff;
-            border-radius: 12px;
-            padding: 8px;
-            min-width: 160px;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
-            z-index: 10;
-        }
-        
-        .hnau-cat-menu::before {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            right: 30px;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid #16213e;
-        }
-        
-        .hnau-cat-menu-item {
-            padding: 10px 14px;
-            color: #e4e4e7;
-            font-size: 13px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .hnau-cat-menu-item:hover {
-            background: rgba(0, 212, 255, 0.2);
-            color: #00d4ff;
-        }
-        
         /* ===== 粒子画布 ===== */
-        .hnau-cat-particles {
+        .hnau-cat-canvas {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
             z-index: 5;
         }
         
         /* ===== 猫咪主体 ===== */
-        .hnau-cat-body {
+        .hnau-cat-main {
             position: relative;
             width: 100%;
             height: 100%;
@@ -338,49 +292,50 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-end;
+            cursor: pointer;
         }
         
-        /* ===== 底座光环 ===== */
+        /* ===== 底座 ===== */
         .hnau-cat-base {
             position: absolute;
             bottom: 0;
-            width: 160px;
-            height: 40px;
+            width: 150px;
+            height: 35px;
         }
         
-        .hnau-cat-base-ring {
+        .hnau-cat-ring {
             position: absolute;
-            bottom: 10px;
+            bottom: 8px;
             left: 50%;
             transform: translateX(-50%);
-            width: 120px;
-            height: 30px;
-            border: 2px solid rgba(0, 212, 255, 0.5);
+            width: 100px;
+            height: 25px;
+            border: 2px solid rgba(79, 195, 247, 0.4);
             border-radius: 50%;
             animation: hnau-cat-pulse 2s ease-in-out infinite;
         }
         
-        .hnau-cat-base-glow {
+        .hnau-cat-glow {
             position: absolute;
-            bottom: 5px;
+            bottom: 4px;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
-            height: 20px;
-            background: radial-gradient(ellipse, rgba(0, 212, 255, 0.3) 0%, transparent 70%);
-            filter: blur(5px);
+            width: 90px;
+            height: 18px;
+            background: radial-gradient(ellipse, rgba(79, 195, 247, 0.25) 0%, transparent 70%);
+            filter: blur(4px);
         }
         
         @keyframes hnau-cat-pulse {
-            0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
-            50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+            0%, 100% { opacity: 0.4; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.9; transform: translateX(-50%) scale(1.04); }
         }
         
-        /* ===== 3D场景 ===== */
+        /* ===== 猫咪场景 ===== */
         .hnau-cat-scene {
             position: relative;
-            width: 120px;
-            height: 180px;
+            width: 100px;
+            height: 160px;
             transform-style: preserve-3d;
             perspective: 500px;
             animation: hnau-cat-float 3s ease-in-out infinite;
@@ -388,257 +343,219 @@
         }
         
         @keyframes hnau-cat-float {
-            0%, 100% { transform: translateY(0) rotateY(0deg); }
-            25% { transform: translateY(-5px) rotateY(3deg); }
-            75% { transform: translateY(-3px) rotateY(-3deg); }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
         }
         
-        /* ===== 猫咪头部 ===== */
+        /* ===== 头部 ===== */
         .hnau-cat-head {
             position: absolute;
             top: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 80px;
-            height: 70px;
-            background: linear-gradient(180deg, #2a3f5f 0%, #1a2a40 100%);
-            border-radius: 40% 40% 45% 45%;
+            width: 70px;
+            height: 60px;
+            background: linear-gradient(180deg, #1e3a5f 0%, #0f2744 100%);
+            border-radius: 35% 35% 40% 40%;
             box-shadow: 
-                inset 0 -10px 20px rgba(0, 0, 0, 0.3),
-                0 5px 15px rgba(0, 0, 0, 0.3),
-                0 0 30px rgba(0, 212, 255, 0.2);
-            border: 1px solid rgba(0, 212, 255, 0.3);
+                inset 0 -8px 15px rgba(0, 0, 0, 0.3),
+                0 0 25px rgba(79, 195, 247, 0.15);
+            border: 1px solid rgba(79, 195, 247, 0.25);
+            overflow: hidden;
         }
         
         /* 全息头顶 */
         .hnau-cat-holo {
             position: absolute;
-            top: -5px;
+            top: -4px;
             left: 50%;
             transform: translateX(-50%);
-            width: 40px;
-            height: 20px;
-            background: linear-gradient(180deg, rgba(0, 212, 255, 0.5) 0%, transparent 100%);
+            width: 35px;
+            height: 18px;
+            background: linear-gradient(180deg, rgba(79, 195, 247, 0.5) 0%, transparent 100%);
             border-radius: 50% 50% 0 0;
-            animation: hnau-cat-holo-glow 1.5s ease-in-out infinite;
+            animation: hnau-cat-holo 1.5s ease-in-out infinite;
         }
         
-        @keyframes hnau-cat-holo-glow {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+        @keyframes hnau-cat-holo {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
         }
         
         /* 耳朵 */
         .hnau-cat-ear {
             position: absolute;
-            top: -15px;
-            width: 25px;
-            height: 30px;
-            background: linear-gradient(180deg, #3a4f6f 0%, #2a3f5f 100%);
-            border: 1px solid rgba(0, 212, 255, 0.3);
+            top: -12px;
+            width: 22px;
+            height: 26px;
+            background: linear-gradient(180deg, #2a4a70 0%, #1e3a5f 100%);
+            border: 1px solid rgba(79, 195, 247, 0.25);
         }
         
-        .hnau-cat-ear-left {
-            left: 5px;
-            transform: rotate(-15deg);
-            border-radius: 50% 50% 0 50%;
-        }
-        
-        .hnau-cat-ear-right {
-            right: 5px;
-            transform: rotate(15deg);
-            border-radius: 50% 50% 50% 0;
-        }
+        .hnau-cat-el { left: 3px; transform: rotate(-12deg); border-radius: 50% 50% 0 50%; }
+        .hnau-cat-er { right: 3px; transform: rotate(12deg); border-radius: 50% 50% 50% 0; }
         
         .hnau-cat-ear::after {
             content: '';
             position: absolute;
-            top: 8px;
+            top: 7px;
             left: 50%;
             transform: translateX(-50%);
-            width: 10px;
-            height: 12px;
-            background: rgba(0, 212, 255, 0.3);
+            width: 9px;
+            height: 10px;
+            background: rgba(79, 195, 247, 0.25);
             border-radius: 50%;
         }
         
         /* 面部 */
         .hnau-cat-face {
             position: absolute;
-            top: 15px;
+            top: 12px;
             left: 50%;
             transform: translateX(-50%);
-            width: 70px;
-            height: 50px;
+            width: 60px;
+            height: 45px;
         }
         
         /* 眼睛 */
         .hnau-cat-eye {
             position: absolute;
-            top: 5px;
-            width: 20px;
-            height: 16px;
-            background: linear-gradient(180deg, #00d4ff 0%, #0066cc 100%);
+            top: 4px;
+            width: 17px;
+            height: 14px;
+            background: linear-gradient(180deg, #4fc3f7 0%, #0288d1 100%);
             border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            box-shadow: 0 0 8px rgba(79, 195, 247, 0.5);
         }
         
-        .hnau-cat-eye-left { left: 8px; }
-        .hnau-cat-eye-right { right: 8px; }
+        .hnau-cat-eyel { left: 6px; }
+        .hnau-cat-eyer { right: 6px; }
         
         .hnau-cat-pupil {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 8px;
-            height: 12px;
-            background: #0a0a1a;
+            width: 7px;
+            height: 10px;
+            background: #050a15;
             border-radius: 50%;
             animation: hnau-cat-blink 4s ease-in-out infinite;
         }
         
-        .hnau-cat-glint {
-            position: absolute;
-            top: 3px;
-            left: 4px;
-            width: 4px;
-            height: 4px;
-            background: white;
-            border-radius: 50%;
-        }
-        
         @keyframes hnau-cat-blink {
-            0%, 90%, 100% { transform: translate(-50%, -50%) scaleY(1); }
-            95% { transform: translate(-50%, -50%) scaleY(0.1); }
+            0%, 92%, 100% { transform: translate(-50%, -50%) scaleY(1); }
+            96% { transform: translate(-50%, -50%) scaleY(0.1); }
         }
         
         /* 鼻子 */
         .hnau-cat-nose {
             position: absolute;
-            top: 22px;
+            top: 18px;
             left: 50%;
             transform: translateX(-50%);
-            width: 8px;
-            height: 6px;
-            background: #ff6b9d;
-            border-radius: 50% 50% 40% 40%;
-            box-shadow: 0 0 5px rgba(255, 107, 157, 0.5);
+            width: 7px;
+            height: 5px;
+            background: #f06292;
+            border-radius: 50%;
+            box-shadow: 0 0 4px rgba(240, 98, 146, 0.5);
         }
         
         /* 嘴巴 */
         .hnau-cat-mouth {
             position: absolute;
-            top: 27px;
+            top: 22px;
             left: 50%;
             transform: translateX(-50%);
-            width: 20px;
-            height: 10px;
-            border-bottom: 2px solid rgba(0, 212, 255, 0.5);
+            width: 16px;
+            height: 8px;
+            border-bottom: 2px solid rgba(79, 195, 247, 0.4);
             border-left: 2px solid transparent;
             border-right: 2px solid transparent;
             border-radius: 0 0 50% 50%;
         }
         
         /* 腮须 */
-        .hnau-cat-whiskers {
+        .hnau-cat-whisk {
             position: absolute;
-            top: 25px;
+            top: 20px;
             left: 0;
             right: 0;
         }
         
-        .hnau-cat-whiskers::before,
-        .hnau-cat-whiskers::after {
+        .hnau-cat-whisk::before,
+        .hnau-cat-whisk::after {
             content: '';
             position: absolute;
-            width: 25px;
+            width: 20px;
             height: 1px;
-            background: rgba(0, 212, 255, 0.5);
+            background: rgba(79, 195, 247, 0.4);
         }
         
-        .hnau-cat-whiskers::before {
-            left: -5px;
-            top: 0;
-            transform: rotate(-10deg);
-        }
+        .hnau-cat-whisk::before { left: -3px; top: 0; transform: rotate(-8deg); }
+        .hnau-cat-whisk::after { right: -3px; top: 0; transform: rotate(8deg); }
         
-        .hnau-cat-whiskers::after {
-            right: -5px;
-            top: 0;
-            transform: rotate(10deg);
-        }
-        
-        /* 数据流 */
-        .hnau-cat-dataflow {
+        /* 数据流线 */
+        .hnau-cat-lines {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                180deg,
-                transparent 0%,
-                rgba(0, 212, 255, 0.1) 50%,
-                transparent 100%
-            );
-            background-size: 100% 20px;
-            animation: hnau-cat-dataflow-move 1s linear infinite;
-            border-radius: 40% 40% 45% 45%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(180deg, transparent 0%, rgba(79, 195, 247, 0.08) 50%, transparent 100%);
+            background-size: 100% 18px;
+            animation: hnau-cat-lines-move 1.2s linear infinite;
+            border-radius: 35% 35% 40% 40%;
             pointer-events: none;
         }
         
-        @keyframes hnau-cat-dataflow-move {
-            from { background-position: 0 -20px; }
-            to { background-position: 0 70px; }
+        @keyframes hnau-cat-lines-move {
+            from { background-position: 0 -18px; }
+            to { background-position: 0 60px; }
         }
         
         /* ===== 身体 ===== */
-        .hnau-cat-torso {
+        .hnau-cat-body {
             position: absolute;
-            top: 60px;
+            top: 52px;
             left: 50%;
             transform: translateX(-50%);
-            width: 60px;
-            height: 70px;
-            background: linear-gradient(180deg, #1a2a40 0%, #0f1a2a 100%);
-            border-radius: 30% 30% 40% 40%;
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.3);
+            width: 52px;
+            height: 60px;
+            background: linear-gradient(180deg, #0f2744 0%, #081c38 100%);
+            border-radius: 26% 26% 35% 35%;
+            border: 1px solid rgba(79, 195, 247, 0.2);
             overflow: hidden;
         }
         
         /* 能量核心 */
         .hnau-cat-core {
             position: absolute;
-            top: 20px;
+            top: 18px;
             left: 50%;
             transform: translateX(-50%);
-            width: 20px;
-            height: 20px;
-            background: radial-gradient(circle, #00d4ff 0%, #0066cc 50%, transparent 70%);
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle, #4fc3f7 0%, #0288d1 50%, transparent 70%);
             border-radius: 50%;
             animation: hnau-cat-core-pulse 1.5s ease-in-out infinite;
         }
         
         @keyframes hnau-cat-core-pulse {
-            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
-            50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.7; }
+            50% { transform: translateX(-50%) scale(1.15); opacity: 1; }
         }
         
         /* 扫描线 */
-        .hnau-cat-scanline {
+        .hnau-cat-scan {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.5), transparent);
-            animation: hnau-cat-scan 2s linear infinite;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(79, 195, 247, 0.4), transparent);
+            animation: hnau-cat-scan-move 2s linear infinite;
         }
         
-        @keyframes hnau-cat-scan {
+        @keyframes hnau-cat-scan-move {
             from { top: 0; }
             to { top: 100%; }
         }
@@ -646,445 +563,350 @@
         /* ===== 尾巴 ===== */
         .hnau-cat-tail {
             position: absolute;
-            bottom: 30px;
-            right: -20px;
-            width: 50px;
-            height: 15px;
-            background: linear-gradient(90deg, #1a2a40, #2a4a6f);
-            border-radius: 10px;
+            bottom: 28px;
+            right: -15px;
+            width: 42px;
+            height: 12px;
+            background: linear-gradient(90deg, #0f2744, #1e3a5f);
+            border-radius: 8px;
             transform-origin: left center;
-            animation: hnau-cat-tail-wave 1.5s ease-in-out infinite;
-            border: 1px solid rgba(0, 212, 255, 0.2);
+            animation: hnau-cat-tail-idle 1.8s ease-in-out infinite;
+            border: 1px solid rgba(79, 195, 247, 0.15);
         }
         
         .hnau-cat-tail::after {
             content: '';
             position: absolute;
-            right: -5px;
+            right: -4px;
             top: 50%;
             transform: translateY(-50%);
-            width: 12px;
-            height: 12px;
-            background: #2a4a6f;
+            width: 10px;
+            height: 10px;
+            background: #1e3a5f;
             border-radius: 50%;
         }
         
-        @keyframes hnau-cat-tail-wave {
-            0%, 100% { transform: rotate(-10deg); }
-            50% { transform: rotate(15deg); }
+        @keyframes hnau-cat-tail-idle {
+            0%, 100% { transform: rotate(-8deg); }
+            50% { transform: rotate(12deg); }
         }
         
         /* ===== 爪子 ===== */
         .hnau-cat-paws {
             position: absolute;
-            bottom: 10px;
+            bottom: 8px;
             left: 50%;
             transform: translateX(-50%);
-            width: 50px;
+            width: 42px;
             display: flex;
             justify-content: space-between;
         }
         
         .hnau-cat-paw {
-            width: 20px;
-            height: 15px;
-            background: linear-gradient(180deg, #2a3f5f, #1a2a40);
+            width: 17px;
+            height: 12px;
+            background: linear-gradient(180deg, #1e3a5f, #0f2744);
             border-radius: 50% 50% 40% 40%;
-            border: 1px solid rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(79, 195, 247, 0.15);
         }
         
-        /* ===== 状态指示器 ===== */
+        /* ===== 状态指示 ===== */
         .hnau-cat-status {
             position: absolute;
-            bottom: -25px;
+            bottom: -22px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             align-items: center;
-            gap: 5px;
-            background: rgba(26, 26, 46, 0.9);
-            padding: 4px 10px;
-            border-radius: 10px;
-            border: 1px solid rgba(0, 212, 255, 0.3);
+            gap: 4px;
+            background: rgba(10, 22, 40, 0.9);
+            padding: 3px 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(79, 195, 247, 0.2);
         }
         
-        .hnau-cat-status-dot {
-            width: 6px;
-            height: 6px;
-            background: #00ff88;
+        .hnau-cat-dot {
+            width: 5px;
+            height: 5px;
+            background: #4caf50;
             border-radius: 50%;
-            animation: hnau-cat-status-blink 1s ease-in-out infinite;
+            animation: hnau-cat-dot-blink 1s ease-in-out infinite;
         }
         
-        @keyframes hnau-cat-status-blink {
+        @keyframes hnau-cat-dot-blink {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            50% { opacity: 0.4; }
         }
         
-        .hnau-cat-status-text {
-            font-size: 10px;
-            color: #a1a1aa;
+        .hnau-cat-stxt {
+            font-size: 9px;
+            color: #78909c;
         }
         
         /* ===== 交互状态 ===== */
-        /* 悬浮状态 */
-        .hnau-cat-body:hover {
+        /* 悬浮 */
+        #hnau-cat-main:hover .hnau-cat-scene {
+            transform: translateY(-8px);
             animation: none;
         }
         
-        .hnau-cat-body:hover .hnau-cat-scene {
-            transform: translateY(-10px) rotateY(5deg);
+        #hnau-cat-main:hover .hnau-cat-tail {
+            animation: hnau-cat-tail-happy 0.25s ease-in-out infinite;
         }
         
-        .hnau-cat-body:hover .hnau-cat-tail {
-            animation: hnau-cat-tail-excited 0.3s ease-in-out infinite;
+        @keyframes hnau-cat-tail-happy {
+            0%, 100% { transform: rotate(-18deg); }
+            50% { transform: rotate(18deg); }
         }
         
-        @keyframes hnau-cat-tail-excited {
-            0%, 100% { transform: rotate(-20deg); }
-            50% { transform: rotate(20deg); }
+        #hnau-cat-main:hover .hnau-cat-holo {
+            background: linear-gradient(180deg, rgba(79, 195, 247, 0.7) 0%, transparent 100%);
         }
         
-        .hnau-cat-body:hover .hnau-cat-holo {
-            background: linear-gradient(180deg, rgba(0, 212, 255, 0.8) 0%, transparent 100%);
-        }
-        
-        /* 点击状态 */
-        .hnau-cat-body.hnau-cat-tapped .hnau-cat-scene {
-            animation: hnau-cat-tap 0.3s ease;
+        /* 点击 */
+        #hnau-cat-main.hnau-cat-tap .hnau-cat-scene {
+            animation: hnau-cat-tap 0.25s ease !important;
         }
         
         @keyframes hnau-cat-tap {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(0.95); }
+            50% { transform: scale(0.94); }
         }
         
-        /* 庆祝状态 */
-        .hnau-cat-body.hnau-cat-celebrate .hnau-cat-scene {
-            animation: hnau-cat-jump 0.5s ease infinite;
+        /* 跳跃（新品提醒） */
+        #hnau-cat-main.hnau-cat-jump .hnau-cat-scene {
+            animation: hnau-cat-jump 0.4s ease !important;
         }
         
         @keyframes hnau-cat-jump {
             0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-20px) rotate(-5deg); }
-            75% { transform: translateY(-15px) rotate(5deg); }
+            30% { transform: translateY(-18px) rotate(-4deg); }
+            70% { transform: translateY(-14px) rotate(4deg); }
         }
         
-        /* 消息提醒状态 */
-        .hnau-cat-body.hnau-cat-alert .hnau-cat-holo {
-            animation: hnau-cat-alert-holo 0.5s ease-in-out infinite;
-        }
-        
-        @keyframes hnau-cat-alert-holo {
-            0%, 100% { background: linear-gradient(180deg, rgba(255, 107, 157, 0.8) 0%, transparent 100%); }
-            50% { background: linear-gradient(180deg, rgba(0, 212, 255, 0.8) 0%, transparent 100%); }
-        }
-        
-        /* ===== 移动端适配 ===== */
+        /* 移动端 */
         @media (max-width: 768px) {
-            #hnau-cat-container {
-                width: 150px;
-                height: 220px;
-                bottom: 80px;
-                right: 10px;
+            #hnau-cat-box {
+                width: 150px !important;
+                height: 210px !important;
+                bottom: 85px !important;
+                right: 10px !important;
             }
             
             .hnau-cat-scene {
-                width: 90px;
-                height: 140px;
+                width: 80px;
+                height: 130px;
             }
             
             .hnau-cat-head {
-                width: 60px;
-                height: 55px;
+                width: 56px;
+                height: 48px;
             }
             
-            .hnau-cat-torso {
-                width: 45px;
-                height: 55px;
+            .hnau-cat-body {
+                width: 42px;
+                height: 48px;
             }
             
-            .hnau-cat-menu {
-                min-width: 140px;
-                right: -10px;
+            .hnau-cat-base {
+                width: 120px;
+            }
+            
+            .hnau-cat-ring {
+                width: 80px;
             }
             
             .hnau-cat-bubble {
-                max-width: 150px;
-                font-size: 11px;
+                max-width: 140px;
+            }
+            
+            .hnau-cat-bubble-txt {
+                font-size: 10px;
             }
         }
     </style>
     
     <!-- 宠物猫组件脚本 -->
-    <script>
+    <script id="hnau-cat-script">
         (function() {
             'use strict';
             
-            // ===== 配置 =====
-            const CONFIG = {
-                particleCount: 30,      // 粒子数量
-                particleSpeed: 2,       // 粒子速度
-                checkInterval: 3000,   // 检查间隔(ms)
-                bubbleDuration: 3000,   // 气泡显示时长(ms)
-                menuDuration: 5000      // 菜单显示时长(ms)
+            // ===== 配置区（可自行修改）=====
+            var CONFIG = {
+                enableSound: false,           // 是否启用音效：true / false
+                bubbleDuration: 3500,          // 气泡显示时长(ms)
+                productBubbleText: '今日有新闲置上架啦',  // 新商品提醒气泡
+                publishBubbleText: '点顶部发布，闲置快出手', // 发布引导气泡
+                jumpDelay: 2000,              // 页面加载后多久触发跳跃(ms)
+                particleCount: 20,            // 粒子数量
+                particleSpeed: 1.5            // 粒子速度
             };
             
-            // ===== DOM元素 =====
-            const container = document.getElementById('hnau-cat-container');
-            const catBody = document.getElementById('hnau-cat-body');
-            const bubble = document.getElementById('hnau-cat-bubble');
-            const bubbleContent = bubble.querySelector('.hnau-cat-bubble-content');
-            const menu = document.getElementById('hnau-cat-menu');
-            const canvas = document.getElementById('hnau-cat-particles');
-            const ctx = canvas.getContext('2d');
+            // ===== DOM引用 =====
+            var box = document.getElementById('hnau-cat-box');
+            var main = document.getElementById('hnau-cat-main');
+            var bubble = document.getElementById('hnau-cat-bubble');
+            var bubbleTxt = bubble.querySelector('.hnau-cat-bubble-txt');
+            var canvas = document.getElementById('hnau-cat-canvas');
+            var ctx = canvas.getContext('2d');
             
             // ===== 粒子系统 =====
-            let particles = [];
+            var particles = [];
+            var isHover = false;
+            var rafId = null;
             
-            function initParticles() {
-                canvas.width = container.offsetWidth;
-                canvas.height = container.offsetHeight;
+            function initCanvas() {
+                canvas.width = box.offsetWidth;
+                canvas.height = box.offsetHeight;
                 particles = [];
-                
-                for (let i = 0; i < CONFIG.particleCount; i++) {
-                    particles.push(createParticle());
+                for (var i = 0; i < CONFIG.particleCount; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        s: Math.random() * 2.5 + 0.8,
+                        vx: (Math.random() - 0.5) * CONFIG.particleSpeed,
+                        vy: (Math.random() - 0.5) * CONFIG.particleSpeed,
+                        o: Math.random() * 0.4 + 0.2
+                    });
                 }
-            }
-            
-            function createParticle() {
-                return {
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 3 + 1,
-                    speedX: (Math.random() - 0.5) * CONFIG.particleSpeed,
-                    speedY: (Math.random() - 0.5) * CONFIG.particleSpeed,
-                    opacity: Math.random() * 0.5 + 0.3,
-                    color: Math.random() > 0.5 ? '#00d4ff' : '#ff6b9d'
-                };
             }
             
             function updateParticles() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                particles.forEach((p, i) => {
-                    // 更新位置
-                    p.x += p.speedX;
-                    p.y += p.speedY;
+                particles.forEach(function(p) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
                     
-                    // 边界检测
-                    if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
-                    if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
-                    
-                    // 绘制粒子
                     ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                    ctx.fillStyle = p.color;
-                    ctx.globalAlpha = p.opacity;
-                    ctx.fill();
-                    
-                    // 绘制光晕
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
-                    ctx.fillStyle = p.color;
-                    ctx.globalAlpha = p.opacity * 0.3;
+                    ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(79, 195, 247, ' + p.o + ')';
                     ctx.fill();
                 });
-                
-                ctx.globalAlpha = 1;
             }
             
-            // ===== 气泡显示 =====
+            function animate() {
+                if (isHover) updateParticles();
+                rafId = requestAnimationFrame(animate);
+            }
+            
+            // ===== 音效（可选）=====
+            function playTap() {
+                if (!CONFIG.enableSound) return;
+                try {
+                    var ac = new (window.AudioContext || window.webkitAudioContext)();
+                    var osc = ac.createOscillator();
+                    var gain = ac.createGain();
+                    osc.connect(gain);
+                    gain.connect(ac.destination);
+                    osc.frequency.setValueAtTime(700, ac.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1100, ac.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.08, ac.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.1);
+                    osc.start(ac.currentTime);
+                    osc.stop(ac.currentTime + 0.1);
+                } catch(e) {}
+            }
+            
+            // ===== 气泡控制 =====
+            var bubbleTimer = null;
+            
             function showBubble(text, duration) {
-                bubbleContent.textContent = text;
+                if (bubbleTimer) clearTimeout(bubbleTimer);
+                bubbleTxt.textContent = text;
                 bubble.style.display = 'block';
-                catBody.classList.add('hnau-cat-alert');
-                
-                setTimeout(() => {
-                    hideBubble();
+                bubbleTimer = setTimeout(function() {
+                    bubble.style.display = 'none';
                 }, duration || CONFIG.bubbleDuration);
             }
             
             function hideBubble() {
+                if (bubbleTimer) clearTimeout(bubbleTimer);
                 bubble.style.display = 'none';
-                catBody.classList.remove('hnau-cat-alert');
             }
             
-            // ===== 菜单显示 =====
-            function showMenu() {
-                menu.style.display = 'block';
-                
-                setTimeout(() => {
-                    hideMenu();
-                }, CONFIG.menuDuration);
+            // ===== 跳跃动画 =====
+            function doJump(callback) {
+                main.classList.add('hnau-cat-jump');
+                setTimeout(function() {
+                    main.classList.remove('hnau-cat-jump');
+                    if (callback) callback();
+                }, 500);
             }
             
-            function hideMenu() {
-                menu.style.display = 'none';
-            }
-            
-            // ===== 播放音效 =====
-            function playSound(type) {
-                try {
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    if (type === 'click') {
-                        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-                        oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
-                        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                        oscillator.start(audioContext.currentTime);
-                        oscillator.stop(audioContext.currentTime + 0.1);
-                    } else if (type === 'celebrate') {
-                        oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
-                        oscillator.frequency.exponentialRampToValueAtTime(1800, audioContext.currentTime + 0.2);
-                        gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                        oscillator.start(audioContext.currentTime);
-                        oscillator.stop(audioContext.currentTime + 0.3);
-                    }
-                } catch (e) {
-                    // 静默处理音频不支持的情况
-                }
-            }
-            
-            // ===== 状态管理 =====
-            let isHovering = false;
-            let lastTapTime = 0;
-            
-            // ===== 事件绑定 =====
-            // 悬浮事件
-            catBody.addEventListener('mouseenter', function() {
-                isHovering = true;
-                catBody.style.cursor = 'pointer';
-                playSound('click');
+            // ===== 点击事件 =====
+            main.addEventListener('mouseenter', function() {
+                isHover = true;
+                initCanvas();
             });
             
-            catBody.addEventListener('mouseleave', function() {
-                isHovering = false;
+            main.addEventListener('mouseleave', function() {
+                isHover = false;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
             });
             
-            // 点击事件
-            catBody.addEventListener('click', function(e) {
-                const now = Date.now();
+            main.addEventListener('click', function(e) {
+                // 蹭手反馈
+                main.classList.add('hnau-cat-tap');
+                setTimeout(function() { main.classList.remove('hnau-cat-tap'); }, 250);
+                playTap();
                 
-                // 检测双击
-                if (now - lastTapTime < 300) {
-                    // 双击 - 显示快捷菜单
-                    playSound('click');
-                    showMenu();
-                } else {
-                    // 单击 - 蹭手效果 + 随机对话
-                    catBody.classList.add('hnau-cat-tapped');
-                    setTimeout(() => catBody.classList.remove('hnau-cat-tapped'), 300);
-                    
-                    const messages = [
-                        '喵~欢迎来到农大闲置!',
-                        '有什么需要帮忙的吗?',
-                        '点击右上角🔔查看新消息哦~',
-                        '想发布闲置?双击我试试!',
-                        '校园认证完成后才能发布商品哦~',
-                        '我是你的小助手,随时为你服务!'
-                    ];
-                    showBubble(messages[Math.floor(Math.random() * messages.length)]);
-                }
-                
-                lastTapTime = now;
+                // 发布引导气泡
+                showBubble(CONFIG.publishBubbleText, CONFIG.bubbleDuration);
             });
             
-            // 气泡点击
-            bubble.addEventListener('click', function() {
+            // 气泡点击 - 跳转锚点
+            bubble.addEventListener('click', function(e) {
+                e.stopPropagation();
                 hideBubble();
+                // 跳转到商品列表锚点
+                var productArea = document.getElementById('product-list') || document.querySelector('.product-grid') || document.querySelector('.goods-section');
+                if (productArea) {
+                    productArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
             });
             
-            // 菜单项点击
-            menu.querySelectorAll('.hnau-cat-menu-item').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    const action = this.dataset.action;
-                    
-                    switch(action) {
-                        case 'publish':
-                            Auth.requireReleasePermission(function() {
-                                Utils.跳转('release_goods.html');
-                            });
-                            break;
-                        case 'favorites':
-                            Utils.跳转('user_center.html?tab=favorites');
-                            break;
-                        case 'center':
-                            Utils.跳转('user_center.html');
-                            break;
-                    }
-                    
-                    hideMenu();
-                });
-            });
-            
-            // ===== 项目联动功能 =====
-            // 检查新消息
-            function checkNewMessages() {
-                try {
-                    const notifications = JSON.parse(localStorage.getItem('hnau_notifications') || '[]');
-                    const unread = notifications.filter(n => !n.read);
-                    
-                    if (unread.length > 0) {
-                        const latest = unread[0];
-                        showBubble(`📬 ${latest.title}: ${latest.content}`, 5000);
-                    }
-                } catch (e) {}
+            // ===== 项目联动：新商品提醒 =====
+            function checkNewProduct() {
+                // 模拟：随机触发新商品提醒（实际项目中可读取localStorage）
+                var hasNewProduct = sessionStorage.getItem('hnau_new_product');
+                if (hasNewProduct === 'true') {
+                    sessionStorage.removeItem('hnau_new_product');
+                    doJump(function() {
+                        showBubble(CONFIG.productBubbleText, CONFIG.bubbleDuration);
+                    });
+                }
             }
             
-            // 检查发布成功
-            function checkPublishSuccess() {
-                try {
-                    const publishStatus = sessionStorage.getItem('hnau_publish_success');
-                    if (publishStatus === 'true') {
-                        sessionStorage.removeItem('hnau_publish_success');
-                        
-                        // 庆祝动画
-                        catBody.classList.add('hnau-cat-celebrate');
-                        playSound('celebrate');
-                        showBubble('发布成功啦,等待同学来咨询~', 4000);
-                        
-                        setTimeout(() => {
-                            catBody.classList.remove('hnau-cat-celebrate');
-                        }, 3000);
-                    }
-                } catch (e) {}
-            }
-            
-            // 监听storage变化(跨标签页)
+            // 监听跨标签页消息
             window.addEventListener('storage', function(e) {
-                if (e.key === 'hnau_notifications') {
-                    checkNewMessages();
+                if (e.key === 'hnau_new_product') {
+                    doJump(function() {
+                        showBubble(CONFIG.productBubbleText, CONFIG.bubbleDuration);
+                    });
                 }
             });
-            
-            // ===== 动画循环 =====
-            function animate() {
-                if (isHovering) {
-                    updateParticles();
-                }
-                requestAnimationFrame(animate);
-            }
             
             // ===== 初始化 =====
             function init() {
-                initParticles();
+                initCanvas();
                 animate();
                 
-                // 定期检查新消息
-                setInterval(checkNewMessages, CONFIG.checkInterval);
+                // 页面加载后延迟触发跳跃+气泡
+                setTimeout(function() {
+                    // 随机决定是否触发（70%概率）
+                    if (Math.random() < 0.7) {
+                        doJump(function() {
+                            showBubble(CONFIG.productBubbleText, CONFIG.bubbleDuration);
+                        });
+                    }
+                }, CONFIG.jumpDelay);
                 
-                // 检查发布成功
-                checkPublishSuccess();
+                // 检查新商品状态
+                checkNewProduct();
                 
-                console.log('[HNAU Cat] 科技风宠物猫组件初始化完成~ 🐱');
+                console.log('[HNAU Cat] 科技风宠物猫已就绪~');
             }
             
             // 页面加载完成后初始化
