@@ -128,6 +128,7 @@ const AdminModule = {
                             </div>
                             <button 
                                 type="submit" 
+                                id="adminLoginBtn"
                                 class="btn btn-primary btn-lg btn-block"
                                 style="margin-top: 10px; height: 48px; font-size: 16px;"
                             >
@@ -824,21 +825,26 @@ const AdminModule = {
 
     // ---------- 事件绑定 ----------
     /**
-     * 绑定事件 - 使用事件委托
+     * 绑定事件 - 使用 addEventListener 事件委托
      */
     bindEvents() {
         const container = document.getElementById('adminContent');
         if (!container) return;
 
-        // 使用onclick进行事件委托
-        container.onclick = (e) => {
+        // 移除旧的事件监听器（防止重复绑定）
+        if (this._boundHandler) {
+            container.removeEventListener('click', this._boundHandler);
+        }
+
+        // 创建事件处理器
+        this._boundHandler = (e) => {
             const target = e.target;
 
             // ========== 登录表单提交 ==========
-            const loginForm = target.closest('#adminLoginForm');
-            if (loginForm && (target.type === 'submit' || target.closest('button[type="submit"]'))) {
+            if (target.id === 'adminLoginBtn' || target.closest('#adminLoginBtn')) {
                 e.preventDefault();
                 this.handleLogin();
+                return;
             }
 
             // ========== 退出登录 ==========
@@ -858,6 +864,7 @@ const AdminModule = {
                         this.bindEvents();
                     }
                 );
+                return;
             }
 
             // ========== 标签页切换 ==========
@@ -867,6 +874,7 @@ const AdminModule = {
                 if (tabName && tabName !== this.state.activeTab) {
                     this.switchTab(tabName);
                 }
+                return;
             }
 
             // ========== 通过认证 ==========
@@ -878,6 +886,7 @@ const AdminModule = {
                     `确定要通过学号「${studentId}」的认证申请吗？通过后该用户可以发布商品。`,
                     () => this.approveVerify(studentId)
                 );
+                return;
             }
 
             // ========== 拒绝认证 ==========
@@ -889,6 +898,7 @@ const AdminModule = {
                     `确定要拒绝学号「${studentId}」的认证申请吗？拒绝后该用户需要重新提交认证。`,
                     () => this.rejectVerify()
                 );
+                return;
             }
 
             // ========== 删除商品 ==========
@@ -900,6 +910,7 @@ const AdminModule = {
                     '确定要删除该商品吗？此操作不可恢复，相关的收藏记录也会被同步删除。',
                     () => this.deleteGoods(goodsId)
                 );
+                return;
             }
 
             // ========== 图片预览 ==========
@@ -909,11 +920,23 @@ const AdminModule = {
             }
         };
 
-        // ========== 表单输入事件（回车提交）==========
-        const loginForm = document.getElementById('adminLoginForm');
-        if (loginForm) {
-            loginForm.onkeydown = (e) => {
-                if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') {
+        // 添加事件监听器
+        container.addEventListener('click', this._boundHandler);
+
+        // ========== 表单回车提交 ==========
+        const usernameInput = document.getElementById('adminUsername');
+        const passwordInput = document.getElementById('adminPassword');
+        if (usernameInput) {
+            usernameInput.onkeydown = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (passwordInput) passwordInput.focus();
+                }
+            };
+        }
+        if (passwordInput) {
+            passwordInput.onkeydown = (e) => {
+                if (e.key === 'Enter') {
                     e.preventDefault();
                     this.handleLogin();
                 }
