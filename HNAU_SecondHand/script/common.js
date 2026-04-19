@@ -307,96 +307,73 @@ const Auth = {
      * 四级权限校验 - 发布商品专用
      * @returns {Object} { passed: boolean, level: number, message: string, redirect: string }
      */
+    /**
+     * 四级权限校验 - 发布商品专用
+     * 【关键修复】简化逻辑：只需检查登录状态和用户 authStatus
+     * 流程：注册 → 登录 → 提交认证 → 管理员审核通过 → 发布
+     * @returns {Object} { passed: boolean, level: number, message: string, redirect: string }
+     */
     checkReleasePermission() {
         const loginState = this.getLoginState();
-        const users = this.getUsers();
         
-        // 【关键修复】优先读取用户数据中的 authStatus
-        let verifyState = this.VERIFY_STATE.UNSUBMITTED;
-        
-        if (loginState.isLogin && loginState.curUser) {
-            // 已登录用户，优先使用用户数据中的认证状态
-            const userAuthStatus = this.getUserAuthStatus(loginState.curUser);
-            if (userAuthStatus) {
-                verifyState = userAuthStatus;
-            }
+        // 校验0：检查是否登录
+        if (!loginState.isLogin || !loginState.curUser) {
+            return {
+                passed: false,
+                level: 0,
+                message: '请先登录后再发布商品',
+                type: 'info',
+                redirect: 'user_login.html',
+                tab: 'login'
+            };
         }
         
+        // 获取用户的认证状态
+        let verifyState = this.getUserAuthStatus(loginState.curUser);
+        
         // 如果用户数据中没有 authStatus，使用全局状态（兼容旧数据）
-        if (verifyState === this.VERIFY_STATE.UNSUBMITTED) {
+        if (!verifyState || verifyState === 'unsubmitted') {
             const globalVerifyState = this.getVerifyState();
-            if (globalVerifyState !== this.VERIFY_STATE.UNSUBMITTED) {
+            if (globalVerifyState && globalVerifyState !== 'unsubmitted') {
                 verifyState = globalVerifyState;
             }
         }
         
-        console.log('[Auth] 发布权限校验 - 认证状态:', verifyState);
+        console.log('[Auth] 发布权限校验 - 用户:', loginState.curUser, '| 认证状态:', verifyState);
 
-        // 校验1：未认证或待审核
-        if (verifyState !== this.VERIFY_STATE.APPROVED && verifyState !== 'approved') {
-            if (verifyState === this.VERIFY_STATE.UNSUBMITTED || verifyState === 'unsubmitted') {
-                return {
-                    passed: false,
-                    level: 1,
-                    message: '发布商品需先完成校园认证并通过审核',
-                    type: 'error',
-                    redirect: 'stu_check.html'
-                };
-            } else if (verifyState === this.VERIFY_STATE.PENDING || verifyState === 'pending') {
-                return {
-                    passed: false,
-                    level: 1,
-                    message: '您的认证正在审核中，请等待审核通过后再发布商品',
-                    type: 'warning',
-                    redirect: 'stu_check.html'
-                };
-            } else if (verifyState === 'rejected') {
-                return {
-                    passed: false,
-                    level: 1,
-                    message: '您的认证申请被拒绝，请重新提交认证信息',
-                    type: 'error',
-                    redirect: 'stu_check.html'
-                };
-            }
+        // 校验1：检查认证状态
+        if (verifyState === 'approved') {
+            // 已认证，直接通过
+            return { passed: true, level: 4 };
         }
-
-        // 获取认证信息中的用户名（学号作为用户名）
-        const verifyInfo = this.getVerifyInfo();
-        const verifyUsername = verifyInfo ? verifyInfo.studentId : '';
-
-        // 校验2：认证通过但未注册
-        const userExists = users.some(u => u.username === verifyUsername);
-        if (!userExists) {
+        
+        if (verifyState === 'pending') {
             return {
                 passed: false,
-                level: 2,
-                message: '校园认证已通过，请先完成账号注册',
-                type: 'info',
-                redirect: 'user_login.html',
-                tab: 'register'
+                level: 1,
+                message: '您的认证正在审核中，请等待审核通过后再发布商品',
+                type: 'warning',
+                redirect: 'user_center.html'
             };
         }
-
-        // 校验3：已注册但未登录
-        if (!loginState.isLogin || loginState.curUser !== verifyUsername) {
+        
+        if (verifyState === 'rejected') {
             return {
                 passed: false,
-                level: 3,
-                message: '账号已注册，请先登录',
-                type: 'info',
-                redirect: 'user_login.html',
-                tab: 'login',
-                prefillUser: verifyUsername
+                level: 1,
+                message: '您的认证申请被拒绝，请重新提交认证信息',
+                type: 'error',
+                redirect: 'stu_check.html'
             };
         }
-
-        // 校验4：全部通过
+        
+        // verifyState === 'unsubmitted' 或其他情况
         return {
-            passed: true,
-            level: 4,
-            message: '',
-            redirect: ''
+            passed: false,
+            level: 1,
+            message: '发布商品需先完成校园认证并通过审核',
+            type: 'error',
+            redirect: 'stu_check.html'
         };
     },
 
