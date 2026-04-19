@@ -51,16 +51,25 @@ const AdminModule = {
     /**
      * 【新增】监听 localStorage 变化
      * 当其他页面（如校园认证页）修改数据时，自动刷新认证审核列表
+     * 
+     * 【注意】storage 事件只在跨标签页时触发
+     * 同一标签页内修改 localStorage 不会触发此事件
+     * 所以需要配合主动轮询机制使用
      */
     bindStorageListener() {
         // 移除旧监听器（防止重复）
         if (this._storageListener) {
             window.removeEventListener('storage', this._storageListener);
         }
+        if (this._pollInterval) {
+            clearInterval(this._pollInterval);
+        }
 
-        // 创建监听器
+        // 记录上一次的数据状态，用于检测变化
+        this._lastDataHash = this._getDataHash();
+
+        // 创建监听器 - 用于跨标签页同步
         this._storageListener = (e) => {
-            // 只监听认证相关的数据变化
             if (!e.key || 
                 (e.key !== ADMIN_KEYS.VERIFY_INFO && 
                  e.key !== ADMIN_KEYS.VERIFY_STATE &&
@@ -69,72 +78,102 @@ const AdminModule = {
                 return;
             }
 
-            // 如果当前已登录且在认证审核标签，自动刷新数据
-            if (this.state.isLoggedIn && this.state.activeTab === 'verify') {
-                console.log('[Admin] 检测到认证数据变化，自动刷新...');
-                // 延迟一点执行，确保 localStorage 已经更新完成
-                setTimeout(() => {
-                    this.refreshVerifyData();
-                }, 50);
-            }
-
-            // 如果当前已登录且在用户管理标签，刷新用户列表
-            if (this.state.isLoggedIn && this.state.activeTab === 'users') {
-                const usersPanel = document.getElementById('usersPanel');
-                if (usersPanel) {
-                    usersPanel.innerHTML = this.renderUsersList();
-                }
-            }
-
-            // 如果当前已登录且在商品管理标签，刷新商品列表
-            if (this.state.isLoggedIn && this.state.activeTab === 'goods') {
-                const goodsPanel = document.getElementById('goodsPanel');
-                if (goodsPanel) {
-                    goodsPanel.innerHTML = this.renderGoodsList();
-                }
-            }
-
-            // 如果当前已登录，刷新顶部统计数字
-            if (this.state.isLoggedIn) {
-                const pendingCount = this.getPendingCount();
-                const pendingCountEl = document.getElementById('pendingCountNum');
-                if (pendingCountEl) {
-                    pendingCountEl.textContent = pendingCount;
-                }
-
-                // 更新标签徽章
-                const verifyTab = document.querySelector('.tabs-nav-item[data-tab="verify"]');
-                if (verifyTab) {
-                    let badge = verifyTab.querySelector('.tabs-badge');
-                    if (pendingCount > 0) {
-                        if (badge) {
-                            badge.textContent = pendingCount;
-                        } else {
-                            badge = document.createElement('span');
-                            badge.className = 'tabs-badge';
-                            badge.textContent = pendingCount;
-                            verifyTab.appendChild(badge);
-                        }
-                    } else if (badge) {
-                        badge.remove();
-                    }
-                }
-            }
+            console.log('[Admin] 检测到其他页面数据变化:', e.key);
+            this._refreshAllData();
         };
 
-        // 添加监听器
         window.addEventListener('storage', this._storageListener);
 
-        // 【额外功能】页面可见性变化时刷新数据
-        // 当用户从其他页面切换回管理员页面时，检查是否有数据更新
+        // 【关键】主动轮询 - 用于检测同标签页内的数据变化
+        this._pollInterval = setInterval(() => {
+            if (!this.state.isLoggedIn) return;
+            
+            const currentHash = this._getDataHash();
+            if (currentHash !== this._lastDataHash) {
+                console.log('[Admin] 检测到数据变化（轮询）');
+                this._lastDataHash = currentHash;
+                this._refreshAllData();
+            }
+        }, 500); // 每500ms检查一次
+
+        // 页面可见性变化时刷新数据
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible' && this.state.isLoggedIn) {
-                console.log('[Admin] 页面恢复可见，刷新数据...');
-                if (this.state.activeTab === 'verify') {
-                    this.refreshVerifyData();
-                }
+                console.log('[Admin] 页面恢复可见，检查数据...');
+                this._refreshAllData();
             }
         });
+
+        // 页面离开时清理
+        window.addEventListener('beforeunload', () => {
+            if (this._pollInterval) {
+                clearInterval(this._pollInterval);
+            }
+        });
+    },
+
+    /**
+     * 【新增】获取当前数据的哈希值
+     * 用于检测数据是否发生变化
+     */
+    _getDataHash() {
+        const data = {
+            verifyState: localStorage.getItem(ADMIN_KEYS.VERIFY_STATE) || '',
+            verifyInfo: localStorage.getItem(ADMIN_KEYS.VERIFY_INFO) || '',
+            users: localStorage.getItem(ADMIN_KEYS.USERS) || '',
+            goods: localStorage.getItem(ADMIN_KEYS.GOODS) || ''
+        };
+        return JSON.stringify(data);
+    },
+
+    /**
+     * 【新增】刷新所有数据
+     * 根据当前激活的标签页刷新对应数据
+     */
+    _refreshAllData() {
+        // 刷新顶部统计数字
+        const pendingCount = this.getPendingCount();
+        const pendingCountEl = document.getElementById('pendingCountNum');
+        if (pendingCountEl) {
+            pendingCountEl.textContent = pendingCount;
+        }
+
+        // 更新标签徽章
+        const verifyTab = document.querySelector('.tabs-nav-item[data-tab="verify"]');
+        if (verifyTab) {
+            let badge = verifyTab.querySelector('.tabs-badge');
+            if (pendingCount > 0) {
+                if (badge) {
+                    badge.textContent = pendingCount;
+                } else {
+                    badge = document.createElement('span');
+                    badge.className = 'tabs-badge';
+                    badge.textContent = pendingCount;
+                    verifyTab.appendChild(badge);
+                }
+            } else if (badge) {
+                badge.remove();
+            }
+        }
+
+        // 刷新当前标签页的内容
+        if (this.state.activeTab === 'verify') {
+            const verifyPanel = document.getElementById('verifyPanel');
+            if (verifyPanel) {
+                verifyPanel.innerHTML = this.renderVerifyList();
+                this.bindVerifyPanelEvents();
+            }
+        } else if (this.state.activeTab === 'users') {
+            const usersPanel = document.getElementById('usersPanel');
+            if (usersPanel) {
+                usersPanel.innerHTML = this.renderUsersList();
+            }
+        } else if (this.state.activeTab === 'goods') {
+            const goodsPanel = document.getElementById('goodsPanel');
+            if (goodsPanel) {
+                goodsPanel.innerHTML = this.renderGoodsList();
+            }
+        }
     },
 
     /**
@@ -283,6 +322,15 @@ const AdminModule = {
                 <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
                     <h2 class="card-title" style="margin: 0; display: flex; align-items: center; gap: 8px;">
                         <span>📊</span> 管理面板
+                        <button 
+                            id="refreshDataBtn"
+                            title="刷新数据"
+                            style="background: none; border: none; cursor: pointer; font-size: 18px; padding: 4px 8px; border-radius: 4px; transition: background 0.2s;"
+                            onmouseover="this.style.background='#f0f0f0'"
+                            onmouseout="this.style.background='none'"
+                        >
+                            🔄
+                        </button>
                     </h2>
                     <button class="btn btn-outline btn-sm" id="adminLogoutBtn" style="display: flex; align-items: center; gap: 5px;">
                         <span>🚪</span> 退出登录
@@ -955,6 +1003,14 @@ const AdminModule = {
                         this.bindEvents();
                     }
                 );
+                return;
+            }
+
+            // ========== 手动刷新数据 ==========
+            if (target.id === 'refreshDataBtn' || target.closest('#refreshDataBtn')) {
+                console.log('[Admin] 手动刷新数据');
+                this._refreshAllData();
+                this.showToast('数据已刷新', 'success');
                 return;
             }
 
