@@ -263,11 +263,17 @@
         
         // ===== 配置 =====
         var CONFIG = {
-            enableSound: false,
-            bubbleDuration: 3500,
+            enableSound: false,           // 音效开关
+            bubbleDuration: 3000,          // 气泡时长
             productBubbleText: '今日有新闲置上架啦',
-            publishBubbleText: '点顶部发布，闲置快出手',
-            jumpDelay: 2000
+            clickBubbleTexts: [           // 点击气泡随机短句
+                '今天看看有什么好闲置吧~',
+                '校园好物，等你来淘',
+                '闲置循环，绿色校园',
+                '点击发布，闲置快出手',
+                '优质二手，省钱环保'
+            ],
+            jumpDelay: 2500               // 页面加载后触发跳跃延迟
         };
         
         // ===== DOM =====
@@ -280,10 +286,19 @@
         var scene, camera, renderer, catGroup, particles;
         var mouseX = 0, mouseY = 0;
         var targetRotX = 0, targetRotY = 0;
-        var isHover = false;
+        var currentRotX = 0, currentRotY = 0;
+        var isHover = false, isClick = false;
         var isJumping = false;
         var jumpVelocity = 0;
         var catY = 0;
+        
+        // ===== 亮度状态（用于渐变过渡）=====
+        var glowIntensity = 0.3;
+        var targetGlow = 0.3;
+        var clickGlow = 0;
+        
+        // ===== 所有可发光部件 =====
+        var glowParts = [];
         
         // ===== 气泡 =====
         var bubbleTimer = null;
@@ -308,11 +323,11 @@
                 var osc = ac.createOscillator();
                 var gain = ac.createGain();
                 osc.connect(gain); gain.connect(ac.destination);
-                osc.frequency.setValueAtTime(700, ac.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1100, ac.currentTime + 0.08);
-                gain.gain.setValueAtTime(0.08, ac.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.1);
-                osc.start(ac.currentTime); osc.stop(ac.currentTime + 0.1);
+                osc.frequency.setValueAtTime(800, ac.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, ac.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.06, ac.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.12);
+                osc.start(ac.currentTime); osc.stop(ac.currentTime + 0.12);
             } catch(e) {}
         }
         
@@ -320,11 +335,11 @@
         function doJump(callback) {
             if (isJumping) return;
             isJumping = true;
-            jumpVelocity = 0.15;
+            jumpVelocity = 0.12;
             
             function jumpFrame() {
                 catY += jumpVelocity;
-                jumpVelocity -= 0.008;
+                jumpVelocity -= 0.006;
                 if (catY <= 0) { catY = 0; isJumping = false; }
                 else requestAnimationFrame(jumpFrame);
             }
@@ -335,84 +350,97 @@
         function createCat() {
             catGroup = new THREE.Group();
             
-            // 材质
-            var holoMat = new THREE.MeshBasicMaterial({
-                color: 0x00d4ff,
-                transparent: true,
-                opacity: 0.3,
-                wireframe: true
-            });
+            // 发光部件材质
+            function createGlowMat(opacity) {
+                return new THREE.MeshBasicMaterial({
+                    color: 0x00d4ff,
+                    transparent: true,
+                    opacity: opacity || 0.3,
+                    wireframe: true
+                });
+            }
             
-            var coreMat = new THREE.MeshBasicMaterial({
-                color: 0x00d4ff,
-                transparent: true,
-                opacity: 0.8
-            });
-            
-            var glowMat = new THREE.MeshBasicMaterial({
-                color: 0x00d4ff,
-                transparent: true,
-                opacity: 0.6
-            });
+            function createSolidMat(opacity, color) {
+                return new THREE.MeshBasicMaterial({
+                    color: color || 0x00d4ff,
+                    transparent: true,
+                    opacity: opacity || 0.8
+                });
+            }
             
             // 头部
             var headGeo = new THREE.SphereGeometry(0.5, 16, 12);
-            var head = new THREE.Mesh(headGeo, holoMat.clone());
+            var head = new THREE.Mesh(headGeo, createGlowMat(0.25));
             head.scale.set(1, 0.9, 0.85);
             head.position.y = 1.8;
+            head.name = 'head';
+            glowParts.push(head);
             catGroup.add(head);
             
-            // 头顶全息
+            // 头顶全息光晕
             var holoGeo = new THREE.SphereGeometry(0.25, 8, 6, 0, Math.PI * 2, 0, Math.PI / 2);
-            var holo = new THREE.Mesh(holoGeo, new THREE.MeshBasicMaterial({
-                color: 0x00d4ff, transparent: true, opacity: 0.5, wireframe: true
-            }));
+            var holo = new THREE.Mesh(holoGeo, createGlowMat(0.4));
             holo.position.y = 2.15;
             holo.name = 'holo';
+            glowParts.push(holo);
             catGroup.add(holo);
             
             // 耳朵
             var earGeo = new THREE.ConeGeometry(0.18, 0.35, 4);
-            var earL = new THREE.Mesh(earGeo, holoMat.clone());
+            var earL = new THREE.Mesh(earGeo, createGlowMat(0.25));
             earL.position.set(-0.35, 2.25, 0);
             earL.rotation.z = 0.3;
+            earL.name = 'earL';
+            glowParts.push(earL);
             catGroup.add(earL);
             
-            var earR = new THREE.Mesh(earGeo, holoMat.clone());
+            var earR = new THREE.Mesh(earGeo, createGlowMat(0.25));
             earR.position.set(0.35, 2.25, 0);
             earR.rotation.z = -0.3;
+            earR.name = 'earR';
+            glowParts.push(earR);
             catGroup.add(earR);
             
-            // 眼睛
+            // 眼睛（核心发光部件）
             var eyeGeo = new THREE.SphereGeometry(0.12, 8, 6);
-            var eyeMat = new THREE.MeshBasicMaterial({ color: 0x00d4ff });
-            var eyeL = new THREE.Mesh(eyeGeo, eyeMat);
+            var eyeMat = createSolidMat(0.9);
+            eyeMat.name = 'eyeMat';
+            
+            var eyeL = new THREE.Mesh(eyeGeo, eyeMat.clone());
             eyeL.position.set(-0.18, 1.85, 0.4);
+            eyeL.name = 'eyeL';
+            glowParts.push(eyeL);
             catGroup.add(eyeL);
             
-            var eyeR = new THREE.Mesh(eyeGeo, eyeMat);
+            var eyeR = new THREE.Mesh(eyeGeo, eyeMat.clone());
             eyeR.position.set(0.18, 1.85, 0.4);
+            eyeR.name = 'eyeR';
+            glowParts.push(eyeR);
             catGroup.add(eyeR);
             
             // 鼻子
             var noseGeo = new THREE.SphereGeometry(0.06, 6, 4);
-            var noseMat = new THREE.MeshBasicMaterial({ color: 0xff6b9d });
-            var nose = new THREE.Mesh(noseGeo, noseMat);
+            var nose = new THREE.Mesh(noseGeo, createSolidMat(0.9, 0xff6b9d));
             nose.position.set(0, 1.7, 0.48);
             catGroup.add(nose);
             
             // 身体
             var bodyGeo = new THREE.SphereGeometry(0.55, 12, 10);
-            var body = new THREE.Mesh(bodyGeo, holoMat.clone());
+            var body = new THREE.Mesh(bodyGeo, createGlowMat(0.25));
             body.scale.set(0.9, 1.1, 0.75);
             body.position.y = 1.0;
+            body.name = 'body';
+            glowParts.push(body);
             catGroup.add(body);
             
-            // 能量核心
+            // 能量核心（脉冲发光）
             var coreGeo = new THREE.SphereGeometry(0.15, 8, 6);
+            var coreMat = createSolidMat(0.8);
+            coreMat.name = 'coreMat';
             var core = new THREE.Mesh(coreGeo, coreMat);
             core.position.set(0, 1.0, 0.35);
             core.name = 'core';
+            glowParts.push(core);
             catGroup.add(core);
             
             // 尾巴
@@ -423,39 +451,62 @@
                 new THREE.Vector3(0.4, 1.2, -0.3)
             ]);
             var tailGeo = new THREE.TubeGeometry(tailCurve, 12, 0.06, 6, false);
-            var tail = new THREE.Mesh(tailGeo, holoMat.clone());
+            var tail = new THREE.Mesh(tailGeo, createGlowMat(0.3));
             tail.name = 'tail';
+            glowParts.push(tail);
             catGroup.add(tail);
             
             // 爪子
             var pawGeo = new THREE.SphereGeometry(0.12, 6, 4);
-            var pawL = new THREE.Mesh(pawGeo, glowMat);
+            var pawMat = createSolidMat(0.5);
+            pawMat.name = 'pawMat';
+            
+            var pawL = new THREE.Mesh(pawGeo, pawMat.clone());
             pawL.position.set(-0.25, 0.35, 0.2);
             pawL.scale.set(1, 0.6, 1.3);
+            pawL.name = 'pawL';
+            glowParts.push(pawL);
             catGroup.add(pawL);
             
-            var pawR = new THREE.Mesh(pawGeo, glowMat);
+            var pawR = new THREE.Mesh(pawGeo, pawMat.clone());
             pawR.position.set(0.25, 0.35, 0.2);
             pawR.scale.set(1, 0.6, 1.3);
+            pawR.name = 'pawR';
+            glowParts.push(pawR);
             catGroup.add(pawR);
             
             // 底座光环
-            var ringGeo = new THREE.TorusGeometry(0.6, 0.02, 8, 32);
-            var ringMat = new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.5 });
+            var ringGeo = new THREE.TorusGeometry(0.6, 0.025, 8, 32);
+            var ringMat = createSolidMat(0.4);
+            ringMat.name = 'ringMat';
             var ring = new THREE.Mesh(ringGeo, ringMat);
             ring.rotation.x = Math.PI / 2;
             ring.position.y = 0.15;
             ring.name = 'ring';
+            glowParts.push(ring);
             catGroup.add(ring);
+            
+            // 内圈光环
+            var ring2Geo = new THREE.TorusGeometry(0.45, 0.015, 8, 32);
+            var ring2Mat = createSolidMat(0.25);
+            ring2Mat.name = 'ring2Mat';
+            var ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
+            ring2.rotation.x = Math.PI / 2;
+            ring2.position.y = 0.16;
+            ring2.name = 'ring2';
+            glowParts.push(ring2);
+            catGroup.add(ring2);
             
             // 发光圆盘
             var discGeo = new THREE.CircleGeometry(0.5, 32);
-            var discMat = new THREE.MeshBasicMaterial({ 
-                color: 0x00d4ff, transparent: true, opacity: 0.15, side: THREE.DoubleSide 
-            });
+            var discMat = createSolidMat(0.12);
+            discMat.side = THREE.DoubleSide;
+            discMat.name = 'discMat';
             var disc = new THREE.Mesh(discGeo, discMat);
             disc.rotation.x = -Math.PI / 2;
             disc.position.y = 0.16;
+            disc.name = 'disc';
+            glowParts.push(disc);
             catGroup.add(disc);
             
             // 数据粒子
@@ -464,38 +515,120 @@
             scene.add(catGroup);
         }
         
-        // ===== 粒子 =====
+        // ===== 粒子系统 =====
         function createParticles() {
             var geo = new THREE.BufferGeometry();
-            var count = 100;
+            var count = 60;  // 轻量化粒子数
             var positions = new Float32Array(count * 3);
             var colors = new Float32Array(count * 3);
             
             for (var i = 0; i < count; i++) {
-                positions[i * 3] = (Math.random() - 0.5) * 3;
-                positions[i * 3 + 1] = Math.random() * 3;
-                positions[i * 3 + 2] = (Math.random() - 0.5) * 3;
+                positions[i * 3] = (Math.random() - 0.5) * 2.5;
+                positions[i * 3 + 1] = Math.random() * 2.5 + 0.3;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 2.5;
                 
-                // 青色或粉色
-                if (Math.random() > 0.5) {
-                    colors[i * 3] = 0; colors[i * 3 + 1] = 0.83; colors[i * 3 + 2] = 1;
-                } else {
-                    colors[i * 3] = 1; colors[i * 3 + 1] = 0.42; colors[i * 3 + 2] = 0.62;
-                }
+                colors[i * 3] = 0; colors[i * 3 + 1] = 0.83; colors[i * 3 + 2] = 1;
             }
             
             geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
             
             var mat = new THREE.PointsMaterial({
-                size: 0.04,
+                size: 0.05,
                 vertexColors: true,
                 transparent: true,
-                opacity: 0
+                opacity: 0,
+                blending: THREE.AdditiveBlending
             });
             
             particles = new THREE.Points(geo, mat);
+            particles.name = 'particles';
             scene.add(particles);
+        }
+        
+        // ===== 粒子动画 =====
+        function updateParticles(time) {
+            if (!particles) return;
+            var positions = particles.geometry.attributes.position.array;
+            var targetOpacity = isHover ? 0.7 : 0;
+            
+            // 渐变过渡
+            particles.material.opacity += (targetOpacity - particles.material.opacity) * 0.08;
+            
+            // 粒子漂浮
+            for (var i = 0; i < positions.length / 3; i++) {
+                positions[i * 3 + 1] += 0.003;  // 上升
+                if (positions[i * 3 + 1] > 2.8) {
+                    positions[i * 3 + 1] = 0.3;
+                    positions[i * 3] = (Math.random() - 0.5) * 2.5;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 2.5;
+                }
+                
+                // 悬浮时额外漂移
+                if (isHover) {
+                    positions[i * 3] += (Math.random() - 0.5) * 0.01;
+                    positions[i * 3 + 2] += (Math.random() - 0.5) * 0.01;
+                }
+            }
+            particles.geometry.attributes.position.needsUpdate = true;
+        }
+        
+        // ===== 发光效果更新 =====
+        function updateGlow(time) {
+            var baseGlow = 0.3;
+            var hoverBoost = isHover ? 0.5 : 0;
+            var clickBoost = clickGlow;
+            
+            // 目标亮度
+            targetGlow = baseGlow + hoverBoost + clickBoost;
+            
+            // 平滑过渡
+            glowIntensity += (targetGlow - glowIntensity) * 0.1;
+            
+            // 点击亮度衰减
+            if (clickGlow > 0) {
+                clickGlow *= 0.92;
+                if (clickGlow < 0.01) clickGlow = 0;
+            }
+            
+            // 更新所有发光部件
+            glowParts.forEach(function(part) {
+                if (part.material) {
+                    var mat = part.material;
+                    var isEye = part.name && part.name.indexOf('eye') === 0;
+                    var isCore = part.name === 'core';
+                    var isRing = part.name && part.name.indexOf('ring') === 0;
+                    
+                    // 眼睛和核心在点击时特别亮
+                    var intensity = glowIntensity;
+                    if (isEye && clickGlow > 0) intensity += 0.6;
+                    if (isCore && clickGlow > 0) intensity += 0.3;
+                    if (isRing) intensity *= 1.2;
+                    
+                    mat.opacity = Math.min(intensity, 1);
+                    
+                    // 点击时颜色变白
+                    if (clickGlow > 0.3 && isEye) {
+                        mat.color.setHex(0x88ffff);
+                    } else {
+                        mat.color.setHex(0x00d4ff);
+                    }
+                }
+            });
+            
+            // 全息头冠脉冲
+            var holo = catGroup.getObjectByName('holo');
+            if (holo) {
+                var pulse = 0.4 + Math.sin(time * 0.003) * 0.2;
+                holo.material.opacity = glowIntensity + pulse * 0.3;
+            }
+            
+            // 核心脉冲
+            var core = catGroup.getObjectByName('core');
+            if (core) {
+                var scale = 1 + Math.sin(time * 0.005) * 0.15 + clickGlow * 0.3;
+                core.scale.set(scale, scale, scale);
+            }
         }
         
         // ===== 初始化Three.js =====
@@ -512,15 +645,15 @@
                 antialias: true 
             });
             renderer.setSize(box.offsetWidth, box.offsetHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));  // 限制像素比，轻量化
             renderer.setClearColor(0x000000, 0);
             
             // 环境光
-            var ambient = new THREE.AmbientLight(0x404040, 0.5);
+            var ambient = new THREE.AmbientLight(0x404040, 0.3);
             scene.add(ambient);
             
             // 点光源
-            var point = new THREE.PointLight(0x00d4ff, 1, 10);
+            var point = new THREE.PointLight(0x00d4ff, 0.8, 10);
             point.position.set(0, 3, 2);
             scene.add(point);
             
@@ -532,55 +665,56 @@
         function animate() {
             requestAnimationFrame(animate);
             
+            var time = Date.now();
+            
             if (catGroup) {
-                // 悬浮跟随鼠标
+                // 鼠标跟随 - 平滑转头
                 if (isHover) {
-                    targetRotY = mouseX * 0.5;
-                    targetRotX = mouseY * 0.3;
-                    if (particles) particles.material.opacity = 0.6;
+                    targetRotY = mouseX * 0.4;
+                    targetRotX = mouseY * 0.25;
                 } else {
-                    targetRotY = Math.sin(Date.now() * 0.001) * 0.1;
+                    targetRotY = Math.sin(time * 0.001) * 0.08;
                     targetRotX = 0;
-                    if (particles) particles.material.opacity = 0;
                 }
                 
-                // 尾巴摆动
+                // 平滑旋转插值
+                currentRotY += (targetRotY - currentRotY) * 0.08;
+                currentRotX += (targetRotX - currentRotX) * 0.08;
+                catGroup.rotation.y = currentRotY;
+                catGroup.rotation.x = currentRotX;
+                
+                // 尾巴摆动（悬浮时幅度更大）
                 var tail = catGroup.getObjectByName('tail');
                 if (tail) {
-                    tail.rotation.z = Math.sin(Date.now() * 0.003) * (isHover ? 0.4 : 0.15);
+                    var tailAmp = isHover ? 0.45 : 0.15;
+                    tail.rotation.z = Math.sin(time * 0.003) * tailAmp;
                 }
                 
-                // 核心脉冲
-                var core = catGroup.getObjectByName('core');
-                if (core) {
-                    var scale = 1 + Math.sin(Date.now() * 0.005) * 0.2;
-                    core.scale.set(scale, scale, scale);
-                }
-                
-                // 全息闪烁
-                var holo = catGroup.getObjectByName('holo');
-                if (holo) {
-                    holo.material.opacity = 0.3 + Math.sin(Date.now() * 0.004) * 0.2;
-                }
-                
-                // 底座旋转
+                // 底座旋转（悬浮时更快）
                 var ring = catGroup.getObjectByName('ring');
                 if (ring) {
-                    ring.rotation.z += isHover ? 0.02 : 0.005;
+                    ring.rotation.z += isHover ? 0.018 : 0.004;
                 }
                 
-                // 平滑旋转
-                catGroup.rotation.y += (targetRotY - catGroup.rotation.y) * 0.05;
-                catGroup.rotation.x += (targetRotX - catGroup.rotation.x) * 0.05;
+                var ring2 = catGroup.getObjectByName('ring2');
+                if (ring2) {
+                    ring2.rotation.z -= isHover ? 0.012 : 0.003;
+                }
                 
                 // 跳跃偏移
                 catGroup.position.y = catY;
                 
-                // 浮动
+                // 待机浮动
                 if (!isJumping) {
-                    catGroup.position.y += Math.sin(Date.now() * 0.002) * 0.03;
+                    catGroup.position.y += Math.sin(time * 0.002) * 0.025;
                 }
             }
+            
+            // 更新粒子
+            updateParticles(time);
+            
+            // 更新发光效果
+            updateGlow(time);
             
             renderer.render(scene, camera);
         }
@@ -588,11 +722,13 @@
         // ===== 事件 =====
         box.addEventListener('mouseenter', function() {
             isHover = true;
+            targetGlow = 0.8;  // 悬浮时光晕增强
             document.addEventListener('mousemove', onMouseMove);
         });
         
         box.addEventListener('mouseleave', function() {
             isHover = false;
+            targetGlow = 0.3;  // 恢复基础亮度
             document.removeEventListener('mousemove', onMouseMove);
         });
         
@@ -603,8 +739,16 @@
         }
         
         box.addEventListener('click', function() {
+            // 点击反馈
+            isClick = true;
+            clickGlow = 1;  // 点亮所有线条
             playTap();
-            showBubble(CONFIG.publishBubbleText, CONFIG.bubbleDuration);
+            doJump();
+            
+            // 随机气泡短句
+            var texts = CONFIG.clickBubbleTexts;
+            var text = texts[Math.floor(Math.random() * texts.length)];
+            showBubble(text, CONFIG.bubbleDuration);
         });
         
         bubble.addEventListener('click', function(e) {
@@ -635,7 +779,7 @@
                 }
             }, CONFIG.jumpDelay);
             
-            console.log('[HNAU Cat] Three.js 3D全息猫已就绪~');
+            console.log('[HNAU Cat] 3D全息猫已就绪~');
         }
         
         // 响应式
