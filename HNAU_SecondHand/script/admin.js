@@ -7,8 +7,8 @@
 
 // ========== 管理员账号配置 ==========
 const ADMIN_ACCOUNT = {
-    username: 'admin',
-    password: '123456'
+    username: '2589241396',
+    password: '147258369Bq@'
 };
 
 // ========== localStorage 键名常量 ==========
