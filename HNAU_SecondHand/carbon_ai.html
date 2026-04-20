@@ -473,18 +473,48 @@
                     body: JSON.stringify({
                         bot_id: CONFIG.BOT_ID,
                         user_id: CONFIG.USER_ID,
-                        query: contextPrompt,
-                        stream: false,
-                        auto_save_history: true
+                        messages: [{
+                            role: 'user',
+                            content: contextPrompt,
+                            type: 'text'
+                        }],
+                        stream: false
                     })
                 });
                 
                 var data = await response.json();
                 
-                if (data.code === 0 && data.messages && data.messages.length > 0) {
-                    var aiMessage = data.messages.find(function(m) { return m.role === 'assistant'; });
-                    if (aiMessage && aiMessage.content) {
-                        return aiMessage.content;
+                // 处理异步任务：需要先创建会话，再轮询获取结果
+                if (data.code === 0 && data.data && data.data.id) {
+                    var chatId = data.data.id;
+                    var conversationId = data.data.conversation_id;
+                    
+                    // 轮询获取结果（最多10次）
+                    for (var i = 0; i < 10; i++) {
+                        await new Promise(function(resolve) { setTimeout(resolve, 1500); });
+                        
+                        var retrieveRes = await fetch(CONFIG.API_URL.replace('/chat', '/chat/retrieve') + '?chat_id=' + chatId + '&conversation_id=' + conversationId, {
+                            headers: { 'Authorization': 'Bearer ' + getAPIKey() }
+                        });
+                        var retrieveData = await retrieveRes.json();
+                        
+                        if (retrieveData.data && retrieveData.data.status === 'completed') {
+                            // 获取消息列表
+                            var messagesRes = await fetch(CONFIG.API_URL.replace('/chat', '/chat/message/list') + '?chat_id=' + chatId + '&conversation_id=' + conversationId, {
+                                headers: { 'Authorization': 'Bearer ' + getAPIKey() }
+                            });
+                            var messagesData = await messagesRes.json();
+                            
+                            if (messagesData.data && messagesData.data.messages) {
+                                var aiMsg = messagesData.data.messages.find(function(m) { return m.role === 'assistant'; });
+                                if (aiMsg && aiMsg.content) {
+                                    return aiMsg.content;
+                                }
+                            }
+                            break;
+                        } else if (retrieveData.data && retrieveData.data.status === 'failed') {
+                            break;
+                        }
                     }
                 }
                 
