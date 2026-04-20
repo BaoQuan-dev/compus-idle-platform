@@ -251,6 +251,9 @@
     var CarbonStorage = {
         STORAGE_KEY: 'hnau_carbon_data',
         _listeners: [],
+        _lastDataHash: '',        // 【新增】上次数据哈希
+        _pollInterval: null,      // 【新增】轮询定时器
+        _pollDelay: 2000,         // 【新增】轮询间隔（毫秒）
 
         // 获取当前用户名（兼容Auth模块）
         getCurrentUser: function() {
@@ -261,6 +264,44 @@
             }
             // 兼容旧版本
             return localStorage.getItem('hnau_current_user') || 'guest';
+        },
+
+        // 【新增】获取当前数据哈希（用于变化检测）
+        getDataHash: function() {
+            var user = this.getCurrentUser();
+            var allData = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '{}');
+            var userData = allData[user] || this.initUserData();
+            return JSON.stringify(userData);
+        },
+
+        // 【新增】启动轮询检测数据变化
+        startPolling: function() {
+            var self = this;
+            // 初始化哈希
+            this._lastDataHash = this.getDataHash();
+            // 清除之前的定时器
+            if (this._pollInterval) {
+                clearInterval(this._pollInterval);
+            }
+            // 启动轮询
+            this._pollInterval = setInterval(function() {
+                var currentHash = self.getDataHash();
+                if (currentHash !== self._lastDataHash) {
+                    self._lastDataHash = currentHash;
+                    self._notifyListeners();
+                    console.log('[Carbon] 检测到数据变化，通知监听器');
+                }
+            }, this._pollDelay);
+            console.log('[Carbon] 轮询已启动，间隔', this._pollDelay, 'ms');
+        },
+
+        // 【新增】停止轮询
+        stopPolling: function() {
+            if (this._pollInterval) {
+                clearInterval(this._pollInterval);
+                this._pollInterval = null;
+                console.log('[Carbon] 轮询已停止');
+            }
         },
 
         // 获取用户碳数据
@@ -325,16 +366,35 @@
             });
         },
 
-        // 【新增】初始化跨标签页同步
+        // 【新增】初始化跨标签页/跨设备同步
         initSync: function() {
             var self = this;
+            
+            // 1. 监听 storage 事件（同一浏览器跨标签页同步）
             this._storageListener = function(e) {
                 if (e.key === self.STORAGE_KEY) {
                     // 数据发生变化，通知监听器
+                    self._lastDataHash = self.getDataHash(); // 更新哈希避免重复触发
                     self._notifyListeners();
                 }
             };
             window.addEventListener('storage', this._storageListener);
+            
+            // 2. 启动轮询（跨设备同步，间隔2秒）
+            this.startPolling();
+            
+            // 3. 监听页面可见性变化（当用户从后台切换回来时强制刷新）
+            this._visibilityHandler = function() {
+                if (!document.hidden) {
+                    // 页面从后台切换回来，强制更新哈希并通知监听器
+                    console.log('[Carbon] 页面恢复可见，强制刷新数据');
+                    self._lastDataHash = self.getDataHash();
+                    self._notifyListeners();
+                }
+            };
+            document.addEventListener('visibilitychange', this._visibilityHandler);
+            
+            console.log('[Carbon] 数据同步已启用（storage事件 + 轮询 + 可见性监听）');
         },
 
         // 【新增】清理跨标签页同步
@@ -342,6 +402,11 @@
             if (this._storageListener) {
                 window.removeEventListener('storage', this._storageListener);
                 this._storageListener = null;
+            }
+            this.stopPolling();  // 【新增】停止轮询
+            if (this._visibilityHandler) {
+                document.removeEventListener('visibilitychange', this._visibilityHandler);
+                this._visibilityHandler = null;
             }
             this._listeners = [];
         },
