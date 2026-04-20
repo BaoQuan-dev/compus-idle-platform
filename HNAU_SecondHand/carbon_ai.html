@@ -350,7 +350,7 @@
         // ========== 配置 ==========
         var CONFIG = {
             BOT_ID: '7630670043630010374',  // 农大碳足迹助手 Bot ID
-            API_URL: 'https://api.coze.cn/v1/chat',
+            API_URL: 'https://api.coze.cn/v3/chat',  // 使用v3 API
             USER_ID: localStorage.getItem('hnau_current_user') || 'guest_' + Date.now()
         };
         
@@ -474,7 +474,8 @@
                         bot_id: CONFIG.BOT_ID,
                         user_id: CONFIG.USER_ID,
                         query: contextPrompt,
-                        stream: false
+                        stream: false,
+                        auto_save_history: true
                     })
                 });
                 
