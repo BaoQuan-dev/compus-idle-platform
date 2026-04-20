@@ -323,7 +323,8 @@
             var aiBtn = document.getElementById('openCarbonAI');
             if (aiBtn) {
                 aiBtn.addEventListener('click', function() {
-                    alert('即将打开AI碳足迹助手...\n\n功能包括：\n• 个性化环保建议\n• 碳积分兑换方案\n• 闲置品类环保科普');
+                    // 直接跳转到本地AI对话页面
+                    window.location.href = 'carbon_ai.html';
                 });
             }
         }

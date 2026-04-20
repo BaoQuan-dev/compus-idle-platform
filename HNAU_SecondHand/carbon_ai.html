@@ -239,10 +239,8 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: #ccc;
+            background: #4caf50;
         }
-        
-        .ai-status-dot.online { background: #4caf50; }
         
         .ai-status-text {
             flex: 1;
@@ -264,15 +262,6 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             z-index: 100;
             text-decoration: none;
-        }
-        
-        .ai-error {
-            background: #ffebee;
-            color: #c62828;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            font-size: 0.9rem;
         }
         
         @media (max-width: 768px) {
@@ -313,7 +302,7 @@
         <!-- AI状态 -->
         <div class="ai-status" id="aiStatus">
             <div class="ai-status-dot" id="aiStatusDot"></div>
-            <div class="ai-status-text" id="aiStatusText">正在连接AI助手...</div>
+            <div class="ai-status-text" id="aiStatusText">🌿 AI助手已就绪</div>
         </div>
         
         <!-- 聊天窗口 -->
@@ -347,83 +336,183 @@
     (function() {
         'use strict';
         
-        // ========== 配置 ==========
-        var CONFIG = {
-            BOT_ID: '7630670043630010374',  // 农大碳足迹助手 Bot ID
-            API_URL: 'https://api.coze.cn/v3/chat',  // 使用v3 API
-            USER_ID: localStorage.getItem('hnau_current_user') || 'guest_' + Date.now()
-        };
-        
         // ========== DOM ==========
         var messagesContainer = document.getElementById('aiMessages');
         var input = document.getElementById('aiInput');
         var sendBtn = document.getElementById('aiSendBtn');
         var quickBtns = document.getElementById('quickBtns');
-        var statusDot = document.getElementById('aiStatusDot');
-        var statusText = document.getElementById('aiStatusText');
         
         // ========== 状态 ==========
         var isTyping = false;
-        var conversationId = null;
-        var messageHistory = [];
+        
+        // ========== 预设回复数据库 ==========
+        var REPLY_DATABASE = {
+            // 碳减排相关
+            '贡献': {
+                patterns: ['贡献', '减排', '碳排', '减碳', '节省'],
+                replies: [
+                    '🌱 您目前累计减碳{carbon}kg CO₂\n\n📊 相当于种了{trees}棵树！\n\n💪 继续保持，绿色校园离不开您的贡献！\n\n每笔闲置交易都在为碳减排做贡献，感谢您的参与~',
+                    '🌿 您的碳减排数据非常亮眼！\n\n累计减少碳排放 {carbon}kg，相当于减少了 {trees} 棵树木一年的吸碳量！\n\n🏆 继续保持，绿色校园需要你我共同努力！'
+                ]
+            },
+            // 积分获取
+            '积分获得': {
+                patterns: ['获得积分', '怎么获得', '如何获得', '积分怎么来', '积分如何'],
+                replies: [
+                    '🎁 获得碳积分的方式：\n\n• ✅ 每笔交易完成：+100积分\n• 🌿 每节省1kg CO₂：+10积分\n• 📦 发布闲置：+20积分\n• 📅 每日签到：+5积分\n• 📤 分享海报：+50积分\n\n您目前有{points}积分，继续加油！',
+                    '💰 积分获取攻略：\n\n1. 完成交易可获得基础积分\n2. 闲置品类越环保，额外奖励越多\n3. 定期签到保持活跃度\n4. 分享海报邀请好友可获得高额奖励\n\n当前积分：{points}分'
+                ]
+            },
+            // 教材价值
+            '教材': {
+                patterns: ['教材', '书', '书本', '书籍', '课本'],
+                replies: [
+                    '📚 教材类闲置是校园碳减排的"主力军"！\n\n每本教材二手流转可节省约8kg CO₂：\n• 📄 减少0.5kg纸张消耗\n• 💧 节省3L水资源\n• 🛍️ 减少0.2kg塑料包装\n\n毕业季回收教材，让知识循环起来！',
+                    '📖 教材循环利用的环保价值：\n\n• 减少新书生产带来的碳排放\n• 节约印刷用纸和水资源\n• 减少运输过程中的能源消耗\n• 延长书籍使用寿命\n\n建议：每学期末组织教材回收活动！'
+                ]
+            },
+            // 积分兑换
+            '兑换': {
+                patterns: ['兑换', '礼品', '奖励', '奖品', '换什么'],
+                replies: [
+                    '🎁 碳积分可兑换：\n\n• 🌿 100积分：环保书签\n• 🛍️ 500积分：二手袋套装\n• 🌱 1000积分：校园绿植一盆\n• 📜 5000积分：环保达人证书\n\n（兑换商店开发中，敬请期待~）',
+                    '🛒 积分兑换中心（即将上线）：\n\n• 环保文具套装\n• 二手袋/帆布袋\n• 绿植盆栽\n• 校外科普活动门票\n• 环保志愿者证书\n\n攒积分，兑好礼，倡导绿色生活！'
+                ]
+            },
+            // 双碳目标
+            '双碳': {
+                patterns: ['双碳', '碳达峰', '碳中和', '碳达', '碳中'],
+                replies: [
+                    '🌍 "双碳"目标是国家战略！\n\n**碳达峰**：2030年前CO₂排放达到峰值后不再增长\n\n**碳中和**：2060年前实现CO₂净零排放\n\n🏫 校园闲置循环是实现双碳目标的重要路径：\n• 延长物品使用寿命\n• 减少资源开采和运输\n• 培养低碳生活习惯',
+                    '📋 双碳目标解读：\n\n中国承诺：\n• 2030年前碳达峰\n• 2060年前碳中和\n\n作为大学生，我们能做什么？\n• 参与闲置交易，减少浪费\n• 选择二手物品，降低需求\n• 分享传播环保理念\n• 积极参加环保活动'
+                ]
+            },
+            // 问好
+            '你好': {
+                patterns: ['你好', 'hi', 'hello', '嗨', '您好', '早上好', '晚上好'],
+                replies: [
+                    '👋 你好！很高兴为你服务~\n\n作为农大闲置平台的AI助手，我可以帮你：\n• 分析你的碳减排数据\n• 提供环保建议\n• 解答双碳问题\n\n有什么想了解的吗？',
+                    '🌿 你好！我是碳足迹助手~\n\n你的当前数据：\n• 累计减碳 {carbon}kg\n• 等效种树 {trees} 棵\n• 碳积分 {points} 分\n\n继续参与绿色交易，一起为双碳目标努力！'
+                ]
+            },
+            // 电子产品
+            '电子': {
+                patterns: ['手机', '电脑', '平板', '电子', '数码', '耳机', '充电器'],
+                replies: [
+                    '📱 电子产品二手交易的环保价值：\n\n• 减少电子垃圾污染\n• 节省稀有金属资源开采\n• 降低生产过程的碳排放\n• 减少有毒物质排放\n\n提醒：交易前请确保个人数据已清除！',
+                    '💻 数码产品二手流转的环境效益：\n\n一台二手手机再利用，可减少约30kg碳排放！\n\n购买二手数码产品不仅省钱，还能为环保做贡献~'
+                ]
+            },
+            // 衣物
+            '衣服': {
+                patterns: ['衣服', '衣物', '衣服', '服装', '裙子', '裤子', '鞋子', '球鞋'],
+                replies: [
+                    '👕 衣物二手交易的环保价值：\n\n• 减少纺织业资源消耗\n• 降低服装生产的碳排放\n• 减少填埋场垃圾\n• 减少水污染（纺织业是高耗水行业）\n\n快来交易你的闲置衣物吧！',
+                    '👗 服装二手流转的生态意义：\n\n一件T恤从生产到上架，碳排放约7kg\n一件牛仔裤高达30kg CO₂\n\n二手衣物交易可显著降低这些排放！'
+                ]
+            },
+            // 日用品
+            '日用品': {
+                patterns: ['日用品', '生活用品', '生活用品', '收纳', '收纳箱'],
+                replies: [
+                    '🧸 日用品二手交易的环保价值：\n\n• 减少塑料制品生产\n• 降低包装材料消耗\n• 减少物流运输碳排放\n• 延长物品使用寿命\n\n闲置日用品的交易，让资源循环起来！',
+                    '🏠 生活用品再利用的好处：\n\n• 收纳箱、小家电等都可以二手交易\n• 减少资源开采和加工\n• 降低产品全生命周期的碳足迹\n\n整理闲置，让物品找到新主人~'
+                ]
+            },
+            // 运动用品
+            '运动': {
+                patterns: ['运动', '篮球', '足球', '羽毛球', '乒乓球', '健身', '瑜伽'],
+                replies: [
+                    '⚽ 运动用品二手交易的环保价值：\n\n• 减少体育用品生产碳排放\n• 延长运动器材使用寿命\n• 降低学生运动成本\n• 减少塑料和橡胶消耗\n\n毕业季运动器材回收，让学弟学妹也能享受运动的乐趣！',
+                    '🏀 体育用品再利用的生态效益：\n\n球类、球拍、健身器材等都适合二手交易\n\n二手购买不仅便宜，还能减少碳排放~\n\n一起倡导绿色运动！'
+                ]
+            }
+        };
+        
+        // 默认回复
+        var DEFAULT_REPLIES = [
+            '💡 感谢您的提问！\n\n作为农大闲置平台的用户，您的每一笔闲置交易都在为碳减排做贡献。\n\n当前数据：减碳{carbon}kg，等效种树{trees}棵\n\n继续参与绿色交易，一起为双碳目标努力！🌱',
+            '🌿 您的提问很棒！\n\n作为农大闲置平台的AI助手，我会持续为你提供碳足迹相关的知识和建议。\n\n当前减碳进度：{carbon}kg 🔋\n\n继续保持，绿色校园建设需要你我共同参与！',
+            '📝 关于您的问题，让我来解答：\n\n农大闲置平台致力于推广绿色交易理念，每一笔闲置交易都能减少碳排放。\n\n您的贡献：累计减碳{carbon}kg = 种了{trees}棵树的价值！\n\n继续加油，一起为环保助力！💪'
+        ];
+        
+        // ========== 获取用户数据 ==========
+        function getUserStats() {
+            if (window.HNAU_Carbon && typeof HNAU_Carbon.getStats === 'function') {
+                return HNAU_Carbon.getStats();
+            }
+            return {
+                totalSaved: 0,
+                treesEquivalent: 0,
+                totalPoints: 0
+            };
+        }
+        
+        // ========== 格式化回复 ==========
+        function formatReply(reply, stats) {
+            return reply
+                .replace('{carbon}', stats.totalSaved.toFixed(1))
+                .replace('{trees}', stats.treesEquivalent.toFixed(1))
+                .replace('{points}', stats.totalPoints);
+        }
+        
+        // ========== 获取预设回复 ==========
+        function getPresetResponse(question, stats) {
+            var lowerQ = question.toLowerCase();
+            
+            // 遍历预设回复库
+            for (var key in REPLY_DATABASE) {
+                var category = REPLY_DATABASE[key];
+                for (var i = 0; i < category.patterns.length; i++) {
+                    if (lowerQ.includes(category.patterns[i])) {
+                        var replies = category.replies;
+                        var reply = replies[Math.floor(Math.random() * replies.length)];
+                        return formatReply(reply, stats);
+                    }
+                }
+            }
+            
+            // 返回默认回复（随机选择）
+            var defaultReply = DEFAULT_REPLIES[Math.floor(Math.random() * DEFAULT_REPLIES.length)];
+            return formatReply(defaultReply, stats);
+        }
         
         // ========== 初始化 ==========
         function init() {
+            var stats = getUserStats();
+            
             // 更新用户数据
-            var stats = HNAU_Carbon.getStats();
             document.getElementById('userCarbon').textContent = stats.totalSaved.toFixed(1);
             document.getElementById('userTrees').textContent = stats.treesEquivalent.toFixed(1);
             document.getElementById('userPoints').textContent = stats.totalPoints;
             
             // 添加欢迎消息
-            addMessage('👋 你好！我是农大碳足迹助手 🌱\n\n我可以帮你：\n• 📊 分析你的碳减排贡献\n• 💡 提供个性化环保建议\n• 🎁 介绍碳积分兑换方案\n• 📚 讲解闲置品类的环保价值\n• 🌍 科普双碳目标知识\n\n你的当前数据：累计减碳' + stats.totalSaved.toFixed(1) + 'kg，等效种树' + stats.treesEquivalent.toFixed(1) + '棵！\n\n有什么想了解的吗？', 'ai');
+            var welcomeMsg = '👋 你好！我是农大碳足迹助手 🌱\n\n' +
+                '我可以帮你：\n' +
+                '• 📊 分析你的碳减排贡献\n' +
+                '• 💡 提供个性化环保建议\n' +
+                '• 🎁 介绍碳积分兑换方案\n' +
+                '• 📚 讲解闲置品类的环保价值\n' +
+                '• 🌍 科普双碳目标知识\n\n' +
+                '你的当前数据：累计减碳' + stats.totalSaved.toFixed(1) + 'kg，等效种树' + stats.treesEquivalent.toFixed(1) + '棵！\n\n' +
+                '有什么想了解的吗？';
+            
+            addMessage(welcomeMsg, 'ai');
             
             // 绑定事件
             bindEvents();
             
-            // 更新状态
-            updateStatus('ready', 'AI助手已就绪');
-            
-            console.log('[HNAU AI] 碳足迹助手已初始化，Bot ID:', CONFIG.BOT_ID);
-        }
-        
-        // ========== 状态更新 ==========
-        function updateStatus(type, text) {
-            statusText.textContent = text;
-            statusDot.className = 'ai-status-dot';
-            if (type === 'online') {
-                statusDot.classList.add('online');
-            } else if (type === 'error') {
-                statusDot.style.background = '#f44336';
-            }
+            console.log('[HNAU AI] 碳足迹助手已初始化（纯前端预设模式）');
         }
         
         // ========== 添加消息 ==========
         function addMessage(text, type) {
             var msg = document.createElement('div');
             msg.className = 'ai-message ' + type;
-            
-            if (type === 'ai') {
-                // AI消息支持Markdown简化格式
-                text = formatMessage(text);
-            }
-            
-            msg.innerHTML = '<div class="ai-message-bubble">' + text + '</div>' +
+            msg.innerHTML = '<div class="ai-message-bubble">' + text.replace(/\n/g, '<br>') + '</div>' +
                            '<div class="ai-message-time">' + new Date().toLocaleTimeString() + '</div>';
             messagesContainer.appendChild(msg);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            
-            // 保存到历史
-            messageHistory.push({ role: type === 'user' ? 'user' : 'assistant', content: text });
-        }
-        
-        // ========== 格式化消息 ==========
-        function formatMessage(text) {
-            // 简单的文本格式化
-            return text
-                .replace(/\n/g, '<br>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/`(.*?)`/g, '<code style="background:#e8f5e9;padding:2px 6px;border-radius:4px;">$1</code>');
         }
         
         // ========== 显示正在输入 ==========
@@ -455,158 +544,8 @@
             });
         }
         
-        // ========== 调用Coze API ==========
-        async function callCozeAPI(userMessage) {
-            try {
-                updateStatus('', 'AI正在思考...');
-                
-                // 构造提示词，包含用户碳数据
-                var stats = HNAU_Carbon.getStats();
-                var contextPrompt = '用户信息：' + userMessage + '\n\n用户碳数据：累计减碳' + stats.totalSaved.toFixed(1) + 'kg CO₂，等效种树' + stats.treesEquivalent.toFixed(1) + '棵，碳积分' + stats.totalPoints + '分，交易' + stats.tradeCount + '次。';
-                
-                var response = await fetch(CONFIG.API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + getAPIKey(),
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        bot_id: CONFIG.BOT_ID,
-                        user_id: CONFIG.USER_ID,
-                        messages: [{
-                            role: 'user',
-                            content: contextPrompt,
-                            type: 'text'
-                        }],
-                        stream: false
-                    })
-                });
-                
-                var data = await response.json();
-                
-                // 处理异步任务：需要先创建会话，再轮询获取结果
-                if (data.code === 0 && data.data && data.data.id) {
-                    var chatId = data.data.id;
-                    var conversationId = data.data.conversation_id;
-                    
-                    // 轮询获取结果（最多10次）
-                    for (var i = 0; i < 10; i++) {
-                        await new Promise(function(resolve) { setTimeout(resolve, 1500); });
-                        
-                        var retrieveRes = await fetch(CONFIG.API_URL.replace('/chat', '/chat/retrieve') + '?chat_id=' + chatId + '&conversation_id=' + conversationId, {
-                            headers: { 'Authorization': 'Bearer ' + getAPIKey() }
-                        });
-                        var retrieveData = await retrieveRes.json();
-                        
-                        if (retrieveData.data && retrieveData.data.status === 'completed') {
-                            // 获取消息列表
-                            var messagesRes = await fetch(CONFIG.API_URL.replace('/chat', '/chat/message/list') + '?chat_id=' + chatId + '&conversation_id=' + conversationId, {
-                                headers: { 'Authorization': 'Bearer ' + getAPIKey() }
-                            });
-                            var messagesData = await messagesRes.json();
-                            
-                            if (messagesData.data && messagesData.data.messages) {
-                                var aiMsg = messagesData.data.messages.find(function(m) { return m.role === 'assistant'; });
-                                if (aiMsg && aiMsg.content) {
-                                    return aiMsg.content;
-                                }
-                            }
-                            break;
-                        } else if (retrieveData.data && retrieveData.data.status === 'failed') {
-                            break;
-                        }
-                    }
-                }
-                
-                // API调用失败，使用本地回复
-                console.warn('[HNAU AI] API调用失败:', data);
-                return getLocalResponse(userMessage, stats);
-                
-            } catch (error) {
-                console.error('[HNAU AI] API错误:', error);
-                return getLocalResponse(userMessage, HNAU_Carbon.getStats());
-            }
-        }
-        
-        // ========== 获取API Key ==========
-        function getAPIKey() {
-            // 从localStorage获取或使用默认值
-            var key = localStorage.getItem('hnau_coze_api_key');
-            if (!key) {
-                // 提示用户配置API Key
-                updateStatus('error', '请在扣子平台获取API Key并配置');
-            }
-            return key || '';
-        }
-        
-        // ========== 本地回复（降级方案）==========
-        function getLocalResponse(question, stats) {
-            var lowerQ = question.toLowerCase();
-            
-            // 根据问题类型返回对应回复
-            if (lowerQ.includes('贡献') || lowerQ.includes('减排') || lowerQ.includes('碳排')) {
-                return '🌱 您目前累计减碳' + stats.totalSaved.toFixed(1) + 'kg CO₂\n\n' +
-                       '📊 相当于种了' + stats.treesEquivalent.toFixed(1) + '棵树！\n\n' +
-                       '💪 继续保持，绿色校园离不开您的贡献！\n\n' +
-                       '每笔闲置交易都在为碳减排做贡献，感谢您的参与~';
-            }
-            
-            if (lowerQ.includes('积分') && (lowerQ.includes('获得') || lowerQ.includes('怎么'))) {
-                return '🎁 获得碳积分的方式：\n\n' +
-                       '• ✅ 每笔交易完成：+100积分\n' +
-                       '• 🌿 每节省1kg CO₂：+10积分\n' +
-                       '• 📦 发布闲置：+20积分\n' +
-                       '• 📅 每日签到：+5积分\n' +
-                       '• 📤 分享海报：+50积分\n\n' +
-                       '您目前有' + stats.totalPoints + '积分，继续加油！';
-            }
-            
-            if (lowerQ.includes('教材') || lowerQ.includes('书')) {
-                return '📚 教材类闲置是校园碳减排的"主力军"！\n\n' +
-                       '每本教材二手流转可节省约8kg CO₂：\n' +
-                       '• 📄 减少0.5kg纸张消耗\n' +
-                       '• 💧 节省3L水资源\n' +
-                       '• 🛍️ 减少0.2kg塑料包装\n\n' +
-                       '毕业季回收教材，让知识循环起来！';
-            }
-            
-            if (lowerQ.includes('兑换') || lowerQ.includes('礼品')) {
-                return '🎁 碳积分可兑换：\n\n' +
-                       '• 🌿 100积分：环保书签\n' +
-                       '• 🛍️ 500积分：二手袋套装\n' +
-                       '• 🌱 1000积分：校园绿植一盆\n' +
-                       '• 📜 5000积分：环保达人证书\n\n' +
-                       '（兑换商店开发中，敬请期待~）';
-            }
-            
-            if (lowerQ.includes('双碳') || lowerQ.includes('碳达') || lowerQ.includes('碳中')) {
-                return '🌍 "双碳"目标是国家战略！\n\n' +
-                       '**碳达峰**：2030年前CO₂排放达到峰值后不再增长\n\n' +
-                       '**碳中和**：2060年前实现CO₂净零排放\n\n' +
-                       '🏫 校园闲置循环是实现双碳目标的重要路径：\n' +
-                       '• 延长物品使用寿命\n' +
-                       '• 减少资源开采和运输\n' +
-                       '• 培养低碳生活习惯';
-            }
-            
-            if (lowerQ.includes('你好') || lowerQ.includes('hi') || lowerQ.includes('hello')) {
-                return '👋 你好！很高兴为你服务~\n\n' +
-                       '作为农大闲置平台的AI助手，我可以帮你：\n' +
-                       '• 分析你的碳减排数据\n' +
-                       '• 提供环保建议\n' +
-                       '• 解答双碳问题\n\n' +
-                       '有什么想了解的吗？';
-            }
-            
-            // 默认回复
-            return '💡 感谢您的提问！\n\n' +
-                   '作为农大闲置平台的用户，您的每一笔闲置交易都在为碳减排做贡献。\n\n' +
-                   '当前数据：减碳' + stats.totalSaved.toFixed(1) + 'kg，等效种树' + stats.treesEquivalent.toFixed(1) + '棵\n\n' +
-                   '继续参与绿色交易，一起为双碳目标努力！🌱';
-        }
-        
-        // ========== 发送消息 ==========
-        async function sendMessage() {
+        // ========== 发送消息（纯前端预设模式）==========
+        function sendMessage() {
             var text = input.value.trim();
             if (!text || isTyping) return;
             
@@ -617,21 +556,22 @@
             // 显示AI正在输入
             showTyping();
             
-            // 调用AI
-            try {
-                var response = await callCozeAPI(text);
+            // 模拟延迟（1-2秒）
+            var delay = 1000 + Math.random() * 1000;
+            
+            setTimeout(function() {
                 hideTyping();
+                
+                // 获取预设回复
+                var stats = getUserStats();
+                var response = getPresetResponse(text, stats);
                 addMessage(response, 'ai');
-                updateStatus('online', 'AI助手已就绪');
                 
                 // 记录AI报告获取
-                HNAU_Carbon.addAIReport();
-                
-            } catch (error) {
-                hideTyping();
-                addMessage('抱歉，AI服务暂时不可用，请稍后再试。', 'ai');
-                updateStatus('error', 'AI服务异常');
-            }
+                if (window.HNAU_Carbon && typeof HNAU_Carbon.addAIReport === 'function') {
+                    HNAU_Carbon.addAIReport();
+                }
+            }, delay);
         }
         
         // ========== 绑定事件 ==========

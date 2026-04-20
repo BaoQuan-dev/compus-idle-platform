@@ -769,23 +769,28 @@
                 });
             }
             
-            // AI报告
+            // AI报告 - 生成我的环保报告（纯前端模拟）
             var reportBtn = document.getElementById('getCarbonReport');
             if (reportBtn) {
                 reportBtn.addEventListener('click', function() {
                     HNAU_Carbon.addAIReport();
-                    alert('即将打开AI环保助手，为您生成个性化报告...\n\n（请在扣子AI配置好后，这里将跳转到AI对话页面）');
-                    // TODO: 跳转到AI对话页面
-                    // window.location.href = 'carbon_ai.html';
+                    // 纯前端模拟：弹窗提示报告生成成功
+                    alert('✅ 报告生成成功，已保存至本地\n\n📊 您的环保报告包含：\n• 累计碳减排数据\n• 碳积分明细\n• 环保贡献排行榜\n• 绿色校园排名\n\n可在「我的闲置」中查看历史报告');
+                    // 跳转到AI对话页面获取更多建议
+                    window.location.href = 'carbon_ai.html';
                 });
             }
             
-            // 分享
+            // 分享 - 一键分享碳足迹（纯前端模拟）
             var shareBtn = document.getElementById('shareCarbon');
             if (shareBtn) {
                 shareBtn.addEventListener('click', function() {
                     HNAU_Carbon.addShare();
-                    alert('分享成功！+' + HNAU_Carbon.Points.RULES.shareBonus + '积分\n\n正在生成海报...');
+                    // 模拟复制到剪贴板
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText('我在农大闲置平台参与绿色交易，累计减碳' + stats.totalSaved.toFixed(1) + 'kg！🌱 #双碳目标 #农大闲置');
+                    }
+                    alert('📤 分享链接已复制到剪贴板！\n\n分享内容：\n"我在农大闲置平台参与绿色交易，累计减碳' + stats.totalSaved.toFixed(1) + 'kg！🌱 #双碳目标 #农大闲置"\n\n🎉 +' + HNAU_Carbon.Points.RULES.shareBonus + '积分奖励已到账');
                 });
             }
         }
