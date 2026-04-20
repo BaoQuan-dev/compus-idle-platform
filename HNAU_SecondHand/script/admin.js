@@ -1018,6 +1018,7 @@ const AdminModule = {
                     '退出登录',
                     '确定要退出管理员登录吗？退出后将返回登录页面。',
                     () => {
+                        this.unbindStorageListener();  // 【修复】退出前清理监听器
                         try {
                             localStorage.setItem(ADMIN_KEYS.ADMIN_LOGIN, 'false');
                         } catch (err) {
@@ -1457,6 +1458,7 @@ const AdminModule = {
             this.showToast('登录成功，欢迎回来！', 'success');
             this.render();
             this.bindEvents();
+            this.bindStorageListener();  // 【修复】登录成功后启动数据监听
         } else {
             if (passwordErrorEl) {
                 passwordErrorEl.textContent = '用户名或密码错误，请重试';
