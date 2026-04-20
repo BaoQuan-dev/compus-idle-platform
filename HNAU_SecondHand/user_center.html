@@ -201,8 +201,103 @@
         </div>
     </section>
     
+    <!-- 统一弹窗 -->
+    <div class="hnau-modal-overlay" id="shareModal">
+        <div class="hnau-modal">
+            <div class="hnau-modal-header" id="modalTitle">分享准备就绪</div>
+            <div class="hnau-modal-content" id="modalContent"></div>
+            <div class="hnau-modal-footer">
+                <button class="hnau-modal-btn" id="modalBtn">确定</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- 碳足迹样式 -->
     <style>
+        /* 统一弹窗样式 */
+        .hnau-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .hnau-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .hnau-modal {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 320px;
+            width: 90%;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+        
+        .hnau-modal-overlay.active .hnau-modal {
+            transform: translateY(0);
+        }
+        
+        .hnau-modal-header {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        .hnau-modal-content {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        
+        .hnau-modal-content .check-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .hnau-modal-content .check-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .hnau-modal-footer {
+            text-align: center;
+        }
+        
+        .hnau-modal-btn {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: #fff;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .hnau-modal-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
+        }
+        
         .carbon-container {
             background: linear-gradient(135deg, #f0f9f0 0%, #e8f5e9 100%);
             border-radius: 16px;
@@ -783,14 +878,41 @@
             
             // 分享 - 一键分享碳足迹（纯前端模拟）
             var shareBtn = document.getElementById('shareCarbon');
-            if (shareBtn) {
+            var modalOverlay = document.getElementById('shareModal');
+            var modalTitle = document.getElementById('modalTitle');
+            var modalContent = document.getElementById('modalContent');
+            var modalBtn = document.getElementById('modalBtn');
+            
+            if (shareBtn && modalOverlay) {
                 shareBtn.addEventListener('click', function() {
                     HNAU_Carbon.addShare();
-                    // 模拟复制到剪贴板
+                    
+                    // 显示统一弹窗
+                    modalTitle.textContent = '分享准备就绪';
+                    modalContent.innerHTML = 
+                        '<div class="check-item">✅ 碳足迹分享图片已生成</div>' +
+                        '<div class="check-item">🔗 分享链接已复制到剪贴板</div>' +
+                        '<div style="margin-top: 12px; color: #888; font-size: 0.9rem;">' +
+                        '可直接分享到微信、QQ或朋友圈，邀请好友一起参与环保！</div>';
+                    
+                    modalOverlay.classList.add('active');
+                    
+                    // 尝试复制到剪贴板（模拟）
                     if (navigator.clipboard && navigator.clipboard.writeText) {
                         navigator.clipboard.writeText('我在农大闲置平台参与绿色交易，累计减碳' + stats.totalSaved.toFixed(1) + 'kg！🌱 #双碳目标 #农大闲置');
                     }
-                    alert('📤 分享链接已复制到剪贴板！\n\n分享内容：\n"我在农大闲置平台参与绿色交易，累计减碳' + stats.totalSaved.toFixed(1) + 'kg！🌱 #双碳目标 #农大闲置"\n\n🎉 +' + HNAU_Carbon.Points.RULES.shareBonus + '积分奖励已到账');
+                });
+                
+                // 关闭弹窗
+                modalBtn.addEventListener('click', function() {
+                    modalOverlay.classList.remove('active');
+                });
+                
+                // 点击遮罩关闭
+                modalOverlay.addEventListener('click', function(e) {
+                    if (e.target === modalOverlay) {
+                        modalOverlay.classList.remove('active');
+                    }
                 });
             }
         }
