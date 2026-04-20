@@ -215,6 +215,15 @@ const HomeModule = {
                 }, 1500);
             });
         });
+
+        // 卡片点击翻转（不阻止事件冒泡到卡片）
+        const cards = document.querySelectorAll('.goods-card');
+        cards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                // 点击卡片时切换翻转状态
+                card.classList.toggle('flipped');
+            });
+        });
     },
 
     /**
@@ -462,7 +471,22 @@ const HomeModule = {
 
         // 重新加载数据并渲染
         this.state.collects = collects;
+        
+        // 保存翻转状态
+        const flippedCards = {};
+        document.querySelectorAll('.goods-card.flipped').forEach(card => {
+            flippedCards[card.dataset.id] = true;
+        });
+        
         this.renderGoods();
+        
+        // 恢复翻转状态
+        Object.keys(flippedCards).forEach(id => {
+            const card = document.querySelector(`.goods-card[data-id="${id}"]`);
+            if (card) {
+                card.classList.add('flipped');
+            }
+        });
     }
 };
 
