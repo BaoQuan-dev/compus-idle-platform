@@ -682,10 +682,15 @@
             margin: 0 !important;
             padding: 0 !important;
         }
-        
+
         #hnau-cat-box {
             will-change: transform;
             backface-visibility: hidden;
+            transition: transform 0.15s ease;
+        }
+
+        #hnau-cat-box:active {
+            cursor: grabbing;
         }
         
         .hnau-cat-bubble {
@@ -1342,7 +1347,83 @@
             showBubble(text, CONFIG.bubbleDuration);
         });
         
-        // 触摸支持
+        // ===== 拖动功能 =====
+        var isDragging = false;
+        var dragOffsetX = 0;
+        var dragOffsetY = 0;
+        var catStartLeft = 0;
+        var catStartBottom = 0;
+        
+        function onDragStart(e) {
+            // 如果点击的是气泡，不触发拖动
+            if (e.target.closest('.hnau-cat-bubble')) return;
+            
+            isDragging = true;
+            box.style.transition = 'none';
+            
+            var clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+            var clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+            
+            var rect = box.getBoundingClientRect();
+            dragOffsetX = clientX - rect.left;
+            dragOffsetY = clientY - rect.top;
+            
+            // 记录初始位置（从bottom和right转换为left和top）
+            catStartLeft = rect.left;
+            catStartBottom = window.innerHeight - rect.bottom;
+            
+            // 按下缩放效果
+            box.style.transform = 'scale(0.95)';
+        }
+        
+        function onDragMove(e) {
+            if (!isDragging) return;
+            
+            var clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+            var clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+            
+            // 计算新位置
+            var newLeft = clientX - dragOffsetX;
+            var newBottom = window.innerHeight - clientY + dragOffsetY;
+            
+            // 限制在视窗内
+            var maxLeft = window.innerWidth - box.offsetWidth;
+            var maxBottom = window.innerHeight - box.offsetHeight - 10;
+            
+            newLeft = Math.max(0, Math.min(maxLeft, newLeft));
+            newBottom = Math.max(10, Math.min(maxBottom, newBottom));
+            
+            // 应用位置
+            box.style.left = newLeft + 'px';
+            box.style.bottom = 'auto';
+            box.style.top = newBottom + 'px';
+            box.style.right = 'auto';
+            
+            // 移除初始的fixed定位
+            box.style.position = 'absolute';
+            
+            if (e.cancelable) e.preventDefault();
+        }
+        
+        function onDragEnd(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            // 恢复缩放
+            box.style.transform = '';
+        }
+        
+        // 绑定拖动事件（绑定到box本身）
+        box.addEventListener('mousedown', onDragStart);
+        box.addEventListener('touchstart', onDragStart, { passive: false });
+        
+        document.addEventListener('mousemove', onDragMove);
+        document.addEventListener('touchmove', onDragMove, { passive: false });
+        
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchend', onDragEnd);
+        
+        // 触摸支持（原有）
         overlay.addEventListener('touchstart', function(e) {
             e.preventDefault();
             isHover = true;
