@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>需求公告板 - 农大闲置</title>
+    <link rel="stylesheet" href="style/main.css">
+    <style>
+        /* ========== 页面基础样式 ========== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f9f0 0%, #e8f5e9 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        /* ========== 顶部Banner ========== */
+        .page-header {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 50%, #66bb6a 100%);
+            color: white;
+            padding: 32px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .page-header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .page-header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            position: relative;
+        }
+        
+        /* ========== 主容器 ========== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* ========== 操作栏 ========== */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .filter-section {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+        
+        .filter-input {
+            padding: 10px 14px;
+            border: 2px solid #e8f5e9;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            min-width: 160px;
+            transition: all 0.2s;
+            background: #fff;
+        }
+        
+        .filter-input:focus {
+            outline: none;
+            border-color: #43a047;
+            box-shadow: 0 0 0 3px rgba(67, 160, 71, 0.1);
+        }
+        
+        .filter-select {
+            padding: 10px 14px;
+            border: 2px solid #e8f5e9;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            background: #fff;
+            cursor: pointer;
+            min-width: 120px;
+        }
+        
+        .filter-select:focus {
+            outline: none;
+            border-color: #43a047;
+        }
+        
+        .publish-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #43a047, #2e7d32);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+        
+        .publish-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+        }
+        
+        /* ========== 统计信息 ========== */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #fff;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .stats-info {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .stats-info strong {
+            color: #2e7d32;
+        }
+        
+        /* ========== 需求列表 ========== */
+        .demand-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        
+        /* ========== 需求卡片 ========== */
+        .demand-card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            transition: all 0.25s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .demand-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.1);
+            border-color: #a5d6a7;
+        }
+        
+        .demand-card-header {
+            padding: 16px;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .demand-card-badge {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .demand-card-price {
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .demand-card-price.free {
+            background: linear-gradient(135deg, #43a047, #66bb6a);
+        }
+        
+        .demand-card-body {
+            padding: 16px;
+        }
+        
+        .demand-card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1b5e20;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .demand-card-desc {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .demand-card-desc.expanded {
+            -webkit-line-clamp: unset;
+        }
+        
+        .demand-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #888;
+            padding-top: 12px;
+            border-top: 1px dashed #e0e0e0;
+        }
+        
+        .demand-card-user {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .demand-card-avatar {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #a5d6a7, #81c784);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+        
+        .demand-card-footer {
+            padding: 12px 16px;
+            background: #fafafa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .demand-card-time {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .demand-card-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .demand-card-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .demand-card-btn-edit {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .demand-card-btn-delete {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .demand-card-btn:hover {
+            opacity: 0.8;
+            transform: scale(1.02);
+        }
+        
+        /* ========== 空状态 ========== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+        
+        .empty-state-title {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .empty-state-desc {
+            font-size: 0.95rem;
+            color: #888;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state-btn {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #43a047, #2e7d32);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .empty-state-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(46, 125, 50, 0.3);
+        }
+        
+        /* ========== 发布/编辑弹窗 ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background: #fff;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e8f5e9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 1;
+        }
+        
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2e7d32;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #666;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-label.required::after {
+            content: ' *';
+            color: #d32f2f;
+        }
+        
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e8f5e9;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            background: #fff;
+        }
+        
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #43a047;
+            box-shadow: 0 0 0 3px rgba(67, 160, 71, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-help {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 6px;
+        }
+        
+        .form-checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .form-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: #43a047;
+        }
+        
+        .price-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .price-input-group .form-input {
+            flex: 1;
+        }
+        
+        .price-unit {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e8f5e9;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+        
+        .btn-cancel:hover {
+            background: #e0e0e0;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #43a047, #2e7d32);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+        
+        .btn-danger {
+            background: #d32f2f;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #b71c1c;
+        }
+        
+        /* ========== 详情弹窗 ========== */
+        .detail-modal .modal {
+            max-width: 540px;
+        }
+        
+        .detail-content {
+            padding: 0;
+        }
+        
+        .detail-header {
+            padding: 24px;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+        }
+        
+        .detail-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1b5e20;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .detail-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .detail-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .detail-badge-price {
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+            color: white;
+        }
+        
+        .detail-badge-price.free {
+            background: linear-gradient(135deg, #66bb6a, #81c784);
+        }
+        
+        .detail-body {
+            padding: 24px;
+        }
+        
+        .detail-section {
+            margin-bottom: 20px;
+        }
+        
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .detail-section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #888;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .detail-section-content {
+            font-size: 0.95rem;
+            color: #333;
+            line-height: 1.7;
+        }
+        
+        .detail-contact {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+        
+        .detail-contact-info {
+            flex: 1;
+        }
+        
+        .detail-contact-label {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .detail-contact-value {
+            font-size: 1rem;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .detail-contact-value.hidden {
+            color: #888;
+            font-style: italic;
+        }
+        
+        .copy-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .copy-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+        }
+        
+        .detail-footer {
+            padding: 16px 24px;
+            background: #fafafa;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .detail-meta {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        
+        /* ========== Toast ========== */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        .toast.success {
+            background: #2e7d32;
+        }
+        
+        .toast.error {
+            background: #d32f2f;
+        }
+        
+        /* ========== 响应式 ========== */
+        @media (max-width: 768px) {
+            .demand-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-section {
+                width: 100%;
+            }
+            
+            .publish-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .modal {
+                max-height: 95vh;
+                border-radius: 16px 16px 0 0;
+                margin-top: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="home.html" class="navbar-brand">
+                <img src="./images/logo.png" alt="农大闲置" class="navbar-logo" onerror="this.style.display='none'">
+                <span>🌱 农大闲置</span>
+            </a>
+            <ul class="navbar-menu">
+                <li class="navbar-menu-item">
+                    <a href="home.html" class="navbar-menu-link">首页</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="release_goods.html" class="navbar-menu-link">发布闲置</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="user_center.html" class="navbar-menu-link">个人中心</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="donation_list.html" class="navbar-menu-link">公益转赠</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- 页面内容 -->
+    <div class="page-header">
+        <h1>📋 需求公告板</h1>
+        <p>发布您需要的闲置物品，让爱心传递更高效</p>
+    </div>
+    
+    <div class="container">
+        <!-- 操作栏 -->
+        <div class="action-bar">
+            <div class="filter-section">
+                <input type="text" class="filter-input" id="searchInput" placeholder="搜索需求关键词...">
+                <select class="filter-select" id="sortSelect">
+                    <option value="newest">最新优先</option>
+                    <option value="oldest">最早优先</option>
+                    <option value="price-low">价格从低到高</option>
+                    <option value="price-high">价格从高到低</option>
+                </select>
+            </div>
+            <button class="publish-btn" id="publishBtn">
+                <span>+</span>
+                <span>发布需求</span>
+            </button>
+        </div>
+        
+        <!-- 统计信息 -->
+        <div class="stats-bar">
+            <div class="stats-info">
+                共 <strong id="totalCount">0</strong> 条需求
+            </div>
+        </div>
+        
+        <!-- 需求列表 -->
+        <div class="demand-list" id="demandList"></div>
+        
+        <!-- 空状态 -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-state-icon">📋</div>
+            <div class="empty-state-title">暂无需求公告</div>
+            <div class="empty-state-desc">还没有人发布需求，赶快来发布第一条吧！</div>
+            <button class="empty-state-btn" id="emptyPublishBtn">发布第一条需求</button>
+        </div>
+    </div>
+    
+    <!-- 发布/编辑弹窗 -->
+    <div class="modal-overlay" id="publishModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">📝 发布需求</div>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editId">
+                
+                <div class="form-group">
+                    <label class="form-label required">需求标题</label>
+                    <input type="text" class="form-input" id="demandTitle" placeholder="例如：求购一辆自行车" maxlength="50">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">需求描述</label>
+                    <textarea class="form-textarea" id="demandDesc" placeholder="详细描述您需要的物品：品牌、型号、新旧程度、期望成色等..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">期望价格</label>
+                    <div class="price-input-group">
+                        <input type="number" class="form-input" id="demandPrice" placeholder="0" min="0" style="width: 120px;">
+                        <span class="price-unit">元</span>
+                        <label class="form-checkbox" style="margin-left: auto;">
+                            <input type="checkbox" id="priceNegotiable">
+                            <span>可协商</span>
+                        </label>
+                    </div>
+                    <div class="form-help">设置为0表示不限价格</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">联系方式</label>
+                    <input type="text" class="form-input" id="demandContact" placeholder="手机号/微信/QQ等">
+                    <label class="form-checkbox" style="margin-top: 8px;">
+                        <input type="checkbox" id="contactPublic" checked>
+                        <span>公开联系方式（其他用户可见）</span>
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">备注</label>
+                    <input type="text" class="form-input" id="demandNote" placeholder="其他补充说明（选填）">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" id="cancelBtn">取消</button>
+                <button class="btn btn-primary" id="submitBtn">发布需求</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 详情弹窗 -->
+    <div class="modal-overlay detail-modal" id="detailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">📋 需求详情</div>
+                <button class="modal-close" id="detailClose">×</button>
+            </div>
+            <div class="detail-content">
+                <div class="detail-header">
+                    <div class="detail-title" id="detailTitle"></div>
+                    <div class="detail-badges">
+                        <span class="detail-badge detail-badge-price" id="detailPrice"></span>
+                        <span class="detail-badge" style="background: rgba(0,0,0,0.1); color: #666;" id="detailPublishTime"></span>
+                    </div>
+                </div>
+                <div class="detail-body">
+                    <div class="detail-section">
+                        <div class="detail-section-title">需求描述</div>
+                        <div class="detail-section-content" id="detailDesc"></div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-section-title">联系方式</div>
+                        <div class="detail-contact">
+                            <div class="detail-contact-info">
+                                <div class="detail-contact-label" id="detailContactLabel"></div>
+                                <div class="detail-contact-value" id="detailContact"></div>
+                            </div>
+                            <button class="copy-btn" id="copyContactBtn">📋 复制</button>
+                        </div>
+                    </div>
+                    <div class="detail-section" id="detailNoteSection" style="display: none;">
+                        <div class="detail-section-title">备注</div>
+                        <div class="detail-section-content" id="detailNote"></div>
+                    </div>
+                </div>
+                <div class="detail-footer">
+                    <div class="detail-meta">
+                        <div id="detailPublisher"></div>
+                        <div id="detailTime"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // ========== 配置 ==========
+        var STORAGE_KEY = 'demandList';
+        var currentUser = null;
+        var currentDetail = null;
+        var editingId = null;
+        
+        // ========== 初始化 ==========
+        (function() {
+            initUser();
+            bindEvents();
+            loadDemands();
+        })();
+        
+        // ========== 获取当前用户 ==========
+        function initUser() {
+            var loginState = JSON.parse(localStorage.getItem('hnau_login_state') || '{}');
+            if (loginState && loginState.isLoggedIn && loginState.curUser) {
+                currentUser = loginState.curUser;
+            } else {
+                currentUser = { id: 'guest_' + Date.now(), name: '游客' };
+            }
+        }
+        
+        // ========== 获取需求列表 ==========
+        function getDemands() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        }
+        
+        // ========== 保存需求列表 ==========
+        function saveDemands(demands) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(demands));
+        }
+        
+        // ========== 加载需求 ==========
+        function loadDemands() {
+            var demands = getDemands();
+            renderDemands(demands);
+            document.getElementById('totalCount').textContent = demands.length;
+        }
+        
+        // ========== 渲染需求列表 ==========
+        function renderDemands(demands) {
+            var listEl = document.getElementById('demandList');
+            var emptyEl = document.getElementById('emptyState');
+            
+            // 筛选
+            var keyword = document.getElementById('searchInput').value.toLowerCase().trim();
+            var sortType = document.getElementById('sortSelect').value;
+            
+            if (keyword) {
+                demands = demands.filter(function(d) {
+                    return d.title.toLowerCase().includes(keyword) ||
+                           d.description.toLowerCase().includes(keyword) ||
+                           d.note.toLowerCase().includes(keyword);
+                });
+            }
+            
+            // 排序
+            demands.sort(function(a, b) {
+                if (sortType === 'newest') return new Date(b.publishTime) - new Date(a.publishTime);
+                if (sortType === 'oldest') return new Date(a.publishTime) - new Date(b.publishTime);
+                if (sortType === 'price-low') return (a.price || 0) - (b.price || 0);
+                if (sortType === 'price-high') return (b.price || 0) - (a.price || 0);
+                return 0;
+            });
+            
+            if (demands.length === 0) {
+                listEl.innerHTML = '';
+                emptyEl.style.display = 'block';
+                return;
+            }
+            
+            emptyEl.style.display = 'none';
+            
+            listEl.innerHTML = demands.map(function(item) {
+                var priceText = item.price > 0 ? '¥' + item.price + (item.priceNegotiable ? ' 可协商' : '') : '价格面议';
+                var priceClass = item.price > 0 ? '' : 'free';
+                var isOwn = item.publisher && item.publisher.id === currentUser.id;
+                var isAuth = JSON.parse(localStorage.getItem('hnau_login_state') || '{}').authStatus === 'approved';
+                
+                var actionsHtml = '';
+                if (isOwn) {
+                    actionsHtml = '<button class="demand-card-btn demand-card-btn-edit" onclick="event.stopPropagation(); editDemand(\'' + item.id + '\')">编辑</button>' +
+                                  '<button class="demand-card-btn demand-card-btn-delete" onclick="event.stopPropagation(); deleteDemand(\'' + item.id + '\')">删除</button>';
+                }
+                
+                return '<div class="demand-card" onclick="showDetail(\'' + item.id + '\')">' +
+                    '<div class="demand-card-header">' +
+                    '<span class="demand-card-badge">📋 需求</span>' +
+                    '<span class="demand-card-price ' + priceClass + '">' + priceText + '</span>' +
+                    '</div>' +
+                    '<div class="demand-card-body">' +
+                    '<div class="demand-card-title">' + item.title + '</div>' +
+                    '<div class="demand-card-desc">' + item.description + '</div>' +
+                    '<div class="demand-card-meta">' +
+                    '<div class="demand-card-user">' +
+                    '<div class="demand-card-avatar">👤</div>' +
+                    '<span>' + (item.publisher ? item.publisher.name : '匿名') + '</span>' +
+                    '</div>' +
+                    '<span>' + formatTime(item.publishTime) + '</span>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="demand-card-footer">' +
+                    '<span class="demand-card-time">' + formatDate(item.publishTime) + '</span>' +
+                    '<div class="demand-card-actions" onclick="event.stopPropagation()">' + actionsHtml + '</div>' +
+                    '</div>' +
+                    '</div>';
+            }).join('');
+        }
+        
+        // ========== 绑定事件 ==========
+        function bindEvents() {
+            // 发布按钮
+            document.getElementById('publishBtn').addEventListener('click', showPublishModal);
+            document.getElementById('emptyPublishBtn').addEventListener('click', showPublishModal);
+            
+            // 筛选
+            document.getElementById('searchInput').addEventListener('input', function() {
+                loadDemands();
+            });
+            document.getElementById('sortSelect').addEventListener('change', function() {
+                loadDemands();
+            });
+            
+            // 弹窗
+            document.getElementById('modalClose').addEventListener('click', hidePublishModal);
+            document.getElementById('cancelBtn').addEventListener('click', hidePublishModal);
+            document.getElementById('submitBtn').addEventListener('click', submitDemand);
+            
+            // 详情弹窗
+            document.getElementById('detailClose').addEventListener('click', hideDetailModal);
+            document.getElementById('copyContactBtn').addEventListener('click', copyContact);
+            
+            // 点击遮罩关闭
+            document.getElementById('publishModal').addEventListener('click', function(e) {
+                if (e.target === this) hidePublishModal();
+            });
+            document.getElementById('detailModal').addEventListener('click', function(e) {
+                if (e.target === this) hideDetailModal();
+            });
+        }
+        
+        // ========== 显示发布弹窗 ==========
+        function showPublishModal() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = '📝 发布需求';
+            document.getElementById('submitBtn').textContent = '发布需求';
+            document.getElementById('editId').value = '';
+            document.getElementById('demandTitle').value = '';
+            document.getElementById('demandDesc').value = '';
+            document.getElementById('demandPrice').value = '';
+            document.getElementById('priceNegotiable').checked = false;
+            document.getElementById('demandContact').value = '';
+            document.getElementById('contactPublic').checked = true;
+            document.getElementById('demandNote').value = '';
+            document.getElementById('publishModal').classList.add('active');
+        }
+        
+        // ========== 编辑需求 ==========
+        function editDemand(id) {
+            var demands = getDemands();
+            var demand = demands.find(function(d) { return d.id === id; });
+            if (!demand) return;
+            
+            editingId = id;
+            document.getElementById('modalTitle').textContent = '✏️ 编辑需求';
+            document.getElementById('submitBtn').textContent = '保存修改';
+            document.getElementById('editId').value = id;
+            document.getElementById('demandTitle').value = demand.title;
+            document.getElementById('demandDesc').value = demand.description;
+            document.getElementById('demandPrice').value = demand.price || '';
+            document.getElementById('priceNegotiable').checked = demand.priceNegotiable || false;
+            document.getElementById('demandContact').value = demand.contact || '';
+            document.getElementById('contactPublic').checked = demand.contactPublic !== false;
+            document.getElementById('demandNote').value = demand.note || '';
+            document.getElementById('publishModal').classList.add('active');
+        }
+        
+        // ========== 隐藏发布弹窗 ==========
+        function hidePublishModal() {
+            document.getElementById('publishModal').classList.remove('active');
+            editingId = null;
+        }
+        
+        // ========== 提交需求 ==========
+        function submitDemand() {
+            var title = document.getElementById('demandTitle').value.trim();
+            var description = document.getElementById('demandDesc').value.trim();
+            var price = parseFloat(document.getElementById('demandPrice').value) || 0;
+            var priceNegotiable = document.getElementById('priceNegotiable').checked;
+            var contact = document.getElementById('demandContact').value.trim();
+            var contactPublic = document.getElementById('contactPublic').checked;
+            var note = document.getElementById('demandNote').value.trim();
+            
+            // 验证
+            if (!title) {
+                showToast('请输入需求标题', 'error');
+                return;
+            }
+            if (!description) {
+                showToast('请输入需求描述', 'error');
+                return;
+            }
+            if (!contact) {
+                showToast('请输入联系方式', 'error');
+                return;
+            }
+            
+            var demands = getDemands();
+            var now = new Date().toISOString();
+            
+            if (editingId) {
+                // 编辑
+                demands = demands.map(function(d) {
+                    if (d.id === editingId) {
+                        return Object.assign({}, d, {
+                            title: title,
+                            description: description,
+                            price: price,
+                            priceNegotiable: priceNegotiable,
+                            contact: contact,
+                            contactPublic: contactPublic,
+                            note: note,
+                            updateTime: now
+                        });
+                    }
+                    return d;
+                });
+                showToast('需求已更新', 'success');
+            } else {
+                // 新增
+                var demand = {
+                    id: 'demand_' + Date.now(),
+                    title: title,
+                    description: description,
+                    price: price,
+                    priceNegotiable: priceNegotiable,
+                    contact: contact,
+                    contactPublic: contactPublic,
+                    note: note,
+                    publisher: {
+                        id: currentUser.id,
+                        name: currentUser.name || '匿名用户'
+                    },
+                    publishTime: now,
+                    updateTime: now
+                };
+                demands.unshift(demand);
+                showToast('需求发布成功', 'success');
+            }
+            
+            saveDemands(demands);
+            hidePublishModal();
+            loadDemands();
+        }
+        
+        // ========== 删除需求 ==========
+        function deleteDemand(id) {
+            if (!confirm('确定要删除这条需求吗？')) return;
+            
+            var demands = getDemands();
+            demands = demands.filter(function(d) { return d.id !== id; });
+            saveDemands(demands);
+            showToast('需求已删除', 'success');
+            loadDemands();
+        }
+        
+        // ========== 显示详情 ==========
+        function showDetail(id) {
+            var demands = getDemands();
+            var demand = demands.find(function(d) { return d.id === id; });
+            if (!demand) return;
+            
+            currentDetail = demand;
+            
+            document.getElementById('detailTitle').textContent = demand.title;
+            
+            var priceText = demand.price > 0 ? '¥' + demand.price + (demand.priceNegotiable ? ' 可协商' : '') : '价格面议';
+            document.getElementById('detailPrice').textContent = priceText;
+            document.getElementById('detailPrice').className = 'detail-badge detail-badge-price' + (demand.price > 0 ? '' : ' free');
+            
+            document.getElementById('detailDesc').textContent = demand.description;
+            
+            // 联系方式
+            if (demand.contactPublic) {
+                document.getElementById('detailContactLabel').textContent = demand.contact.includes('@') ? '邮箱' : 
+                    (demand.contact.match(/\d{11}/) ? '手机号' : '联系方式');
+                document.getElementById('detailContact').textContent = demand.contact;
+                document.getElementById('detailContact').classList.remove('hidden');
+                document.getElementById('copyContactBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('detailContactLabel').textContent = '联系方式';
+                document.getElementById('detailContact').textContent = '发布者选择隐藏联系方式';
+                document.getElementById('detailContact').classList.add('hidden');
+                document.getElementById('copyContactBtn').style.display = 'none';
+            }
+            
+            // 备注
+            if (demand.note) {
+                document.getElementById('detailNoteSection').style.display = 'block';
+                document.getElementById('detailNote').textContent = demand.note;
+            } else {
+                document.getElementById('detailNoteSection').style.display = 'none';
+            }
+            
+            // 发布信息
+            document.getElementById('detailPublisher').textContent = '发布者：' + (demand.publisher ? demand.publisher.name : '匿名用户');
+            document.getElementById('detailTime').textContent = formatDate(demand.publishTime);
+            
+            document.getElementById('detailModal').classList.add('active');
+        }
+        
+        // ========== 隐藏详情 ==========
+        function hideDetailModal() {
+            document.getElementById('detailModal').classList.remove('active');
+            currentDetail = null;
+        }
+        
+        // ========== 复制联系方式 ==========
+        function copyContact() {
+            if (!currentDetail) return;
+            navigator.clipboard.writeText(currentDetail.contact).then(function() {
+                showToast('联系方式已复制', 'success');
+            }).catch(function() {
+                showToast('复制失败，请手动复制', 'error');
+            });
+        }
+        
+        // ========== 工具函数 ==========
+        function formatTime(isoString) {
+            if (!isoString) return '';
+            var date = new Date(isoString);
+            var now = new Date();
+            var diff = now - date;
+            var minutes = Math.floor(diff / 60000);
+            var hours = Math.floor(diff / 3600000);
+            var days = Math.floor(diff / 86400000);
+            
+            if (minutes < 1) return '刚刚';
+            if (minutes < 60) return minutes + '分钟前';
+            if (hours < 24) return hours + '小时前';
+            if (days < 7) return days + '天前';
+            return date.toLocaleDateString();
+        }
+        
+        function formatDate(isoString) {
+            if (!isoString) return '';
+            return new Date(isoString).toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+        
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + (type || '');
+            toast.classList.add('show');
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
