@@ -595,6 +595,12 @@ const ReleaseModule = {
             goods.unshift(goodsInfo);
             Storage.set(Auth.KEYS.GOODS, goods);
 
+            // 记录碳足迹（发布商品奖励）
+            if (window.HNAU_Carbon) {
+                // 记录碳足迹数据（使用品类和默认新旧程度）
+                HNAU_Carbon.addPublish(goodsCategory, '正常使用', goodsName.trim());
+            }
+
             Toast.show('商品发布成功！即将跳转到首页', 'success');
 
             // 1.5秒后跳转

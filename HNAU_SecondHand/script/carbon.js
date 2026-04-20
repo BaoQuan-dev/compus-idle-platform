@@ -251,8 +251,14 @@
     var CarbonStorage = {
         STORAGE_KEY: 'hnau_carbon_data',
 
-        // 获取当前用户名
+        // 获取当前用户名（兼容Auth模块）
         getCurrentUser: function() {
+            // 优先使用Auth模块的当前用户
+            var loginState = JSON.parse(localStorage.getItem('hnau_login_state') || '{}');
+            if (loginState.curUser) {
+                return loginState.curUser;
+            }
+            // 兼容旧版本
             return localStorage.getItem('hnau_current_user') || 'guest';
         },
 
@@ -324,11 +330,44 @@
             return data;
         },
 
-        // 添加发布记录
-        addPublish: function() {
+        // 记录发布商品（增加积分和减碳记录）
+        addPublish: function(category, condition, title) {
             var data = this.getData();
-            data.publishCount++;
+            
+            // 计算碳足迹（使用默认品类）
+            var coef = CARBON_COEFFICIENTS[category] || CARBON_COEFFICIENTS.others;
+            var result = CarbonCalculator.calculateSavings(category || 'others', condition || '正常使用');
+            
+            // 创建交易记录
+            var transaction = {
+                id: Date.now(),
+                type: 'publish',
+                category: category || 'others',
+                condition: condition || '正常使用',
+                title: title || '发布闲置物品',
+                saved: result.saved,
+                treesEquivalent: result.treesEquivalent,
+                date: new Date().toISOString().split('T')[0],
+                year: new Date().getFullYear(),
+                month: new Date().getMonth() + 1
+            };
+            
+            data.transactions.push(transaction);
+            data.totalSaved += result.saved;
             data.totalPoints += CarbonPoints.RULES.publishGoods;
+            data.publishCount++;
+            data.tradeCount++;
+            
+            // 更新年度趋势
+            var year = new Date().getFullYear().toString();
+            var month = (new Date().getMonth() + 1).toString();
+            if (!data.yearlyTrend[year]) data.yearlyTrend[year] = {};
+            if (!data.yearlyTrend[year][month]) data.yearlyTrend[year][month] = 0;
+            data.yearlyTrend[year][month] += result.saved;
+            
+            // 检查勋章
+            this.checkBadges(data);
+            
             this.saveData(data);
             return data;
         },
@@ -402,7 +441,7 @@
     HNAU_Carbon.Storage = CarbonStorage;
     HNAU_Carbon.getStats = function() { return CarbonStorage.getStats(); };
     HNAU_Carbon.addTransaction = function(c, cdt, t) { return CarbonStorage.addTransaction(c, cdt, t); };
-    HNAU_Carbon.addPublish = function() { return CarbonStorage.addPublish(); };
+    HNAU_Carbon.addPublish = function(cat, cdt, title) { return CarbonStorage.addPublish(cat, cdt, title); };
     HNAU_Carbon.addShare = function() { return CarbonStorage.addShare(); };
     HNAU_Carbon.checkIn = function() { return CarbonStorage.checkIn(); };
     HNAU_Carbon.addAIReport = function() { return CarbonStorage.addAIReport(); };
