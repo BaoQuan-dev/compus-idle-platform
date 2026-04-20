@@ -99,11 +99,29 @@
             color: #666;
             cursor: pointer;
             transition: all 0.2s;
+            position: relative;
         }
         
         .tab-item.active {
             background: #2e7d32;
             color: #fff;
+        }
+        
+        .tab-item .badge {
+            position: absolute;
+            top: 6px;
+            right: calc(50% - 28px);
+            background: #EF4444;
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        
+        .tab-item.active .badge {
+            background: #fff;
+            color: #2e7d32;
         }
         
         /* 转赠记录列表 */
@@ -528,6 +546,168 @@
             gap: 12px;
         }
         
+        /* 申请卡片样式 */
+        .apply-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border-left: 4px solid #2196F3;
+        }
+        
+        .apply-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .apply-card-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .apply-card-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .apply-card-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 0.95rem;
+        }
+        
+        .apply-card-id {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .apply-card-time {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .apply-card-reason {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .apply-card-reason-label {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 6px;
+        }
+        
+        .apply-card-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .apply-card-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .apply-card-btn-accept {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: #fff;
+        }
+        
+        .apply-card-btn-reject {
+            background: #f5f5f5;
+            color: #EF4444;
+        }
+        
+        .apply-card-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        /* 拒绝原因弹窗 */
+        .reject-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 12000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .reject-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .reject-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 380px;
+            width: 90%;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        
+        .reject-modal.active .reject-content {
+            transform: translateY(0);
+        }
+        
+        .reject-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #EF4444;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        .reject-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ffebee;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            resize: vertical;
+            min-height: 100px;
+            box-sizing: border-box;
+            margin-bottom: 16px;
+        }
+        
+        .reject-textarea:focus {
+            outline: none;
+            border-color: #EF4444;
+        }
+        
+        .reject-btns {
+            display: flex;
+            gap: 12px;
+        }
+        
         @media (max-width: 600px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -618,7 +798,10 @@
         
         <!-- Tab切换 -->
         <div class="tab-bar">
-            <div class="tab-item active" data-tab="published">我发布的</div>
+            <div class="tab-item active" data-tab="pending" id="tabPending">
+                待审核<span class="badge" id="pendingBadge" style="display:none;">0</span>
+            </div>
+            <div class="tab-item" data-tab="published">我发布的</div>
             <div class="tab-item" data-tab="received">我接收的</div>
         </div>
         
@@ -679,6 +862,18 @@
         </div>
     </div>
     
+    <!-- 拒绝原因弹窗 -->
+    <div class="reject-modal" id="rejectModal">
+        <div class="reject-content">
+            <div class="reject-title">❌ 填写拒绝原因</div>
+            <textarea class="reject-textarea" id="rejectReason" placeholder="请说明拒绝的原因，让对方理解您的决定~"></textarea>
+            <div class="reject-btns">
+                <button class="confirm-btn confirm-btn-cancel" id="rejectCancel">取消</button>
+                <button class="confirm-btn" style="background: #EF4444; color: #fff;" id="rejectConfirm">确认拒绝</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
     (function() {
         'use strict';
@@ -691,8 +886,9 @@
         // ========== DOM ==========
         var recordList = document.getElementById('recordList');
         var emptyState = document.getElementById('emptyState');
-        var currentTab = 'published';
+        var currentTab = 'pending';
         var currentItem = null;
+        var currentApplicant = null;
         
         // ========== 转赠对象名称 ==========
         var TARGET_NAMES = {
@@ -711,9 +907,32 @@
         // ========== 初始化 ==========
         function init() {
             updateStats();
+            updatePendingBadge();
             renderList();
             bindEvents();
             console.log('[HNAU Donation] 我的公益转赠页已加载');
+        }
+        
+        // ========== 更新待审核徽章 ==========
+        function updatePendingBadge() {
+            var list = getDonationList();
+            var currentUser = getCurrentUser();
+            
+            // 统计待审核申请数量（我发布的物品中，有接收者等待确认的数量）
+            var pendingCount = list.filter(function(item) {
+                return item.publisher && 
+                       item.publisher.id === currentUser.id &&
+                       item.status === 'receiving' &&
+                       item.receiver;
+            }).length;
+            
+            var badge = document.getElementById('pendingBadge');
+            if (pendingCount > 0) {
+                badge.textContent = pendingCount;
+                badge.style.display = 'inline';
+            } else {
+                badge.style.display = 'none';
+            }
         }
         
         // ========== 更新统计 ==========
@@ -747,84 +966,125 @@
             var list = getDonationList();
             var currentUser = getCurrentUser();
             
+            // 根据Tab过滤
             var filtered = list.filter(function(item) {
-                if (currentTab === 'published') {
+                if (currentTab === 'pending') {
+                    // 待审核：我发布的物品中，有接收者等待确认的
+                    return item.publisher && 
+                           item.publisher.id === currentUser.id &&
+                           item.status === 'receiving' &&
+                           item.receiver;
+                } else if (currentTab === 'published') {
                     return item.publisher && item.publisher.id === currentUser.id;
                 } else {
                     return item.receiver && item.receiver.id === currentUser.id;
                 }
             });
             
+            var emptyTexts = {
+                pending: '暂无待审核的申请',
+                published: '您还没有发布公益转赠',
+                received: '您还没有接收过公益转赠'
+            };
+            
             if (filtered.length === 0) {
                 recordList.style.display = 'none';
                 emptyState.style.display = 'block';
-                document.getElementById('emptyText').textContent = 
-                    currentTab === 'published' ? '您还没有发布公益转赠' : '您还没有接收过公益转赠';
+                document.getElementById('emptyText').textContent = emptyTexts[currentTab] || '暂无记录';
                 return;
             }
             
             recordList.style.display = 'flex';
             emptyState.style.display = 'none';
             
-            recordList.innerHTML = filtered.map(function(item) {
-                var badgeClass = 'badge-' + item.status;
-                var statusName = STATUS_NAMES[item.status];
-                
-                var actions = '';
-                if (currentTab === 'published') {
-                    if (item.status === 'pending') {
-                        actions = '<span style="color: #888; font-size: 0.85rem;">等待爱心人士申请...</span>';
-                    } else if (item.status === 'receiving' && item.receiver) {
-                        actions = 
-                            '<button class="record-btn record-btn-primary" onclick="confirmTransfer(\'' + item.id + '\')">确认转赠</button>' +
-                            '<button class="record-btn record-btn-secondary" onclick="showReceiver(\'' + item.id + '\')">查看申请</button>';
-                    } else if (item.status === 'completed') {
-                        actions = 
-                            '<button class="record-btn record-btn-primary" onclick="showCertificate(\'' + item.id + '\')">📜 公益证明</button>';
-                    }
-                } else {
-                    if (item.status === 'receiving') {
-                        actions = '<span style="color: #1565c0; font-size: 0.85rem;">等待发布者确认...</span>';
-                    } else if (item.status === 'completed') {
-                        if (item.feedback) {
-                            actions = '<span style="color: #888; font-size: 0.85rem;">已填写反馈</span>';
-                        } else {
-                            actions = '<button class="record-btn record-btn-primary" onclick="showFeedback(\'' + item.id + '\')">💬 填写反馈</button>';
-                        }
-                        actions += ' <button class="record-btn record-btn-secondary" onclick="showCertificate(\'' + item.id + '\')">📜 公益证明</button>';
-                    }
-                }
-                
-                var extraInfo = '';
-                if (item.status === 'completed' && item.feedback) {
-                    extraInfo = '<div class="feedback-info">' +
-                        '<div class="feedback-info-title">💬 使用反馈</div>' +
-                        '<div class="feedback-info-content">' + item.feedback + '</div>' +
-                        '</div>';
-                }
-                
-                return '<div class="record-card" data-id="' + item.id + '">' +
-                    '<div class="record-header">' +
-                    '<div class="record-title">' + item.itemName + ' <span class="record-badge ' + badgeClass + '">' + statusName + '</span></div>' +
-                    '<div class="record-time">' + formatDate(item.publishTime) + '</div>' +
-                    '</div>' +
-                    '<div class="record-info">' +
-                    '<span>🎯 ' + TARGET_NAMES[item.targetType] + '</span>' +
-                    '<span>📦 ' + item.category + '</span>' +
-                    '</div>' +
-                    '<div class="record-desc">' + item.description + '</div>' +
-                    (item.receiver && currentTab === 'published' && item.status !== 'pending' ? 
-                        '<div class="receiver-info">' +
-                        '<div class="receiver-info-title">🎁 接收方</div>' +
-                        '<div class="receiver-info-content">' + 
-                        (item.receiver.name || '匿名同学') + ' · ' + 
-                        (item.receiveReason || '希望接收此物品') + 
+            // 待审核Tab显示申请卡片
+            if (currentTab === 'pending') {
+                recordList.innerHTML = filtered.map(function(item) {
+                    return '<div class="apply-card" style="margin-bottom: 16px;">' +
+                        '<div style="font-size: 0.9rem; color: #666; margin-bottom: 12px;">您发布的「' + item.itemName + '」收到了新的申请</div>' +
+                        '<div class="apply-card-header">' +
+                        '<div class="apply-card-user">' +
+                        '<div class="apply-card-avatar">👤</div>' +
+                        '<div>' +
+                        '<div class="apply-card-name">' + (item.receiver.name || '匿名同学') + '</div>' +
+                        '<div class="apply-card-id">' + (item.receiver.studentId || '') + ' · ' + (item.receiver.college || '') + '</div>' +
                         '</div>' +
-                        '</div>' : '') +
-                    extraInfo +
-                    '<div class="record-actions">' + actions + '</div>' +
-                    '</div>';
-            }).join('');
+                        '</div>' +
+                        '<div class="apply-card-time">' + formatDate(item.receiveTime) + '</div>' +
+                        '</div>' +
+                        '<div class="apply-card-reason-label">申请理由：</div>' +
+                        '<div class="apply-card-reason">' + (item.receiveReason || '希望接收此物品') + '</div>' +
+                        '<div class="apply-card-actions">' +
+                        '<button class="apply-card-btn apply-card-btn-reject" onclick="rejectApplicant(\'' + item.id + '\')">婉拒</button>' +
+                        '<button class="apply-card-btn apply-card-btn-accept" onclick="acceptApplicant(\'' + item.id + '\')">✓ 同意转赠</button>' +
+                        '</div>' +
+                        '</div>';
+                }).join('');
+            } else {
+                // 我发布的和我接收的显示记录卡片
+                recordList.innerHTML = filtered.map(function(item) {
+                    var badgeClass = 'badge-' + item.status;
+                    var statusName = STATUS_NAMES[item.status];
+                    
+                    var actions = '';
+                    if (currentTab === 'published') {
+                        if (item.status === 'pending') {
+                            actions = '<span style="color: #888; font-size: 0.85rem;">等待爱心人士申请...</span>';
+                        } else if (item.status === 'receiving' && item.receiver) {
+                            // 有待审核的申请
+                            actions = '<button class="record-btn record-btn-primary" onclick="showPendingApplicants(\'' + item.id + '\')">📋 查看申请 (' + (item.receiver ? '1' : '0') + ')</button>';
+                        } else if (item.status === 'completed') {
+                            actions = 
+                                '<button class="record-btn record-btn-primary" onclick="showCertificate(\'' + item.id + '\')">📜 公益证明</button>';
+                        }
+                    } else {
+                        if (item.status === 'receiving') {
+                            if (item.rejected) {
+                                actions = '<span style="color: #EF4444; font-size: 0.85rem;">很遗憾，申请被婉拒了</span>';
+                            } else {
+                                actions = '<span style="color: #1565c0; font-size: 0.85rem;">等待发布者确认...</span>';
+                            }
+                        } else if (item.status === 'completed') {
+                            if (item.feedback) {
+                                actions = '<span style="color: #888; font-size: 0.85rem;">已填写反馈</span>';
+                            } else {
+                                actions = '<button class="record-btn record-btn-primary" onclick="showFeedback(\'' + item.id + '\')">💬 填写反馈</button>';
+                            }
+                            actions += ' <button class="record-btn record-btn-secondary" onclick="showCertificate(\'' + item.id + '\')">📜 公益证明</button>';
+                        }
+                    }
+                    
+                    var extraInfo = '';
+                    if (item.status === 'completed' && item.feedback) {
+                        extraInfo = '<div class="feedback-info">' +
+                            '<div class="feedback-info-title">💬 使用反馈</div>' +
+                            '<div class="feedback-info-content">' + item.feedback + '</div>' +
+                            '</div>';
+                    }
+                    
+                    return '<div class="record-card" data-id="' + item.id + '">' +
+                        '<div class="record-header">' +
+                        '<div class="record-title">' + item.itemName + ' <span class="record-badge ' + badgeClass + '">' + statusName + '</span></div>' +
+                        '<div class="record-time">' + formatDate(item.publishTime) + '</div>' +
+                        '</div>' +
+                        '<div class="record-info">' +
+                        '<span>🎯 ' + TARGET_NAMES[item.targetType] + '</span>' +
+                        '<span>📦 ' + item.category + '</span>' +
+                        '</div>' +
+                        '<div class="record-desc">' + item.description + '</div>' +
+                        (item.receiver && currentTab === 'published' && item.status !== 'pending' ? 
+                            '<div class="receiver-info">' +
+                            '<div class="receiver-info-title">🎁 接收方</div>' +
+                            '<div class="receiver-info-content">' + 
+                            (item.receiver.name || '匿名同学') + ' · ' + 
+                            (item.receiveReason || '希望接收此物品') + 
+                            '</div>' +
+                            '</div>' : '') +
+                        extraInfo +
+                        '<div class="record-actions">' + actions + '</div>' +
+                        '</div>';
+                }).join('');
+            }
         }
         
         // ========== 绑定事件 ==========
@@ -891,6 +1151,21 @@
             });
             
             document.getElementById('feedbackModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+            
+            // 拒绝弹窗
+            document.getElementById('rejectCancel').addEventListener('click', function() {
+                document.getElementById('rejectModal').classList.remove('active');
+            });
+            
+            document.getElementById('rejectConfirm').addEventListener('click', function() {
+                confirmReject();
+            });
+            
+            document.getElementById('rejectModal').addEventListener('click', function(e) {
                 if (e.target === this) {
                     this.classList.remove('active');
                 }
@@ -988,17 +1263,72 @@
             console.log('[HNAU Carbon] 已同步公益转赠碳减排 +' + carbonValue + 'kg');
         }
         
-        // ========== 显示接收方信息 ==========
-        window.showReceiver = function(id) {
+        // ========== 同意申请 ==========
+        window.acceptApplicant = function(id) {
             var list = getDonationList();
             var item = list.find(function(i) { return i.id === id; });
-            if (!item || !item.receiver) return;
+            if (!item) return;
             
-            alert('🎁 申请者信息\n\n' +
-                '姓名：' + (item.receiver.name || '匿名同学') + '\n' +
-                '学院：' + (item.receiver.college || '未填写') + '\n\n' +
-                '申请理由：\n' + (item.receiveReason || '希望接收此物品') + '\n\n' +
-                '申请时间：' + formatDate(item.receiveTime));
+            currentItem = item;
+            
+            if (confirm('确定要将「' + item.itemName + '」转赠给 ' + (item.receiver ? item.receiver.name : '该同学') + ' 吗？\n\n确认后，物品将正式转赠成功！')) {
+                // 完成转赠
+                list = list.map(function(i) {
+                    if (i.id === id) {
+                        i.status = 'completed';
+                        i.confirmTime = new Date().toISOString();
+                        // 同步到碳足迹模块
+                        syncToCarbon(i);
+                    }
+                    return i;
+                });
+                
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+                
+                alert('🎉 转赠成功！\n\n感谢您的爱心，让闲置继续传递温暖！\n\n已自动同步到您的碳足迹记录~');
+                
+                updateStats();
+                updatePendingBadge();
+                renderList();
+            }
+        };
+        
+        // ========== 拒绝申请 ==========
+        window.rejectApplicant = function(id) {
+            var list = getDonationList();
+            var item = list.find(function(i) { return i.id === id; });
+            if (!item) return;
+            
+            currentItem = item;
+            document.getElementById('rejectReason').value = '';
+            document.getElementById('rejectModal').classList.add('active');
+        };
+        
+        function confirmReject() {
+            var reason = document.getElementById('rejectReason').value.trim();
+            var list = getDonationList();
+            
+            list = list.map(function(item) {
+                if (item.id === currentItem.id) {
+                    item.rejected = true;
+                    item.rejectReason = reason || '暂无说明';
+                    item.rejectTime = new Date().toISOString();
+                    // 清除接收者信息，让物品恢复待申请状态
+                    item.receiver = null;
+                    item.receiveReason = null;
+                    item.status = 'pending';
+                }
+                return item;
+            });
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+            document.getElementById('rejectModal').classList.remove('active');
+            
+            alert('已婉拒该申请\n\n物品已恢复为待申请状态，其他爱心同学仍可申请~');
+            
+            updateStats();
+            updatePendingBadge();
+            renderList();
         };
         
         // ========== 显示反馈弹窗 ==========

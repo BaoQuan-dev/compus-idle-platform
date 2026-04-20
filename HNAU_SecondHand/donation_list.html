@@ -256,6 +256,10 @@
             cursor: not-allowed;
         }
         
+        .donation-card-action.applied {
+            background: linear-gradient(135deg, #1565c0, #1976d2);
+        }
+        
         /* 空状态 */
         .empty-state {
             text-align: center;
@@ -713,9 +717,17 @@
         // ========== 状态名称 ==========
         var STATUS_NAMES = {
             pending: '待转赠',
-            receiving: '可申请',
+            receiving: '待确认',
             completed: '已完成',
-            cancelled: '已取消'
+            rejected: '已婉拒'
+        };
+        
+        // ========== 申请状态名称 ==========
+        var APPLY_STATUS_NAMES = {
+            none: '未申请',
+            pending: '等待确认',
+            accepted: '已同意',
+            rejected: '已婉拒'
         };
         
         // ========== 分类图标 ==========
@@ -788,8 +800,30 @@
                     : (CATEGORY_ICONS[item.category] || '📦');
                 var statusClass = 'status-' + item.status;
                 var isOwn = item.publisher && item.publisher.id === currentUser.id;
-                var btnText = isOwn ? '我的发布' : (item.status === 'completed' ? '已完成' : '申请接收');
-                var btnDisabled = isOwn || item.status === 'completed' ? 'disabled' : '';
+                
+                // 获取申请状态
+                var applyStatus = getMyApplyStatus(item);
+                var btnText, btnDisabled;
+                
+                if (isOwn) {
+                    btnText = '我的发布';
+                    btnDisabled = 'disabled';
+                } else if (item.status === 'completed') {
+                    btnText = '已完成';
+                    btnDisabled = 'disabled';
+                } else if (applyStatus === 'pending') {
+                    btnText = '等待确认';
+                    btnDisabled = 'disabled';
+                } else if (applyStatus === 'accepted') {
+                    btnText = '已获得';
+                    btnDisabled = 'disabled';
+                } else if (applyStatus === 'rejected') {
+                    btnText = '已婉拒(可重试)';
+                    btnDisabled = '';
+                } else {
+                    btnText = '申请接收';
+                    btnDisabled = '';
+                }
                 
                 return '<div class="donation-card" data-id="' + item.id + '">' +
                     '<div class="donation-card-image">' +
@@ -805,7 +839,7 @@
                     '<div class="donation-card-target">' + TARGET_NAMES[item.targetType] + '</div>' +
                     '<div class="donation-card-footer">' +
                     '<span class="donation-card-publisher">查看详情</span>' +
-                    '<button class="donation-card-action" ' + btnDisabled + '>' + btnText + '</button>' +
+                    '<button class="donation-card-action ' + (applyStatus === 'pending' || applyStatus === 'accepted' ? 'applied' : '') + '" ' + btnDisabled + '>' + btnText + '</button>' +
                     '</div>' +
                     '</div>' +
                     '</div>';
@@ -902,13 +936,28 @@
             var applyBtn = document.getElementById('applyBtn');
             var currentUser = getCurrentUser();
             var isOwn = currentItem.publisher && currentItem.publisher.id === currentUser.id;
+            var applyStatus = getMyApplyStatus(currentItem);
             
             if (isOwn) {
                 applyBtn.textContent = '这是您发布的';
                 applyBtn.disabled = true;
             } else if (currentItem.status === 'completed') {
-                applyBtn.textContent = '已被接收';
+                if (currentItem.receiver && currentItem.receiver.id === currentUser.id) {
+                    applyBtn.textContent = '✓ 您已获得此物品';
+                    applyBtn.disabled = true;
+                } else {
+                    applyBtn.textContent = '已被其他同学接收';
+                    applyBtn.disabled = true;
+                }
+            } else if (applyStatus === 'pending') {
+                applyBtn.textContent = '⏳ 等待发布者确认...';
                 applyBtn.disabled = true;
+            } else if (applyStatus === 'accepted') {
+                applyBtn.textContent = '✓ 恭喜！您已获得此物品';
+                applyBtn.disabled = true;
+            } else if (applyStatus === 'rejected') {
+                applyBtn.textContent = '↻ 重新申请';
+                applyBtn.disabled = false;
             } else {
                 applyBtn.textContent = '🌱 申请接收';
                 applyBtn.disabled = false;
@@ -968,6 +1017,31 @@
                 studentId: '2024****',
                 college: '爱心学院'
             };
+        }
+        
+        // ========== 获取我的申请状态 ==========
+        function getMyApplyStatus(item) {
+            var currentUser = getCurrentUser();
+            
+            if (item.status === 'pending') {
+                return 'none';
+            }
+            
+            if (item.status === 'receiving') {
+                if (item.receiver && item.receiver.id === currentUser.id) {
+                    if (item.rejected) {
+                        return 'rejected';
+                    }
+                    return 'pending';
+                }
+                return 'none';
+            }
+            
+            if (item.status === 'completed' && item.receiver && item.receiver.id === currentUser.id) {
+                return 'accepted';
+            }
+            
+            return 'none';
         }
         
         // ========== 格式化时间 ==========
