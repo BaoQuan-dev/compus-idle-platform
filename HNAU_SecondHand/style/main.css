@@ -2316,4 +2316,282 @@ body {
 .badge-warning {
     background: var(--warning-color);
 }
+
+/* ================================================
+   移动端安全区域适配 - 解决汉堡导航遮挡问题
+   ================================================ */
+
+/* 基础安全区域变量 */
+:root {
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-left: env(safe-area-inset-left, 0px);
+    --safe-area-right: env(safe-area-inset-right, 0px);
 }
+
+/* 全局盒模型优化 */
+html, body {
+    /* iOS 11.0-11.1 需要 */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+}
+
+/* 确保固定定位元素正确处理安全区域 */
+body {
+    min-height: 100vh;
+    /* iOS 11.2+ 使用 */
+    min-height: -webkit-fill-available;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* 导航栏 - 顶部安全区域 */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+    /* 适配刘海屏 */
+    padding-top: var(--safe-area-top);
+    /* 确保不被任何元素遮挡 */
+    isolation: isolate;
+}
+
+/* 导航栏汉堡菜单按钮 - 优化点击区域 */
+.navbar-hamburger {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    padding: 12px !important;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10001;
+    /* 点击区域扩展 */
+    margin: -8px;
+    padding: 8px !important;
+    box-sizing: content-box;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+}
+
+/* 汉堡菜单三横线 */
+.navbar-hamburger-line {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background-color: #333;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+/* 汉堡菜单激活状态 */
+.navbar-hamburger.active .navbar-hamburger-line:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.navbar-hamburger.active .navbar-hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.navbar-hamburger.active .navbar-hamburger-line:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* 移动端菜单 - 固定定位在最顶层 */
+.navbar-mobile-menu {
+    position: fixed !important;
+    top: var(--nav-height) !important;
+    padding-top: var(--safe-area-top) !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: #fff !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+    z-index: 9999 !important;
+    max-height: calc(100vh - var(--nav-height)) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* 移动端菜单项 - 优化触摸区域 */
+.navbar-mobile-menu a,
+.navbar-mobile-menu-item {
+    display: block;
+    padding: 16px 20px !important;
+    min-height: 48px !important;
+    line-height: 1.4 !important;
+    font-size: 16px !important;
+    -webkit-tap-highlight-color: rgba(16, 185, 129, 0.1) !important;
+    /* 确保足够大的点击区域 */
+    margin: 0 !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+
+/* 移动端菜单项点击效果 */
+.navbar-mobile-menu a:active,
+.navbar-mobile-menu-item:active {
+    background-color: rgba(16, 185, 129, 0.08) !important;
+}
+
+/* 底部固定元素 - 安全区域适配 */
+.footer-fixed,
+.bottom-nav,
+.tab-bar-fixed,
+.bottom-bar {
+    position: fixed !important;
+    bottom: 0 !important;
+    padding-bottom: var(--safe-area-bottom) !important;
+    z-index: 9998 !important;
+}
+
+/* 主内容区域 - 防止被导航遮挡 */
+.main-content,
+.page-content,
+.container {
+    padding-top: calc(var(--nav-height) + var(--safe-area-top, 0px)) !important;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* ================================================
+   微信/QQ/浏览器兼容性优化
+   ================================================ */
+
+/* 微信浏览器平滑滚动 */
+html {
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+}
+
+/* 禁用双击缩放 */
+* {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 图片禁止长按保存 */
+img {
+    -webkit-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* 按钮点击效果优化 */
+button, 
+.btn,
+.navbar-hamburger,
+.navbar-mobile-menu-item {
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 0;
+}
+
+/* 移动端输入框焦点优化 */
+input, textarea, select {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+}
+
+/* 防止iOS输入框被键盘遮挡 */
+@media (max-height: 500px) {
+    .navbar {
+        position: relative !important;
+    }
+    
+    .navbar-mobile-menu {
+        position: relative !important;
+        max-height: none !important;
+    }
+}
+
+/* ================================================
+   响应式布局优化
+   ================================================ */
+
+@media (max-width: 768px) {
+    /* 确保汉堡菜单在所有情况下可见 */
+    .navbar {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+    
+    .navbar-container {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+    
+    .navbar-brand {
+        flex: 1 !important;
+        min-width: 0 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+    }
+    
+    .navbar-brand span {
+        display: inline-block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    /* 隐藏PC端菜单 */
+    .navbar-menu {
+        display: none !important;
+    }
+    
+    /* 显示汉堡按钮 */
+    .navbar-hamburger {
+        display: flex !important;
+    }
+}
+
+/* ================================================
+   修复iOS 11.x 安全区域
+   ================================================ */
+
+@supports (padding: max(0px)) {
+    .navbar {
+        padding-top: max(0px, env(safe-area-inset-top));
+    }
+    
+    .navbar-mobile-menu {
+        padding-top: max(var(--nav-height), env(safe-area-inset-top));
+    }
+    
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+}
+
+/* ================================================
+   动画优化 - 减少重排重绘
+   ================================================ */
+
+.navbar-hamburger span {
+    will-change: transform, opacity;
+}
+
+.navbar-mobile-menu {
+    will-change: transform, opacity;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
