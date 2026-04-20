@@ -804,7 +804,7 @@
         // ===== 粒子系统 =====
         function createParticles() {
             var geo = new THREE.BufferGeometry();
-            var count = 60;  // 轻量化粒子数
+            var count = 80;  // 粒子数量
             var positions = new Float32Array(count * 3);
             var colors = new Float32Array(count * 3);
             
@@ -836,10 +836,10 @@
         function updateParticles(time) {
             if (!particles) return;
             var positions = particles.geometry.attributes.position.array;
-            var targetOpacity = isHover ? 0.7 : 0;
+            var targetOpacity = isHover ? 1 : 0;
             
             // 渐变过渡
-            particles.material.opacity += (targetOpacity - particles.material.opacity) * 0.08;
+            particles.material.opacity += (targetOpacity - particles.material.opacity) * 0.06;
             
             // 粒子漂浮
             for (var i = 0; i < positions.length / 3; i++) {
@@ -861,15 +861,15 @@
         
         // ===== 发光效果更新 =====
         function updateGlow(time) {
-            var baseGlow = 0.3;
-            var hoverBoost = isHover ? 0.5 : 0;
+            var baseGlow = 0.35;
+            var hoverBoost = isHover ? 0.55 : 0;
             var clickBoost = clickGlow;
             
             // 目标亮度
             targetGlow = baseGlow + hoverBoost + clickBoost;
             
             // 平滑过渡
-            glowIntensity += (targetGlow - glowIntensity) * 0.1;
+            glowIntensity += (targetGlow - glowIntensity) * 0.08;
             
             // 点击亮度衰减
             if (clickGlow > 0) {
@@ -947,18 +947,18 @@
             var time = Date.now();
             
             if (catGroup) {
-                // 鼠标跟随 - 平滑转头
+                // 鼠标跟随 - 增强灵敏度
                 if (isHover) {
-                    targetRotY = mouseX * 0.4;
-                    targetRotX = mouseY * 0.25;
+                    targetRotY = mouseX * 0.6;
+                    targetRotX = mouseY * 0.35;
                 } else {
-                    targetRotY = Math.sin(time * 0.001) * 0.08;
+                    targetRotY = Math.sin(time * 0.001) * 0.1;
                     targetRotX = 0;
                 }
                 
-                // 平滑旋转插值
-                currentRotY += (targetRotY - currentRotY) * 0.08;
-                currentRotX += (targetRotX - currentRotX) * 0.08;
+                // 平滑旋转插值（加快响应速度）
+                currentRotY += (targetRotY - currentRotY) * 0.12;
+                currentRotX += (targetRotX - currentRotX) * 0.12;
                 catGroup.rotation.y = currentRotY;
                 catGroup.rotation.x = currentRotX;
                 
@@ -999,23 +999,25 @@
         }
         
         // ===== 事件 =====
-        box.addEventListener('mouseenter', function() {
-            isHover = true;
-            targetGlow = 0.8;  // 悬浮时光晕增强
-            document.addEventListener('mousemove', onMouseMove);
-        });
-        
-        box.addEventListener('mouseleave', function() {
-            isHover = false;
-            targetGlow = 0.3;  // 恢复基础亮度
-            document.removeEventListener('mousemove', onMouseMove);
-        });
-        
         function onMouseMove(e) {
             var rect = box.getBoundingClientRect();
             mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
             mouseY = -((e.clientY - rect.top) / rect.height - 0.5) * 2;
         }
+        
+        box.addEventListener('mouseenter', function() {
+            isHover = true;
+            targetGlow = 0.8;
+        });
+        
+        box.addEventListener('mousemove', onMouseMove);
+        
+        box.addEventListener('mouseleave', function() {
+            isHover = false;
+            targetGlow = 0.3;
+            mouseX = 0;
+            mouseY = 0;
+        });
         
         box.addEventListener('click', function() {
             // 点击反馈
