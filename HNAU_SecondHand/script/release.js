@@ -593,7 +593,17 @@ const ReleaseModule = {
             // 保存商品
             const goods = Auth.getGoods();
             goods.unshift(goodsInfo);
-            Storage.set(Auth.KEYS.GOODS, goods);
+            const saveSuccess = Storage.set(Auth.KEYS.GOODS, goods);
+            
+            // 【修复】检查存储是否成功
+            if (!saveSuccess) {
+                // 存储失败，恢复按钮状态
+                this.state.isSubmitting = false;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.textContent = '发布商品';
+                return;  // 停止后续操作
+            }
 
             // 记录碳足迹（发布商品奖励）
             if (window.HNAU_Carbon) {
