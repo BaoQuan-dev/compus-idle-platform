@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布公益转赠 - 农大闲置</title>
+    <link rel="stylesheet" href="./style/main.css">
+    <style>
+        /* ========== 公益转赠发布页样式 ========== */
+        body {
+            background: linear-gradient(135deg, #f0f9f0, #e8f5e9);
+            min-height: 100vh;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+            color: #fff;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .page-header h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.6rem;
+        }
+        
+        .page-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+        
+        .donation-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 16px 40px;
+        }
+        
+        .donation-form {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .form-section {
+            margin-bottom: 24px;
+        }
+        
+        .form-section-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #c8e6c9;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 6px;
+        }
+        
+        .form-label .required {
+            color: #f44336;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e8f5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #43a047;
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-hint {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 4px;
+        }
+        
+        .donation-target-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        
+        .target-option {
+            position: relative;
+        }
+        
+        .target-option input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .target-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 10px;
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .target-option input:checked + label {
+            background: #e8f5e9;
+            border-color: #43a047;
+            color: #2e7d32;
+        }
+        
+        .target-option label:hover {
+            border-color: #a5d6a7;
+        }
+        
+        .target-icon {
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+        }
+        
+        .target-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        
+        .price-display {
+            background: #e8f5e9;
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px dashed #43a047;
+        }
+        
+        .price-display .price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+        
+        .price-display .price-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        .image-upload-area {
+            border: 2px dashed #c8e6c9;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #fafafa;
+        }
+        
+        .image-upload-area:hover {
+            border-color: #43a047;
+            background: #f5f5f5;
+        }
+        
+        .image-upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .image-upload-text {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        .image-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 16px;
+        }
+        
+        .image-preview {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+        
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 160, 71, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .charity-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 480px) {
+            .donation-target-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .image-preview-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="home.html" class="navbar-logo">
+                <span class="logo-icon">🌱</span>
+                <span class="logo-text">农大闲置</span>
+            </a>
+            <ul class="navbar-menu">
+                <li class="navbar-menu-item">
+                    <a href="home.html" class="navbar-menu-link">首页</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="release_goods.html" class="navbar-menu-link">发布闲置</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="stu_check.html" class="navbar-menu-link">校园认证</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="user_center.html" class="navbar-menu-link">个人中心</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="carbon_ai.html" class="navbar-menu-link">🤖 碳足迹AI助手</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="donation_list.html" class="navbar-menu-link active">🌱 公益转赠通道</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="manage_admin.html" class="navbar-menu-link">管理员</a>
+                </li>
+            </ul>
+            <button class="navbar-toggle" id="navbarToggle">☰</button>
+        </div>
+        <div class="navbar-mobile-menu" id="mobileMenu">
+            <a href="home.html" class="navbar-mobile-menu-item">首页</a>
+            <a href="release_goods.html" class="navbar-mobile-menu-item">发布闲置</a>
+            <a href="stu_check.html" class="navbar-mobile-menu-item">校园认证</a>
+            <a href="user_center.html" class="navbar-mobile-menu-item">个人中心</a>
+            <a href="carbon_ai.html" class="navbar-mobile-menu-item">🤖 碳足迹AI助手</a>
+            <a href="donation_list.html" class="navbar-mobile-menu-item active">🌱 公益转赠通道</a>
+            <a href="manage_admin.html" class="navbar-mobile-menu-item">管理员</a>
+        </div>
+    </nav>
+    
+    <!-- 页面头部 -->
+    <div class="page-header">
+        <h1>🌱 发布公益转赠</h1>
+        <p>让闲置物品继续传递温暖与价值</p>
+    </div>
+    
+    <!-- 发布表单 -->
+    <div class="donation-container">
+        <form class="donation-form" id="donationForm">
+            <!-- 基本信息 -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <span class="charity-badge">📋</span> 基本信息
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        转赠物品名称 <span class="required">*</span>
+                    </label>
+                    <input type="text" class="form-input" id="itemName" placeholder="请输入物品名称" required maxlength="50">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        物品分类 <span class="required">*</span>
+                    </label>
+                    <select class="form-select" id="category" required>
+                        <option value="">请选择分类</option>
+                        <option value="教材">📚 教材图书</option>
+                        <option value="电子产品">📱 电子产品</option>
+                        <option value="衣物">👕 衣物鞋帽</option>
+                        <option value="日用品">🧸 生活用品</option>
+                        <option value="运动">⚽ 运动用品</option>
+                        <option value="文具">✏️ 文具办公</option>
+                        <option value="其他">📦 其他物品</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- 转赠对象 -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <span class="charity-badge">🎯</span> 转赠对象
+                </div>
+                
+                <div class="donation-target-grid">
+                    <div class="target-option">
+                        <input type="radio" name="targetType" id="targetClub" value="club" required>
+                        <label for="targetClub">
+                            <span class="target-icon">🏛️</span>
+                            <span class="target-name">公益社团</span>
+                        </label>
+                    </div>
+                    <div class="target-option">
+                        <input type="radio" name="targetType" id="targetWork" value="work">
+                        <label for="targetWork">
+                            <span class="target-icon">💼</span>
+                            <span class="target-name">勤工助学点</span>
+                        </label>
+                    </div>
+                    <div class="target-option">
+                        <input type="radio" name="targetType" id="targetPersonal" value="personal">
+                        <label for="targetPersonal">
+                            <span class="target-icon">👤</span>
+                            <span class="target-name">个人定向</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-top: 16px;">
+                    <label class="form-label">
+                        转赠说明 <span class="required">*</span>
+                    </label>
+                    <textarea class="form-textarea" id="description" placeholder="请描述物品的使用状况、转赠原因或对接收者的期望..." required maxlength="500"></textarea>
+                    <div class="form-hint">建议包含：物品新旧程度、功能完好情况、使用建议等</div>
+                </div>
+            </div>
+            
+            <!-- 价格提示 -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <span class="charity-badge">💚</span> 转赠价格
+                </div>
+                <div class="price-display">
+                    <div class="price">¥0.00</div>
+                    <div class="price-label">公益转赠，无需支付 · 爱心传递</div>
+                </div>
+            </div>
+            
+            <!-- 图片上传 -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <span class="charity-badge">📷</span> 物品图片
+                </div>
+                <div class="image-upload-area" id="imageUploadArea">
+                    <div class="image-upload-icon">📷</div>
+                    <div class="image-upload-text">点击上传物品图片（最多4张）</div>
+                </div>
+                <input type="file" id="imageInput" accept="image/*" multiple style="display: none;">
+                <div class="image-preview-grid" id="imagePreview"></div>
+            </div>
+            
+            <!-- 提交按钮 -->
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span>🌱</span>
+                <span>发布公益转赠</span>
+            </button>
+        </form>
+    </div>
+    
+    <!-- 成功弹窗 -->
+    <div class="hnau-modal-overlay" id="successModal">
+        <div class="hnau-modal">
+            <div class="hnau-modal-icon" style="text-align: center; font-size: 3rem; margin-bottom: 16px;">🎉</div>
+            <div class="hnau-modal-header" style="text-align: center;">发布成功</div>
+            <div class="hnau-modal-content" style="text-align: center;">
+                您的公益转赠已发布！<br>
+                感谢您的爱心，让闲置继续传递温暖 🌱
+            </div>
+            <div class="hnau-modal-footer">
+                <button class="hnau-modal-btn" id="successBtn">查看我的转赠</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 弹窗样式（内联） -->
+    <style>
+        .hnau-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .hnau-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .hnau-modal {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 320px;
+            width: 90%;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+        
+        .hnau-modal-overlay.active .hnau-modal {
+            transform: translateY(0);
+        }
+        
+        .hnau-modal-header {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 16px;
+        }
+        
+        .hnau-modal-content {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        
+        .hnau-modal-footer {
+            text-align: center;
+        }
+        
+        .hnau-modal-btn {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: #fff;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .hnau-modal-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
+        }
+    </style>
+    
+    <script>
+    (function() {
+        'use strict';
+        
+        // ========== 公益转赠存储键 ==========
+        var STORAGE_KEY = 'hnau_donation_list';
+        var USER_KEY = 'hnau_current_user';
+        
+        // ========== DOM ==========
+        var form = document.getElementById('donationForm');
+        var imageUploadArea = document.getElementById('imageUploadArea');
+        var imageInput = document.getElementById('imageInput');
+        var imagePreview = document.getElementById('imagePreview');
+        var submitBtn = document.getElementById('submitBtn');
+        var successModal = document.getElementById('successModal');
+        var successBtn = document.getElementById('successBtn');
+        
+        // ========== 图片预览 ==========
+        var uploadedImages = [];
+        
+        imageUploadArea.addEventListener('click', function() {
+            imageInput.click();
+        });
+        
+        imageInput.addEventListener('change', function(e) {
+            var files = Array.from(e.target.files);
+            if (uploadedImages.length + files.length > 4) {
+                alert('最多只能上传4张图片');
+                return;
+            }
+            
+            files.forEach(function(file) {
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    uploadedImages.push(event.target.result);
+                    renderImagePreviews();
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+        
+        function renderImagePreviews() {
+            imagePreview.innerHTML = uploadedImages.map(function(img, index) {
+                return '<div class="image-preview">' +
+                       '<img src="' + img + '" alt="预览' + (index + 1) + '">' +
+                       '</div>';
+            }).join('');
+        }
+        
+        // ========== 表单提交 ==========
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 获取表单数据
+            var formData = {
+                id: 'D' + Date.now(),
+                itemName: document.getElementById('itemName').value.trim(),
+                category: document.getElementById('category').value,
+                targetType: document.querySelector('input[name="targetType"]:checked')?.value,
+                description: document.getElementById('description').value.trim(),
+                images: uploadedImages,
+                price: 0,
+                status: 'pending', // pending | receiving | completed | cancelled
+                publishTime: new Date().toISOString(),
+                publisher: getCurrentUser(),
+                receiver: null,
+                confirmTime: null,
+                feedback: null
+            };
+            
+            // 验证
+            if (!formData.targetType) {
+                alert('请选择转赠对象类型');
+                return;
+            }
+            
+            // 保存到localStorage
+            var list = getDonationList();
+            list.unshift(formData);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+            
+            // 显示成功弹窗
+            successModal.classList.add('active');
+            
+            // 禁用按钮
+            submitBtn.disabled = true;
+        });
+        
+        // ========== 成功弹窗 ==========
+        successBtn.addEventListener('click', function() {
+            window.location.href = 'donation_my.html';
+        });
+        
+        // ========== 获取当前用户 ==========
+        function getCurrentUser() {
+            var userStr = localStorage.getItem(USER_KEY);
+            if (userStr) {
+                return JSON.parse(userStr);
+            }
+            // 模拟用户数据
+            return {
+                id: 'user_' + Date.now(),
+                name: '爱心同学',
+                studentId: '2024****',
+                college: '爱心学院'
+            };
+        }
+        
+        // ========== 获取转赠列表 ==========
+        function getDonationList() {
+            var listStr = localStorage.getItem(STORAGE_KEY);
+            return listStr ? JSON.parse(listStr) : [];
+        }
+        
+        // ========== 移动端菜单 ==========
+        document.getElementById('navbarToggle').addEventListener('click', function() {
+            var menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        });
+        
+        console.log('[HNAU Donation] 公益转赠发布页已加载');
+    })();
+    </script>
+</body>
+</html>

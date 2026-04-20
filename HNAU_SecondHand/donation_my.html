@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的公益转赠 - 农大闲置</title>
+    <link rel="stylesheet" href="./style/main.css">
+    <style>
+        /* ========== 我的公益转赠页样式 ========== */
+        body {
+            background: linear-gradient(135deg, #f0f9f0, #e8f5e9);
+            min-height: 100vh;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+            color: #fff;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .page-header h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.5rem;
+        }
+        
+        .page-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .page-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+        
+        /* 统计卡片 */
+        .stats-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .stats-card-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        
+        .stats-item {
+            text-align: center;
+            padding: 12px;
+            background: #f5f5f5;
+            border-radius: 12px;
+        }
+        
+        .stats-item-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+        
+        .stats-item-label {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 4px;
+        }
+        
+        /* Tab切换 */
+        .tab-bar {
+            display: flex;
+            background: #fff;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .tab-item {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .tab-item.active {
+            background: #2e7d32;
+            color: #fff;
+        }
+        
+        /* 转赠记录列表 */
+        .record-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .record-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            transition: all 0.2s;
+        }
+        
+        .record-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+        
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .record-title {
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .record-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: normal;
+        }
+        
+        .badge-pending {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        
+        .badge-receiving {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .badge-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .record-time {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .record-info {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .record-info span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .record-desc {
+            font-size: 0.9rem;
+            color: #888;
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+        
+        .record-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .record-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .record-btn-primary {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: #fff;
+        }
+        
+        .record-btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+        
+        .record-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        /* 接收方信息 */
+        .receiver-info {
+            background: #e8f5e9;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .receiver-info-title {
+            font-size: 0.85rem;
+            color: #2e7d32;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .receiver-info-content {
+            font-size: 0.9rem;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* 反馈信息 */
+        .feedback-info {
+            background: #fff3e0;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .feedback-info-title {
+            font-size: 0.85rem;
+            color: #e65100;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .feedback-info-content {
+            font-size: 0.9rem;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: #fff;
+            border-radius: 16px;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+        
+        .empty-text {
+            color: #888;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        
+        /* 公益证明弹窗 */
+        .certificate-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .certificate-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .certificate-content {
+            background: #fff;
+            border-radius: 16px;
+            max-width: 450px;
+            width: 95%;
+            max-height: 85vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        
+        .certificate-modal.active .certificate-content {
+            transform: translateY(0);
+        }
+        
+        .certificate-header {
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .certificate-header h3 {
+            margin: 0 0 4px 0;
+            font-size: 1.2rem;
+        }
+        
+        .certificate-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.85rem;
+        }
+        
+        .certificate-body {
+            padding: 20px;
+        }
+        
+        .certificate-text {
+            background: #f9f9f9;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: #333;
+            white-space: pre-wrap;
+            margin-bottom: 16px;
+        }
+        
+        .certificate-btns {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .certificate-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        
+        .certificate-btn-copy {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: #fff;
+        }
+        
+        .certificate-btn-close {
+            background: #f5f5f5;
+            color: #666;
+        }
+        
+        /* 确认转赠弹窗 */
+        .confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 11000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .confirm-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .confirm-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 380px;
+            width: 90%;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        
+        .confirm-modal.active .confirm-content {
+            transform: translateY(0);
+        }
+        
+        .confirm-icon {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+        
+        .confirm-title {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .confirm-text {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .confirm-btns {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .confirm-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        
+        .confirm-btn-cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+        
+        .confirm-btn-confirm {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: #fff;
+        }
+        
+        /* 反馈弹窗 */
+        .feedback-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 11000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .feedback-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .feedback-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 380px;
+            width: 90%;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        
+        .feedback-modal.active .feedback-content {
+            transform: translateY(0);
+        }
+        
+        .feedback-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        .feedback-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e8f5e9;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            resize: vertical;
+            min-height: 100px;
+            box-sizing: border-box;
+            margin-bottom: 16px;
+        }
+        
+        .feedback-textarea:focus {
+            outline: none;
+            border-color: #43a047;
+        }
+        
+        .feedback-btns {
+            display: flex;
+            gap: 12px;
+        }
+        
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .record-info {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="home.html" class="navbar-logo">
+                <span class="logo-icon">🌱</span>
+                <span class="logo-text">农大闲置</span>
+            </a>
+            <ul class="navbar-menu">
+                <li class="navbar-menu-item">
+                    <a href="home.html" class="navbar-menu-link">首页</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="release_goods.html" class="navbar-menu-link">发布闲置</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="stu_check.html" class="navbar-menu-link">校园认证</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="user_center.html" class="navbar-menu-link">个人中心</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="carbon_ai.html" class="navbar-menu-link">🤖 碳足迹AI助手</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="donation_list.html" class="navbar-menu-link active">🌱 公益转赠通道</a>
+                </li>
+                <li class="navbar-menu-item">
+                    <a href="manage_admin.html" class="navbar-menu-link">管理员</a>
+                </li>
+            </ul>
+            <button class="navbar-toggle" id="navbarToggle">☰</button>
+        </div>
+        <div class="navbar-mobile-menu" id="mobileMenu">
+            <a href="home.html" class="navbar-mobile-menu-item">首页</a>
+            <a href="release_goods.html" class="navbar-mobile-menu-item">发布闲置</a>
+            <a href="stu_check.html" class="navbar-mobile-menu-item">校园认证</a>
+            <a href="user_center.html" class="navbar-mobile-menu-item">个人中心</a>
+            <a href="carbon_ai.html" class="navbar-mobile-menu-item">🤖 碳足迹AI助手</a>
+            <a href="donation_list.html" class="navbar-mobile-menu-item active">🌱 公益转赠通道</a>
+            <a href="manage_admin.html" class="navbar-mobile-menu-item">管理员</a>
+        </div>
+    </nav>
+    
+    <!-- 页面头部 -->
+    <div class="page-header">
+        <h1>🌱 我的公益转赠</h1>
+        <p>记录每一份爱心，传递每一份温暖</p>
+    </div>
+    
+    <div class="page-container">
+        <!-- 统计卡片 -->
+        <div class="stats-card">
+            <div class="stats-card-title">
+                <span>📊</span> 公益贡献统计
+            </div>
+            <div class="stats-grid">
+                <div class="stats-item">
+                    <div class="stats-item-value" id="totalPublished">0</div>
+                    <div class="stats-item-label">发布转赠</div>
+                </div>
+                <div class="stats-item">
+                    <div class="stats-item-value" id="totalCompleted">0</div>
+                    <div class="stats-item-label">已完成</div>
+                </div>
+                <div class="stats-item">
+                    <div class="stats-item-value" id="totalReceived">0</div>
+                    <div class="stats-item-label">接收转赠</div>
+                </div>
+                <div class="stats-item">
+                    <div class="stats-item-value" id="charityPoints">0</div>
+                    <div class="stats-item-label">公益积分</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab切换 -->
+        <div class="tab-bar">
+            <div class="tab-item active" data-tab="published">我发布的</div>
+            <div class="tab-item" data-tab="received">我接收的</div>
+        </div>
+        
+        <!-- 记录列表 -->
+        <div class="record-list" id="recordList">
+            <!-- 由JS动态生成 -->
+        </div>
+        
+        <!-- 空状态 -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">🌱</div>
+            <div class="empty-text" id="emptyText">暂无转赠记录</div>
+            <button class="record-btn record-btn-primary" onclick="window.location.href='donation_publish.html'">
+                发布第一份爱心
+            </button>
+        </div>
+    </div>
+    
+    <!-- 公益证明弹窗 -->
+    <div class="certificate-modal" id="certificateModal">
+        <div class="certificate-content">
+            <div class="certificate-header">
+                <h3>🌱 公益转赠证明</h3>
+                <p>河南农业大学闲置交易平台</p>
+            </div>
+            <div class="certificate-body">
+                <div class="certificate-text" id="certificateText"></div>
+                <div class="certificate-btns">
+                    <button class="certificate-btn certificate-btn-copy" id="copyCertificate">复制证明</button>
+                    <button class="certificate-btn certificate-btn-close" id="closeCertificate">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 确认转赠弹窗 -->
+    <div class="confirm-modal" id="confirmModal">
+        <div class="confirm-content">
+            <div class="confirm-icon">🤝</div>
+            <div class="confirm-title">确认转赠</div>
+            <div class="confirm-text" id="confirmText">确定要将此物品转赠给该同学吗？</div>
+            <div class="confirm-btns">
+                <button class="confirm-btn confirm-btn-cancel" id="confirmCancel">取消</button>
+                <button class="confirm-btn confirm-btn-confirm" id="confirmBtn">确认转赠</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 填写反馈弹窗 -->
+    <div class="feedback-modal" id="feedbackModal">
+        <div class="feedback-content">
+            <div class="feedback-title">💬 填写使用反馈</div>
+            <textarea class="feedback-textarea" id="feedbackText" placeholder="感谢您的爱心！请简单说明物品的用途和使用感受~"></textarea>
+            <div class="feedback-btns">
+                <button class="confirm-btn confirm-btn-cancel" id="feedbackCancel">稍后填写</button>
+                <button class="confirm-btn confirm-btn-confirm" id="feedbackSubmit">提交反馈</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    (function() {
+        'use strict';
+        
+        // ========== 存储键 ==========
+        var STORAGE_KEY = 'hnau_donation_list';
+        var USER_KEY = 'hnau_current_user';
+        var CARBON_KEY = 'hnau_carbon_stats';
+        
+        // ========== DOM ==========
+        var recordList = document.getElementById('recordList');
+        var emptyState = document.getElementById('emptyState');
+        var currentTab = 'published';
+        var currentItem = null;
+        
+        // ========== 转赠对象名称 ==========
+        var TARGET_NAMES = {
+            club: '🏛️ 公益社团',
+            work: '💼 勤工助学点',
+            personal: '👤 个人定向'
+        };
+        
+        // ========== 状态名称 ==========
+        var STATUS_NAMES = {
+            pending: '待转赠',
+            receiving: '待确认',
+            completed: '已完成'
+        };
+        
+        // ========== 初始化 ==========
+        function init() {
+            updateStats();
+            renderList();
+            bindEvents();
+            console.log('[HNAU Donation] 我的公益转赠页已加载');
+        }
+        
+        // ========== 更新统计 ==========
+        function updateStats() {
+            var list = getDonationList();
+            var currentUser = getCurrentUser();
+            
+            // 我发布的
+            var published = list.filter(function(item) {
+                return item.publisher && item.publisher.id === currentUser.id;
+            });
+            
+            // 已完成
+            var completed = published.filter(function(item) {
+                return item.status === 'completed';
+            });
+            
+            // 我接收的
+            var received = list.filter(function(item) {
+                return item.receiver && item.receiver.id === currentUser.id;
+            });
+            
+            document.getElementById('totalPublished').textContent = published.length;
+            document.getElementById('totalCompleted').textContent = completed.length;
+            document.getElementById('totalReceived').textContent = received.length;
+            document.getElementById('charityPoints').textContent = completed.length * 50;
+        }
+        
+        // ========== 渲染列表 ==========
+        function renderList() {
+            var list = getDonationList();
+            var currentUser = getCurrentUser();
+            
+            var filtered = list.filter(function(item) {
+                if (currentTab === 'published') {
+                    return item.publisher && item.publisher.id === currentUser.id;
+                } else {
+                    return item.receiver && item.receiver.id === currentUser.id;
+                }
+            });
+            
+            if (filtered.length === 0) {
+                recordList.style.display = 'none';
+                emptyState.style.display = 'block';
+                document.getElementById('emptyText').textContent = 
+                    currentTab === 'published' ? '您还没有发布公益转赠' : '您还没有接收过公益转赠';
+                return;
+            }
+            
+            recordList.style.display = 'flex';
+            emptyState.style.display = 'none';
+            
+            recordList.innerHTML = filtered.map(function(item) {
+                var badgeClass = 'badge-' + item.status;
+                var statusName = STATUS_NAMES[item.status];
+                
+                var actions = '';
+                if (currentTab === 'published') {
+                    if (item.status === 'pending') {
+                        actions = '<span style="color: #888; font-size: 0.85rem;">等待爱心人士申请...</span>';
+                    } else if (item.status === 'receiving' && item.receiver) {
+                        actions = 
+                            '<button class="record-btn record-btn-primary" onclick="confirmTransfer(\'' + item.id + '\')">确认转赠</button>' +
+                            '<button class="record-btn record-btn-secondary" onclick="showReceiver(\'' + item.id + '\')">查看申请</button>';
+                    } else if (item.status === 'completed') {
+                        actions = 
+                            '<button class="record-btn record-btn-primary" onclick="showCertificate(\'' + item.id + '\')">📜 公益证明</button>';
+                    }
+                } else {
+                    if (item.status === 'receiving') {
+                        actions = '<span style="color: #1565c0; font-size: 0.85rem;">等待发布者确认...</span>';
+                    } else if (item.status === 'completed') {
+                        if (item.feedback) {
+                            actions = '<span style="color: #888; font-size: 0.85rem;">已填写反馈</span>';
+                        } else {
+                            actions = '<button class="record-btn record-btn-primary" onclick="showFeedback(\'' + item.id + '\')">💬 填写反馈</button>';
+                        }
+                        actions += ' <button class="record-btn record-btn-secondary" onclick="showCertificate(\'' + item.id + '\')">📜 公益证明</button>';
+                    }
+                }
+                
+                var extraInfo = '';
+                if (item.status === 'completed' && item.feedback) {
+                    extraInfo = '<div class="feedback-info">' +
+                        '<div class="feedback-info-title">💬 使用反馈</div>' +
+                        '<div class="feedback-info-content">' + item.feedback + '</div>' +
+                        '</div>';
+                }
+                
+                return '<div class="record-card" data-id="' + item.id + '">' +
+                    '<div class="record-header">' +
+                    '<div class="record-title">' + item.itemName + ' <span class="record-badge ' + badgeClass + '">' + statusName + '</span></div>' +
+                    '<div class="record-time">' + formatDate(item.publishTime) + '</div>' +
+                    '</div>' +
+                    '<div class="record-info">' +
+                    '<span>🎯 ' + TARGET_NAMES[item.targetType] + '</span>' +
+                    '<span>📦 ' + item.category + '</span>' +
+                    '</div>' +
+                    '<div class="record-desc">' + item.description + '</div>' +
+                    (item.receiver && currentTab === 'published' && item.status !== 'pending' ? 
+                        '<div class="receiver-info">' +
+                        '<div class="receiver-info-title">🎁 接收方</div>' +
+                        '<div class="receiver-info-content">' + 
+                        (item.receiver.name || '匿名同学') + ' · ' + 
+                        (item.receiveReason || '希望接收此物品') + 
+                        '</div>' +
+                        '</div>' : '') +
+                    extraInfo +
+                    '<div class="record-actions">' + actions + '</div>' +
+                    '</div>';
+            }).join('');
+        }
+        
+        // ========== 绑定事件 ==========
+        function bindEvents() {
+            // 移动端菜单
+            document.getElementById('navbarToggle').addEventListener('click', function() {
+                document.getElementById('mobileMenu').classList.toggle('active');
+            });
+            
+            // Tab切换
+            document.querySelectorAll('.tab-item').forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.tab-item').forEach(function(t) {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    currentTab = this.dataset.tab;
+                    renderList();
+                });
+            });
+            
+            // 公益证明弹窗
+            document.getElementById('closeCertificate').addEventListener('click', function() {
+                document.getElementById('certificateModal').classList.remove('active');
+            });
+            
+            document.getElementById('copyCertificate').addEventListener('click', function() {
+                var text = document.getElementById('certificateText').textContent;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text).then(function() {
+                        alert('公益证明已复制到剪贴板！');
+                    });
+                }
+            });
+            
+            document.getElementById('certificateModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+            
+            // 确认弹窗
+            document.getElementById('confirmCancel').addEventListener('click', function() {
+                document.getElementById('confirmModal').classList.remove('active');
+            });
+            
+            document.getElementById('confirmBtn').addEventListener('click', function() {
+                completeTransfer();
+            });
+            
+            document.getElementById('confirmModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+            
+            // 反馈弹窗
+            document.getElementById('feedbackCancel').addEventListener('click', function() {
+                document.getElementById('feedbackModal').classList.remove('active');
+            });
+            
+            document.getElementById('feedbackSubmit').addEventListener('click', function() {
+                submitFeedback();
+            });
+            
+            document.getElementById('feedbackModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        }
+        
+        // ========== 显示公益证明 ==========
+        window.showCertificate = function(id) {
+            var list = getDonationList();
+            var item = list.find(function(i) { return i.id === id; });
+            if (!item) return;
+            
+            var certText = 
+                '═══════════════════════════════════\n' +
+                '       🌱 公益转赠证书 🌱\n' +
+                '═══════════════════════════════════\n\n' +
+                '转赠物品：' + item.itemName + '\n' +
+                '物品种类：' + item.category + '\n' +
+                '转赠对象：' + TARGET_NAMES[item.targetType] + '\n' +
+                '物品描述：' + item.description + '\n\n' +
+                '发布者：' + (item.publisher ? item.publisher.name : '匿名') + '\n' +
+                '发布时间：' + formatDate(item.publishTime) + '\n\n';
+            
+            if (item.receiver) {
+                certText += '接收者：' + (item.receiver.name || '匿名') + '\n';
+            }
+            if (item.confirmTime) {
+                certText += '完成时间：' + formatDate(item.confirmTime) + '\n';
+            }
+            
+            certText += '\n═══════════════════════════════════\n' +
+                '本证书由河南农业大学闲置交易平台\n' +
+                '公益转赠通道自动生成\n' +
+                '查询编号：' + item.id + '\n' +
+                '生成时间：' + formatDate(new Date().toISOString()) + '\n' +
+                '═══════════════════════════════════';
+            
+            document.getElementById('certificateText').textContent = certText;
+            document.getElementById('certificateModal').classList.add('active');
+        };
+        
+        // ========== 确认转赠 ==========
+        window.confirmTransfer = function(id) {
+            var list = getDonationList();
+            var item = list.find(function(i) { return i.id === id; });
+            if (!item) return;
+            
+            currentItem = item;
+            document.getElementById('confirmText').textContent = 
+                '确定要将「' + item.itemName + '」转赠给 ' + (item.receiver ? item.receiver.name : '该同学') + ' 吗？\n\n确认后，物品将正式转赠成功！';
+            document.getElementById('confirmModal').classList.add('active');
+        };
+        
+        function completeTransfer() {
+            var list = getDonationList();
+            
+            list = list.map(function(item) {
+                if (item.id === currentItem.id) {
+                    item.status = 'completed';
+                    item.confirmTime = new Date().toISOString();
+                    
+                    // 同步到碳足迹模块
+                    syncToCarbon(item);
+                }
+                return item;
+            });
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+            document.getElementById('confirmModal').classList.remove('active');
+            
+            alert('🎉 转赠成功！\n\n感谢您的爱心，让闲置继续传递温暖！\n\n已自动同步到您的碳足迹记录~');
+            
+            updateStats();
+            renderList();
+        }
+        
+        // ========== 同步到碳足迹模块 ==========
+        function syncToCarbon(item) {
+            var carbonStats = JSON.parse(localStorage.getItem(CARBON_KEY) || '{"totalSaved":0,"treesEquivalent":0,"totalPoints":0,"itemsSaved":0}');
+            
+            // 转赠增加碳减排量（按物品类型估算）
+            var carbonValue = 5; // 默认5kg CO2
+            if (item.category === '教材') carbonValue = 8;
+            else if (item.category === '电子产品') carbonValue = 15;
+            else if (item.category === '衣物') carbonValue = 6;
+            
+            carbonStats.totalSaved += carbonValue;
+            carbonStats.treesEquivalent = carbonStats.totalSaved / 21; // 每棵树每年吸碳21kg
+            carbonStats.totalPoints += 100; // 转赠积分
+            carbonStats.itemsSaved += 1;
+            
+            // 保存
+            localStorage.setItem(CARBON_KEY, JSON.stringify(carbonStats));
+            
+            console.log('[HNAU Carbon] 已同步公益转赠碳减排 +' + carbonValue + 'kg');
+        }
+        
+        // ========== 显示接收方信息 ==========
+        window.showReceiver = function(id) {
+            var list = getDonationList();
+            var item = list.find(function(i) { return i.id === id; });
+            if (!item || !item.receiver) return;
+            
+            alert('🎁 申请者信息\n\n' +
+                '姓名：' + (item.receiver.name || '匿名同学') + '\n' +
+                '学院：' + (item.receiver.college || '未填写') + '\n\n' +
+                '申请理由：\n' + (item.receiveReason || '希望接收此物品') + '\n\n' +
+                '申请时间：' + formatDate(item.receiveTime));
+        };
+        
+        // ========== 显示反馈弹窗 ==========
+        window.showFeedback = function(id) {
+            var list = getDonationList();
+            var item = list.find(function(i) { return i.id === id; });
+            if (!item) return;
+            
+            currentItem = item;
+            document.getElementById('feedbackText').value = '';
+            document.getElementById('feedbackModal').classList.add('active');
+        };
+        
+        function submitFeedback() {
+            var feedback = document.getElementById('feedbackText').value.trim();
+            
+            var list = getDonationList();
+            list = list.map(function(item) {
+                if (item.id === currentItem.id) {
+                    item.feedback = feedback || '感谢分享！';
+                }
+                return item;
+            });
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+            document.getElementById('feedbackModal').classList.remove('active');
+            
+            alert('感谢您的反馈！🌱\n\n您的使用感受将鼓励更多同学参与公益转赠~');
+            
+            renderList();
+        }
+        
+        // ========== 获取转赠列表 ==========
+        function getDonationList() {
+            var listStr = localStorage.getItem(STORAGE_KEY);
+            return listStr ? JSON.parse(listStr) : [];
+        }
+        
+        // ========== 获取当前用户 ==========
+        function getCurrentUser() {
+            var userStr = localStorage.getItem(USER_KEY);
+            if (userStr) {
+                return JSON.parse(userStr);
+            }
+            return {
+                id: 'user_' + Date.now(),
+                name: '爱心同学',
+                studentId: '2024****',
+                college: '爱心学院'
+            };
+        }
+        
+        // ========== 格式化日期 ==========
+        function formatDate(isoString) {
+            var date = new Date(isoString);
+            return date.getFullYear() + '年' + 
+                   (date.getMonth() + 1) + '月' + 
+                   date.getDate() + '日';
+        }
+        
+        // ========== 启动 ==========
+        init();
+    })();
+    </script>
+</body>
+</html>
