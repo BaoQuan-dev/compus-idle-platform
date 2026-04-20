@@ -363,17 +363,28 @@
         right: 25px;
         width: 200px;
         height: 280px;
-        z-index: 999;
+        z-index: 100;
         pointer-events: auto;
         cursor: pointer;
+        transform-origin: center bottom;
+        transform: translateZ(0);
     ">
         <!-- 气泡层 -->
-        <div id="hnau-cat-bubble" class="hnau-cat-bubble" style="display:none;">
+        <div id="hnau-cat-bubble" class="hnau-cat-bubble" style="display:none; pointer-events: auto;">
             <div class="hnau-cat-bubble-txt"></div>
         </div>
         
-        <!-- Three.js渲染画布 -->
-        <canvas id="hnau-cat-three"></canvas>
+        <!-- Three.js渲染画布 - 设置pointer-events:none让事件穿透 -->
+        <canvas id="hnau-cat-three" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
+        
+        <!-- 透明事件捕获层 - 在canvas上方接收所有鼠标事件 -->
+        <div id="hnau-cat-overlay" style="
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: auto;
+            z-index: 10;
+        "></div>
         
         <!-- 状态指示 -->
         <div class="hnau-cat-status">
@@ -383,8 +394,17 @@
     </div>
     
     <!-- 组件样式 -->
-    <style>
-        #hnau-cat-box * { box-sizing: border-box !important; margin: 0 !important; padding: 0 !important; }
+    <style id="hnau-cat-style">
+        #hnau-cat-box, #hnau-cat-box * {
+            box-sizing: border-box !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        #hnau-cat-box {
+            will-change: transform;
+            backface-visibility: hidden;
+        }
         
         .hnau-cat-bubble {
             position: absolute;
@@ -397,8 +417,9 @@
             padding: 8px 14px;
             max-width: 180px;
             box-shadow: 0 0 15px rgba(64, 255, 170, 0.3);
-            z-index: 10;
+            z-index: 20;
             animation: hnau-cat-bi 0.3s ease;
+            pointer-events: auto;
         }
         
         .hnau-cat-bubble::after {
@@ -417,17 +438,12 @@
             font-size: 11px;
             text-align: center;
             line-height: 1.4;
+            pointer-events: none;
         }
         
         @keyframes hnau-cat-bi {
             from { opacity: 0; transform: translateX(-50%) translateY(8px); }
             to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-        
-        #hnau-cat-three {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
         }
         
         .hnau-cat-status {
@@ -442,6 +458,7 @@
             padding: 3px 8px;
             border-radius: 8px;
             border: 1px solid rgba(64, 255, 170, 0.3);
+            pointer-events: none;
         }
         
         .hnau-cat-dot {
@@ -490,6 +507,7 @@
         
         // ===== DOM =====
         var box = document.getElementById('hnau-cat-box');
+        var overlay = document.getElementById('hnau-cat-overlay');
         var threeCanvas = document.getElementById('hnau-cat-three');
         var bubble = document.getElementById('hnau-cat-bubble');
         var bubbleTxt = bubble.querySelector('.hnau-cat-bubble-txt');
@@ -998,31 +1016,41 @@
             renderer.render(scene, camera);
         }
         
-        // ===== 事件 =====
+        // ===== 事件 - 使用overlay捕获鼠标事件 =====
         function onMouseMove(e) {
+            // 使用clientX/Y计算相对位置
             var rect = box.getBoundingClientRect();
-            mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-            mouseY = -((e.clientY - rect.top) / rect.height - 0.5) * 2;
+            var x = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+            var y = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+            mouseX = ((x - rect.left) / rect.width - 0.5) * 2;
+            mouseY = -((y - rect.top) / rect.height - 0.5) * 2;
         }
         
-        box.addEventListener('mouseenter', function() {
+        // 悬浮进入
+        overlay.addEventListener('mouseenter', function(e) {
             isHover = true;
             targetGlow = 0.8;
         });
         
-        box.addEventListener('mousemove', onMouseMove);
+        // 鼠标移动
+        overlay.addEventListener('mousemove', onMouseMove);
         
-        box.addEventListener('mouseleave', function() {
+        // 悬浮离开
+        overlay.addEventListener('mouseleave', function(e) {
             isHover = false;
             targetGlow = 0.3;
             mouseX = 0;
             mouseY = 0;
         });
         
-        box.addEventListener('click', function() {
+        // 点击事件
+        overlay.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
             // 点击反馈
             isClick = true;
-            clickGlow = 1;  // 点亮所有线条
+            clickGlow = 1;
             playTap();
             doJump();
             
@@ -1032,7 +1060,30 @@
             showBubble(text, CONFIG.bubbleDuration);
         });
         
+        // 触摸支持
+        overlay.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            isHover = true;
+            targetGlow = 0.8;
+            onMouseMove(e);
+        }, { passive: false });
+        
+        overlay.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+            onMouseMove(e);
+        }, { passive: false });
+        
+        overlay.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            isHover = false;
+            targetGlow = 0.3;
+            mouseX = 0;
+            mouseY = 0;
+        });
+        
+        // 气泡点击 - 跳转到商品列表
         bubble.addEventListener('click', function(e) {
+            e.preventDefault();
             e.stopPropagation();
             hideBubble();
             var productArea = document.getElementById('product-list') || document.querySelector('.product-grid') || document.querySelector('.goods-section');
@@ -1050,7 +1101,16 @@
         
         // ===== 初始化 =====
         function init() {
+            console.log('[HNAU Cat] 开始初始化3D全息猫...');
+            console.log('[HNAU Cat] 容器尺寸:', box.offsetWidth, 'x', box.offsetHeight);
+            console.log('[HNAU Cat] overlay元素:', overlay ? '存在' : '不存在');
+            
             initThree();
+            
+            // 测试事件绑定
+            if (overlay) {
+                console.log('[HNAU Cat] 鼠标事件已绑定到overlay');
+            }
             
             setTimeout(function() {
                 if (Math.random() < 0.7) {
@@ -1060,7 +1120,7 @@
                 }
             }, CONFIG.jumpDelay);
             
-            console.log('[HNAU Cat] 3D全息猫已就绪~');
+            console.log('[HNAU Cat] 3D全息猫初始化完成!');
         }
         
         // 响应式
