@@ -171,7 +171,7 @@ const ReleaseModule = {
 
                     <!-- 商品图片 -->
                     <div class="form-group">
-                        <label class="form-label">商品图片（选填，最多3张）</label>
+                        <label class="form-label">商品图片（选填，最多3张，单张最大10MB）</label>
                         <div class="upload-multi-area" id="uploadMultiArea">
                             <div class="upload-add-btn" id="addImageBtn">
                                 <span class="upload-add-btn-icon">➕</span>
@@ -327,9 +327,9 @@ const ReleaseModule = {
                 continue;
             }
 
-            // 校验大小（5MB）
-            if (file.size > 5 * 1024 * 1024) {
-                Toast.show('图片大小不能超过5MB', 'error');
+            // 校验大小（10MB）
+            if (file.size > 10 * 1024 * 1024) {
+                Toast.show('图片大小不能超过10MB', 'error');
                 continue;
             }
 
