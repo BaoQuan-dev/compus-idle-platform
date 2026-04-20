@@ -448,6 +448,16 @@
             document.getElementById('homeTotalTrades').textContent = stats.tradeCount;
         }
         
+        function initCarbonSync() {
+            // 【新增】初始化碳足迹数据跨标签页同步
+            if (window.HNAU_Carbon && typeof HNAU_Carbon.initSync === 'function') {
+                HNAU_Carbon.initSync();
+                HNAU_Carbon.addChangeListener(function(stats) {
+                    updateHomeCarbonStats();
+                });
+            }
+        }
+        
         function bindLeaderboardTabs() {
             var tabs = document.querySelectorAll('.carbon-tab');
             tabs.forEach(function(tab) {
@@ -619,6 +629,7 @@
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function() {
                 updateHomeCarbonStats();
+                initCarbonSync();  // 【新增】初始化碳足迹跨标签页同步
                 bindLeaderboardTabs();
                 bindAIEntrance();
                 initCatDrag();

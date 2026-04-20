@@ -250,6 +250,7 @@
     // ========== 数据存储管理 ==========
     var CarbonStorage = {
         STORAGE_KEY: 'hnau_carbon_data',
+        _listeners: [],
 
         // 获取当前用户名（兼容Auth模块）
         getCurrentUser: function() {
@@ -292,6 +293,57 @@
             var allData = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '{}');
             allData[user] = data;
             localStorage.setItem(this.STORAGE_KEY, JSON.stringify(allData));
+            
+            // 【新增】通知所有监听器
+            this._notifyListeners();
+        },
+
+        // 【新增】添加数据变更监听器
+        addChangeListener: function(callback) {
+            if (typeof callback === 'function' && this._listeners.indexOf(callback) === -1) {
+                this._listeners.push(callback);
+            }
+        },
+
+        // 【新增】移除数据变更监听器
+        removeChangeListener: function(callback) {
+            var index = this._listeners.indexOf(callback);
+            if (index > -1) {
+                this._listeners.splice(index, 1);
+            }
+        },
+
+        // 【新增】通知所有监听器
+        _notifyListeners: function() {
+            var stats = this.getStats();
+            this._listeners.forEach(function(callback) {
+                try {
+                    callback(stats);
+                } catch (e) {
+                    console.error('[Carbon] 监听器执行失败:', e);
+                }
+            });
+        },
+
+        // 【新增】初始化跨标签页同步
+        initSync: function() {
+            var self = this;
+            this._storageListener = function(e) {
+                if (e.key === self.STORAGE_KEY) {
+                    // 数据发生变化，通知监听器
+                    self._notifyListeners();
+                }
+            };
+            window.addEventListener('storage', this._storageListener);
+        },
+
+        // 【新增】清理跨标签页同步
+        destroySync: function() {
+            if (this._storageListener) {
+                window.removeEventListener('storage', this._storageListener);
+                this._storageListener = null;
+            }
+            this._listeners = [];
         },
 
         // 添加交易记录
@@ -445,6 +497,11 @@
     HNAU_Carbon.addShare = function() { return CarbonStorage.addShare(); };
     HNAU_Carbon.checkIn = function() { return CarbonStorage.checkIn(); };
     HNAU_Carbon.addAIReport = function() { return CarbonStorage.addAIReport(); };
+    // 【新增】跨标签页同步相关方法
+    HNAU_Carbon.addChangeListener = function(cb) { CarbonStorage.addChangeListener(cb); };
+    HNAU_Carbon.removeChangeListener = function(cb) { CarbonStorage.removeChangeListener(cb); };
+    HNAU_Carbon.initSync = function() { CarbonStorage.initSync(); };
+    HNAU_Carbon.destroySync = function() { CarbonStorage.destroySync(); };
 
     console.log('[HNAU Carbon] 碳足迹模块已就绪');
 })();

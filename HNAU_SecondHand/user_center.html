@@ -698,9 +698,121 @@
         // 初始化碳足迹模块
         function initCarbonModule() {
             carbonModule.style.display = 'block';
+            
+            // 【新增】初始化碳足迹数据跨标签页同步
+            if (window.HNAU_Carbon && typeof HNAU_Carbon.initSync === 'function') {
+                HNAU_Carbon.initSync();
+                // 添加数据变更监听器，自动更新UI
+                HNAU_Carbon.addChangeListener(function(stats) {
+                    updateCarbonUI(stats);
+                });
+            }
+            
             loadCarbonData();
             initCharts();
             bindEvents();
+        }
+        
+        // 【新增】更新碳足迹UI（供监听器回调使用）
+        function updateCarbonUI(stats) {
+            // 更新核心数据
+            document.getElementById('carbonTotalSaved').textContent = stats.totalSaved.toFixed(1);
+            document.getElementById('carbonTrees').textContent = stats.treesEquivalent.toFixed(1);
+            document.getElementById('carbonPoints').textContent = stats.totalPoints;
+            document.getElementById('carbonTrades').textContent = stats.tradeCount;
+            document.getElementById('carbonWaterSaved').textContent = stats.waterSaved.toFixed(1);
+            document.getElementById('carbonEnergySaved').textContent = stats.energySaved.toFixed(1);
+            
+            // 更新等级
+            var level = stats.level;
+            var levelBadge = document.getElementById('carbonLevelBadge');
+            if (levelBadge) {
+                levelBadge.querySelector('.carbon-level-icon').textContent = level.icon === 'seedling' ? '🌱' : 
+                                                                            level.icon === 'leaf' ? '🌿' : 
+                                                                            level.icon === 'tree' ? '🌳' : 
+                                                                            level.icon === 'recycle' ? '♻️' : 
+                                                                            level.icon === 'award' ? '🏆' : '⭐';
+                levelBadge.querySelector('.carbon-level-name').textContent = level.name;
+                levelBadge.style.borderColor = level.color;
+                levelBadge.style.background = level.color + '33';
+            }
+            
+            // 计算进度
+            var levels = [{min: 0}, {min: 100}, {min: 500}, {min: 2000}, {min: 5000}, {min: 10000}];
+            var currentIdx = 0;
+            for (var i = levels.length - 1; i >= 0; i--) {
+                if (stats.totalPoints >= levels[i].min) {
+                    currentIdx = i;
+                    break;
+                }
+            }
+            var currentMin = levels[currentIdx].min;
+            var nextMin = levels[Math.min(currentIdx + 1, levels.length - 1)].min;
+            var progress = ((stats.totalPoints - currentMin) / (nextMin - currentMin)) * 100;
+            var levelBar = document.getElementById('carbonLevelBar');
+            var levelNeed = document.getElementById('carbonLevelNeed');
+            if (levelBar) levelBar.style.width = Math.min(progress, 100) + '%';
+            if (levelNeed) levelNeed.textContent = Math.max(nextMin - stats.totalPoints, 0);
+            
+            // 更新勋章
+            var badgesGrid = document.getElementById('carbonBadgesGrid');
+            if (badgesGrid) {
+                if (stats.badges && stats.badges.length > 0) {
+                    badgesGrid.innerHTML = stats.badges.map(function(b) {
+                        return '<div class="carbon-badge"><div class="carbon-badge-icon">' + b.icon + '</div><div class="carbon-badge-name">' + b.name + '</div></div>';
+                    }).join('');
+                } else {
+                    badgesGrid.innerHTML = '<span class="carbon-badge-empty">暂无勋章，继续努力！</span>';
+                }
+            }
+            
+            // 更新交易记录
+            var recordsList = document.getElementById('carbonRecordsList');
+            if (recordsList) {
+                if (stats.transactions && stats.transactions.length > 0) {
+                    recordsList.innerHTML = stats.transactions.map(function(t) {
+                        return '<div class="carbon-record">' +
+                            '<div class="carbon-record-info">' +
+                            '<div class="carbon-record-title">' + (t.title || '闲置交易') + '</div>' +
+                            '<div class="carbon-record-meta">' + t.date + ' · ' + t.category + '</div>' +
+                            '</div>' +
+                            '<div class="carbon-record-value">' +
+                            '<div class="carbon-record-saved">-' + t.saved + '</div>' +
+                            '<div class="carbon-record-unit">kg CO₂</div>' +
+                            '</div></div>';
+                    }).join('');
+                } else {
+                    recordsList.innerHTML = '<div class="carbon-record-empty">暂无交易记录，开始交易即可累积碳减排！</div>';
+                }
+            }
+            
+            // 更新图表
+            updateCharts(stats);
+        }
+        
+        // 【新增】更新图表（供监听器回调使用）
+        function updateCharts(stats) {
+            var currentYear = new Date().getFullYear();
+            if (trendChart) {
+                var yearlyTrend = stats.yearlyTrend && stats.yearlyTrend[currentYear] ? 
+                                  stats.yearlyTrend[currentYear] : [0,0,0,0,0,0,0,0,0,0,0,0];
+                trendChart.data.datasets[0].data = yearlyTrend;
+                trendChart.update();
+            }
+            if (pieChart) {
+                var categoryData = {};
+                if (stats.transactions) {
+                    stats.transactions.forEach(function(t) {
+                        if (!categoryData[t.category]) {
+                            categoryData[t.category] = 0;
+                        }
+                        categoryData[t.category] += t.saved;
+                    });
+                }
+                pieChart.data.labels = Object.keys(categoryData);
+                pieChart.data.datasets[0].data = Object.values(categoryData);
+                pieChart.update();
+            }
         }
         
         // 加载碳数据
