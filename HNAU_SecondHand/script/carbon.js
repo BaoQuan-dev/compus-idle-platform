@@ -368,6 +368,13 @@
 
         // 【新增】初始化跨标签页/跨设备同步
         initSync: function() {
+            // 【修复】防止重复初始化
+            if (this._initialized) {
+                console.log('[Carbon] 同步已初始化，跳过');
+                return;
+            }
+            this._initialized = true;
+            
             var self = this;
             
             // 1. 监听 storage 事件（同一浏览器跨标签页同步）
@@ -376,6 +383,7 @@
                     // 数据发生变化，通知监听器
                     self._lastDataHash = self.getDataHash(); // 更新哈希避免重复触发
                     self._notifyListeners();
+                    console.log('[Carbon] storage事件触发，通知监听器');
                 }
             };
             window.addEventListener('storage', this._storageListener);
@@ -409,6 +417,7 @@
                 this._visibilityHandler = null;
             }
             this._listeners = [];
+            this._initialized = false;  // 【新增】重置初始化状态
         },
 
         // 添加交易记录
