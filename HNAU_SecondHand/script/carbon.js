@@ -1,0 +1,411 @@
+/**
+ * 农大闲置平台 - 碳足迹核心模块
+ * 功能：碳排放计算、积分管理、数据存储
+ * 作者：HNAU Dev Team
+ * 版本：v1.0
+ */
+
+(function() {
+    'use strict';
+
+    // ========== 命名空间 ==========
+    window.HNAU_Carbon = window.HNAU_Carbon || {};
+
+    // ========== 农大专属碳排放系数表 ==========
+    // 基于《中国生命周期数据库CLCD》及高校场景定制
+    var CARBON_COEFFICIENTS = {
+        // 教材类（kg CO₂/本）
+        textbooks: {
+            name: '教材类',
+            emission: 2.5,        // 印刷、运输总排放
+            saved: 8.0,           // 相比购买新书节约
+            examples: ['专业教材', '考研资料', '参考书']
+        },
+        // 电子设备类（kg CO₂/件）
+        electronics: {
+            name: '电子设备',
+            emission: 25.0,       // 生产环节碳排放
+            saved: 45.0,          // 延长使用寿命节约
+            examples: ['计算器', '耳机', '充电宝', '台灯']
+        },
+        // 生活用品类（kg CO₂/件）
+        dailyGoods: {
+            name: '生活用品',
+            emission: 5.0,
+            saved: 12.0,
+            examples: ['水壶', '收纳盒', '衣架', '床上用品']
+        },
+        // 运动器材类（kg CO₂/件）
+        sports: {
+            name: '运动器材',
+            emission: 8.0,
+            saved: 18.0,
+            examples: ['篮球', '羽毛球拍', '瑜伽垫', '自行车']
+        },
+        // 实验器材类（kg CO₂/件）- 农大特色
+        labEquipment: {
+            name: '实验器材',
+            emission: 15.0,
+            saved: 30.0,
+            examples: ['烧杯', '试管架', '移液管', '培养皿']
+        },
+        // 服装鞋帽类（kg CO₂/件）
+        clothing: {
+            name: '服装鞋帽',
+            emission: 20.0,
+            saved: 35.0,
+            examples: ['棉衣', '运动鞋', '书包', '正装']
+        },
+        // 其他类（kg CO₂/件）
+        others: {
+            name: '其他',
+            emission: 3.0,
+            saved: 6.0,
+            examples: ['日用品', '装饰品', '文具']
+        }
+    };
+
+    // ========== 碳排放计算引擎 ==========
+    var CarbonCalculator = {
+        // 获取品类系数
+        getCoefficient: function(category) {
+            return CARBON_COEFFICIENTS[category] || CARBON_COEFFICIENTS.others;
+        },
+
+        // 计算单笔交易的碳减排量
+        calculateSavings: function(category, condition) {
+            var coef = this.getCoefficient(category);
+            var baseSaved = coef.saved;
+
+            // 根据新旧程度调整
+            var conditionMultiplier = {
+                '全新': 1.0,
+                '几乎全新': 0.95,
+                '轻微使用': 0.85,
+                '正常使用': 0.75,
+                '明显使用痕迹': 0.6
+            };
+
+            var multiplier = conditionMultiplier[condition] || 0.8;
+            return {
+                saved: parseFloat((baseSaved * multiplier).toFixed(2)),
+                emission: coef.emission,
+                category: coef.name,
+                treesEquivalent: parseFloat((baseSaved * multiplier / 6.6).toFixed(2)) // 一棵成年树每年吸收约6.6kg CO₂
+            };
+        },
+
+        // 计算累计减排
+        calculateTotalSavings: function(transactions) {
+            var total = 0;
+            var byCategory = {};
+            var treesCount = 0;
+
+            transactions.forEach(function(t) {
+                var result = this.calculateSavings(t.category, t.condition);
+                total += result.saved;
+                treesCount += result.treesEquivalent;
+
+                if (!byCategory[t.category]) {
+                    byCategory[t.category] = 0;
+                }
+                byCategory[t.category] += result.saved;
+            }.bind(this));
+
+            return {
+                totalSaved: parseFloat(total.toFixed(2)),
+                treesEquivalent: parseFloat(treesCount.toFixed(2)),
+                byCategory: byCategory,
+                waterSaved: parseFloat((total * 2.5).toFixed(2)),      // 节约用水估算
+                energySaved: parseFloat((total * 1.8).toFixed(2))       // 节约用电估算
+            };
+        },
+
+        // 获取年度趋势数据
+        getYearlyTrend: function(transactions, year) {
+            var monthlyData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+            transactions.forEach(function(t) {
+                if (t.year === year) {
+                    monthlyData[t.month - 1] += this.calculateSavings(t.category, t.condition).saved;
+                }
+            }.bind(this));
+
+            return monthlyData.map(function(v) { return parseFloat(v.toFixed(2)); });
+        }
+    };
+
+    // ========== 碳积分系统 ==========
+    var CarbonPoints = {
+        // 积分规则
+        RULES: {
+            perKgSaved: 10,           // 每节省1kg CO₂ = 10积分
+            shareBonus: 50,            // 分享一次 = 50积分
+            dailyCheckIn: 5,          // 每日签到 = 5积分
+            publishGoods: 20,          // 发布闲置 = 20积分
+            successfulTrade: 100,     // 成交一笔 = 100积分
+            reachMilestone: [500, 1000, 5000, 10000]  // 里程碑奖励
+        },
+
+        // 计算积分
+        calculatePoints: function(carbonSaved) {
+            return Math.floor(carbonSaved * this.RULES.perKgSaved);
+        },
+
+        // 获取等级
+        getLevel: function(totalPoints) {
+            var levels = [
+                { min: 0, name: '环保新手', icon: 'seedling', color: '#90EE90' },
+                { min: 100, name: '低碳践行者', icon: 'leaf', color: '#32CD32' },
+                { min: 500, name: '绿色传播者', icon: 'tree', color: '#228B22' },
+                { min: 2000, name: '循环先锋', icon: 'recycle', color: '#006400' },
+                { min: 5000, name: '碳中和大使', icon: 'award', color: '#FFD700' },
+                { min: 10000, name: '零碳达人', icon: 'star', color: '#FF69B4' }
+            ];
+
+            for (var i = levels.length - 1; i >= 0; i--) {
+                if (totalPoints >= levels[i].min) {
+                    return levels[i];
+                }
+            }
+            return levels[0];
+        },
+
+        // 获取勋章
+        getBadges: function(stats) {
+            var badges = [];
+
+            // 交易次数勋章
+            if (stats.tradeCount >= 1) badges.push({
+                id: 'first_trade',
+                name: '首单达成',
+                icon: '🎯',
+                desc: '完成首次交易'
+            });
+
+            if (stats.tradeCount >= 10) badges.push({
+                id: 'trade_master',
+                name: '交易达人',
+                icon: '🛒',
+                desc: '完成10次交易'
+            });
+
+            // 碳减排勋章
+            if (stats.totalSaved >= 50) badges.push({
+                id: 'carbon_saver_50',
+                name: '减碳50kg',
+                icon: '🌱',
+                desc: '累计减碳50kg'
+            });
+
+            if (stats.totalSaved >= 200) badges.push({
+                id: 'carbon_saver_200',
+                name: '减碳达人',
+                icon: '🌿',
+                desc: '累计减碳200kg'
+            });
+
+            if (stats.totalSaved >= 500) badges.push({
+                id: 'carbon_master',
+                name: '减碳大师',
+                icon: '🌳',
+                desc: '累计减碳500kg'
+            });
+
+            // 等效种树勋章
+            if (stats.treesEquivalent >= 1) badges.push({
+                id: 'first_tree',
+                name: '种下希望',
+                icon: '🌰',
+                desc: '等效种下第1棵树'
+            });
+
+            if (stats.treesEquivalent >= 10) badges.push({
+                id: 'tree_grower',
+                name: '护林使者',
+                icon: '🌲',
+                desc: '等效种下10棵树'
+            });
+
+            // 活跃勋章
+            if (stats.publishCount >= 5) badges.push({
+                id: 'active_publisher',
+                name: '发布先锋',
+                icon: '📦',
+                desc: '发布5件闲置'
+            });
+
+            // 环保科普勋章
+            if (stats.aiReportCount >= 1) badges.push({
+                id: 'eco_learner',
+                name: '环保学员',
+                icon: '📚',
+                desc: '获取首份环保报告'
+            });
+
+            return badges;
+        }
+    };
+
+    // ========== 数据存储管理 ==========
+    var CarbonStorage = {
+        STORAGE_KEY: 'hnau_carbon_data',
+
+        // 获取当前用户名
+        getCurrentUser: function() {
+            return localStorage.getItem('hnau_current_user') || 'guest';
+        },
+
+        // 获取用户碳数据
+        getData: function() {
+            var user = this.getCurrentUser();
+            var allData = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '{}');
+            return allData[user] || this.initUserData();
+        },
+
+        // 初始化用户数据
+        initUserData: function() {
+            return {
+                joinDate: new Date().toISOString().split('T')[0],
+                totalSaved: 0,           // 总减碳量(kg)
+                totalPoints: 0,          // 总积分
+                tradeCount: 0,           // 交易次数
+                publishCount: 0,         // 发布次数
+                shareCount: 0,           // 分享次数
+                aiReportCount: 0,        // AI报告获取次数
+                transactions: [],         // 交易记录
+                yearlyTrend: {},         // 年度趋势
+                badges: [],              // 已获得勋章
+                lastCheckIn: null        // 最后签到日期
+            };
+        },
+
+        // 保存用户数据
+        saveData: function(data) {
+            var user = this.getCurrentUser();
+            var allData = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '{}');
+            allData[user] = data;
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(allData));
+        },
+
+        // 添加交易记录
+        addTransaction: function(category, condition, title) {
+            var data = this.getData();
+            var result = CarbonCalculator.calculateSavings(category, condition);
+
+            var transaction = {
+                id: Date.now(),
+                category: category,
+                condition: condition,
+                title: title,
+                saved: result.saved,
+                treesEquivalent: result.treesEquivalent,
+                date: new Date().toISOString().split('T')[0],
+                year: new Date().getFullYear(),
+                month: new Date().getMonth() + 1
+            };
+
+            data.transactions.push(transaction);
+            data.totalSaved += result.saved;
+            data.totalPoints += CarbonPoints.calculatePoints(result.saved) + CarbonPoints.RULES.successfulTrade;
+            data.tradeCount++;
+
+            // 更新年度趋势
+            var year = new Date().getFullYear().toString();
+            if (!data.yearlyTrend[year]) {
+                data.yearlyTrend[year] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            }
+            data.yearlyTrend[year][new Date().getMonth()] += result.saved;
+
+            // 检查勋章
+            data.badges = CarbonPoints.getBadges(data);
+
+            this.saveData(data);
+            return data;
+        },
+
+        // 添加发布记录
+        addPublish: function() {
+            var data = this.getData();
+            data.publishCount++;
+            data.totalPoints += CarbonPoints.RULES.publishGoods;
+            this.saveData(data);
+            return data;
+        },
+
+        // 添加分享记录
+        addShare: function() {
+            var data = this.getData();
+            data.shareCount++;
+            data.totalPoints += CarbonPoints.RULES.shareBonus;
+            this.saveData(data);
+            return data;
+        },
+
+        // 记录AI报告
+        addAIReport: function() {
+            var data = this.getData();
+            data.aiReportCount++;
+            this.saveData(data);
+            return data;
+        },
+
+        // 每日签到
+        checkIn: function() {
+            var data = this.getData();
+            var today = new Date().toISOString().split('T')[0];
+
+            if (data.lastCheckIn === today) {
+                return { success: false, message: '今日已签到' };
+            }
+
+            data.lastCheckIn = today;
+            data.totalPoints += CarbonPoints.RULES.dailyCheckIn;
+            this.saveData(data);
+            return { success: true, points: CarbonPoints.RULES.dailyCheckIn };
+        },
+
+        // 获取统计数据
+        getStats: function() {
+            var data = this.getData();
+            var level = CarbonPoints.getLevel(data.totalPoints);
+
+            return {
+                totalSaved: data.totalSaved,
+                totalPoints: data.totalPoints,
+                treesEquivalent: parseFloat((data.totalSaved / 6.6).toFixed(2)),
+                waterSaved: parseFloat((data.totalSaved * 2.5).toFixed(2)),
+                energySaved: parseFloat((data.totalSaved * 1.8).toFixed(2)),
+                tradeCount: data.tradeCount,
+                publishCount: data.publishCount,
+                shareCount: data.shareCount,
+                level: level,
+                badges: data.badges,
+                yearlyTrend: data.yearlyTrend,
+                transactions: data.transactions.slice(-10).reverse() // 最近10条
+            };
+        },
+
+        // 清除用户数据（测试用）
+        clearData: function() {
+            var user = this.getCurrentUser();
+            var allData = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '{}');
+            delete allData[user];
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(allData));
+        }
+    };
+
+    // ========== 导出模块 ==========
+    HNAU_Carbon.COEFFICIENTS = CARBON_COEFFICIENTS;
+    HNAU_Carbon.Calculator = CarbonCalculator;
+    HNAU_Carbon.Points = CarbonPoints;
+    HNAU_Carbon.Storage = CarbonStorage;
+    HNAU_Carbon.getStats = function() { return CarbonStorage.getStats(); };
+    HNAU_Carbon.addTransaction = function(c, cdt, t) { return CarbonStorage.addTransaction(c, cdt, t); };
+    HNAU_Carbon.addPublish = function() { return CarbonStorage.addPublish(); };
+    HNAU_Carbon.addShare = function() { return CarbonStorage.addShare(); };
+    HNAU_Carbon.checkIn = function() { return CarbonStorage.checkIn(); };
+    HNAU_Carbon.addAIReport = function() { return CarbonStorage.addAIReport(); };
+
+    console.log('[HNAU Carbon] 碳足迹模块已就绪');
+})();

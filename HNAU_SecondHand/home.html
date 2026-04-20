@@ -118,6 +118,87 @@
                 <!-- JS渲染 -->
             </div>
         </section>
+        
+        <!-- ========== 碳足迹模块 ========== -->
+        <section class="carbon-home-section">
+            <div class="container">
+                <!-- 碳足迹Banner -->
+                <div class="carbon-banner">
+                    <div class="carbon-banner-content">
+                        <h2>🌍 碳足迹 · 绿色校园</h2>
+                        <p>每一次闲置交易，都是一次碳减排行动</p>
+                        <div class="carbon-banner-stats">
+                            <div class="carbon-banner-stat">
+                                <span class="stat-value" id="homeTotalCarbon">0</span>
+                                <span class="stat-label">kg CO₂减排</span>
+                            </div>
+                            <div class="carbon-banner-stat">
+                                <span class="stat-value" id="homeTotalTrees">0</span>
+                                <span class="stat-label">棵树等效</span>
+                            </div>
+                            <div class="carbon-banner-stat">
+                                <span class="stat-value" id="homeTotalTrades">0</span>
+                                <span class="stat-label">绿色交易</span>
+                            </div>
+                        </div>
+                        <a href="user_center.html" class="carbon-banner-btn">查看我的碳足迹 →</a>
+                    </div>
+                    <div class="carbon-banner-visual">
+                        <div class="carbon-circle carbon-circle-1"></div>
+                        <div class="carbon-circle carbon-circle-2"></div>
+                        <div class="carbon-circle carbon-circle-3"></div>
+                        <div class="carbon-leaf">🌱</div>
+                    </div>
+                </div>
+                
+                <!-- 碳排行版 -->
+                <div class="carbon-leaderboard">
+                    <h3>🏆 碳减排排行榜</h3>
+                    <div class="carbon-leaderboard-tabs">
+                        <button class="carbon-tab active" data-type="college">学院排行</button>
+                        <button class="carbon-tab" data-type="school">全校排行</button>
+                    </div>
+                    <div class="carbon-leaderboard-list" id="carbonLeaderboardList">
+                        <div class="carbon-leader-item">
+                            <span class="leader-rank leader-rank-1">🥇</span>
+                            <span class="leader-name">农学院</span>
+                            <span class="leader-carbon">285.6 kg</span>
+                        </div>
+                        <div class="carbon-leader-item">
+                            <span class="leader-rank">🥈</span>
+                            <span class="leader-name">林学院</span>
+                            <span class="leader-carbon">241.3 kg</span>
+                        </div>
+                        <div class="carbon-leader-item">
+                            <span class="leader-rank">🥉</span>
+                            <span class="leader-name">园艺学院</span>
+                            <span class="leader-carbon">198.7 kg</span>
+                        </div>
+                        <div class="carbon-leader-item">
+                            <span class="leader-rank">4</span>
+                            <span class="leader-name">动物医学院</span>
+                            <span class="leader-carbon">156.2 kg</span>
+                        </div>
+                        <div class="carbon-leader-item">
+                            <span class="leader-rank">5</span>
+                            <span class="leader-name">机电工程学院</span>
+                            <span class="leader-carbon">132.8 kg</span>
+                        </div>
+                    </div>
+                    <p class="carbon-leaderboard-tip">💡 排行榜数据每周更新，展示各学院碳减排贡献</p>
+                </div>
+                
+                <!-- AI碳助手入口 -->
+                <div class="carbon-ai-entrance">
+                    <div class="carbon-ai-icon">🤖</div>
+                    <div class="carbon-ai-content">
+                        <h3>AI碳足迹助手</h3>
+                        <p>获取个性化环保建议，了解闲置背后的碳价值</p>
+                    </div>
+                    <button id="openCarbonAI" class="carbon-ai-btn">咨询AI</button>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- 页脚 -->
@@ -130,6 +211,137 @@
     <!-- 脚本 -->
     <script src="./script/common.js"></script>
     <script src="./script/home.js"></script>
+    <script src="./script/carbon.js"></script>
+    
+    <!-- 碳足迹样式 -->
+    <style>
+        .carbon-home-section {
+            background: linear-gradient(180deg, #f0f9f0 0%, #e8f5e9 100%);
+            padding: 40px 0;
+            margin-top: 40px;
+        }
+        
+        .carbon-banner {
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #fff;
+            margin-bottom: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .carbon-banner-content { flex: 1; z-index: 2; }
+        .carbon-banner h2 { margin: 0 0 8px 0; font-size: 1.8rem; }
+        .carbon-banner p { margin: 0 0 20px 0; opacity: 0.9; }
+        
+        .carbon-banner-stats { display: flex; gap: 30px; margin-bottom: 20px; }
+        .carbon-banner-stat { text-align: center; }
+        .carbon-banner-stat .stat-value { display: block; font-size: 2rem; font-weight: bold; }
+        .carbon-banner-stat .stat-label { font-size: 0.85rem; opacity: 0.8; }
+        
+        .carbon-banner-btn {
+            display: inline-block;
+            background: #fff;
+            color: #2e7d32;
+            padding: 10px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .carbon-banner-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        
+        .carbon-banner-visual { position: relative; width: 150px; height: 150px; }
+        .carbon-circle { position: absolute; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); }
+        .carbon-circle-1 { width: 150px; height: 150px; top: 0; right: 0; animation: carbon-pulse 3s ease-in-out infinite; }
+        .carbon-circle-2 { width: 100px; height: 100px; top: 25px; right: 25px; animation: carbon-pulse 3s ease-in-out infinite 0.5s; }
+        .carbon-circle-3 { width: 60px; height: 60px; top: 45px; right: 45px; background: rgba(255,255,255,0.1); animation: carbon-pulse 3s ease-in-out infinite 1s; }
+        .carbon-leaf { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; animation: carbon-float 2s ease-in-out infinite; }
+        
+        @keyframes carbon-pulse { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.05); opacity: 0.6; } }
+        @keyframes carbon-float { 0%, 100% { transform: translate(-50%, -50%) rotate(-5deg); } 50% { transform: translate(-50%, -55%) rotate(5deg); } }
+        
+        .carbon-leaderboard { background: #fff; border-radius: 16px; padding: 24px; margin-bottom: 30px; border: 1px solid #c8e6c9; }
+        .carbon-leaderboard h3 { color: #2e7d32; margin: 0 0 16px 0; }
+        .carbon-leaderboard-tabs { display: flex; gap: 10px; margin-bottom: 16px; }
+        .carbon-tab { padding: 8px 20px; border: none; background: #e8f5e9; color: #666; border-radius: 20px; cursor: pointer; transition: all 0.3s; }
+        .carbon-tab.active { background: #43a047; color: #fff; }
+        .carbon-leaderboard-list { margin-bottom: 12px; }
+        .carbon-leader-item { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #f5f5f5; }
+        .carbon-leader-item:hover { background: #f9f9f9; }
+        .carbon-leader-item:last-child { border-bottom: none; }
+        .leader-rank { width: 40px; font-size: 1.2rem; }
+        .leader-rank-1 { color: #f9a825; }
+        .leader-name { flex: 1; color: #333; }
+        .leader-carbon { color: #43a047; font-weight: bold; }
+        .carbon-leaderboard-tip { color: #999; font-size: 0.85rem; text-align: center; margin: 0; }
+        
+        .carbon-ai-entrance { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 16px; border: 1px solid #a5d6a7; }
+        .carbon-ai-icon { font-size: 3rem; }
+        .carbon-ai-content { flex: 1; }
+        .carbon-ai-content h3 { color: #2e7d32; margin: 0 0 4px 0; }
+        .carbon-ai-content p { color: #666; margin: 0; font-size: 0.9rem; }
+        .carbon-ai-btn { background: linear-gradient(135deg, #66bb6a, #43a047); color: #fff; border: none; padding: 12px 24px; border-radius: 25px; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .carbon-ai-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(67, 160, 71, 0.4); }
+        
+        @media (max-width: 768px) {
+            .carbon-banner { flex-direction: column; text-align: center; }
+            .carbon-banner-visual { display: none; }
+            .carbon-banner-stats { justify-content: center; }
+            .carbon-ai-entrance { flex-direction: column; text-align: center; }
+        }
+    </style>
+    
+    <!-- 碳足迹逻辑 -->
+    <script>
+    (function() {
+        'use strict';
+        
+        function updateHomeCarbonStats() {
+            var stats = HNAU_Carbon.getStats();
+            document.getElementById('homeTotalCarbon').textContent = stats.totalSaved.toFixed(1);
+            document.getElementById('homeTotalTrees').textContent = stats.treesEquivalent.toFixed(1);
+            document.getElementById('homeTotalTrades').textContent = stats.tradeCount;
+        }
+        
+        function bindLeaderboardTabs() {
+            var tabs = document.querySelectorAll('.carbon-tab');
+            tabs.forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(function(t) { t.classList.remove('active'); });
+                    this.classList.add('active');
+                });
+            });
+        }
+        
+        function bindAIEntrance() {
+            var aiBtn = document.getElementById('openCarbonAI');
+            if (aiBtn) {
+                aiBtn.addEventListener('click', function() {
+                    alert('即将打开AI碳足迹助手...\n\n功能包括：\n• 个性化环保建议\n• 碳积分兑换方案\n• 闲置品类环保科普');
+                });
+            }
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                updateHomeCarbonStats();
+                bindLeaderboardTabs();
+                bindAIEntrance();
+            });
+        } else {
+            updateHomeCarbonStats();
+            bindLeaderboardTabs();
+            bindAIEntrance();
+        }
+    })();
+    </script>
+    
     <script>
         // 移动端发布按钮
         document.addEventListener('DOMContentLoaded', function() {
