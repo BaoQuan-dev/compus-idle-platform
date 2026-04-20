@@ -449,13 +449,21 @@
         }
         
         function initCarbonSync() {
-            // 【新增】初始化碳足迹数据跨标签页同步
+            // 【新增】初始化碳足迹数据同步
             if (window.HNAU_Carbon && typeof HNAU_Carbon.initSync === 'function') {
                 HNAU_Carbon.initSync();
                 HNAU_Carbon.addChangeListener(function(stats) {
                     updateHomeCarbonStats();
                 });
             }
+            
+            // 【新增】监听页面可见性变化，当页面从后台切换回来时强制刷新
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    console.log('[首页] 页面恢复可见，刷新碳足迹数据');
+                    updateHomeCarbonStats();
+                }
+            });
         }
         
         function bindLeaderboardTabs() {

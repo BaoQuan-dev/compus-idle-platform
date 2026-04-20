@@ -699,7 +699,7 @@
         function initCarbonModule() {
             carbonModule.style.display = 'block';
             
-            // 【新增】初始化碳足迹数据跨标签页同步
+            // 【新增】初始化碳足迹数据同步
             if (window.HNAU_Carbon && typeof HNAU_Carbon.initSync === 'function') {
                 HNAU_Carbon.initSync();
                 // 添加数据变更监听器，自动更新UI
@@ -711,6 +711,16 @@
             loadCarbonData();
             initCharts();
             bindEvents();
+            
+            // 【新增】监听页面可见性变化，当页面从后台切换回来时强制刷新
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    // 页面从后台切换回来，强制重新加载数据
+                    console.log('[个人中心] 页面恢复可见，刷新碳足迹数据');
+                    loadCarbonData();
+                    updateCharts(HNAU_Carbon.getStats());
+                }
+            });
         }
         
         // 【新增】更新碳足迹UI（供监听器回调使用）
