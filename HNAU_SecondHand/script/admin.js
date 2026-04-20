@@ -75,8 +75,7 @@ const AdminModule = {
                 (e.key !== ADMIN_KEYS.VERIFY_INFO && 
                  e.key !== ADMIN_KEYS.VERIFY_STATE &&
                  e.key !== ADMIN_KEYS.USERS &&
-                 e.key !== ADMIN_KEYS.GOODS &&
-                 e.key !== ADMIN_KEYS.PENDING_AUTHS)) {  // 【修复】添加 PENDING_AUTHS
+                 e.key !== ADMIN_KEYS.GOODS)) {
                 return;
             }
 
@@ -123,8 +122,7 @@ const AdminModule = {
             verifyState: localStorage.getItem(ADMIN_KEYS.VERIFY_STATE) || '',
             verifyInfo: localStorage.getItem(ADMIN_KEYS.VERIFY_INFO) || '',
             users: localStorage.getItem(ADMIN_KEYS.USERS) || '',
-            goods: localStorage.getItem(ADMIN_KEYS.GOODS) || '',
-            pendingAuths: localStorage.getItem(ADMIN_KEYS.PENDING_AUTHS) || ''  // 【修复】添加 PENDING_AUTHS
+            goods: localStorage.getItem(ADMIN_KEYS.GOODS) || ''
         };
         return JSON.stringify(data);
     },
@@ -1018,7 +1016,6 @@ const AdminModule = {
                     '退出登录',
                     '确定要退出管理员登录吗？退出后将返回登录页面。',
                     () => {
-                        this.unbindStorageListener();  // 【修复】退出前清理监听器
                         try {
                             localStorage.setItem(ADMIN_KEYS.ADMIN_LOGIN, 'false');
                         } catch (err) {
@@ -1458,7 +1455,6 @@ const AdminModule = {
             this.showToast('登录成功，欢迎回来！', 'success');
             this.render();
             this.bindEvents();
-            this.bindStorageListener();  // 【修复】登录成功后启动数据监听
         } else {
             if (passwordErrorEl) {
                 passwordErrorEl.textContent = '用户名或密码错误，请重试';
