@@ -142,6 +142,7 @@ body {
     box-shadow: var(--shadow-sm);
     z-index: 1000;
     border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    overflow: visible;
 }
 
 .navbar-container {
@@ -1928,7 +1929,50 @@ body {
         --font-md: 15px;
         --font-lg: 16px;
     }
-
+    
+    /* 导航栏移动端 */
+    .navbar-container {
+        padding: 0 16px;
+    }
+    
+    .navbar-brand {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .navbar-brand span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .navbar-hamburger {
+        width: 40px;
+        height: 40px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 4px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+    
+    .navbar-mobile-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        flex-direction: column;
+        padding: 8px 0;
+        z-index: 999;
+    }
+    
     .page-header {
         padding: var(--spacing-lg) 0;
     }
