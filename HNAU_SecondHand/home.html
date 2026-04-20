@@ -151,11 +151,59 @@
                         </div>
                         <a href="user_center.html" class="carbon-banner-btn">查看我的碳足迹 →</a>
                     </div>
-                    <div class="carbon-banner-visual">
+                    <div class="carbon-banner-visual" id="carbonVisualContainer">
                         <div class="carbon-circle carbon-circle-1"></div>
                         <div class="carbon-circle carbon-circle-2"></div>
                         <div class="carbon-circle carbon-circle-3"></div>
-                        <div class="carbon-leaf">🌱</div>
+                        <!-- 可拖动小猫咪 -->
+                        <div class="carbon-cat-wrapper" id="carbonCatWrapper">
+                            <div class="carbon-cat" id="carbonCat">
+                                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- 身体 -->
+                                    <ellipse cx="50" cy="65" rx="28" ry="22" fill="#81C784"/>
+                                    <ellipse cx="50" cy="65" rx="24" ry="18" fill="#A5D6A7"/>
+                                    <!-- 头部 -->
+                                    <circle cx="50" cy="38" r="24" fill="#81C784"/>
+                                    <circle cx="50" cy="40" r="20" fill="#A5D6A7"/>
+                                    <!-- 耳朵 -->
+                                    <path d="M30 25 L36 38 L24 35 Z" fill="#81C784"/>
+                                    <path d="M32 28 L36 36 L27 34 Z" fill="#F8BBD9"/>
+                                    <path d="M70 25 L64 38 L76 35 Z" fill="#81C784"/>
+                                    <path d="M68 28 L64 36 L73 34 Z" fill="#F8BBD9"/>
+                                    <!-- 腮红 -->
+                                    <ellipse cx="32" cy="45" rx="6" ry="4" fill="#F8BBD9" opacity="0.6"/>
+                                    <ellipse cx="68" cy="45" rx="6" ry="4" fill="#F8BBD9" opacity="0.6"/>
+                                    <!-- 眼睛 -->
+                                    <ellipse cx="40" cy="36" rx="6" ry="7" fill="#2E7D32"/>
+                                    <ellipse cx="60" cy="36" rx="6" ry="7" fill="#2E7D32"/>
+                                    <ellipse cx="41" cy="35" rx="3" ry="4" fill="#1B5E20"/>
+                                    <ellipse cx="61" cy="35" rx="3" ry="4" fill="#1B5E20"/>
+                                    <!-- 眼睛高光 -->
+                                    <circle cx="38" cy="33" r="2" fill="#fff"/>
+                                    <circle cx="58" cy="33" r="2" fill="#fff"/>
+                                    <circle cx="42" cy="37" r="1" fill="#fff" opacity="0.7"/>
+                                    <circle cx="62" cy="37" r="1" fill="#fff" opacity="0.7"/>
+                                    <!-- 鼻子 -->
+                                    <ellipse cx="50" cy="44" rx="3" ry="2" fill="#F48FB1"/>
+                                    <!-- 嘴巴 -->
+                                    <path d="M47 46 Q50 49 53 46" stroke="#F48FB1" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                                    <!-- 胡须 -->
+                                    <line x1="22" y1="42" x2="34" y2="44" stroke="#4CAF50" stroke-width="1" opacity="0.7"/>
+                                    <line x1="22" y1="46" x2="34" y2="46" stroke="#4CAF50" stroke-width="1" opacity="0.7"/>
+                                    <line x1="66" y1="44" x2="78" y2="42" stroke="#4CAF50" stroke-width="1" opacity="0.7"/>
+                                    <line x1="66" y1="46" x2="78" y2="46" stroke="#4CAF50" stroke-width="1" opacity="0.7"/>
+                                    <!-- 小爪子 -->
+                                    <ellipse cx="35" cy="82" rx="8" ry="5" fill="#81C784"/>
+                                    <ellipse cx="65" cy="82" rx="8" ry="5" fill="#81C784"/>
+                                    <!-- 尾巴 -->
+                                    <path d="M78 60 Q95 55 90 70 Q85 80 78 75" fill="#81C784" stroke="#66BB6A" stroke-width="1"/>
+                                    <!-- 头顶叶子装饰 -->
+                                    <ellipse cx="50" cy="18" rx="8" ry="4" fill="#4CAF50" transform="rotate(-30 50 18)"/>
+                                    <line x1="50" y1="18" x2="50" y2="10" stroke="#66BB6A" stroke-width="1.5"/>
+                                </svg>
+                            </div>
+                            <div class="carbon-cat-hint">拖我呀~</div>
+                        </div>
                     </div>
                 </div>
                 
@@ -264,15 +312,90 @@
         
         .carbon-banner-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         
-        .carbon-banner-visual { position: relative; width: 150px; height: 150px; }
+        .carbon-banner-visual { position: relative; width: 150px; height: 150px; overflow: visible; }
         .carbon-circle { position: absolute; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); }
         .carbon-circle-1 { width: 150px; height: 150px; top: 0; right: 0; animation: carbon-pulse 3s ease-in-out infinite; }
         .carbon-circle-2 { width: 100px; height: 100px; top: 25px; right: 25px; animation: carbon-pulse 3s ease-in-out infinite 0.5s; }
         .carbon-circle-3 { width: 60px; height: 60px; top: 45px; right: 45px; background: rgba(255,255,255,0.1); animation: carbon-pulse 3s ease-in-out infinite 1s; }
-        .carbon-leaf { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; animation: carbon-float 2s ease-in-out infinite; }
+        
+        /* 可拖动小猫咪样式 */
+        .carbon-cat-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .carbon-cat {
+            width: 80px;
+            height: 80px;
+            filter: drop-shadow(0 4px 8px rgba(46, 125, 50, 0.3));
+            transition: transform 0.2s ease, filter 0.2s ease;
+            animation: cat-bounce 2s ease-in-out infinite;
+        }
+        
+        .carbon-cat svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .carbon-cat-hint {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.8);
+            margin-top: 4px;
+            animation: hint-pulse 1.5s ease-in-out infinite;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        /* 拖动中状态 */
+        .carbon-cat-wrapper.dragging {
+            cursor: grabbing;
+        }
+        
+        .carbon-cat-wrapper.dragging .carbon-cat {
+            transform: scale(1.1);
+            filter: drop-shadow(0 8px 16px rgba(46, 125, 50, 0.4));
+            animation: none;
+        }
+        
+        .carbon-cat-wrapper.dragging .carbon-cat-hint {
+            opacity: 0;
+        }
+        
+        /* 悬停状态 */
+        .carbon-cat-wrapper:hover .carbon-cat {
+            transform: scale(1.05);
+            filter: drop-shadow(0 6px 12px rgba(46, 125, 50, 0.35));
+            animation-play-state: paused;
+        }
+        
+        .carbon-cat-wrapper:hover .carbon-cat-hint {
+            color: #fff;
+        }
+        
+        @keyframes cat-bounce {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-5px) rotate(2deg); }
+        }
+        
+        @keyframes hint-pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
         
         @keyframes carbon-pulse { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.05); opacity: 0.6; } }
-        @keyframes carbon-float { 0%, 100% { transform: translate(-50%, -50%) rotate(-5deg); } 50% { transform: translate(-50%, -55%) rotate(5deg); } }
+        
+        /* 回弹动画 */
+        .carbon-cat-wrapper.settling {
+            transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
         
         .carbon-leaderboard { background: #fff; border-radius: 16px; padding: 24px; margin-bottom: 30px; border: 1px solid #c8e6c9; }
         .carbon-leaderboard h3 { color: #2e7d32; margin: 0 0 16px 0; }
@@ -337,16 +460,166 @@
             }
         }
         
+        // 小猫咪拖动功能
+        function initCatDrag() {
+            var wrapper = document.getElementById('carbonCatWrapper');
+            var container = document.getElementById('carbonVisualContainer');
+            
+            if (!wrapper || !container) return;
+            
+            var isDragging = false;
+            var startX, startY, initialLeft, initialTop;
+            var containerRect, wrapperWidth, wrapperHeight;
+            
+            function getContainerBounds() {
+                containerRect = container.getBoundingClientRect();
+                wrapperWidth = wrapper.offsetWidth;
+                wrapperHeight = wrapper.offsetHeight;
+            }
+            
+            function initPosition() {
+                getContainerBounds();
+                // 居中位置
+                var centerX = (containerRect.width - wrapperWidth) / 2;
+                var centerY = (containerRect.height - wrapperHeight) / 2;
+                wrapper.style.left = centerX + 'px';
+                wrapper.style.top = centerY + 'px';
+            }
+            
+            function clampPosition(x, y) {
+                getContainerBounds();
+                var minX = 0;
+                var minY = 0;
+                var maxX = containerRect.width - wrapperWidth;
+                var maxY = containerRect.height - wrapperHeight;
+                
+                return {
+                    x: Math.max(minX, Math.min(maxX, x)),
+                    y: Math.max(minY, Math.min(maxY, y))
+                };
+            }
+            
+            // 鼠标事件
+            wrapper.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                wrapper.classList.add('dragging');
+                wrapper.classList.remove('settling');
+                
+                startX = e.clientX;
+                startY = e.clientY;
+                initialLeft = wrapper.offsetLeft;
+                initialTop = wrapper.offsetTop;
+                
+                e.preventDefault();
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (!isDragging) return;
+                
+                var deltaX = e.clientX - startX;
+                var deltaY = e.clientY - startY;
+                
+                var newX = initialLeft + deltaX;
+                var newY = initialTop + deltaY;
+                
+                var clamped = clampPosition(newX, newY);
+                wrapper.style.left = clamped.x + 'px';
+                wrapper.style.top = clamped.y + 'px';
+            });
+            
+            document.addEventListener('mouseup', function() {
+                if (!isDragging) return;
+                isDragging = false;
+                wrapper.classList.remove('dragging');
+                // 添加回弹动画
+                setTimeout(function() {
+                    wrapper.classList.add('settling');
+                    var currentLeft = wrapper.offsetLeft;
+                    var currentTop = wrapper.offsetTop;
+                    var clamped = clampPosition(currentLeft, currentTop);
+                    wrapper.style.left = clamped.x + 'px';
+                    wrapper.style.top = clamped.y + 'px';
+                    setTimeout(function() {
+                        wrapper.classList.remove('settling');
+                    }, 400);
+                }, 50);
+            });
+            
+            // 触摸事件
+            wrapper.addEventListener('touchstart', function(e) {
+                isDragging = true;
+                wrapper.classList.add('dragging');
+                wrapper.classList.remove('settling');
+                
+                var touch = e.touches[0];
+                startX = touch.clientX;
+                startY = touch.clientY;
+                initialLeft = wrapper.offsetLeft;
+                initialTop = wrapper.offsetTop;
+                
+                e.preventDefault();
+            }, { passive: false });
+            
+            document.addEventListener('touchmove', function(e) {
+                if (!isDragging) return;
+                
+                var touch = e.touches[0];
+                var deltaX = touch.clientX - startX;
+                var deltaY = touch.clientY - startY;
+                
+                var newX = initialLeft + deltaX;
+                var newY = initialTop + deltaY;
+                
+                var clamped = clampPosition(newX, newY);
+                wrapper.style.left = clamped.x + 'px';
+                wrapper.style.top = clamped.y + 'px';
+                
+                e.preventDefault();
+            }, { passive: false });
+            
+            document.addEventListener('touchend', function() {
+                if (!isDragging) return;
+                isDragging = false;
+                wrapper.classList.remove('dragging');
+                // 添加回弹动画
+                setTimeout(function() {
+                    wrapper.classList.add('settling');
+                    var currentLeft = wrapper.offsetLeft;
+                    var currentTop = wrapper.offsetTop;
+                    var clamped = clampPosition(currentLeft, currentTop);
+                    wrapper.style.left = clamped.x + 'px';
+                    wrapper.style.top = clamped.y + 'px';
+                    setTimeout(function() {
+                        wrapper.classList.remove('settling');
+                    }, 400);
+                }, 50);
+            });
+            
+            // 初始化位置
+            initPosition();
+            
+            // 窗口大小变化时重新调整
+            window.addEventListener('resize', function() {
+                if (!isDragging) {
+                    var clamped = clampPosition(wrapper.offsetLeft, wrapper.offsetTop);
+                    wrapper.style.left = clamped.x + 'px';
+                    wrapper.style.top = clamped.y + 'px';
+                }
+            });
+        }
+        
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function() {
                 updateHomeCarbonStats();
                 bindLeaderboardTabs();
                 bindAIEntrance();
+                initCatDrag();
             });
         } else {
             updateHomeCarbonStats();
             bindLeaderboardTabs();
             bindAIEntrance();
+            initCatDrag();
         }
     })();
     </script>
