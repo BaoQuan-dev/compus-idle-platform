@@ -623,8 +623,8 @@ const AdminModule = {
                     </tbody>
                 </table>
             </div>
-            <div style="margin-top: 16px; padding: 12px 16px; background: var(--bg-light); border-radius: 8px; font-size: 13px; color: var(--text-secondary);">
-                <span>📌</span> 共 ${users.length} 位注册用户 | 认证状态与单个用户独立绑定
+            <div style="margin-top: 16px; padding: 12px 16px; background: var(--bg-light); border-radius: 8px; font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px;">
+                <span style="color: var(--primary-color);">✓</span> 用户认证管理：每位用户独立提交，状态互不干扰
             </div>
         `;
     },
