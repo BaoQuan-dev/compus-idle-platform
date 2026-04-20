@@ -21,7 +21,7 @@
         .ai-container {
             max-width: 700px;
             margin: 20px auto;
-            padding: 0 16px;
+            padding: 0 16px 100px;
         }
         
         .ai-chat-box {
@@ -41,6 +41,12 @@
         .ai-message {
             margin-bottom: 16px;
             display: flex;
+            animation: msgIn 0.3s ease;
+        }
+        
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .ai-message.user { justify-content: flex-end; }
@@ -51,6 +57,7 @@
             padding: 12px 16px;
             border-radius: 16px;
             line-height: 1.6;
+            word-break: break-word;
         }
         
         .ai-message.user .ai-message-bubble {
@@ -65,12 +72,38 @@
             border-bottom-left-radius: 4px;
         }
         
+        .ai-message.ai.typing .ai-message-bubble {
+            padding: 20px;
+        }
+        
+        .ai-typing-dots {
+            display: inline-flex;
+            gap: 4px;
+        }
+        
+        .ai-typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: #43a047;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .ai-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .ai-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+        
         .ai-message-time {
             font-size: 0.75rem;
             color: #999;
             margin-top: 4px;
-            text-align: right;
         }
+        
+        .ai-message.user .ai-message-time { text-align: right; }
         
         .ai-quick-questions {
             padding: 16px;
@@ -106,11 +139,17 @@
             transform: translateY(-1px);
         }
         
+        .ai-quick-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
         .ai-input-area {
             padding: 16px;
             display: flex;
             gap: 12px;
             border-top: 1px solid #eee;
+            background: #fff;
         }
         
         .ai-input {
@@ -139,6 +178,12 @@
         .ai-send-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
+        }
+        
+        .ai-send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
         
         .ai-stats-card {
@@ -179,22 +224,29 @@
             color: #666;
         }
         
-        .ai-coze-tip {
+        .ai-status {
             background: #fff;
             border-radius: 16px;
-            padding: 20px;
-            border: 2px dashed #81c784;
-            text-align: center;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #c8e6c9;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
-        .ai-coze-tip h4 {
-            color: #2e7d32;
-            margin: 0 0 8px 0;
+        .ai-status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ccc;
         }
         
-        .ai-coze-tip p {
+        .ai-status-dot.online { background: #4caf50; }
+        
+        .ai-status-text {
+            flex: 1;
             color: #666;
-            margin: 0;
             font-size: 0.9rem;
         }
         
@@ -214,9 +266,19 @@
             text-decoration: none;
         }
         
+        .ai-error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+        }
+        
         @media (max-width: 768px) {
             .ai-stats-grid { grid-template-columns: repeat(2, 1fr); }
             .ai-messages { height: 350px; }
+            .ai-quick-btn { font-size: 0.8rem; padding: 6px 12px; }
         }
     </style>
 </head>
@@ -248,27 +310,22 @@
             </div>
         </div>
         
+        <!-- AI状态 -->
+        <div class="ai-status" id="aiStatus">
+            <div class="ai-status-dot" id="aiStatusDot"></div>
+            <div class="ai-status-text" id="aiStatusText">正在连接AI助手...</div>
+        </div>
+        
         <!-- 聊天窗口 -->
         <div class="ai-chat-box">
             <div class="ai-messages" id="aiMessages">
-                <div class="ai-message ai">
-                    <div class="ai-message-bubble">
-                        👋 你好！我是AI碳足迹助手，基于Coze平台为你服务。<br><br>
-                        我可以帮你：<br>
-                        • 📝 分析你的碳减排贡献<br>
-                        • 💡 提供个性化环保建议<br>
-                        • 🎁 设计碳积分兑换方案<br>
-                        • 📚 讲解闲置品类的环保价值<br><br>
-                        有什么想了解的吗？
-                    </div>
-                    <div class="ai-message-time">刚刚</div>
-                </div>
+                <!-- 消息由JS动态添加 -->
             </div>
             
             <!-- 快捷问题 -->
             <div class="ai-quick-questions">
                 <h4>💬 快捷问题</h4>
-                <div class="ai-quick-btns">
+                <div class="ai-quick-btns" id="quickBtns">
                     <button class="ai-quick-btn" data-q="我的碳减排贡献有多少？">我的贡献</button>
                     <button class="ai-quick-btn" data-q="如何获得更多碳积分？">获得积分</button>
                     <button class="ai-quick-btn" data-q="教材类闲置的环保价值是什么？">教材价值</button>
@@ -283,13 +340,6 @@
                 <button class="ai-send-btn" id="aiSendBtn">发送</button>
             </div>
         </div>
-        
-        <!-- Coze配置提示 -->
-        <div class="ai-coze-tip">
-            <h4>🔧 Coze AI配置</h4>
-            <p>在扣子平台创建碳足迹助手Bot，将Bot ID填入下方即可启用真实AI对话</p>
-            <input type="text" id="cozeBotId" placeholder="输入扣子Bot ID" style="margin-top:12px;padding:10px 16px;border:1px solid #81c784;border-radius:8px;width:80%;max-width:300px;">
-        </div>
     </div>
     
     <script src="./script/carbon.js"></script>
@@ -297,78 +347,291 @@
     (function() {
         'use strict';
         
+        // ========== 配置 ==========
+        var CONFIG = {
+            BOT_ID: '7630670043630010374',  // 农大碳足迹助手 Bot ID
+            API_URL: 'https://api.coze.cn/v1/chat',
+            USER_ID: localStorage.getItem('hnau_current_user') || 'guest_' + Date.now()
+        };
+        
+        // ========== DOM ==========
         var messagesContainer = document.getElementById('aiMessages');
         var input = document.getElementById('aiInput');
         var sendBtn = document.getElementById('aiSendBtn');
-        var stats = HNAU_Carbon.getStats();
+        var quickBtns = document.getElementById('quickBtns');
+        var statusDot = document.getElementById('aiStatusDot');
+        var statusText = document.getElementById('aiStatusText');
         
-        // 更新用户数据
-        document.getElementById('userCarbon').textContent = stats.totalSaved.toFixed(1);
-        document.getElementById('userTrees').textContent = stats.treesEquivalent.toFixed(1);
-        document.getElementById('userPoints').textContent = stats.totalPoints;
+        // ========== 状态 ==========
+        var isTyping = false;
+        var conversationId = null;
+        var messageHistory = [];
         
-        // 模拟AI回复
-        function getAIResponse(question) {
-            var responses = {
-                '我的贡献': '您目前累计减碳' + stats.totalSaved.toFixed(1) + 'kg CO₂，相当于种了' + stats.treesEquivalent.toFixed(1) + '棵树！继续保持，绿色校园离不开您的贡献。',
-                '获得积分': '获得碳积分的方式：\n• 每笔交易完成：+100积分\n• 每节省1kg CO₂：+10积分\n• 发布闲置：+20积分\n• 每日签到：+5积分\n• 分享海报：+50积分',
-                '教材价值': '教材类闲置是校园碳减排的"主力军"！每本教材二手流转可节省约8kg CO₂（印刷+运输），相当于：\n• 减少0.5kg纸张消耗\n• 节省3L水资源\n• 减少0.2kg塑料包装',
-                '积分兑换': '碳积分可兑换：\n• 100积分：环保书签\n• 500积分：二手袋套装\n• 1000积分：校园绿植一盆\n• 5000积分：环保达人证书\n（具体兑换商店开发中）',
-                '双碳目标': '"双碳"即碳达峰、碳中和：\n• 碳达峰：2030年前CO₂排放达峰值<br>• 碳中和：2060年前实现CO₂净零排放<br>校园闲置循环是实现双碳目标的重要路径！'
-            };
+        // ========== 初始化 ==========
+        function init() {
+            // 更新用户数据
+            var stats = HNAU_Carbon.getStats();
+            document.getElementById('userCarbon').textContent = stats.totalSaved.toFixed(1);
+            document.getElementById('userTrees').textContent = stats.treesEquivalent.toFixed(1);
+            document.getElementById('userPoints').textContent = stats.totalPoints;
             
-            var lowerQ = question.toLowerCase();
-            for (var key in responses) {
-                if (lowerQ.includes(key.toLowerCase())) {
-                    return responses[key];
-                }
-            }
+            // 添加欢迎消息
+            addMessage('👋 你好！我是农大碳足迹助手 🌱\n\n我可以帮你：\n• 📊 分析你的碳减排贡献\n• 💡 提供个性化环保建议\n• 🎁 介绍碳积分兑换方案\n• 📚 讲解闲置品类的环保价值\n• 🌍 科普双碳目标知识\n\n你的当前数据：累计减碳' + stats.totalSaved.toFixed(1) + 'kg，等效种树' + stats.treesEquivalent.toFixed(1) + '棵！\n\n有什么想了解的吗？', 'ai');
             
-            return '感谢您的提问！作为农大闲置平台的用户，您的每一笔交易都在为碳减排做贡献。如果您有关于碳积分、环保建议或闲置品类价值的问题，欢迎继续提问！';
+            // 绑定事件
+            bindEvents();
+            
+            // 更新状态
+            updateStatus('ready', 'AI助手已就绪');
+            
+            console.log('[HNAU AI] 碳足迹助手已初始化，Bot ID:', CONFIG.BOT_ID);
         }
         
-        // 添加消息
+        // ========== 状态更新 ==========
+        function updateStatus(type, text) {
+            statusText.textContent = text;
+            statusDot.className = 'ai-status-dot';
+            if (type === 'online') {
+                statusDot.classList.add('online');
+            } else if (type === 'error') {
+                statusDot.style.background = '#f44336';
+            }
+        }
+        
+        // ========== 添加消息 ==========
         function addMessage(text, type) {
             var msg = document.createElement('div');
             msg.className = 'ai-message ' + type;
-            msg.innerHTML = '<div class="ai-message-bubble">' + text.replace(/\n/g, '<br>') + '</div>' +
+            
+            if (type === 'ai') {
+                // AI消息支持Markdown简化格式
+                text = formatMessage(text);
+            }
+            
+            msg.innerHTML = '<div class="ai-message-bubble">' + text + '</div>' +
                            '<div class="ai-message-time">' + new Date().toLocaleTimeString() + '</div>';
             messagesContainer.appendChild(msg);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // 保存到历史
+            messageHistory.push({ role: type === 'user' ? 'user' : 'assistant', content: text });
         }
         
-        // 发送消息
-        function sendMessage() {
-            var text = input.value.trim();
-            if (!text) return;
+        // ========== 格式化消息 ==========
+        function formatMessage(text) {
+            // 简单的文本格式化
+            return text
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/`(.*?)`/g, '<code style="background:#e8f5e9;padding:2px 6px;border-radius:4px;">$1</code>');
+        }
+        
+        // ========== 显示正在输入 ==========
+        function showTyping() {
+            var msg = document.createElement('div');
+            msg.className = 'ai-message ai typing';
+            msg.id = 'typingIndicator';
+            msg.innerHTML = '<div class="ai-message-bubble"><div class="ai-typing-dots"><span></span><span></span><span></span></div></div>';
+            messagesContainer.appendChild(msg);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            isTyping = true;
+            setInputEnabled(false);
+        }
+        
+        // ========== 隐藏正在输入 ==========
+        function hideTyping() {
+            var typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+            isTyping = false;
+            setInputEnabled(true);
+        }
+        
+        // ========== 设置输入状态 ==========
+        function setInputEnabled(enabled) {
+            input.disabled = !enabled;
+            sendBtn.disabled = !enabled;
+            quickBtns.querySelectorAll('button').forEach(function(btn) {
+                btn.disabled = !enabled;
+            });
+        }
+        
+        // ========== 调用Coze API ==========
+        async function callCozeAPI(userMessage) {
+            try {
+                updateStatus('', 'AI正在思考...');
+                
+                // 构造提示词，包含用户碳数据
+                var stats = HNAU_Carbon.getStats();
+                var contextPrompt = '用户信息：' + userMessage + '\n\n用户碳数据：累计减碳' + stats.totalSaved.toFixed(1) + 'kg CO₂，等效种树' + stats.treesEquivalent.toFixed(1) + '棵，碳积分' + stats.totalPoints + '分，交易' + stats.tradeCount + '次。';
+                
+                var response = await fetch(CONFIG.API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + getAPIKey(),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        bot_id: CONFIG.BOT_ID,
+                        user_id: CONFIG.USER_ID,
+                        query: contextPrompt,
+                        stream: false
+                    })
+                });
+                
+                var data = await response.json();
+                
+                if (data.code === 0 && data.messages && data.messages.length > 0) {
+                    var aiMessage = data.messages.find(function(m) { return m.role === 'assistant'; });
+                    if (aiMessage && aiMessage.content) {
+                        return aiMessage.content;
+                    }
+                }
+                
+                // API调用失败，使用本地回复
+                console.warn('[HNAU AI] API调用失败:', data);
+                return getLocalResponse(userMessage, stats);
+                
+            } catch (error) {
+                console.error('[HNAU AI] API错误:', error);
+                return getLocalResponse(userMessage, HNAU_Carbon.getStats());
+            }
+        }
+        
+        // ========== 获取API Key ==========
+        function getAPIKey() {
+            // 从localStorage获取或使用默认值
+            var key = localStorage.getItem('hnau_coze_api_key');
+            if (!key) {
+                // 提示用户配置API Key
+                updateStatus('error', '请在扣子平台获取API Key并配置');
+            }
+            return key || '';
+        }
+        
+        // ========== 本地回复（降级方案）==========
+        function getLocalResponse(question, stats) {
+            var lowerQ = question.toLowerCase();
             
+            // 根据问题类型返回对应回复
+            if (lowerQ.includes('贡献') || lowerQ.includes('减排') || lowerQ.includes('碳排')) {
+                return '🌱 您目前累计减碳' + stats.totalSaved.toFixed(1) + 'kg CO₂\n\n' +
+                       '📊 相当于种了' + stats.treesEquivalent.toFixed(1) + '棵树！\n\n' +
+                       '💪 继续保持，绿色校园离不开您的贡献！\n\n' +
+                       '每笔闲置交易都在为碳减排做贡献，感谢您的参与~';
+            }
+            
+            if (lowerQ.includes('积分') && (lowerQ.includes('获得') || lowerQ.includes('怎么'))) {
+                return '🎁 获得碳积分的方式：\n\n' +
+                       '• ✅ 每笔交易完成：+100积分\n' +
+                       '• 🌿 每节省1kg CO₂：+10积分\n' +
+                       '• 📦 发布闲置：+20积分\n' +
+                       '• 📅 每日签到：+5积分\n' +
+                       '• 📤 分享海报：+50积分\n\n' +
+                       '您目前有' + stats.totalPoints + '积分，继续加油！';
+            }
+            
+            if (lowerQ.includes('教材') || lowerQ.includes('书')) {
+                return '📚 教材类闲置是校园碳减排的"主力军"！\n\n' +
+                       '每本教材二手流转可节省约8kg CO₂：\n' +
+                       '• 📄 减少0.5kg纸张消耗\n' +
+                       '• 💧 节省3L水资源\n' +
+                       '• 🛍️ 减少0.2kg塑料包装\n\n' +
+                       '毕业季回收教材，让知识循环起来！';
+            }
+            
+            if (lowerQ.includes('兑换') || lowerQ.includes('礼品')) {
+                return '🎁 碳积分可兑换：\n\n' +
+                       '• 🌿 100积分：环保书签\n' +
+                       '• 🛍️ 500积分：二手袋套装\n' +
+                       '• 🌱 1000积分：校园绿植一盆\n' +
+                       '• 📜 5000积分：环保达人证书\n\n' +
+                       '（兑换商店开发中，敬请期待~）';
+            }
+            
+            if (lowerQ.includes('双碳') || lowerQ.includes('碳达') || lowerQ.includes('碳中')) {
+                return '🌍 "双碳"目标是国家战略！\n\n' +
+                       '**碳达峰**：2030年前CO₂排放达到峰值后不再增长\n\n' +
+                       '**碳中和**：2060年前实现CO₂净零排放\n\n' +
+                       '🏫 校园闲置循环是实现双碳目标的重要路径：\n' +
+                       '• 延长物品使用寿命\n' +
+                       '• 减少资源开采和运输\n' +
+                       '• 培养低碳生活习惯';
+            }
+            
+            if (lowerQ.includes('你好') || lowerQ.includes('hi') || lowerQ.includes('hello')) {
+                return '👋 你好！很高兴为你服务~\n\n' +
+                       '作为农大闲置平台的AI助手，我可以帮你：\n' +
+                       '• 分析你的碳减排数据\n' +
+                       '• 提供环保建议\n' +
+                       '• 解答双碳问题\n\n' +
+                       '有什么想了解的吗？';
+            }
+            
+            // 默认回复
+            return '💡 感谢您的提问！\n\n' +
+                   '作为农大闲置平台的用户，您的每一笔闲置交易都在为碳减排做贡献。\n\n' +
+                   '当前数据：减碳' + stats.totalSaved.toFixed(1) + 'kg，等效种树' + stats.treesEquivalent.toFixed(1) + '棵\n\n' +
+                   '继续参与绿色交易，一起为双碳目标努力！🌱';
+        }
+        
+        // ========== 发送消息 ==========
+        async function sendMessage() {
+            var text = input.value.trim();
+            if (!text || isTyping) return;
+            
+            // 添加用户消息
             addMessage(text, 'user');
             input.value = '';
             
-            // 模拟AI思考
-            setTimeout(function() {
-                var response = getAIResponse(text);
+            // 显示AI正在输入
+            showTyping();
+            
+            // 调用AI
+            try {
+                var response = await callCozeAPI(text);
+                hideTyping();
                 addMessage(response, 'ai');
+                updateStatus('online', 'AI助手已就绪');
                 
                 // 记录AI报告获取
                 HNAU_Carbon.addAIReport();
-            }, 800);
+                
+            } catch (error) {
+                hideTyping();
+                addMessage('抱歉，AI服务暂时不可用，请稍后再试。', 'ai');
+                updateStatus('error', 'AI服务异常');
+            }
         }
         
-        // 绑定事件
-        sendBtn.addEventListener('click', sendMessage);
-        input.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sendMessage();
-        });
-        
-        document.querySelectorAll('.ai-quick-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                input.value = this.dataset.q;
-                sendMessage();
+        // ========== 绑定事件 ==========
+        function bindEvents() {
+            // 发送按钮
+            sendBtn.addEventListener('click', sendMessage);
+            
+            // 回车发送
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
             });
-        });
+            
+            // 快捷问题按钮
+            quickBtns.addEventListener('click', function(e) {
+                var btn = e.target.closest('.ai-quick-btn');
+                if (btn && !btn.disabled) {
+                    input.value = btn.dataset.q;
+                    sendMessage();
+                }
+            });
+        }
         
-        console.log('[HNAU AI] 碳足迹助手已就绪');
+        // ========== 启动 ==========
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
     })();
     </script>
 </body>
