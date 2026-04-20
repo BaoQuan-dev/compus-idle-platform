@@ -1961,22 +1961,6 @@ body {
         flex-shrink: 0;
     }
     
-    .navbar-mobile-menu {
-        position: fixed !important;
-        top: var(--nav-height) !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        background: #fff !important;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.1) !important;
-        flex-direction: column;
-        padding: 16px !important;
-        padding-top: calc(var(--nav-height) + 16px) !important;
-        z-index: 10000 !important;
-        max-height: 100vh !important;
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch;
-    }
     
     .page-header {
         padding: var(--spacing-lg) 0;
@@ -2414,19 +2398,29 @@ body {
 }
 
 /* 移动端菜单 - 固定定位在最顶层 */
-.navbar-mobile-menu {
-    position: fixed !important;
-    top: var(--nav-height) !important;
-    padding-top: var(--safe-area-top) !important;
-    left: 0 !important;
-    right: 0 !important;
-    background: #fff !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
-    z-index: 9999 !important;
-    max-height: calc(100vh - var(--nav-height)) !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+@media (max-width: 768px) {
+    .navbar-mobile-menu {
+        position: fixed !important;
+        top: var(--nav-height) !important;
+        padding-top: calc(env(safe-area-inset-top, 0px) + 10px) !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: #fff !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+        z-index: 10000 !important;
+        max-height: calc(100vh - var(--nav-height)) !important;
+        height: calc(100vh - var(--nav-height)) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+        transform: translateX(100%) !important;
+        transition: transform 0.3s ease !important;
+    }
+    
+    .navbar-mobile-menu.show {
+        transform: translateX(0) !important;
+    }
 }
 
 /* 移动端菜单项 - 优化触摸区域 */
@@ -2575,10 +2569,6 @@ input:focus, textarea:focus, select:focus {
 @supports (padding: max(0px)) {
     .navbar {
         padding-top: max(0px, env(safe-area-inset-top));
-    }
-    
-    .navbar-mobile-menu {
-        padding-top: max(var(--nav-height), env(safe-area-inset-top));
     }
     
     body {
