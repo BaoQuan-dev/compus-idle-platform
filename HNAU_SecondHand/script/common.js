@@ -1112,6 +1112,104 @@ const ImagePreview = {
     }
 };
 
+/**
+ * 获取存储空间使用情况
+ */
+function getStorageUsage() {
+    let used = 0;
+    try {
+        for (let key in localStorage) {
+            if (localStorage.hasOwnProperty(key) && localStorage[key]) {
+                used += localStorage[key].length + key.length;
+            }
+        }
+    } catch (e) {
+        console.warn('[Storage] 计算空间失败:', e);
+    }
+    // 估算 localStorage 总容量（通常 5MB）
+    const total = 5 * 1024 * 1024;
+    return {
+        used: used,
+        total: total,
+        percent: Math.round((used / total) * 100),
+        usedMB: (used / 1024 / 1024).toFixed(2),
+        totalMB: (total / 1024 / 1024).toFixed(2)
+    };
+}
+
+/**
+ * 检查存储空间是否足够（预留 500KB 余量）
+ * @param {number} neededBytes - 需要的空间（字节）
+ * @returns {boolean}
+ */
+function checkStorageSpace(neededBytes) {
+    const buffer = 500 * 1024; // 500KB 余量
+    const usage = getStorageUsage();
+    return (usage.used + neededBytes + buffer) < usage.total;
+}
+
+/**
+ * 图片压缩工具
+ */
+const ImageCompressor = {
+    /**
+     * 压缩图片文件
+     * @param {File} file - 图片文件
+     * @param {object} options - 配置选项
+     * @returns {Promise<string>} 返回压缩后的 Base64
+     */
+    async compress(file, options = {}) {
+        const {
+            maxWidth = 1200,      // 最大宽度
+            maxHeight = 1200,     // 最大高度
+            quality = 0.7,        // 压缩质量 (0-1)
+            mimeType = 'image/jpeg'
+        } = options;
+
+        return new Promise((resolve, reject) => {
+            // 创建图片对象
+            const img = new Image();
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                img.src = e.target.result;
+            };
+
+            img.onload = () => {
+                // 计算压缩后的尺寸
+                let { width, height } = img;
+                if (width > maxWidth || height > maxHeight) {
+                    const ratio = Math.min(maxWidth / width, maxHeight / height);
+                    width = Math.round(width * ratio);
+                    height = Math.round(height * ratio);
+                }
+
+                // 创建 Canvas 并绘制压缩后的图片
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // 输出压缩后的 Base64
+                const compressed = canvas.toDataURL(mimeType, quality);
+                console.log(`[ImageCompressor] 压缩完成: ${(file.size / 1024).toFixed(1)}KB -> ${(compressed.length / 1024).toFixed(1)}KB`);
+                resolve(compressed);
+            };
+
+            img.onerror = () => {
+                reject(new Error('图片加载失败'));
+            };
+
+            reader.onerror = () => {
+                reject(new Error('文件读取失败'));
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+};
+
 // ========== 页面初始化 ==========
 document.addEventListener('DOMContentLoaded', () => {
     // 初始化导航栏

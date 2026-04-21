@@ -334,7 +334,21 @@ const ReleaseModule = {
             }
 
             try {
-                const base64 = await Utils.fileToBase64(file);
+                // 【修复】使用图片压缩功能，减少 localStorage 占用
+                const base64 = await ImageCompressor.compress(file, {
+                    maxWidth: 1200,
+                    maxHeight: 1200,
+                    quality: 0.7,
+                    mimeType: 'image/jpeg'
+                });
+                
+                // 检查存储空间
+                if (!checkStorageSpace(base64.length)) {
+                    Toast.show('存储空间不足，请清理浏览器缓存后再试', 'error');
+                    console.warn('[Release] 存储空间不足');
+                    continue;
+                }
+                
                 this.state.images.push(base64);
             } catch (err) {
                 console.error('图片处理失败:', err);
@@ -535,6 +549,14 @@ const ReleaseModule = {
      */
     handleSubmit() {
         if (this.state.isSubmitting) return;
+
+        // 【新增】检查存储空间
+        const storageUsage = getStorageUsage();
+        console.log('[Release] 存储空间使用:', storageUsage);
+        if (storageUsage.percent > 90) {
+            Toast.show('存储空间即将用尽（' + storageUsage.percent + '%），请清理浏览器缓存后再试', 'error');
+            return;
+        }
 
         // 获取表单数据
         const goodsName = document.getElementById('goodsName')?.value || '';
