@@ -113,6 +113,22 @@ const AdminModule = {
             }
         });
     },
+    
+    /**
+     * 【新增】清理存储监听器
+     * 用于退出登录时清理监听器
+     */
+    unbindStorageListener() {
+        console.log('[Admin] 清理存储监听器');
+        if (this._storageListener) {
+            window.removeEventListener('storage', this._storageListener);
+            this._storageListener = null;
+        }
+        if (this._pollInterval) {
+            clearInterval(this._pollInterval);
+            this._pollInterval = null;
+        }
+    },
 
     /**
      * 【新增】获取当前数据的哈希值
