@@ -37,24 +37,16 @@ const Storage = {
     set(key, value) {
         try {
             const data = JSON.stringify(value);
-            // 【新增】检查存储空间是否足够
-            const testKey = '__storage_test__';
-            try {
-                localStorage.setItem(testKey, 'test');
-                localStorage.removeItem(testKey);
-            } catch (e) {
-                // 存储空间几乎已满
-                if (e.name === 'QuotaExceededError' || e.code === 22) {
-                    Toast.show('存储空间已满，请清理浏览器缓存后重试', 'error');
-                    console.error(`Storage.set [${key}] 存储空间已满`);
-                    return false;
-                }
-            }
             localStorage.setItem(key, data);
             return true;
         } catch (e) {
             console.error(`Storage.set [${key}] 存储失败:`, e);
-            Toast.show('存储失败，请清理浏览器缓存后重试', 'error');
+            // 如果是存储空间不足，提供更友好的提示
+            if (e.name === 'QuotaExceededError' || e.code === 22) {
+                Toast.show('存储空间已满，请清理浏览器缓存后重试', 'error');
+            } else {
+                Toast.show('存储失败，请清理浏览器缓存后重试', 'error');
+            }
             return false;
         }
     },
