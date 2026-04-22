@@ -568,6 +568,7 @@
         // ========== 表单提交 ==========
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            console.log('[Donation] 表单提交开始');
             
             // 获取表单数据
             var formData = {
@@ -588,20 +589,32 @@
             
             // 验证
             if (!formData.targetType) {
+                console.log('[Donation] 未选择转赠对象类型');
                 alert('请选择转赠对象类型');
                 return;
             }
             
-            // 保存到localStorage
-            var list = getDonationList();
-            list.unshift(formData);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+            console.log('[Donation] 开始保存数据:', formData);
             
+            // 保存到localStorage
+            try {
+                var list = getDonationList();
+                list.unshift(formData);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+                console.log('[Donation] 保存成功，列表长度:', list.length);
+            } catch (err) {
+                console.error('[Donation] 保存失败:', err);
+                alert('存储失败，请清理浏览器缓存后重试');
+                return;
+            }
+            
+            console.log('[Donation] 显示成功弹窗');
             // 显示成功弹窗
             successModal.classList.add('active');
             
             // 禁用按钮
             submitBtn.disabled = true;
+            console.log('[Donation] 表单提交完成');
         });
         
         // ========== 成功弹窗 ==========
