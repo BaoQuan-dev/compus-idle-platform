@@ -491,9 +491,6 @@
             if (!data.yearlyTrend[year][month]) data.yearlyTrend[year][month] = 0;
             data.yearlyTrend[year][month] += result.saved;
             
-            // 勋章已在上面第453行通过 CarbonPoints.getBadges(data) 设置
-            // 【删除】this.checkBadges(data);  // checkBadges 方法不存在！
-            
             this.saveData(data);
             return data;
         },
