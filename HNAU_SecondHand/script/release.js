@@ -621,41 +621,51 @@ const ReleaseModule = {
         }, 10000);
         
         setTimeout(() => {
-            // 保存商品
-            const goods = Auth.getGoods();
-            goods.unshift(goodsInfo);
-            const saveSuccess = Storage.set(Auth.KEYS.GOODS, goods);
-            
-            // 【修复】检查存储是否成功
-            if (!saveSuccess) {
-                clearTimeout(timeoutId);  // 清除超时
-                // 存储失败，恢复按钮状态
+            try {
+                // 保存商品
+                const goods = Auth.getGoods();
+                goods.unshift(goodsInfo);
+                const saveSuccess = Storage.set(Auth.KEYS.GOODS, goods);
+                
+                // 【修复】检查存储是否成功
+                if (!saveSuccess) {
+                    clearTimeout(timeoutId);  // 清除超时
+                    // 存储失败，恢复按钮状态
+                    this.state.isSubmitting = false;
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.textContent = '发布商品';
+                    // 显示具体错误
+                    const storageInfo = Storage.getStorageUsage();
+                    Toast.show('存储失败！空间已使用' + storageInfo.percent + '%，请清理浏览器缓存后再试', 'error');
+                    return;  // 停止后续操作
+                }
+
+                // 清除超时
+                clearTimeout(timeoutId);
+                
+                // 记录碳足迹（发布商品奖励）
+                if (window.HNAU_Carbon) {
+                    // 记录碳足迹数据（使用品类和默认新旧程度）
+                    HNAU_Carbon.addPublish(goodsCategory, '正常使用', goodsName.trim());
+                }
+
+                Toast.show('商品发布成功！即将跳转到首页', 'success');
+
+                // 1.5秒后跳转
+                setTimeout(() => {
+                    Utils.跳转('home.html');
+                }, 1500);
+            } catch (e) {
+                // 确保任何异常都被处理
+                clearTimeout(timeoutId);
                 this.state.isSubmitting = false;
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('btn-loading');
                 submitBtn.textContent = '发布商品';
-                // 【新增】显示具体错误
-                const storageInfo = Storage.getStorageUsage();
-                Toast.show('存储失败！空间已使用' + storageInfo.percent + '%，请清理浏览器缓存后再试', 'error');
-                return;  // 停止后续操作
+                Toast.show('发布失败：' + e.message, 'error');
+                console.error('[Release] 发布异常:', e);
             }
-
-            // 【新增】清除超时
-            clearTimeout(timeoutId);
-            
-            // 记录碳足迹（发布商品奖励）
-            if (window.HNAU_Carbon) {
-                // 记录碳足迹数据（使用品类和默认新旧程度）
-                HNAU_Carbon.addPublish(goodsCategory, '正常使用', goodsName.trim());
-            }
-
-            Toast.show('商品发布成功！即将跳转到首页', 'success');
-
-            // 1.5秒后跳转
-            setTimeout(() => {
-                Utils.跳转('home.html');
-            }, 1500);
-
         }, 500);
     }
 };
