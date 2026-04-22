@@ -424,8 +424,125 @@
                 <span>🌱</span>
                 <span>发布公益转赠</span>
             </button>
+            
+            <!-- 删除按钮 -->
+            <button type="button" class="delete-btn" id="deleteBtn" style="display: none;">
+                <span>🗑️</span>
+                <span>删除发布</span>
+            </button>
         </form>
     </div>
+    
+    <!-- 删除确认弹窗 -->
+    <div class="delete-modal-overlay" id="deleteModal">
+        <div class="delete-modal">
+            <div class="delete-modal-icon">⚠️</div>
+            <div class="delete-modal-header">确认删除</div>
+            <div class="delete-modal-content">
+                确定要删除这条转赠发布吗？<br>
+                <span id="deleteItemName"></span>
+            </div>
+            <div class="delete-modal-footer">
+                <button class="cancel-btn" id="cancelDeleteBtn">取消</button>
+                <button class="confirm-btn" id="confirmDeleteBtn">确认删除</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 删除按钮和弹窗样式 -->
+    <style>
+        .delete-btn {
+            width: 100%;
+            padding: 14px 20px;
+            background: #fff;
+            border: 2px solid #e74c3c;
+            border-radius: 12px;
+            color: #e74c3c;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        .delete-btn:hover {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .delete-btn:active {
+            transform: scale(0.98);
+        }
+        .delete-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        .delete-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .delete-modal {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            width: 85%;
+            max-width: 320px;
+            text-align: center;
+        }
+        .delete-modal-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+        .delete-modal-header {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .delete-modal-content {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .delete-modal-footer {
+            display: flex;
+            gap: 12px;
+        }
+        .delete-modal-footer .cancel-btn {
+            flex: 1;
+            padding: 12px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 8px;
+            color: #666;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        .delete-modal-footer .confirm-btn {
+            flex: 1;
+            padding: 12px;
+            background: #e74c3c;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 15px;
+            cursor: pointer;
+        }
+    </style>
     
     <!-- 成功弹窗 -->
     <div class="hnau-modal-overlay" id="successModal">
@@ -524,6 +641,10 @@
         var STORAGE_KEY = 'hnau_donation_list';
         var USER_KEY = 'hnau_current_user';
         
+        // ========== 编辑模式 ==========
+        var editId = null;
+        var deleteModal = null;
+        
         // ========== DOM ==========
         var form = document.getElementById('donationForm');
         var imageUploadArea = document.getElementById('imageUploadArea');
@@ -532,6 +653,92 @@
         var submitBtn = document.getElementById('submitBtn');
         var successModal = document.getElementById('successModal');
         var successBtn = document.getElementById('successBtn');
+        deleteModal = document.getElementById('deleteModal');
+        
+        // ========== 检查编辑模式 ==========
+        function checkEditMode() {
+            var urlParams = new URLSearchParams(window.location.search);
+            editId = urlParams.get('editId');
+            if (editId) {
+                loadEditData();
+            }
+        }
+        
+        // ========== 加载编辑数据 ==========
+        function loadEditData() {
+            var list = getDonationList();
+            var item = list.find(function(d) { return d.id === editId; });
+            if (item) {
+                document.getElementById('itemName').value = item.itemName || '';
+                document.getElementById('category').value = item.category || '';
+                document.getElementById('description').value = item.description || '';
+                if (item.targetType) {
+                    var radio = document.querySelector('input[name="targetType"][value="' + item.targetType + '"]');
+                    if (radio) radio.checked = true;
+                }
+                uploadedImages = item.images || [];
+                renderImagePreviews();
+                
+                // 切换到编辑模式标题
+                var titleEl = document.querySelector('.page-title');
+                if (titleEl) titleEl.textContent = '编辑转赠';
+                
+                // 显示删除按钮
+                var deleteBtn = document.getElementById('deleteBtn');
+                if (deleteBtn) deleteBtn.style.display = 'flex';
+                
+                // 修改按钮文字
+                submitBtn.textContent = '保存修改';
+            }
+        }
+        
+        // ========== 删除确认弹窗 ==========
+        function showDeleteConfirm() {
+            if (deleteModal) {
+                deleteModal.classList.add('active');
+            }
+        }
+        
+        function hideDeleteConfirm() {
+            if (deleteModal) {
+                deleteModal.classList.remove('active');
+            }
+        }
+        
+        function confirmDelete() {
+            var list = getDonationList();
+            var newList = list.filter(function(d) { return d.id !== editId; });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(newList));
+            hideDeleteConfirm();
+            Toast.show('删除成功', 'success');
+            setTimeout(function() {
+                window.location.href = 'donation_my.html';
+            }, 1000);
+        }
+        
+        // 绑定删除按钮事件
+        document.addEventListener('DOMContentLoaded', function() {
+            var deleteBtn = document.getElementById('deleteBtn');
+            var cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+            var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', showDeleteConfirm);
+            }
+            if (cancelDeleteBtn) {
+                cancelDeleteBtn.addEventListener('click', hideDeleteConfirm);
+            }
+            if (confirmDeleteBtn) {
+                confirmDeleteBtn.addEventListener('click', confirmDelete);
+            }
+            if (deleteModal) {
+                deleteModal.addEventListener('click', function(e) {
+                    if (e.target === deleteModal) {
+                        hideDeleteConfirm();
+                    }
+                });
+            }
+        });
         
         // ========== 图片预览 ==========
         var uploadedImages = [];
@@ -599,7 +806,22 @@
             // 保存到localStorage
             try {
                 var list = getDonationList();
-                list.unshift(formData);
+                
+                if (editId) {
+                    // 编辑模式：更新现有项
+                    for (var i = 0; i < list.length; i++) {
+                        if (list[i].id === editId) {
+                            formData.id = editId;
+                            formData.publishTime = list[i].publishTime;
+                            list[i] = formData;
+                            break;
+                        }
+                    }
+                } else {
+                    // 新增模式
+                    list.unshift(formData);
+                }
+                
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
                 console.log('[Donation] 保存成功，列表长度:', list.length);
             } catch (err) {
@@ -616,6 +838,9 @@
             submitBtn.disabled = true;
             console.log('[Donation] 表单提交完成');
         });
+        
+        // ========== 页面加载时检查编辑模式 ==========
+        checkEditMode();
         
         // ========== 成功弹窗 ==========
         successBtn.addEventListener('click', function() {

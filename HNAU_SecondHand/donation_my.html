@@ -236,6 +236,17 @@
             color: #666;
         }
         
+        .record-btn-edit {
+            background: #fff;
+            border: 1px solid #2196F3;
+            color: #2196F3;
+        }
+        
+        .record-btn-edit:hover {
+            background: #2196F3;
+            color: #fff;
+        }
+        
         .record-btn:hover {
             transform: translateY(-1px);
         }
@@ -1041,7 +1052,8 @@
                     var actions = '';
                     if (currentTab === 'published') {
                         if (item.status === 'pending') {
-                            actions = '<span style="color: #888; font-size: 0.85rem;">等待爱心人士申请...</span>';
+                            actions = '<button class="record-btn record-btn-edit" onclick="window.location.href=\'donation_publish.html?editId=' + item.id + '\'">✏️ 编辑</button> ' +
+                                      '<span style="color: #888; font-size: 0.85rem;">等待申请...</span>';
                         } else if (item.status === 'receiving' && item.receiver) {
                             // 有待审核的申请
                             actions = '<button class="record-btn record-btn-primary" onclick="showPendingApplicants(\'' + item.id + '\')">📋 查看申请 (' + (item.receiver ? '1' : '0') + ')</button>';
