@@ -584,9 +584,23 @@ const CheckModule = {
             submitTime: new Date().toISOString()
         };
 
+        // 【修复】检查图片大小
+        if (!verifyInfo.studentCardImage || verifyInfo.studentCardImage.length < 1000) {
+            Toast.show('请上传学生证照片', 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = '提交认证';
+            return;
+        }
+
         // 提交认证
         setTimeout(() => {
-            Auth.submitVerify(verifyInfo);
+            // 【修复】检查提交是否成功
+            const submitSuccess = Auth.submitVerify(verifyInfo);
+            if (!submitSuccess) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '提交认证';
+                return; // 存储失败时不显示成功提示
+            }
 
             Toast.show('认证信息已提交，等待管理员审核', 'success');
 
