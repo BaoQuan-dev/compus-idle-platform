@@ -611,6 +611,15 @@ const ReleaseModule = {
         };
 
         // 模拟网络延迟
+        // 【新增】超时处理 - 10秒后自动取消
+        const timeoutId = setTimeout(() => {
+            this.state.isSubmitting = false;
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('btn-loading');
+            submitBtn.textContent = '发布商品';
+            Toast.show('发布超时，请检查网络或清理存储空间后重试', 'error');
+        }, 10000);
+        
         setTimeout(() => {
             // 保存商品
             const goods = Auth.getGoods();
@@ -619,14 +628,21 @@ const ReleaseModule = {
             
             // 【修复】检查存储是否成功
             if (!saveSuccess) {
+                clearTimeout(timeoutId);  // 清除超时
                 // 存储失败，恢复按钮状态
                 this.state.isSubmitting = false;
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('btn-loading');
                 submitBtn.textContent = '发布商品';
+                // 【新增】显示具体错误
+                const storageInfo = Storage.getStorageUsage();
+                Toast.show('存储失败！空间已使用' + storageInfo.percent + '%，请清理浏览器缓存后再试', 'error');
                 return;  // 停止后续操作
             }
 
+            // 【新增】清除超时
+            clearTimeout(timeoutId);
+            
             // 记录碳足迹（发布商品奖励）
             if (window.HNAU_Carbon) {
                 // 记录碳足迹数据（使用品类和默认新旧程度）
