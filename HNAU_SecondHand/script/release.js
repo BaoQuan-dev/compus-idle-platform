@@ -644,6 +644,9 @@ const ReleaseModule = {
                 // 清除超时
                 clearTimeout(timeoutId);
                 
+                // 【核心修复】移除按钮加载状态
+                submitBtn.classList.remove('btn-loading');
+                
                 // 记录碳足迹（发布商品奖励）
                 if (window.HNAU_Carbon) {
                     // 记录碳足迹数据（使用品类和默认新旧程度）
