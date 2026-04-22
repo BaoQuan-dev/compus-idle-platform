@@ -750,6 +750,14 @@
             updateStats();
             renderList('all');
             bindEvents();
+            // 【新增】监听其他页面发布的数据，实时刷新
+            window.addEventListener('storage', function(e) {
+                if (e.key === STORAGE_KEY) {
+                    console.log('[HNAU Donation] 检测到数据变化，刷新列表');
+                    updateStats();
+                    renderList('all');
+                }
+            });
             console.log('[HNAU Donation] 公益转赠列表页已加载');
         }
         

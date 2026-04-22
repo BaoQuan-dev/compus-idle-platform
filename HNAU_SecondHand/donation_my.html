@@ -913,6 +913,15 @@
             updatePendingBadge();
             renderList();
             bindEvents();
+            // 【新增】监听其他页面发布的数据，实时刷新
+            window.addEventListener('storage', function(e) {
+                if (e.key === STORAGE_KEY) {
+                    console.log('[HNAU Donation] 检测到数据变化，刷新我的转赠');
+                    updateStats();
+                    updatePendingBadge();
+                    renderList();
+                }
+            });
             console.log('[HNAU Donation] 我的公益转赠页已加载');
         }
         
