@@ -540,6 +540,13 @@ const CheckModule = {
         const campus = document.querySelector('input[name="campus"]:checked')?.value || '郑州校区';
         const subCampus = document.getElementById('subCampus')?.value || '';
         const college = document.getElementById('college')?.value || '';
+        
+        // 【新增】存储空间检查
+        const storageInfo = Storage.getStorageUsage();
+        if (storageInfo.percent > 90) {
+            this.showError('studentIdError', '存储空间已满（' + storageInfo.percent + '%），请先清理存储空间');
+            return;
+        }
 
         // 学号校验
         const studentIdValid = Utils.validateStudentId(studentId);

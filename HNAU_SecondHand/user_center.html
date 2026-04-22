@@ -1067,6 +1067,11 @@
         </button>
     </div>
     
+    <!-- 存储空间警告 -->
+    <div id="storageWarning" style="display:none;background:#fff3cd;color:#856404;padding:10px 15px;border-radius:8px;margin:10px 15px;font-size:12px;text-align:center;cursor:pointer;">
+        存储空间不足，请点击清理
+    </div>
+    
     <script>
         function clearAllData() {
             if (confirm('确定要清除所有登录注册相关数据吗？\n\n包括：\n- 登录状态\n- 用户信息\n- 认证信息\n- 商品数据\n- 需求数据\n- 碳足迹数据\n\n此操作不可恢复！')) {
@@ -1091,6 +1096,27 @@
                         Utils.跳转('release_goods.html');
                     });
                 });
+            }
+            
+            // 存储空间检查
+            var storageInfo = Storage.getStorageUsage();
+            if (storageInfo.percent > 80) {
+                var storageWarning = document.getElementById('storageWarning');
+                if (storageWarning) {
+                    storageWarning.textContent = '存储空间 ' + storageInfo.percent + '% 已满，请点击清理';
+                    storageWarning.style.display = 'block';
+                    storageWarning.addEventListener('click', function() {
+                        if (confirm('确定要清理存储空间吗？这将清除所有本地数据。')) {
+                            var result = DataCleaner.clearAll();
+                            if (result.success) {
+                                alert('存储空间已清理，请重新登录');
+                                location.reload();
+                            } else {
+                                alert('清理失败: ' + result.failed.map(function(f) { return f.key; }).join(', '));
+                            }
+                        }
+                    });
+                }
             }
         });
     </script>
