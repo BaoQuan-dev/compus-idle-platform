@@ -496,7 +496,11 @@ const Auth = {
         }
         
         // 3. 保存认证信息（可选，用于兼容）
-        Storage.set(this.KEYS.VERIFY_INFO, info);
+        const save3 = Storage.set(this.KEYS.VERIFY_INFO, info);
+        if (!save3) {
+            console.error('[Auth] 认证信息保存失败');
+            return false;
+        }
         
         console.log('[Auth] 认证申请已提交，用户:', loginState.curUser, '| 学号:', info.studentId);
         return true;
