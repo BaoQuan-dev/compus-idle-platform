@@ -1319,6 +1319,9 @@ const DataCleaner = {
 
 // 暴露到全局
 window.DataCleaner = DataCleaner;
+window.Storage = Storage;
+window.getStorageUsage = getStorageUsage;
+window.checkStorageSpace = checkStorageSpace;
 
 // ========== 页面初始化 ==========
 document.addEventListener('DOMContentLoaded', () => {
