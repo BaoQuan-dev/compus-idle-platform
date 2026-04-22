@@ -1202,6 +1202,111 @@ const ImageCompressor = {
     }
 };
 
+// ========== 清除所有登录注册相关数据 ==========
+const DataCleaner = {
+    // 所有需要清除的键名
+    KEYS_TO_CLEAR: [
+        // 登录状态
+        'hnau_login_state',
+        'hnau_current_user',
+        // 用户相关
+        'hnau_users',
+        // 认证相关
+        'hnau_verify_state',
+        'hnau_verify_info',
+        'hnau_pending_auths',
+        // 商品相关
+        'hnau_goods',
+        // 需求相关
+        'hnau_demands',
+        // 碳足迹
+        'hnau_carbon_data',
+        // 管理员
+        'hnau_admin_login',
+        'hnau_admin_state',
+        // 其他可能的数据
+        'hnau_history',
+        'hnau_favorites',
+        'hnau_messages',
+        'hnau_settings'
+    ],
+
+    /**
+     * 清除所有登录注册相关数据
+     * @returns {object} 清除结果
+     */
+    clearAll() {
+        let cleared = [];
+        let failed = [];
+
+        this.KEYS_TO_CLEAR.forEach(key => {
+            try {
+                if (localStorage.getItem(key) !== null) {
+                    localStorage.removeItem(key);
+                    cleared.push(key);
+                }
+            } catch (e) {
+                failed.push({ key, error: e.message });
+            }
+        });
+
+        console.log('[DataCleaner] 清除完成:', {
+            cleared: cleared.length,
+            failed: failed.length,
+            keys: cleared
+        });
+
+        return {
+            success: failed.length === 0,
+            cleared,
+            failed
+        };
+    },
+
+    /**
+     * 仅清除登录状态（保留用户数据）
+     */
+    clearLoginState() {
+        const keys = ['hnau_login_state', 'hnau_current_user', 'hnau_admin_login', 'hnau_admin_state'];
+        keys.forEach(key => {
+            try {
+                localStorage.removeItem(key);
+            } catch (e) {
+                console.warn('[DataCleaner] 清除失败:', key);
+            }
+        });
+        console.log('[DataCleaner] 登录状态已清除');
+    },
+
+    /**
+     * 获取存储空间使用情况
+     */
+    getStorageInfo() {
+        let totalSize = 0;
+        let keys = [];
+
+        for (let key in localStorage) {
+            if (localStorage.hasOwnProperty(key) && localStorage[key]) {
+                const size = localStorage[key].length;
+                totalSize += size;
+                keys.push({
+                    key,
+                    size: (size / 1024).toFixed(2) + ' KB'
+                });
+            }
+        }
+
+        return {
+            totalSize: (totalSize / 1024 / 1024).toFixed(2) + ' MB',
+            keyCount: keys.length,
+            keys: keys.sort((a, b) => parseFloat(b.size) - parseFloat(a.size))
+        };
+    }
+};
+
+// 暴露到全局
+window.DataCleaner = DataCleaner;
+
 // ========== 页面初始化 ==========
 document.addEventListener('DOMContentLoaded', () => {
     // 初始化导航栏

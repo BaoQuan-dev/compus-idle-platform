@@ -1060,6 +1060,27 @@
     })();
     </script>
     
+    <!-- 清除数据按钮（调试用） -->
+    <div style="position:fixed;bottom:20px;right:20px;z-index:9999;">
+        <button onclick="clearAllData()" style="background:#ff4444;color:#fff;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;font-size:12px;box-shadow:0 2px 10px rgba(0,0,0,0.2);">
+            清除所有数据
+        </button>
+    </div>
+    
+    <script>
+        function clearAllData() {
+            if (confirm('确定要清除所有登录注册相关数据吗？\n\n包括：\n- 登录状态\n- 用户信息\n- 认证信息\n- 商品数据\n- 需求数据\n- 碳足迹数据\n\n此操作不可恢复！')) {
+                var result = DataCleaner.clearAll();
+                if (result.success) {
+                    alert('已清除 ' + result.cleared.length + ' 项数据');
+                    location.reload();
+                } else {
+                    alert('部分数据清除失败，请重试');
+                }
+            }
+        }
+    </script>
+    
     <script>
         // 移动端发布按钮
         document.addEventListener('DOMContentLoaded', function() {
