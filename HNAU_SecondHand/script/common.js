@@ -1277,7 +1277,7 @@ const DataCleaner = {
     },
 
     /**
-     * 仅清除登录状态（保留用户数据）
+     * 清除登录状态（保留用户数据）
      */
     clearLoginState() {
         const keys = ['hnau_login_state', 'hnau_current_user', 'hnau_admin_login', 'hnau_admin_state'];
@@ -1289,6 +1289,26 @@ const DataCleaner = {
             }
         });
         console.log('[DataCleaner] 登录状态已清除');
+    },
+
+    /**
+     * 清除公益转赠数据
+     */
+    clearDonationData() {
+        const keys = ['hnau_donation_list'];
+        let cleared = [];
+        keys.forEach(key => {
+            try {
+                if (localStorage.getItem(key) !== null) {
+                    localStorage.removeItem(key);
+                    cleared.push(key);
+                    console.log('[DataCleaner] 已清除:', key);
+                }
+            } catch (e) {
+                console.warn('[DataCleaner] 清除失败:', key, e);
+            }
+        });
+        return { success: true, cleared };
     },
 
     /**
