@@ -1228,18 +1228,24 @@ const DataCleaner = {
         'hnau_verify_state',
         'hnau_verify_info',
         'hnau_pending_auths',
-        // 商品相关
+        // 商品相关（发布商品）
         'hnau_goods',
+        'hnau_products',
+        // 收藏相关
+        'hnau_collects',
+        'hnau_favorites',
         // 需求相关
         'hnau_demands',
+        'demandList',
         // 碳足迹
         'hnau_carbon_data',
         // 管理员
         'hnau_admin_login',
         'hnau_admin_state',
+        // 通知
+        'hnau_notifications',
         // 其他可能的数据
         'hnau_history',
-        'hnau_favorites',
         'hnau_messages',
         'hnau_settings'
     ],
