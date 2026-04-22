@@ -665,139 +665,29 @@
         });
     </script>
 
-    <!-- ========== Three.js 3D全息宠物猫组件 ========== -->
-    <div id="hnau-cat-box" style="
-        position: fixed;
-        bottom: 25px;
-        right: 25px;
-        width: 200px;
-        height: 280px;
-        z-index: 100;
-        pointer-events: auto;
-        cursor: pointer;
-        transform-origin: center bottom;
-        transform: translateZ(0);
-    ">
-        <!-- 气泡层 -->
-        <div id="hnau-cat-bubble" class="hnau-cat-bubble" style="display:none; pointer-events: auto;">
-            <div class="hnau-cat-bubble-txt"></div>
-        </div>
-        
-        <!-- Three.js渲染画布 - 设置pointer-events:none让事件穿透 -->
-        <canvas id="hnau-cat-three" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
-        
-        <!-- 透明事件捕获层 - 在canvas上方接收所有鼠标事件 -->
-        <div id="hnau-cat-overlay" style="
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: auto;
-            z-index: 10;
-        "></div>
-        
-        <!-- 状态指示 -->
-        <div class="hnau-cat-status">
-            <span class="hnau-cat-dot"></span>
-            <span class="hnau-cat-stxt">在线</span>
-        </div>
+    <!-- ========== 碳足迹宠物猫图标 ========== -->
+    <div id="hnau-cat-box" style="position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; z-index: 100; pointer-events: auto; cursor: pointer; background: linear-gradient(135deg, #43a047, #2e7d32); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(67, 160, 71, 0.4); transition: transform 0.2s, box-shadow 0.2s;">
+        <span style="font-size: 28px;">🌱</span>
     </div>
     
     <!-- 组件样式 -->
     <style id="hnau-cat-style">
-        #hnau-cat-box, #hnau-cat-box * {
-            box-sizing: border-box !important;
-            margin: 0 !important;
-            padding: 0 !important;
+        #hnau-cat-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(67, 160, 71, 0.5);
         }
-
-        #hnau-cat-box {
-            will-change: transform;
-            backface-visibility: hidden;
-            transition: transform 0.15s ease;
-        }
-
+        
         #hnau-cat-box:active {
-            cursor: grabbing;
+            transform: scale(0.95);
         }
-        
-        .hnau-cat-bubble {
-            position: absolute;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #0a2015 0%, #1a3525 100%);
-            border: 1px solid #40ffaa;
-            border-radius: 10px;
-            padding: 8px 14px;
-            max-width: 180px;
-            box-shadow: 0 0 15px rgba(64, 255, 170, 0.3);
-            z-index: 20;
-            animation: hnau-cat-bi 0.3s ease;
-            pointer-events: auto;
-        }
-        
-        .hnau-cat-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -7px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-left: 7px solid transparent;
-            border-right: 7px solid transparent;
-            border-top: 7px solid #1a3525;
-        }
-        
-        .hnau-cat-bubble-txt {
-            color: #40ffaa;
-            font-size: 11px;
-            text-align: center;
-            line-height: 1.4;
-            pointer-events: none;
-        }
-        
-        @keyframes hnau-cat-bi {
-            from { opacity: 0; transform: translateX(-50%) translateY(8px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-        
-        .hnau-cat-status {
-            position: absolute;
-            bottom: -22px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: rgba(10, 32, 21, 0.9);
-            padding: 3px 8px;
-            border-radius: 8px;
-            border: 1px solid rgba(64, 255, 170, 0.3);
-            pointer-events: none;
-        }
-        
-        .hnau-cat-dot {
-            width: 5px; height: 5px;
-            background: #40ffaa;
-            border-radius: 50%;
-            animation: hnau-cat-blink 1s ease-in-out infinite;
-        }
-        
-        @keyframes hnau-cat-blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        
-        .hnau-cat-stxt { font-size: 9px; color: #78909c; }
         
         @media (max-width: 768px) {
-            #hnau-cat-box { width: 150px !important; height: 210px !important; bottom: 85px !important; right: 10px !important; }
-            .hnau-cat-bubble { max-width: 140px; }
-            .hnau-cat-bubble-txt { font-size: 10px; }
+            #hnau-cat-box {
+                bottom: 85px !important;
+                right: 10px !important;
+            }
         }
     </style>
-    
-    <!-- Three.js库 -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.min.js"></script>
     
     <!-- 组件脚本 -->
     <script>
