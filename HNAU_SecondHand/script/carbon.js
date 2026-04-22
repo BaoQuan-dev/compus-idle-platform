@@ -458,6 +458,10 @@
 
         // 记录发布商品（增加积分和减碳记录）
         addPublish: function(category, condition, title) {
+            // 【临时禁用】直接返回，不执行任何操作
+            console.log('[Carbon] addPublish 已禁用');
+            return { disabled: true };
+            
             var data = this.getData();
             
             // 计算碳足迹（使用默认品类）
@@ -564,7 +568,10 @@
     HNAU_Carbon.Storage = CarbonStorage;
     HNAU_Carbon.getStats = function() { return CarbonStorage.getStats(); };
     HNAU_Carbon.addTransaction = function(c, cdt, t) { return CarbonStorage.addTransaction(c, cdt, t); };
-    HNAU_Carbon.addPublish = function(cat, cdt, title) { return CarbonStorage.addPublish(cat, cdt, title); };
+    HNAU_Carbon.addPublish = function(cat, cdt, title) { 
+        console.log('[Carbon] HNAU_Carbon.addPublish 已禁用');
+        return { disabled: true }; 
+    };
     HNAU_Carbon.addShare = function() { return CarbonStorage.addShare(); };
     HNAU_Carbon.checkIn = function() { return CarbonStorage.checkIn(); };
     HNAU_Carbon.addAIReport = function() { return CarbonStorage.addAIReport(); };
