@@ -1483,6 +1483,11 @@ const AdminModule = {
             this.render();
             this.bindEvents();
             this.bindStorageListener();  // 【修复】登录成功后启动数据监听
+            // 【新增】登录成功后立即刷新一次数据，确保显示最新数据
+            setTimeout(() => {
+                this._refreshAllData();
+                console.log('[Admin] 登录后立即刷新数据');
+            }, 100);
         } else {
             if (passwordErrorEl) {
                 passwordErrorEl.textContent = '用户名或密码错误，请重试';
