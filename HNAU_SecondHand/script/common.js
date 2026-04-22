@@ -1237,6 +1237,8 @@ const DataCleaner = {
         // 需求相关
         'hnau_demands',
         'demandList',
+        // 公益转赠
+        'hnau_donation_list',
         // 碳足迹
         'hnau_carbon_data',
         // 管理员
