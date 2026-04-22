@@ -58,6 +58,8 @@ const AdminModule = {
      * 所以需要配合主动轮询机制使用
      */
     bindStorageListener() {
+        console.log('[Admin] bindStorageListener - isLoggedIn:', this.state.isLoggedIn);
+        
         // 移除旧监听器（防止重复）
         if (this._storageListener) {
             window.removeEventListener('storage', this._storageListener);
@@ -68,6 +70,7 @@ const AdminModule = {
 
         // 记录上一次的数据状态，用于检测变化
         this._lastDataHash = this._getDataHash();
+        console.log('[Admin] bindStorageListener - 初始数据哈希:', this._lastDataHash.substring(0, 50) + '...');
 
         // 创建监听器 - 用于跨标签页同步
         this._storageListener = (e) => {
@@ -80,7 +83,7 @@ const AdminModule = {
                 return;
             }
 
-            console.log('[Admin] 检测到其他页面数据变化:', e.key);
+            console.log('[Admin] storage事件 - 检测到其他页面数据变化:', e.key);
             this._refreshAllData();
         };
 
@@ -92,7 +95,9 @@ const AdminModule = {
             
             const currentHash = this._getDataHash();
             if (currentHash !== this._lastDataHash) {
-                console.log('[Admin] 检测到数据变化（轮询）');
+                console.log('[Admin] 轮询检测到数据变化!');
+                console.log('[Admin] 旧哈希:', this._lastDataHash.substring(0, 50) + '...');
+                console.log('[Admin] 新哈希:', currentHash.substring(0, 50) + '...');
                 this._lastDataHash = currentHash;
                 this._refreshAllData();
             }
@@ -423,10 +428,13 @@ const AdminModule = {
     getPendingAuths() {
         try {
             const pendingAuthsStr = localStorage.getItem(ADMIN_KEYS.PENDING_AUTHS);
+            console.log('[Admin] getPendingAuths - 原始数据:', pendingAuthsStr ? JSON.parse(pendingAuthsStr) : null);
             if (!pendingAuthsStr) return [];
             const pendingAuths = JSON.parse(pendingAuthsStr);
             // 只返回 pending 状态的申请
-            return pendingAuths.filter(a => a.status === 'pending');
+            const filtered = pendingAuths.filter(a => a.status === 'pending');
+            console.log('[Admin] getPendingAuths - 过滤后数据:', filtered);
+            return filtered;
         } catch (e) {
             console.error('[Admin] 获取待审核列表失败:', e);
             return [];

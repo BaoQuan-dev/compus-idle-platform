@@ -596,11 +596,16 @@ const CheckModule = {
         setTimeout(() => {
             // 【修复】检查提交是否成功
             const submitSuccess = Auth.submitVerify(verifyInfo);
+            console.log('[Check] 认证提交结果:', submitSuccess);
             if (!submitSuccess) {
                 submitBtn.disabled = false;
                 submitBtn.textContent = '提交认证';
                 return; // 存储失败时不显示成功提示
             }
+
+            // 验证提交后的数据
+            const pendingAuthsStr = localStorage.getItem('hnau_pending_auths');
+            console.log('[Check] 提交后的待审核数据:', pendingAuthsStr);
 
             Toast.show('认证信息已提交，等待管理员审核', 'success');
 
