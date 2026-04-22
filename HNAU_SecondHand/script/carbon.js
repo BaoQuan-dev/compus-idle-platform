@@ -557,11 +557,6 @@
             var allData = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '{}');
             delete allData[user];
             localStorage.setItem(this.STORAGE_KEY, JSON.stringify(allData));
-        },
-
-        // 【修复】空的checkBadges函数，防止报错
-        checkBadges: function() {
-            return [];
         }
     };
 
@@ -581,8 +576,6 @@
     HNAU_Carbon.removeChangeListener = function(cb) { CarbonStorage.removeChangeListener(cb); };
     HNAU_Carbon.initSync = function() { CarbonStorage.initSync(); };
     HNAU_Carbon.destroySync = function() { CarbonStorage.destroySync(); };
-    // 【兼容】空函数，防止旧缓存代码报错
-    HNAU_Carbon.checkBadges = function() { return []; };
 
     console.log('[HNAU Carbon] 碳足迹模块已就绪');
 })();
