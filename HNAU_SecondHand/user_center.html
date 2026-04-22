@@ -1099,7 +1099,7 @@
             }
             
             // 存储空间检查
-            var storageInfo = Storage.getStorageUsage();
+            var storageInfo = getStorageUsage();
             if (storageInfo.percent > 80) {
                 var storageWarning = document.getElementById('storageWarning');
                 if (storageWarning) {

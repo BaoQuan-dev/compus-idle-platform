@@ -636,7 +636,7 @@ const ReleaseModule = {
                     submitBtn.classList.remove('btn-loading');
                     submitBtn.textContent = '发布商品';
                     // 显示具体错误
-                    const storageInfo = Storage.getStorageUsage();
+                    const storageInfo = getStorageUsage();
                     Toast.show('存储失败！空间已使用' + storageInfo.percent + '%，请清理浏览器缓存后再试', 'error');
                     return;  // 停止后续操作
                 }

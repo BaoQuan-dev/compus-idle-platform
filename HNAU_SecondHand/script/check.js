@@ -542,7 +542,7 @@ const CheckModule = {
         const college = document.getElementById('college')?.value || '';
         
         // 【新增】存储空间检查
-        const storageInfo = Storage.getStorageUsage();
+        const storageInfo = getStorageUsage();
         if (storageInfo.percent > 90) {
             this.showError('studentIdError', '存储空间已满（' + storageInfo.percent + '%），请先清理存储空间');
             return;
