@@ -816,7 +816,23 @@
                 '点击发布，闲置快出手',
                 '优质二手，省钱环保'
             ],
-            jumpDelay: 2500               // 页面加载后触发跳跃延迟
+            jumpDelay: 2500,               // 页面加载后触发跳跃延迟
+            // 心情气泡
+            moodBubbles: {
+                happy: ['喵呜~你好呀!', '今天也要开心哦!', '一起来环保吧~'],
+                excited: ['太开心啦!喵!', '好喜欢和你玩!', '再来一次!'],
+                sleepy: ['有点困了呢...', '喵~好想睡觉', '晚安~'],
+                sleeping: ['zzZ...', '(呼噜呼噜)', '梦里见~']
+            },
+            // 问候语
+            greetings: [
+                { hour: [5, 9], text: '早安!新的一天从闲置开始~' },
+                { hour: [9, 12], text: '上午好!今天有什么好物?' },
+                { hour: [12, 14], text: '中午好~记得吃午饭哦' },
+                { hour: [14, 18], text: '下午好!继续淘好物吧' },
+                { hour: [18, 22], text: '晚上好~闲置循环更环保' },
+                { hour: [22, 5], text: '夜深了~明天再来看看吧' }
+            ]
         };
         
         // ===== DOM =====
@@ -835,6 +851,27 @@
         var isJumping = false;
         var jumpVelocity = 0;
         var catY = 0;
+        
+        // ===== 表情系统 =====
+        var MOOD = { HAPPY: 'happy', EXCITED: 'excited', SLEEPY: 'sleepy', SLEEPING: 'sleeping' };
+        var currentMood = MOOD.HAPPY;
+        var moodLevel = 0;  // 心情等级 0-100
+        var lastInteraction = Date.now();
+        var idleThreshold = 30000;  // 30秒不互动进入困倦
+        var sleepThreshold = 120000;  // 2分钟不互动进入睡眠
+        var clickCount = 0;
+        var clickTimer = null;
+        var isExcited = false;
+        var excitedTimer = null;
+        
+        // ===== 眼睛追踪 =====
+        var pupilL = null, pupilR = null;
+        var eyeL = null, eyeR = null;
+        var targetPupilX = 0, targetPupilY = 0;
+        var currentPupilX = 0, currentPupilY = 0;
+        var blinkTimer = null;
+        var isBlinking = false;
+        var blinkProgress = 0;
         
         // ===== 亮度状态（用于渐变过渡）=====
         var glowIntensity = 0.3;
@@ -857,6 +894,157 @@
         function hideBubble() {
             if (bubbleTimer) clearTimeout(bubbleTimer);
             bubble.style.display = 'none';
+        }
+        
+        // ===== 获取当前问候语 =====
+        function getGreeting() {
+            var hour = new Date().getHours();
+            for (var i = 0; i < CONFIG.greetings.length; i++) {
+                var g = CONFIG.greetings[i];
+                if (hour >= g.hour[0] && hour < g.hour[1]) {
+                    return g.text;
+                }
+            }
+            return '你好呀!';
+        }
+        
+        // ===== 表情系统 =====
+        function setExpression(type) {
+            if (!catGroup) return;
+            
+            var eyeGeo, eyeScaleX, eyeScaleY;
+            var pupilScaleX, pupilScaleY;
+            
+            switch(type) {
+                case 'happy':  // 开心 - 眯眼笑
+                    eyeScaleX = 1.6; eyeScaleY = 0.3;
+                    pupilScaleX = 1.5; pupilScaleY = 1;
+                    break;
+                case 'excited':  // 兴奋 - 星星眼
+                    eyeScaleX = 1.2; eyeScaleY = 1.2;
+                    pupilScaleX = 0.8; pupilScaleY = 0.8;
+                    break;
+                case 'sleepy':  // 困倦 - 半闭眼
+                    eyeScaleX = 1.4; eyeScaleY = 0.4;
+                    pupilScaleX = 1; pupilScaleY = 2;
+                    break;
+                case 'sleeping':  // 睡眠 - 完全闭眼
+                    eyeScaleX = 1.4; eyeScaleY = 0.1;
+                    pupilScaleX = 1; pupilScaleY = 0.1;
+                    break;
+                default:  // 正常
+                    eyeScaleX = 1.4; eyeScaleY = 0.7;
+                    pupilScaleX = 1; pupilScaleY = 2.5;
+            }
+            
+            if (eyeL) { eyeL.scale.set(eyeScaleX, eyeScaleY, 0.6); }
+            if (eyeR) { eyeR.scale.set(eyeScaleX, eyeScaleY, 0.6); }
+            if (pupilL) { pupilL.scale.set(pupilScaleX, pupilScaleY, 0.5); }
+            if (pupilR) { pupilR.scale.set(pupilScaleX, pupilScaleY, 0.5); }
+        }
+        
+        // ===== 心情系统 =====
+        function updateMood() {
+            var now = Date.now();
+            var idle = now - lastInteraction;
+            
+            if (idle > sleepThreshold) {
+                if (currentMood !== MOOD.SLEEPING) {
+                    currentMood = MOOD.SLEEPING;
+                    showMoodBubble();
+                }
+            } else if (idle > idleThreshold) {
+                if (currentMood !== MOOD.SLEEPY && currentMood !== MOOD.SLEEPING) {
+                    currentMood = MOOD.SLEEPY;
+                    showMoodBubble();
+                }
+            } else if (currentMood === MOOD.SLEEPY || currentMood === MOOD.SLEEPING) {
+                // 被唤醒
+                currentMood = moodLevel > 70 ? MOOD.EXCITED : MOOD.HAPPY;
+                showMoodBubble();
+            }
+        }
+        
+        function showMoodBubble() {
+            var bubbles = CONFIG.moodBubbles[currentMood];
+            if (bubbles && bubbles.length > 0) {
+                var text = bubbles[Math.floor(Math.random() * bubbles.length)];
+                showBubble(text, CONFIG.bubbleDuration);
+            }
+        }
+        
+        function recordInteraction() {
+            lastInteraction = Date.now();
+            moodLevel = Math.min(100, moodLevel + 10);
+            
+            if (currentMood === MOOD.SLEEPING || currentMood === MOOD.SLEEPY) {
+                currentMood = moodLevel > 70 ? MOOD.EXCITED : MOOD.HAPPY;
+            }
+        }
+        
+        // ===== 兴奋状态 =====
+        function triggerExcited() {
+            if (excitedTimer) clearTimeout(excitedTimer);
+            isExcited = true;
+            currentMood = MOOD.EXCITED;
+            moodLevel = Math.min(100, moodLevel + 20);
+            setExpression('excited');
+            
+            // 尾巴疯狂摇摆
+            if (catGroup) {
+                var tail = catGroup.getObjectByName('tail');
+                if (tail) tail.rotation.z = Math.sin(Date.now() * 0.01) * 0.8;
+            }
+            
+            excitedTimer = setTimeout(function() {
+                isExcited = false;
+                if (currentMood === MOOD.EXCITED) {
+                    currentMood = MOOD.HAPPY;
+                    setExpression('happy');
+                }
+            }, 3000);
+        }
+        
+        // ===== 眨眼系统 =====
+        function startBlink() {
+            if (isBlinking || currentMood === MOOD.SLEEPING) return;
+            isBlinking = true;
+            blinkProgress = 0;
+        }
+        
+        function updateBlink() {
+            if (!isBlinking) {
+                // 随机眨眼
+                if (Math.random() < 0.003 && currentMood !== MOOD.SLEEPING) {
+                    startBlink();
+                }
+            } else {
+                // 眨眼动画
+                blinkProgress += 0.15;
+                var blinkScale = Math.sin(blinkProgress * Math.PI);
+                
+                if (eyeL) eyeL.scale.y = 0.7 * (1 - blinkScale * 0.85);
+                if (eyeR) eyeR.scale.y = 0.7 * (1 - blinkScale * 0.85);
+                
+                if (blinkProgress >= 1) {
+                    isBlinking = false;
+                    if (eyeL) eyeL.scale.y = 0.7;
+                    if (eyeR) eyeR.scale.y = 0.7;
+                }
+            }
+            
+            // 睡眠状态自动闭眼
+            if (currentMood === MOOD.SLEEPING) {
+                setExpression('sleeping');
+            }
+        }
+        
+        // ===== 睡眠震动 =====
+        function updateSleepShake() {
+            if (currentMood === MOOD.SLEEPING && catGroup) {
+                var shake = Math.sin(Date.now() * 0.005) * 0.02;
+                catGroup.position.x = shake;
+            }
         }
         
         // ===== 音效 =====
@@ -966,31 +1154,34 @@
             var eyeGeo = new THREE.SphereGeometry(0.1, 12, 8);
             var eyeMat = createSolidMat(0.9);
             
-            var eyeL = new THREE.Mesh(eyeGeo, eyeMat.clone());
+            eyeL = new THREE.Mesh(eyeGeo, eyeMat.clone());
             eyeL.scale.set(1.4, 0.7, 0.6);  // 椭圆形
             eyeL.position.set(-0.2, 1.78, 0.4);
             eyeL.name = 'eyeL';
             glowParts.push(eyeL);
             catGroup.add(eyeL);
             
-            var eyeR = new THREE.Mesh(eyeGeo, eyeMat.clone());
+            eyeR = new THREE.Mesh(eyeGeo, eyeMat.clone());
             eyeR.scale.set(1.4, 0.7, 0.6);
             eyeR.position.set(0.2, 1.78, 0.4);
             eyeR.name = 'eyeR';
             glowParts.push(eyeR);
             catGroup.add(eyeR);
             
-            // 瞳孔（细长）
+            // 瞳孔（细长）- 保存为全局变量用于追踪
             var pupilGeo = new THREE.SphereGeometry(0.04, 6, 4);
             var pupilMat = new THREE.MeshBasicMaterial({ color: 0x003322, transparent: true, opacity: 0.8 });
             
-            var pupilL = new THREE.Mesh(pupilGeo, pupilMat);
+            pupilL = new THREE.Mesh(pupilGeo, pupilMat);
             pupilL.scale.set(1, 2.5, 0.5);
             pupilL.position.set(-0.2, 1.78, 0.46);
+            pupilL.name = 'pupilL';
             catGroup.add(pupilL);
             
-            var pupilR = pupilL.clone();
+            pupilR = new THREE.Mesh(pupilGeo, pupilMat.clone());
+            pupilR.scale.set(1, 2.5, 0.5);
             pupilR.position.set(0.2, 1.78, 0.46);
+            pupilR.name = 'pupilR';
             catGroup.add(pupilR);
             
             // ===== 鼻子（倒三角，更像猫）=====
@@ -1327,6 +1518,44 @@
             // 更新发光效果
             updateGlow(time);
             
+            // ===== 眼睛追踪 =====
+            if (pupilL && pupilR && eyeL && eyeR) {
+                // 睡眠时不追踪
+                if (currentMood !== MOOD.SLEEPING) {
+                    targetPupilX = mouseX * 0.05;
+                    targetPupilY = -mouseY * 0.03;
+                } else {
+                    targetPupilX = 0;
+                    targetPupilY = 0;
+                }
+                
+                // 平滑过渡
+                currentPupilX += (targetPupilX - currentPupilX) * 0.15;
+                currentPupilY += (targetPupilY - currentPupilY) * 0.15;
+                
+                // 应用瞳孔位置
+                pupilL.position.x = -0.2 + currentPupilX;
+                pupilL.position.y = 1.78 + currentPupilY;
+                pupilR.position.x = 0.2 + currentPupilX;
+                pupilR.position.y = 1.78 + currentPupilY;
+            }
+            
+            // ===== 眨眼 =====
+            updateBlink();
+            
+            // ===== 睡眠震动 =====
+            updateSleepShake();
+            
+            // ===== 心情更新（每帧检查）=====
+            if (time % 5000 < 20) {  // 每5秒检查一次
+                updateMood();
+            }
+            
+            // ===== 心情等级衰减 =====
+            if (time % 10000 < 20 && moodLevel > 0) {
+                moodLevel = Math.max(0, moodLevel - 1);
+            }
+            
             renderer.render(scene, camera);
         }
         
@@ -1362,16 +1591,40 @@
             e.preventDefault();
             e.stopPropagation();
             
+            // ===== 连续点击检测 =====
+            clickCount++;
+            if (clickTimer) clearTimeout(clickTimer);
+            clickTimer = setTimeout(function() {
+                // 根据点击次数决定表情
+                if (clickCount >= 5) {
+                    triggerExcited();
+                } else if (clickCount >= 3) {
+                    setExpression('happy');
+                    moodLevel = Math.min(100, moodLevel + 5);
+                }
+                clickCount = 0;
+            }, 500);
+            
             // 点击反馈
             isClick = true;
             clickGlow = 1;
             playTap();
             doJump();
+            recordInteraction();
             
             // 随机气泡短句
             var texts = CONFIG.clickBubbleTexts;
             var text = texts[Math.floor(Math.random() * texts.length)];
             showBubble(text, CONFIG.bubbleDuration);
+        });
+        
+        // 双击事件 - 触发兴奋状态
+        overlay.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            triggerExcited();
+            showBubble('喵喵喵~太开心啦!', CONFIG.bubbleDuration);
         });
         
         // ===== 拖动功能 =====
@@ -1450,12 +1703,13 @@
         document.addEventListener('mouseup', onDragEnd);
         document.addEventListener('touchend', onDragEnd);
         
-        // 触摸支持（原有）
+        // 触摸支持
         overlay.addEventListener('touchstart', function(e) {
             e.preventDefault();
             isHover = true;
             targetGlow = 0.8;
             onMouseMove(e);
+            recordInteraction();
         }, { passive: false });
         
         overlay.addEventListener('touchmove', function(e) {
@@ -1501,6 +1755,15 @@
             if (overlay) {
                 console.log('[HNAU Cat] 鼠标事件已绑定到overlay');
             }
+            
+            // 初始化心情等级
+            moodLevel = 60;
+            lastInteraction = Date.now();
+            
+            // 显示问候语气泡
+            setTimeout(function() {
+                showBubble(getGreeting(), CONFIG.bubbleDuration);
+            }, 1000);
             
             setTimeout(function() {
                 if (Math.random() < 0.7) {
