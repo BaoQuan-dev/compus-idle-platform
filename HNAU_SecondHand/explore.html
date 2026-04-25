@@ -152,11 +152,10 @@
 
         /* 主场景容器 - 只占屏幕上半部分 */
         .scene-container {
-            position: fixed;
-            top: 0;
-            left: 0;
+            position: relative;
             width: 100%;
-            height: calc(100vh - 250px);
+            height: calc(100vh - 300px);
+            min-height: 350px;
             z-index: 10;
             display: flex;
             align-items: center;
@@ -305,14 +304,14 @@
         }
 
         /* 底部轮播卡片 */
+        /* 轮播展示区域 */
         .carousel-section {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 50;
+            position: relative;
+            width: 100%;
+            min-height: 380px;
+            z-index: 20;
             padding: 20px;
-            background: linear-gradient(to top, rgba(10, 10, 18, 0.95) 0%, transparent 100%);
+            background: linear-gradient(to top, rgba(10, 10, 18, 0.98) 0%, rgba(10, 10, 18, 0.9) 100%);
         }
 
         .carousel-wrapper {
@@ -338,8 +337,8 @@
         /* 轮播卡片 */
         .slide-card {
             flex-shrink: 0;
-            width: 260px;
-            height: 160px;
+            width: 280px;
+            height: 200px;
             scroll-snap-align: center;
             background: rgba(25, 25, 45, 0.9);
             backdrop-filter: blur(20px);
