@@ -734,6 +734,13 @@
         var scene, camera, renderer;
         var floatingItems = [];
         var glowParticles;
+        var mouseX = 0, mouseY = 0;
+        var targetX = 0, targetY = 0;
+        var velocityX = 0, velocityY = 0;
+        var isDragging = false;
+        var lastX = 0, lastY = 0;
+        var dragSensitivity = 3;
+        var returnSpeed = 0.08;
         
         function initThree() {
             scene = new THREE.Scene();
@@ -759,7 +766,13 @@
             // 创建发光粒子
             createGlowParticles();
             
-            document.addEventListener('click', onClick);
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mousedown', onDragStart);
+            document.addEventListener('mouseup', onDragEnd);
+            document.addEventListener('mouseleave', onDragEnd);
+            document.addEventListener('touchstart', onTouchStart, { passive: false });
+            document.addEventListener('touchmove', onTouchMove, { passive: false });
+            document.addEventListener('touchend', onDragEnd);
             window.addEventListener('resize', onResize);
         }
         
@@ -813,70 +826,43 @@
             return new THREE.Sprite(material);
         }
         
-        // 星系轨道配置
-        var ORBIT_LAYERS = [
-            { radius: 6, count: 35, minSize: 0.35, maxSize: 0.55, baseSpeed: 0.04 },   // 最内圈 - 最小最慢
-            { radius: 10, count: 45, minSize: 0.4, maxSize: 0.65, baseSpeed: 0.025 }, // 第二圈
-            { radius: 14, count: 50, minSize: 0.45, maxSize: 0.7, baseSpeed: 0.015 },  // 第三圈
-            { radius: 18, count: 40, minSize: 0.5, maxSize: 0.75, baseSpeed: 0.01 },   // 第四圈
-            { radius: 23, count: 30, minSize: 0.55, maxSize: 0.85, baseSpeed: 0.006 }   // 最外圈 - 最大最慢
-        ];
-        
         function createFloatingItems() {
-            var totalCount = 0;
+            // 使用emoji商品代表物品
+            var itemCount = 250;
             
-            ORBIT_LAYERS.forEach(function(layer, layerIndex) {
-                for (var i = 0; i < layer.count; i++) {
-                    var itemGroup = new THREE.Group();
-                    
-                    // 随机选择商品emoji和低饱和颜色
-                    var emoji = ITEMS[Math.floor(Math.random() * ITEMS.length)];
-                    var color = ITEM_COLORS[Math.floor(Math.random() * ITEM_COLORS.length)];
-                    var size = layer.minSize + Math.random() * (layer.maxSize - layer.minSize);
-                    
-                    // 创建emoji精灵
-                    var sprite = createGoodsSprite(emoji, color);
-                    sprite.scale.set(size, size, 1);
-                    itemGroup.add(sprite);
-                    
-                    // 计算在轨道上的初始角度
-                    var angle = (i / layer.count) * Math.PI * 2 + (layerIndex * 0.3);
-                    // 随机顺时针或逆时针
-                    var direction = Math.random() > 0.5 ? 1 : -1;
-                    // 转速差异化（内圈稍快，外圈稍慢）
-                    var speedVariation = 0.7 + Math.random() * 0.6;
-                    var rotSpeed = layer.baseSpeed * direction * speedVariation;
-                    
-                    // 轨道高度变化（上下浮动）
-                    var yOffset = (Math.random() - 0.5) * (layer.radius * 0.15);
-                    // 径向微调（靠近或远离轨道）
-                    var radiusOffset = (Math.random() - 0.5) * 1.5;
-                    
-                    // 设置初始位置
-                    itemGroup.position.x = Math.cos(angle) * (layer.radius + radiusOffset);
-                    itemGroup.position.y = yOffset;
-                    itemGroup.position.z = Math.sin(angle) * (layer.radius + radiusOffset) - 8;
-                    
-                    // 存储公转参数
-                    itemGroup.userData = {
-                        orbitAngle: angle,
-                        orbitRadius: layer.radius,
-                        orbitY: yOffset,
-                        orbitZ: layer.radius,
-                        rotSpeed: rotSpeed,
-                        baseScale: size,
-                        floatOffset: Math.random() * Math.PI * 2,
-                        floatSpeed: 0.15 + Math.random() * 0.1,
-                        layerIndex: layerIndex
-                    };
-                    
-                    scene.add(itemGroup);
-                    floatingItems.push(itemGroup);
-                    totalCount++;
-                }
-            });
-            
-            console.log('[StarField] Created ' + totalCount + ' orbital items');
+            for (var i = 0; i < itemCount; i++) {
+                var itemGroup = new THREE.Group();
+                
+                // 随机选择商品emoji
+                var emoji = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+                var color = ITEM_COLORS[Math.floor(Math.random() * ITEM_COLORS.length)];
+                var size = 0.6 + Math.random() * 0.8;
+                
+                // 创建emoji精灵
+                var sprite = createGoodsSprite(emoji, color);
+                sprite.scale.set(size, size, 1);
+                itemGroup.add(sprite);
+                
+                // 随机位置 - 覆盖整个屏幕
+                itemGroup.position.x = (Math.random() - 0.5) * 45;
+                itemGroup.position.y = (Math.random() - 0.5) * 25;
+                itemGroup.position.z = -5 - Math.random() * 20;
+                
+                // 存储动画参数
+                itemGroup.userData = {
+                    baseX: itemGroup.position.x,
+                    baseY: itemGroup.position.y,
+                    baseZ: itemGroup.position.z,
+                    baseScale: size,
+                    rotSpeedX: 0,
+                    rotSpeedY: 0,
+                    floatSpeed: 0.3 + Math.random() * 0.8,
+                    floatOffset: Math.random() * Math.PI * 2
+                };
+                
+                scene.add(itemGroup);
+                floatingItems.push(itemGroup);
+            }
         }
         
         function createGlowParticles() {
@@ -923,7 +909,55 @@
             scene.add(glowParticles);
         }
         
-        // 纯粹的星系公转动画 - 无拖拽
+        function onMouseMove(e) {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        }
+        
+        function onDragStart(e) {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            velocityX = 0;
+            velocityY = 0;
+            document.body.style.cursor = 'grabbing';
+        }
+        
+        function onDragEnd() {
+            isDragging = false;
+            document.body.style.cursor = 'default';
+        }
+        
+        function onTouchStart(e) {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+                velocityX = 0;
+                velocityY = 0;
+            }
+        }
+        
+        function onTouchMove(e) {
+            if (isDragging && e.touches.length === 1) {
+                e.preventDefault();
+                var deltaX = e.touches[0].clientX - lastX;
+                var deltaY = e.touches[0].clientY - lastY;
+                
+                velocityX = deltaX * 0.01;
+                velocityY = -deltaY * 0.01;
+                
+                targetX += velocityX;
+                targetY += velocityY;
+                
+                // 限制范围
+                targetX = Math.max(-3, Math.min(3, targetX));
+                targetY = Math.max(-2, Math.min(2, targetY));
+                
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+            }
+        }
         
         function onResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
@@ -936,45 +970,75 @@
             
             var time = Date.now() * 0.001;
             
-            // 相机固定在中心，不跟随鼠标（纯粹的星系公转）
-            camera.position.x += (0 - camera.position.x) * 0.02;
-            camera.position.y += (0 - camera.position.y) * 0.02;
-            camera.rotation.y *= 0.98;
-            camera.rotation.x *= 0.98;
+            // 鼠标/拖拽驱动的目标位置
+            if (!isDragging) {
+                // 鼠标悬停影响
+                targetX += (mouseX * 2 - targetX) * 0.05;
+                targetY += (-mouseY * 1.5 - targetY) * 0.05;
+                
+                // 添加惯性滑动
+                targetX += velocityX;
+                targetY += velocityY;
+                
+                // 阻力衰减
+                velocityX *= 0.95;
+                velocityY *= 0.95;
+                
+                // 缓慢回归中心
+                targetX *= 0.995;
+                targetY *= 0.995;
+            }
+            
+            // 限制范围
+            targetX = Math.max(-3, Math.min(3, targetX));
+            targetY = Math.max(-2, Math.min(2, targetY));
+            
+            // 相机跟随（增强滑动感）
+            camera.position.x += (targetX - camera.position.x) * 0.1;
+            camera.position.y += (targetY - camera.position.y) * 0.1;
+            
+            // 相机旋转（视差效果）
+            camera.rotation.y = -targetX * 0.08;
+            camera.rotation.x = targetY * 0.05;
             
             camera.lookAt(0, 0, 0);
             
-            // 星系公转动画（丝滑缓慢，行星环绕）
-            floatingItems.forEach(function(item) {
+            // 动画漂浮物品（增强视差层次感）
+            floatingItems.forEach(function(item, index) {
                 var data = item.userData;
                 
-                // 公转角度增加
-                data.orbitAngle += data.rotSpeed;
+                // 物品本身的漂浮动画
+                var floatY = Math.sin(time * data.floatSpeed + data.floatOffset) * 0.8;
+                var floatX = Math.cos(time * data.floatSpeed * 0.7 + data.floatOffset) * 0.3;
                 
-                // 计算公转位置
-                var radiusVar = Math.sin(time * 0.3 + data.floatOffset) * 0.3;
-                var currentRadius = data.orbitRadius + radiusVar;
+                // 基于深度的视差效果（远处的物品跟随少）
+                var depthFactor = Math.max(0.3, 1 - (Math.abs(data.baseZ) / 25));
+                var parallaxX = targetX * depthFactor * 1.5;
+                var parallaxY = targetY * depthFactor * 1.2;
                 
-                item.position.x = Math.cos(data.orbitAngle) * currentRadius;
-                item.position.z = Math.sin(data.orbitAngle) * currentRadius - 8;
-                // Y轴轻微浮动
-                item.position.y = data.orbitY + Math.sin(time * data.floatSpeed + data.floatOffset) * 0.3;
+                // 拖拽滑动效果（远处的物品跟随更多）
+                var dragFactor = Math.max(0.2, 0.5 + (Math.abs(data.baseZ) / 25) * 0.5);
                 
-                // 物品自身缓慢旋转
-                item.rotation.z = Math.sin(time * 0.3 + data.floatOffset) * 0.15;
+                item.position.x = data.baseX + floatX + parallaxX * dragFactor + (isDragging ? velocityX * 50 * dragFactor : 0);
+                item.position.y = data.baseY + floatY + parallaxY * dragFactor + (isDragging ? -velocityY * 30 * dragFactor : 0);
                 
-                // 大小保持一致（不随位置变化）
-                item.children[0].scale.set(data.baseScale, data.baseScale, 1);
+                // 物品轻微旋转
+                item.rotation.z = Math.sin(time * 0.5 + data.floatOffset) * 0.1;
+                
+                // 物品大小随距离变化
+                var scaleMod = 0.7 + (1 - Math.abs(data.baseZ) / 25) * 0.6;
+                item.children[0].scale.set(data.baseScale || 1, data.baseScale || 1, 1);
             });
             
-            // 粒子效果（纯粹的缓慢旋转）
+            // 粒子效果（跟随滑动）
             if (glowParticles) {
-                glowParticles.rotation.y += 0.0003;
-                glowParticles.rotation.x = Math.sin(time * 0.2) * 0.1;
-                glowParticles.rotation.z = Math.cos(time * 0.15) * 0.08;
-                // 固定位置，不跟随滑动
-                glowParticles.position.x = 0;
-                glowParticles.position.y = 0;
+                glowParticles.rotation.y += 0.0005;
+                glowParticles.rotation.x = Math.sin(time * 0.3) * 0.15;
+                glowParticles.rotation.z = Math.cos(time * 0.2) * 0.1;
+                
+                // 粒子视差跟随
+                glowParticles.position.x = targetX * 0.3;
+                glowParticles.position.y = -targetY * 0.2;
             }
             
             renderer.render(scene, camera);
