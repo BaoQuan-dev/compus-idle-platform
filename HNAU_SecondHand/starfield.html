@@ -1848,6 +1848,11 @@
                 setTimeout(safeInit, 100);
                 return;
             }
+            // 确保容器有尺寸
+            box.style.width = '200px';
+            box.style.height = '280px';
+            box.style.display = 'block';
+            
             initThree();
             setTimeout(function() { showBubble(getGreeting()); }, 1000);
             setTimeout(function() { doJump(); }, 2000);
