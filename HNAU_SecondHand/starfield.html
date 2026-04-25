@@ -1200,44 +1200,43 @@
                 var progress = Math.min(elapsed / zoomDuration, 1);
                 
                 // 弹性缓动
-                var easeProgress = 1 - Math.pow(1 - progress, 4);
+                var easeProgress = 1 - Math.pow(1 - progress, 3);
                 
                 // 相机拉近并向点击位置移动
                 camera.position.x = startX + (targetX - startX) * easeProgress;
                 camera.position.y = startY + (targetY - startY) * easeProgress;
                 camera.position.z = startZ + (targetZ - startZ) * easeProgress;
                 
-                // 物品向点击位置聚拢（越近越快）
+                // 物品向点击位置聚拢并加速旋转
+                var rotationSpeed = 1 + easeProgress * 5; // 旋转速度逐渐加快
                 floatingItems.forEach(function(item, i) {
                     var orig = originalPositions[i];
-                    var itemTargetX = orig.x * (1 - easeProgress * 0.8) + (targetX * 2) * easeProgress * 0.5;
-                    var itemTargetY = orig.y * (1 - easeProgress * 0.8) + (targetY * 2) * easeProgress * 0.5;
-                    var itemTargetZ = orig.z * (1 - easeProgress * 0.9);
+                    var itemTargetX = orig.x * (1 - easeProgress * 0.9) + (targetX * 2) * easeProgress * 0.6;
+                    var itemTargetY = orig.y * (1 - easeProgress * 0.9) + (targetY * 2) * easeProgress * 0.6;
+                    var itemTargetZ = orig.z * (1 - easeProgress * 0.95);
                     item.position.x = orig.x + (itemTargetX - orig.x) * easeProgress;
                     item.position.y = orig.y + (itemTargetY - orig.y) * easeProgress;
                     item.position.z = orig.z + (itemTargetZ - orig.z) * easeProgress;
+                    // 物品自身加速旋转
+                    item.rotation.x += 0.02 * rotationSpeed;
+                    item.rotation.y += 0.03 * rotationSpeed;
                 });
                 
                 // 背景模糊渐增
-                mainContainer.style.filter = 'blur(' + (easeProgress * 8) + 'px)';
+                mainContainer.style.filter = 'blur(' + (easeProgress * 15) + 'px)';
                 
-                // 主容器缩放
-                var scale = 1 - easeProgress * 0.15;
-                var tx2 = -((tx - 50) * 0.1) * easeProgress;
-                var ty2 = -((ty - 50) * 0.1) * easeProgress;
+                // 主容器缩放并向点击位置偏移
+                var scale = 1 - easeProgress * 0.2;
+                var tx2 = -((tx - 50) * 0.15) * easeProgress;
+                var ty2 = -((ty - 50) * 0.15) * easeProgress;
                 mainContainer.style.transform = 'scale(' + scale + ') translate(' + tx2 + '%, ' + ty2 + '%)';
+                mainContainer.style.opacity = 1 - easeProgress * 0.3;
                 
                 if (progress < 1) {
                     requestAnimationFrame(zoomIn);
                 } else {
-                    // 最终状态 - 显示光效
-                    overlay.classList.add('active');
-                    node.style.boxShadow = '0 0 60px ' + module.color + ', 0 0 100px ' + module.color;
-                    
-                    // 等待动画完成后跳转 - 跳转到探索过渡页
-                    setTimeout(function() {
-                        window.location.href = 'explore.html';
-                    }, 300);
+                    // 直接跳转，不显示任何过渡效果
+                    window.location.href = 'explore.html';
                 }
             }
             
