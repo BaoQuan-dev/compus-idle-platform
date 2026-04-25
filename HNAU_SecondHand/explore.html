@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>农大闲置 - 探索</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1a2e 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            color: white;
+        }
+        
+        /* Three.js Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        /* 顶部标题 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(to bottom, rgba(10,10,26,0.9) 0%, transparent 100%);
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #54a0ff, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255,255,255,0.3);
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+        
+        .header .subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 8px;
+        }
+        
+        @keyframes titleGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+        
+        /* 返回按钮 */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 101;
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+        
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+        
+        /* 拖拽提示 */
+        .drag-hint {
+            position: fixed;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+            animation: pulse 2s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        .drag-hint span {
+            margin-right: 8px;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+        }
+        
+        /* 主容器 */
+        .main-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: none;
+        }
+        
+        /* 卡片区域 */
+        .cards-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 功能卡片 */
+        .feature-card {
+            position: absolute;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transform-style: preserve-3d;
+        }
+        
+        .feature-card:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        
+        .feature-card.dimmed {
+            opacity: 0.3;
+            transform: scale(0.9);
+        }
+        
+        .feature-card.highlighted {
+            transform: scale(1.1);
+            z-index: 50;
+        }
+        
+        .feature-card.highlighted .card-icon {
+            animation: iconFloat 1s ease-in-out infinite;
+        }
+        
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .card-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover .card-icon {
+            transform: scale(1.1);
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        .card-desc {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 20px;
+        }
+        
+        .card-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .card-stats span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* 进入按钮 */
+        .card-enter {
+            margin-top: 15px;
+            padding: 10px 25px;
+            background: linear-gradient(135deg, var(--card-color), var(--card-color-light));
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        
+        .feature-card:hover .card-enter,
+        .feature-card.highlighted .card-enter {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .card-enter:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px var(--card-color);
+        }
+        
+        /* 底部指示器 */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: linear-gradient(to top, rgba(10,10,26,0.95) 0%, transparent 100%);
+            padding: 30px 20px 40px;
+        }
+        
+        /* 快捷入口 */
+        .quick-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .quick-link:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-5px);
+            border-color: var(--link-color, rgba(255,255,255,0.3));
+        }
+        
+        .quick-link .icon {
+            font-size: 28px;
+        }
+        
+        .quick-link .label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        /* 轮播指示器 */
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .indicator {
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        
+        .indicator.active {
+            width: 40px;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
+        }
+        
+        .indicator:hover {
+            background: rgba(255,255,255,0.5);
+        }
+        
+        /* 分类标签 */
+        .category-tags {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .category-tag {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .category-tag:hover,
+        .category-tag.active {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        /* 当前分类标题 */
+        .current-category {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .current-category h2 {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+        }
+        
+        .current-category p {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        /* 加载动画 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10,10,26,1);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #ff6b6b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 20px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .feature-card {
+                padding: 20px;
+                width: 200px !important;
+                height: auto !important;
+            }
+            
+            .card-icon {
+                font-size: 48px;
+            }
+            
+            .card-title {
+                font-size: 16px;
+            }
+            
+            .card-desc {
+                font-size: 12px;
+            }
+            
+            .quick-links {
+                gap: 10px;
+            }
+            
+            .quick-link {
+                padding: 10px 15px;
+            }
+            
+            .quick-link .icon {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+        <div class="loading-text">正在加载...</div>
+    </div>
+    
+    <!-- 背景Canvas -->
+    <canvas id="bg-canvas"></canvas>
+    
+    <!-- 返回按钮 -->
+    <div class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    </div>
+    
+    <!-- 顶部标题 -->
+    <div class="header">
+        <h1>🌟 农大闲置探索 🌟</h1>
+        <p class="subtitle">探索校园闲置 · 开启绿色循环</p>
+    </div>
+    
+    <!-- 拖拽提示 -->
+    <div class="drag-hint">
+        <span>✋</span> 拖拽探索 · 点击进入
+    </div>
+    
+    <!-- 主容器 -->
+    <div class="main-container" id="mainContainer">
+        <div class="cards-wrapper" id="cardsWrapper">
+            <!-- 卡片由JS生成 -->
+        </div>
+    </div>
+    
+    <!-- 底部栏 -->
+    <div class="bottom-bar">
+        <!-- 快捷入口 -->
+        <div class="quick-links">
+            <a href="release_goods.html" class="quick-link" style="--link-color: #ffd93d;">
+                <span class="icon">📦</span>
+                <span class="label">发布闲置</span>
+            </a>
+            <a href="stu_check.html" class="quick-link" style="--link-color: #54a0ff;">
+                <span class="icon">🎓</span>
+                <span class="label">校园认证</span>
+            </a>
+            <a href="donation_list.html" class="quick-link" style="--link-color: #ff9ff3;">
+                <span class="icon">💝</span>
+                <span class="label">公益转赠</span>
+            </a>
+            <a href="demand_board.html" class="quick-link" style="--link-color: #a29bfe;">
+                <span class="icon">🔍</span>
+                <span class="label">需求广场</span>
+            </a>
+            <a href="carbon_footprint.html" class="quick-link" style="--link-color: #6bcb77;">
+                <span class="icon">🌱</span>
+                <span class="label">碳足迹</span>
+            </a>
+        </div>
+        
+        <!-- 轮播指示器 -->
+        <div class="carousel-indicators" id="indicators">
+            <div class="indicator active" data-index="0"></div>
+            <div class="indicator" data-index="1"></div>
+            <div class="indicator" data-index="2"></div>
+            <div class="indicator" data-index="3"></div>
+            <div class="indicator" data-index="4"></div>
+        </div>
+        
+        <!-- 分类标签 -->
+        <div class="category-tags">
+            <span class="category-tag active" data-category="all">全部</span>
+            <span class="category-tag" data-category="trending">热门</span>
+            <span class="category-tag" data-category="new">最新</span>
+            <span class="category-tag" data-category="eco">环保</span>
+            <span class="category-tag" data-category="free">免费</span>
+        </div>
+    </div>
+    
+    <script>
+        // ============ Three.js 背景 ============
+        let scene, camera, renderer;
+        let particles, nebula;
+        
+        function initThree() {
+            const canvas = document.getElementById('bg-canvas');
+            
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 30;
+            
+            renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            
+            // 创建粒子背景
+            createParticles();
+            
+            // 创建星云效果
+            createNebula();
+            
+            // 动画循环
+            animate();
+            
+            // 响应式
+            window.addEventListener('resize', onResize);
+        }
+        
+        function createParticles() {
+            const geometry = new THREE.BufferGeometry();
+            const count = 2000;
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+            
+            for (let i = 0; i < count * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 100;
+                positions[i + 1] = (Math.random() - 0.5) * 100;
+                positions[i + 2] = (Math.random() - 0.5) * 100;
+                
+                const color = new THREE.Color();
+                color.setHSL(Math.random() * 0.2 + 0.5, 0.8, 0.6);
+                colors[i] = color.r;
+                colors[i + 1] = color.g;
+                colors[i + 2] = color.b;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const material = new THREE.PointsMaterial({
+                size: 0.5,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+        }
+        
+        function createNebula() {
+            const geometry = new THREE.SphereGeometry(40, 32, 32);
+            const material = new THREE.MeshBasicMaterial({
+                color: 0x1a0a3e,
+                transparent: true,
+                opacity: 0.3,
+                side: THREE.BackSide
+            });
+            
+            nebula = new THREE.Mesh(geometry, material);
+            scene.add(nebula);
+        }
+        
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // 平滑跟随鼠标
+            targetX += (mouseX - targetX) * 0.02;
+            targetY += (mouseY - targetY) * 0.02;
+            
+            if (particles) {
+                particles.rotation.x += 0.0003;
+                particles.rotation.y += 0.0005;
+                particles.rotation.x += (targetY * 0.001 - particles.rotation.x * 0.1) * 0.05;
+                particles.rotation.y += (targetX * 0.001 - particles.rotation.y * 0.1) * 0.05;
+            }
+            
+            if (nebula) {
+                nebula.rotation.x += 0.0001;
+                nebula.rotation.y += 0.0002;
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        function onResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        // ============ 卡片拖拽系统 ============
+        const cardsData = [
+            {
+                id: 'market',
+                icon: '🏪',
+                title: '闲置市场',
+                desc: '浏览全校的闲置物品',
+                color: '#ff6b6b',
+                colorLight: '#ff8787',
+                stats: { total: 156, new: 23 },
+                link: 'home.html',
+                tags: ['trending', 'new']
+            },
+            {
+                id: 'release',
+                icon: '📦',
+                title: '发布闲置',
+                desc: '发布你的闲置物品',
+                color: '#ffd93d',
+                colorLight: '#ffe066',
+                stats: { total: 89, new: 12 },
+                link: 'release_goods.html',
+                tags: ['new']
+            },
+            {
+                id: 'donation',
+                icon: '💝',
+                title: '公益转赠',
+                desc: '免费转赠闲置物品',
+                color: '#ff9ff3',
+                colorLight: '#ffb3ff',
+                stats: { total: 45, new: 8 },
+                link: 'donation_list.html',
+                tags: ['free', 'eco']
+            },
+            {
+                id: 'demand',
+                icon: '🔍',
+                title: '需求广场',
+                desc: '发布你需要的物品',
+                color: '#54a0ff',
+                colorLight: '#74b9ff',
+                stats: { total: 67, new: 15 },
+                link: 'demand_board.html',
+                tags: ['trending']
+            },
+            {
+                id: 'carbon',
+                icon: '🌱',
+                title: '碳足迹',
+                desc: '记录你的绿色足迹',
+                color: '#6bcb77',
+                colorLight: '#8fd99f',
+                stats: { total: 234, new: 31 },
+                link: 'carbon_footprint.html',
+                tags: ['eco', 'trending']
+            },
+            {
+                id: 'profile',
+                icon: '👤',
+                title: '个人中心',
+                desc: '管理你的信息和发布',
+                color: '#a29bfe',
+                colorLight: '#b8b5ff',
+                stats: { total: 12, new: 3 },
+                link: 'user_center.html',
+                tags: ['new']
+            }
+        ];
+        
+        let currentCategory = 'all';
+        let currentIndex = 0;
+        let isDragging = false;
+        let startX, startY;
+        let offsetX = 0, offsetY = 0;
+        let velocityX = 0;
+        
+        function createCards() {
+            const wrapper = document.getElementById('cardsWrapper');
+            wrapper.innerHTML = '';
+            
+            const filteredCards = getFilteredCards();
+            
+            filteredCards.forEach((card, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'feature-card';
+                cardEl.dataset.id = card.id;
+                cardEl.dataset.index = index;
+                cardEl.style.cssText = `
+                    --card-color: ${card.color};
+                    --card-color-light: ${card.colorLight};
+                    width: 280px;
+                    height: auto;
+                    min-height: 320px;
+                `;
+                
+                cardEl.innerHTML = `
+                    <div class="card-icon">${card.icon}</div>
+                    <div class="card-title">${card.title}</div>
+                    <div class="card-desc">${card.desc}</div>
+                    <div class="card-stats">
+                        <span>📦 ${card.stats.total}件</span>
+                        <span>✨ ${card.stats.new}件新增</span>
+                    </div>
+                    <button class="card-enter" onclick="enterModule('${card.link}')">
+                        进入 →
+                    </button>
+                `;
+                
+                // 点击事件
+                cardEl.addEventListener('click', (e) => {
+                    if (!isDragging && Math.abs(offsetX) < 10 && Math.abs(offsetY) < 10) {
+                        enterModule(card.link);
+                    }
+                });
+                
+                // 悬停效果
+                cardEl.addEventListener('mouseenter', () => highlightCard(cardEl));
+                cardEl.addEventListener('mouseleave', () => resetCards());
+                
+                wrapper.appendChild(cardEl);
+            });
+            
+            updateCardPositions();
+        }
+        
+        function getFilteredCards() {
+            if (currentCategory === 'all') return cardsData;
+            return cardsData.filter(card => card.tags.includes(currentCategory));
+        }
+        
+        function updateCardPositions() {
+            const cards = document.querySelectorAll('.feature-card');
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2 - 50;
+            const radius = Math.min(window.innerWidth * 0.35, 300);
+            
+            cards.forEach((card, index) => {
+                const total = cards.length;
+                const angle = (index / total) * Math.PI * 2 - Math.PI / 2;
+                
+                // 添加中心偏移
+                const x = centerX + Math.cos(angle) * radius + offsetX;
+                const y = centerY + Math.sin(angle) * radius * 0.6 + offsetY;
+                
+                // 计算缩放（中间的大，两边的小）
+                const normalizedIndex = (index - currentIndex + total) % total;
+                const scale = normalizedIndex === 0 ? 1.15 : 
+                              normalizedIndex === 1 || normalizedIndex === total - 1 ? 0.9 : 0.75;
+                
+                card.style.transform = `translate(${x - centerX}px, ${y - centerY}px) scale(${scale})`;
+                card.style.zIndex = normalizedIndex === 0 ? 50 : 10 + total - normalizedIndex;
+                card.style.opacity = normalizedIndex === 0 ? 1 : normalizedIndex < 3 ? 0.7 : 0.4;
+                
+                // 更新指示器
+                if (normalizedIndex === 0) {
+                    updateIndicators(index);
+                }
+            });
+        }
+        
+        function highlightCard(cardEl) {
+            document.querySelectorAll('.feature-card').forEach(card => {
+                card.classList.remove('highlighted', 'dimmed');
+                if (card !== cardEl) {
+                    card.classList.add('dimmed');
+                }
+            });
+            cardEl.classList.add('highlighted');
+        }
+        
+        function resetCards() {
+            document.querySelectorAll('.feature-card').forEach(card => {
+                card.classList.remove('highlighted', 'dimmed');
+            });
+        }
+        
+        function updateIndicators(index) {
+            const filteredCards = getFilteredCards();
+            currentIndex = index;
+            
+            document.querySelectorAll('.indicator').forEach((ind, i) => {
+                ind.classList.toggle('active', i === index % 5);
+            });
+            
+            // 更新标题
+            const card = filteredCards[index];
+            if (card) {
+                document.querySelector('.header h1').textContent = `🌟 ${card.title} · 农大闲置 🌟`;
+            }
+        }
+        
+        // ============ 拖拽交互 ============
+        function initDrag() {
+            const container = document.getElementById('mainContainer');
+            
+            container.addEventListener('mousedown', startDrag);
+            container.addEventListener('mousemove', drag);
+            container.addEventListener('mouseup', endDrag);
+            container.addEventListener('mouseleave', endDrag);
+            
+            container.addEventListener('touchstart', startDrag, { passive: true });
+            container.addEventListener('touchmove', drag, { passive: true });
+            container.addEventListener('touchend', endDrag);
+            
+            // 鼠标移动更新背景
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX - window.innerWidth / 2);
+                mouseY = (e.clientY - window.innerHeight / 2);
+            });
+        }
+        
+        let dragStartTime;
+        
+        function startDrag(e) {
+            isDragging = false;
+            dragStartTime = Date.now();
+            
+            const point = e.touches ? e.touches[0] : e;
+            startX = point.clientX - offsetX;
+            startY = point.clientY - offsetY;
+            velocityX = 0;
+        }
+        
+        function drag(e) {
+            const point = e.touches ? e.touches[0] : e;
+            const currentX = point.clientX - startX;
+            const currentY = point.clientY - startY;
+            
+            // 检测是否在拖拽
+            if (Math.abs(currentX - offsetX) > 5 || Math.abs(currentY - offsetY) > 5) {
+                isDragging = true;
+            }
+            
+            velocityX = currentX - offsetX;
+            offsetX = currentX;
+            offsetY = currentY;
+            
+            updateCardPositions();
+        }
+        
+        function endDrag() {
+            const dragDuration = Date.now() - dragStartTime;
+            
+            // 惯性滑动
+            if (Math.abs(velocityX) > 30 && dragDuration < 300) {
+                const direction = velocityX > 0 ? 1 : -1;
+                
+                // 计算新的索引
+                const filteredCards = getFilteredCards();
+                let newIndex = currentIndex - direction;
+                if (newIndex < 0) newIndex = filteredCards.length - 1;
+                if (newIndex >= filteredCards.length) newIndex = 0;
+                
+                animateToIndex(newIndex);
+            }
+            
+            // 缓慢回归
+            animateOffset(0, 0, 500);
+        }
+        
+        function animateOffset(targetX, targetY, duration) {
+            const startX = offsetX;
+            const startY = offsetY;
+            const startTime = performance.now();
+            
+            function step(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                
+                offsetX = startX + (targetX - startX) * eased;
+                offsetY = startY + (targetY - startY) * eased;
+                
+                updateCardPositions();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                }
+            }
+            
+            requestAnimationFrame(step);
+        }
+        
+        function animateToIndex(index) {
+            const cards = document.querySelectorAll('.feature-card');
+            const total = cards.length;
+            
+            // 计算方向
+            let steps = index - currentIndex;
+            if (steps > total / 2) steps -= total;
+            if (steps < -total / 2) steps += total;
+            
+            // 动画移动
+            const angleStep = (Math.PI * 2) / total;
+            const radius = Math.min(window.innerWidth * 0.35, 300);
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2 - 50;
+            
+            const startAngle = (currentIndex / total) * Math.PI * 2;
+            const endAngle = (index / total) * Math.PI * 2;
+            
+            const startTime = performance.now();
+            const duration = 400;
+            
+            function step(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                
+                const currentAngle = startAngle + (endAngle - startAngle) * eased;
+                
+                cards.forEach((card, i) => {
+                    const cardAngle = currentAngle + (i / total) * Math.PI * 2;
+                    const x = centerX + Math.cos(cardAngle) * radius + offsetX;
+                    const y = centerY + Math.sin(cardAngle) * radius * 0.6 + offsetY;
+                    
+                    const normalizedIndex = (i - index + total) % total;
+                    const scale = normalizedIndex === 0 ? 1.15 : 
+                                  normalizedIndex === 1 || normalizedIndex === total - 1 ? 0.9 : 0.75;
+                    
+                    card.style.transform = `translate(${x - centerX}px, ${y - centerY}px) scale(${scale})`;
+                    card.style.zIndex = normalizedIndex === 0 ? 50 : 10 + total - normalizedIndex;
+                });
+                
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    currentIndex = index;
+                    updateCardPositions();
+                }
+            }
+            
+            requestAnimationFrame(step);
+        }
+        
+        // ============ 指示器点击 ============
+        document.querySelectorAll('.indicator').forEach(ind => {
+            ind.addEventListener('click', () => {
+                const index = parseInt(ind.dataset.index);
+                const filteredCards = getFilteredCards();
+                animateToIndex(index % filteredCards.length);
+            });
+        });
+        
+        // ============ 分类标签 ============
+        document.querySelectorAll('.category-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                document.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+                currentCategory = tag.dataset.category;
+                currentIndex = 0;
+                offsetX = 0;
+                offsetY = 0;
+                createCards();
+            });
+        });
+        
+        // ============ 进入模块 ============
+        function enterModule(link) {
+            if (!link) return;
+            
+            // 添加跳转动画
+            document.body.style.transition = 'opacity 0.3s ease';
+            document.body.style.opacity = '0';
+            
+            setTimeout(() => {
+                window.location.href = link;
+            }, 300);
+        }
+        
+        // ============ 返回 ============
+        function goBack() {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                window.location.href = 'starfield.html';
+            }, 300);
+        }
+        
+        // ============ 初始化 ============
+        window.addEventListener('load', () => {
+            initThree();
+            createCards();
+            initDrag();
+            
+            // 隐藏加载动画
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

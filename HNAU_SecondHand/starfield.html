@@ -1234,9 +1234,9 @@
                     overlay.classList.add('active');
                     node.style.boxShadow = '0 0 60px ' + module.color + ', 0 0 100px ' + module.color;
                     
-                    // 等待动画完成后跳转
+                    // 等待动画完成后跳转 - 跳转到探索过渡页
                     setTimeout(function() {
-                        window.location.href = module.url;
+                        window.location.href = 'explore.html';
                     }, 300);
                 }
             }
