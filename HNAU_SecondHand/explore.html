@@ -516,9 +516,8 @@
                 node.addEventListener('mouseenter', () => setActive(index));
                 node.addEventListener('mouseleave', () => clearActive());
                 node.addEventListener('click', (e) => {
-                    if (!isDragging && Math.abs(velocityX) < 5 && Math.abs(velocityY) < 5) {
-                        enterModule(module.link, e);
-                    }
+                    e.stopPropagation();
+                    enterModule(module.link, e);
                 });
 
                 container.appendChild(node);
