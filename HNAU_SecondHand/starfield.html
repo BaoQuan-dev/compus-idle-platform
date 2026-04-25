@@ -1144,7 +1144,7 @@
             }, 3000);
         }
         
-        // ========== 核心：旋转式拉近导航效果（流畅3D版） ==========
+        // ========== 核心：物品漩涡旋转拉近效果 ==========
         function zoomAndNavigate(module, node) {
             if (state.isAnimating) return;
             state.isAnimating = true;
@@ -1153,12 +1153,10 @@
             var overlay = document.getElementById('transitionOverlay');
             var canvasWrapper = document.getElementById('canvas-wrapper');
             
-            // 获取点击位置（用于确定旋转方向）
+            // 获取点击位置
             var rect = node.getBoundingClientRect();
             var clickX = rect.left + rect.width / 2;
             var clickY = rect.top + rect.height / 2;
-            var centerX = window.innerWidth / 2;
-            var rotationDirection = clickX > centerX ? 1 : -1;
             
             // 模块节点放大高亮
             node.style.transform = 'scale(1.3)';
@@ -1172,59 +1170,90 @@
                 }
             });
             
-            // ========== 使用CSS transition实现流畅3D旋转 ==========
-            // 设置初始状态
-            canvasWrapper.style.transition = 'none';
-            canvasWrapper.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
-            
-            // 强制重绘
-            canvasWrapper.offsetHeight;
-            
-            // 启动3D旋转动画
+            // ========== 物品漩涡旋转聚拢动画 ==========
             var startTime = performance.now();
             var zoomDuration = 1200; // 1.2秒
             
-            function animate3D(currentTime) {
+            // 保存物品原始数据
+            var itemsData = floatingItems.map(function(item) {
+                return {
+                    x: item.position.x,
+                    y: item.position.y,
+                    z: item.position.z,
+                    rx: item.rotation.x,
+                    ry: item.rotation.y,
+                    rz: item.rotation.z
+                };
+            });
+            
+            // 目标点（点击位置对应的3D坐标）
+            var targetX = (clickX / window.innerWidth - 0.5) * 30;
+            var targetY = -(clickY / window.innerHeight - 0.5) * 15;
+            
+            function animateVortex(currentTime) {
                 var elapsed = currentTime - startTime;
                 var progress = Math.min(elapsed / zoomDuration, 1);
                 
-                // 更平滑的缓动
+                // 平滑缓动
                 var easeProgress = 1 - Math.pow(1 - progress, 3);
                 
-                // 3D透视旋转角度（旋转3圈）
-                var rotateY = easeProgress * 1080 * rotationDirection;
-                var rotateX = easeProgress * 180; // 上下俯仰
+                // 物品漩涡旋转聚拢
+                floatingItems.forEach(function(item, index) {
+                    var data = itemsData[index];
+                    var delay = (index % 10) * 0.05; // 错开延迟
+                    var localProgress = Math.max(0, Math.min(1, (easeProgress - delay) / (1 - delay)));
+                    var easeLocal = 1 - Math.pow(1 - localProgress, 2);
+                    
+                    // 漩涡旋转效果（绕Z轴旋转）
+                    var angle = easeLocal * Math.PI * 4; // 旋转2圈
+                    var radius = (1 - easeLocal) * data.x; // 半径缩小
+                    var spiralX = Math.cos(angle + index * 0.5) * radius;
+                    var spiralY = Math.sin(angle + index * 0.5) * radius;
+                    
+                    // 聚拢到中心点
+                    item.position.x = data.x + (targetX - data.x) * easeLocal * 0.8 + spiralX * (1 - easeLocal);
+                    item.position.y = data.y + (targetY - data.y) * easeLocal * 0.8 + spiralY * (1 - easeLocal);
+                    item.position.z = data.z + easeLocal * 10; // 向镜头靠近
+                    
+                    // 物品自身旋转
+                    item.rotation.x = data.rx + easeLocal * Math.PI * 2;
+                    item.rotation.y = data.ry + easeLocal * Math.PI * 3;
+                    
+                    // 物品缩放（聚拢时变小消失）
+                    var scale = 1 - easeLocal * 0.7;
+                    item.scale.set(scale, scale, scale);
+                    
+                    // 透明度（通过缩放到0实现淡出）
+                    if (easeLocal > 0.7) {
+                        item.visible = false;
+                    }
+                });
                 
-                // 缩放和位移
-                var scale = 1 - easeProgress * 0.85;
-                var translateZ = easeProgress * 400;
-                
-                // 应用3D变换
-                canvasWrapper.style.transform = 
-                    'perspective(1200px) ' +
-                    'rotateY(' + rotateY + 'deg) ' +
-                    'rotateX(' + rotateX + 'deg) ' +
-                    'scale(' + scale + ') ' +
-                    'translateZ(' + translateZ + 'px)';
-                
-                // 相机跟随拉近
+                // 相机拉近
                 if (camera) {
-                    camera.position.z = 15 - easeProgress * 14;
+                    camera.position.z = 15 - easeProgress * 10;
                 }
                 
-                // 整体淡出
-                var containerOpacity = 1 - easeProgress * 0.7;
-                mainContainer.style.opacity = containerOpacity;
-                overlay.style.opacity = easeProgress * 0.3;
+                // 标题和底部栏淡出
+                var uiOpacity = 1 - easeProgress;
+                document.getElementById('header').style.opacity = uiOpacity;
+                document.getElementById('bottomBar').style.opacity = uiOpacity;
+                
+                // 遮罩淡入
+                overlay.style.opacity = easeProgress * 0.5;
                 
                 if (progress < 1) {
-                    requestAnimationFrame(animate3D);
+                    requestAnimationFrame(animateVortex);
                 } else {
+                    // 恢复物品可见性
+                    floatingItems.forEach(function(item) {
+                        item.visible = true;
+                    });
                     window.location.href = 'explore.html';
                 }
             }
             
-            requestAnimationFrame(animate3D);
+            requestAnimationFrame(animateVortex);
         }
         
         function goBack() {
