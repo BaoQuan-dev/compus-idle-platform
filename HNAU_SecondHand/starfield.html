@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HNAU 闲置星球</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.cn/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+        }
+        
+        /* Three.js Canvas */
+        #cosmic-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        /* 主界面容器 */
+        .main-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        /* 顶部标题 */
+        .header {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        
+        .header.visible {
+            opacity: 1;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 8px;
+            background: linear-gradient(135deg, #00ffc8, #00b4d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 4px;
+        }
+        
+        /* 中心指示器 */
+        .center-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: all 0.5s ease;
+        }
+        
+        .center-indicator.hidden {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0);
+        }
+        
+        .center-circle {
+            width: 80px;
+            height: 80px;
+            border: 2px solid rgba(0, 255, 200, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            animation: pulse-ring 2s ease-in-out infinite;
+        }
+        
+        .center-circle::before {
+            content: '';
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, rgba(0, 255, 200, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .center-indicator:hover .center-circle {
+            border-color: rgba(0, 255, 200, 0.8);
+            transform: scale(1.1);
+        }
+        
+        .center-indicator span {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        @keyframes pulse-ring {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 200, 0.1); }
+            50% { box-shadow: 0 0 40px rgba(0, 255, 200, 0.3); }
+        }
+        
+        /* 模块节点 */
+        .module-node {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: scale(0);
+        }
+        
+        .module-node.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .module-node.dimmed {
+            opacity: 0.25 !important;
+            transform: scale(0.8) !important;
+            filter: blur(2px);
+        }
+        
+        .module-node.active {
+            opacity: 1 !important;
+            transform: scale(1.2) !important;
+        }
+        
+        .module-node-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(30, 40, 60, 0.8), rgba(10, 15, 25, 0.9));
+            border: 1px solid rgba(0, 255, 200, 0.2);
+            transition: all 0.5s ease;
+        }
+        
+        .module-node:hover .module-node-bg,
+        .module-node.active .module-node-bg {
+            border-color: rgba(0, 255, 200, 0.8);
+            box-shadow: 0 0 30px rgba(0, 255, 200, 0.4),
+                        inset 0 0 20px rgba(0, 255, 200, 0.1);
+        }
+        
+        .module-node-ring {
+            position: absolute;
+            width: calc(100% + 10px);
+            height: calc(100% + 10px);
+            border-radius: 50%;
+            border: 1px solid rgba(0, 255, 200, 0.1);
+            transition: all 0.5s ease;
+        }
+        
+        .module-node:hover .module-node-ring,
+        .module-node.active .module-node-ring {
+            border-color: rgba(0, 255, 200, 0.4);
+            animation: rotate-ring 8s linear infinite;
+        }
+        
+        @keyframes rotate-ring {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .module-icon {
+            font-size: 28px;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 200, 0.5));
+            transition: transform 0.3s ease;
+        }
+        
+        .module-node:hover .module-icon {
+            transform: scale(1.1);
+        }
+        
+        .module-title {
+            font-size: 11px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+        }
+        
+        /* 底部轮播 */
+        .bottom-carousel {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            pointer-events: auto;
+        }
+        
+        .bottom-carousel.visible {
+            opacity: 1;
+        }
+        
+        .carousel-items {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .carousel-item {
+            width: 60px;
+            height: 60px;
+            background: rgba(20, 30, 50, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .carousel-item:hover {
+            background: rgba(30, 50, 80, 0.8);
+            border-color: rgba(0, 255, 200, 0.5);
+            transform: translateY(-5px);
+        }
+        
+        .carousel-item.active {
+            background: rgba(0, 255, 200, 0.15);
+            border-color: rgba(0, 255, 200, 0.8);
+            box-shadow: 0 0 20px rgba(0, 255, 200, 0.3);
+        }
+        
+        .carousel-item span {
+            font-size: 24px;
+        }
+        
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .carousel-dot {
+            width: 30px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .carousel-dot.active {
+            background: rgba(0, 255, 200, 0.8);
+            width: 50px;
+        }
+        
+        /* 详情面板 */
+        .detail-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .detail-panel.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .detail-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+        }
+        
+        .detail-content {
+            position: relative;
+            width: 90%;
+            max-width: 500px;
+            background: linear-gradient(135deg, rgba(20, 30, 50, 0.95), rgba(10, 20, 35, 0.98));
+            border: 1px solid rgba(0, 255, 200, 0.3);
+            border-radius: 24px;
+            padding: 40px;
+            transform: scale(0.8) translateY(50px);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+        }
+        
+        .detail-panel.visible .detail-content {
+            transform: scale(1) translateY(0);
+        }
+        
+        .detail-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .detail-close:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(0, 255, 200, 0.5);
+            transform: rotate(90deg);
+        }
+        
+        .detail-icon {
+            font-size: 60px;
+            text-align: center;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 200, 0.5));
+        }
+        
+        .detail-title {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00ffc8, #00b4d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .detail-desc {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        
+        .detail-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(0, 255, 200, 0.05);
+            border: 1px solid rgba(0, 255, 200, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #00ffc8;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .detail-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #00ffc8, #00b4d8);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
+        }
+        
+        .detail-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 200, 0.3);
+        }
+        
+        /* 加载动画 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-text {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 4px;
+            animation: loading-pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes loading-pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* 提示文字 */
+        .hint-text {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 20px;
+                letter-spacing: 4px;
+            }
+            
+            .module-node {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .module-icon {
+                font-size: 22px;
+            }
+            
+            .module-title {
+                font-size: 9px;
+            }
+            
+            .center-circle {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .carousel-item {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .detail-content {
+                padding: 30px 20px;
+            }
+            
+            .detail-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-text">STARFIELD LOADING</div>
+    </div>
+    
+    <!-- Three.js Canvas -->
+    <canvas id="cosmic-canvas"></canvas>
+    
+    <!-- 主界面 -->
+    <div class="main-container" id="mainContainer">
+        <!-- 顶部标题 -->
+        <div class="header" id="header">
+            <h1>HNAU 闲置星球</h1>
+            <p>CAMPUS SUSTAINABLE CIRCULATION</p>
+        </div>
+        
+        <!-- 中心指示器 -->
+        <div class="center-indicator" id="centerIndicator">
+            <div class="center-circle"></div>
+            <span>点击中心 · 唤醒全部</span>
+        </div>
+        
+        <!-- 模块节点（通过 JS 动态生成） -->
+        
+        <!-- 底部轮播 -->
+        <div class="bottom-carousel" id="bottomCarousel">
+            <div class="carousel-items" id="carouselItems"></div>
+            <div class="carousel-indicators" id="carouselIndicators"></div>
+        </div>
+        
+        <!-- 提示文字 -->
+        <div class="hint-text" id="hintText">点击模块探索 · 点击中心唤醒</div>
+    </div>
+    
+    <!-- 详情面板 -->
+    <div class="detail-panel" id="detailPanel">
+        <div class="detail-backdrop" id="detailBackdrop"></div>
+        <div class="detail-content">
+            <button class="detail-close" id="detailClose">×</button>
+            <div class="detail-icon" id="detailIcon"></div>
+            <h2 class="detail-title" id="detailTitle"></h2>
+            <p class="detail-desc" id="detailDesc"></p>
+            <div class="detail-stats" id="detailStats"></div>
+            <button class="detail-btn" id="detailBtn"></button>
+        </div>
+    </div>
+    
+    <!-- Three.js -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.min.js"></script>
+    
+    <script>
+    (function() {
+        'use strict';
+        
+        // ========== 配置 ==========
+        var CONFIG = {
+            modules: [
+                {
+                    id: 'market',
+                    icon: '🏪',
+                    title: '闲置市场',
+                    desc: '浏览校园二手好物，发现超值闲置',
+                    stats: { total: 128, new: 12 },
+                    url: 'home.html'
+                },
+                {
+                    id: 'publish',
+                    icon: '📦',
+                    title: '发布闲置',
+                    desc: '一键发布你的闲置物品，让资源循环',
+                    stats: { total: 45, saved: 892 },
+                    url: 'release_goods.html'
+                },
+                {
+                    id: 'donation',
+                    icon: '💝',
+                    title: '公益转赠',
+                    desc: '传递爱心，让闲置继续温暖他人',
+                    stats: { total: 28, helped: 156 },
+                    url: 'donation_list.html'
+                },
+                {
+                    id: 'demand',
+                    icon: '🔍',
+                    title: '需求广场',
+                    desc: '发布你的需求，寻找有缘人',
+                    stats: { total: 67, matched: 34 },
+                    url: 'demand_board.html'
+                },
+                {
+                    id: 'carbon',
+                    icon: '🌱',
+                    title: '碳足迹',
+                    desc: '记录你的环保行动，见证绿色校园',
+                    stats: { total: 234, saved: 1.2 },
+                    url: 'carbon_ai.html'
+                },
+                {
+                    id: 'profile',
+                    icon: '👤',
+                    title: '个人中心',
+                    desc: '管理你的信息、认证与收藏',
+                    stats: { total: 8, auth: '已认证' },
+                    url: 'user_center.html'
+                }
+            ],
+            carouselItems: [
+                { icon: '🔥', title: '热门推荐' },
+                { icon: '⏰', title: '最新上架' },
+                { icon: '💚', title: '环保先锋' },
+                { icon: '⭐', title: '精选好物' },
+                { icon: '🎁', title: '限时免费' }
+            ]
+        };
+        
+        // ========== 状态 ==========
+        var state = {
+            isDetailOpen: false,
+            activeModule: null,
+            allAwakened: false,
+            carouselIndex: 0,
+            cameraTarget: { x: 0, y: 0, z: 5 }
+        };
+        
+        // ========== Three.js 场景 ==========
+        var scene, camera, renderer;
+        var starField, nebulaClouds, particles;
+        var mouseX = 0, mouseY = 0;
+        
+        function initThree() {
+            // 场景
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x000510, 0.015);
+            
+            // 相机
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+            
+            // 渲染器
+            renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById('cosmic-canvas'),
+                antialias: true,
+                alpha: true
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setClearColor(0x000510, 1);
+            
+            // 创建星空
+            createStarField();
+            createNebulaClouds();
+            createAmbientParticles();
+            
+            // 事件
+            document.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('resize', onResize);
+            
+            // 开始动画
+            animate();
+        }
+        
+        function createStarField() {
+            var geometry = new THREE.BufferGeometry();
+            var count = 3000;
+            var positions = new Float32Array(count * 3);
+            var colors = new Float32Array(count * 3);
+            var sizes = new Float32Array(count);
+            
+            for (var i = 0; i < count; i++) {
+                var i3 = i * 3;
+                // 球形分布
+                var theta = Math.random() * Math.PI * 2;
+                var phi = Math.acos(2 * Math.random() - 1);
+                var r = 50 + Math.random() * 150;
+                
+                positions[i3] = r * Math.sin(phi) * Math.cos(theta);
+                positions[i3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+                positions[i3 + 2] = r * Math.cos(phi);
+                
+                // 颜色 - 蓝白为主
+                var colorChoice = Math.random();
+                if (colorChoice < 0.7) {
+                    colors[i3] = 0.8 + Math.random() * 0.2;
+                    colors[i3 + 1] = 0.9 + Math.random() * 0.1;
+                    colors[i3 + 2] = 1;
+                } else if (colorChoice < 0.9) {
+                    colors[i3] = 0.6;
+                    colors[i3 + 1] = 0.8;
+                    colors[i3 + 2] = 1;
+                } else {
+                    colors[i3] = 1;
+                    colors[i3 + 1] = 0.9;
+                    colors[i3 + 2] = 0.7;
+                }
+                
+                sizes[i] = Math.random() * 2 + 0.5;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            
+            var material = new THREE.PointsMaterial({
+                size: 1.5,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                sizeAttenuation: true
+            });
+            
+            starField = new THREE.Points(geometry, material);
+            scene.add(starField);
+        }
+        
+        function createNebulaClouds() {
+            var geometry = new THREE.BufferGeometry();
+            var count = 500;
+            var positions = new Float32Array(count * 3);
+            
+            for (var i = 0; i < count; i++) {
+                var i3 = i * 3;
+                positions[i3] = (Math.random() - 0.5) * 80;
+                positions[i3 + 1] = (Math.random() - 0.5) * 50;
+                positions[i3 + 2] = -20 - Math.random() * 30;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            
+            var material = new THREE.PointsMaterial({
+                size: 8,
+                color: 0x00ffc8,
+                transparent: true,
+                opacity: 0.03,
+                sizeAttenuation: true
+            });
+            
+            nebulaClouds = new THREE.Points(geometry, material);
+            scene.add(nebulaClouds);
+        }
+        
+        function createAmbientParticles() {
+            var geometry = new THREE.BufferGeometry();
+            var count = 200;
+            var positions = new Float32Array(count * 3);
+            
+            for (var i = 0; i < count; i++) {
+                var i3 = i * 3;
+                positions[i3] = (Math.random() - 0.5) * 30;
+                positions[i3 + 1] = (Math.random() - 0.5) * 20;
+                positions[i3 + 2] = (Math.random() - 0.5) * 10;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            
+            var material = new THREE.PointsMaterial({
+                size: 0.1,
+                color: 0x00ffc8,
+                transparent: true,
+                opacity: 0.4
+            });
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+        }
+        
+        function onMouseMove(e) {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        }
+        
+        function onResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            var time = Date.now() * 0.0001;
+            
+            // 星空旋转
+            if (starField) {
+                starField.rotation.y += 0.0001;
+                starField.rotation.x += 0.00005;
+            }
+            
+            // 星云飘动
+            if (nebulaClouds) {
+                nebulaClouds.rotation.y += 0.0002;
+                nebulaClouds.rotation.x = Math.sin(time) * 0.1;
+            }
+            
+            // 粒子漂浮
+            if (particles) {
+                particles.rotation.y += 0.001;
+                var positions = particles.geometry.attributes.position.array;
+                for (var i = 0; i < positions.length; i += 3) {
+                    positions[i + 1] += Math.sin(time * 10 + i) * 0.001;
+                }
+                particles.geometry.attributes.position.needsUpdate = true;
+            }
+            
+            // 相机跟随鼠标
+            if (!state.isDetailOpen) {
+                camera.position.x += (mouseX * 0.3 - camera.position.x) * 0.02;
+                camera.position.y += (-mouseY * 0.2 - camera.position.y) * 0.02;
+                camera.lookAt(0, 0, 0);
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        // ========== DOM 操作 ==========
+        function createModuleNodes() {
+            var container = document.getElementById('mainContainer');
+            var radius = window.innerWidth < 768 ? 140 : 200;
+            
+            CONFIG.modules.forEach(function(mod, index) {
+                var node = document.createElement('div');
+                node.className = 'module-node';
+                node.id = 'module-' + mod.id;
+                node.innerHTML = 
+                    '<div class="module-node-bg"></div>' +
+                    '<div class="module-node-ring"></div>' +
+                    '<div class="module-icon">' + mod.icon + '</div>' +
+                    '<div class="module-title">' + mod.title + '</div>';
+                
+                // 环形排列
+                var angle = (index / CONFIG.modules.length) * Math.PI * 2 - Math.PI / 2;
+                var x = Math.cos(angle) * radius;
+                var y = Math.sin(angle) * radius;
+                
+                node.style.left = 'calc(50% + ' + x + 'px - 45px)';
+                node.style.top = 'calc(50% + ' + y + 'px - 45px)';
+                
+                // 事件
+                node.addEventListener('click', function() {
+                    openModuleDetail(mod);
+                });
+                
+                node.addEventListener('mouseenter', function() {
+                    dimOtherModules(mod.id);
+                });
+                
+                node.addEventListener('mouseleave', function() {
+                    if (!state.allAwakened) {
+                        resetModules();
+                    }
+                });
+                
+                container.appendChild(node);
+                
+                // 延迟显示动画
+                setTimeout(function() {
+                    node.classList.add('visible');
+                }, 500 + index * 100);
+            });
+        }
+        
+        function createCarousel() {
+            var itemsContainer = document.getElementById('carouselItems');
+            var indicatorsContainer = document.getElementById('carouselIndicators');
+            
+            CONFIG.carouselItems.forEach(function(item, index) {
+                // 项
+                var itemEl = document.createElement('div');
+                itemEl.className = 'carousel-item' + (index === 0 ? ' active' : '');
+                itemEl.innerHTML = '<span>' + item.icon + '</span>';
+                itemEl.addEventListener('click', function() {
+                    setCarouselIndex(index);
+                });
+                itemsContainer.appendChild(itemEl);
+                
+                // 指示器
+                var dot = document.createElement('div');
+                dot.className = 'carousel-dot' + (index === 0 ? ' active' : '');
+                dot.addEventListener('click', function() {
+                    setCarouselIndex(index);
+                });
+                indicatorsContainer.appendChild(dot);
+            });
+            
+            // 自动轮播
+            setInterval(function() {
+                if (!state.isDetailOpen) {
+                    var nextIndex = (state.carouselIndex + 1) % CONFIG.carouselItems.length;
+                    setCarouselIndex(nextIndex);
+                }
+            }, 4000);
+        }
+        
+        function setCarouselIndex(index) {
+            state.carouselIndex = index;
+            
+            var items = document.querySelectorAll('.carousel-item');
+            var dots = document.querySelectorAll('.carousel-dot');
+            
+            items.forEach(function(item, i) {
+                item.classList.toggle('active', i === index);
+            });
+            dots.forEach(function(dot, i) {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+        
+        // ========== 交互 ==========
+        function dimOtherModules(activeId) {
+            CONFIG.modules.forEach(function(mod) {
+                var node = document.getElementById('module-' + mod.id);
+                if (mod.id !== activeId) {
+                    node.classList.add('dimmed');
+                }
+            });
+        }
+        
+        function resetModules() {
+            CONFIG.modules.forEach(function(mod) {
+                var node = document.getElementById('module-' + mod.id);
+                node.classList.remove('dimmed', 'active');
+            });
+        }
+        
+        function awakenAll() {
+            state.allAwakened = true;
+            var center = document.getElementById('centerIndicator');
+            center.classList.add('hidden');
+            
+            CONFIG.modules.forEach(function(mod, index) {
+                var node = document.getElementById('module-' + mod.id);
+                setTimeout(function() {
+                    node.classList.remove('dimmed');
+                    node.classList.add('active');
+                }, index * 100);
+            });
+            
+            document.getElementById('hintText').textContent = '选择一个模块深入探索';
+        }
+        
+        function openModuleDetail(mod) {
+            state.isDetailOpen = true;
+            state.activeModule = mod;
+            
+            var panel = document.getElementById('detailPanel');
+            document.getElementById('detailIcon').textContent = mod.icon;
+            document.getElementById('detailTitle').textContent = mod.title;
+            document.getElementById('detailDesc').textContent = mod.desc;
+            
+            // 动态统计
+            var statsHtml = '';
+            var keys = Object.keys(mod.stats);
+            keys.forEach(function(key) {
+                statsHtml += 
+                    '<div class="stat-card">' +
+                        '<div class="stat-value">' + mod.stats[key] + '</div>' +
+                        '<div class="stat-label">' + key + '</div>' +
+                    '</div>';
+            });
+            document.getElementById('detailStats').innerHTML = statsHtml;
+            document.getElementById('detailBtn').textContent = '进入 ' + mod.title;
+            
+            panel.classList.add('visible');
+            
+            // 隐藏其他元素
+            document.getElementById('header').classList.remove('visible');
+            document.getElementById('bottomCarousel').classList.remove('visible');
+            document.getElementById('hintText').style.opacity = '0';
+        }
+        
+        function closeDetail() {
+            state.isDetailOpen = false;
+            
+            var panel = document.getElementById('detailPanel');
+            panel.classList.remove('visible');
+            
+            // 显示其他元素
+            setTimeout(function() {
+                document.getElementById('header').classList.add('visible');
+                document.getElementById('bottomCarousel').classList.add('visible');
+                document.getElementById('hintText').style.opacity = '1';
+                resetModules();
+                state.allAwakened = false;
+                document.getElementById('centerIndicator').classList.remove('hidden');
+                document.getElementById('hintText').textContent = '点击模块探索 · 点击中心唤醒';
+            }, 300);
+        }
+        
+        // ========== 初始化 ==========
+        function init() {
+            // 初始化 Three.js
+            initThree();
+            
+            // 创建节点
+            createModuleNodes();
+            createCarousel();
+            
+            // 中心点击
+            document.getElementById('centerIndicator').addEventListener('click', awakenAll);
+            
+            // 详情关闭
+            document.getElementById('detailClose').addEventListener('click', closeDetail);
+            document.getElementById('detailBackdrop').addEventListener('click', closeDetail);
+            document.getElementById('detailBtn').addEventListener('click', function() {
+                if (state.activeModule) {
+                    window.location.href = state.activeModule.url;
+                }
+            });
+            
+            // 显示界面
+            setTimeout(function() {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                setTimeout(function() {
+                    document.getElementById('header').classList.add('visible');
+                    document.getElementById('bottomCarousel').classList.add('visible');
+                }, 300);
+            }, 1500);
+        }
+        
+        // 启动
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+    </script>
+</body>
+</html>
