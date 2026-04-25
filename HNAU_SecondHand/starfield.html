@@ -487,13 +487,14 @@
             '🎒', '👝', '👜', '💼', '🎒', '🕶', '⌚', '📱',
             '💻', '⌨️', '🖥', '🖨', '📷', '🎮', '🎧', '📚',
             '🎸', '🎮', '⚽', '🏀', '🎯', '🎲', '🧸', '🎁',
-            '💄', '💍', '📱', '🔧', '🔨', '✂️', '📏', '🖊',
-            '🪑', '💡', '🏷️', '📦', '🎁', '🧲', '🔑', '🎵'
+            '💄', '💍', '🔧', '🔨', '✂️', '📏', '🖊',
+            '🪑', '💡', '🏷️', '📦', '🧲', '🔑', '🎵'
         ];
         
         var ITEM_COLORS = [
             0xff6b6b, 0xffd93d, 0x6bcb77, 0x4d96ff, 0xff9ff3,
-            0xa29bfe, 0xfd79a8, 0xfdcb6e, 0x00b894, 0x0984e3
+            0xa29bfe, 0xfd79a8, 0xfdcb6e, 0x00b894, 0x0984e3,
+            0xe17055, 0x00cec9, 0x6c5ce7, 0xfab1a0, 0x74b9ff
         ];
         
         // ========== 模块配置 ==========
@@ -616,7 +617,7 @@
         
         function createFloatingItems() {
             // 使用简单的几何图形代表物品
-            var itemCount = 60;
+            var itemCount = 250;
             
             for (var i = 0; i < itemCount; i++) {
                 var itemGroup = new THREE.Group();
@@ -667,10 +668,10 @@
                 
                 // 随机位置
                 var angle = Math.random() * Math.PI * 2;
-                var radius = 3 + Math.random() * 8;
+                var radius = 2 + Math.random() * 12;
                 itemGroup.position.x = Math.cos(angle) * radius;
-                itemGroup.position.y = (Math.random() - 0.5) * 8;
-                itemGroup.position.z = -5 - Math.random() * 10;
+                itemGroup.position.y = (Math.random() - 0.5) * 12;
+                itemGroup.position.z = -8 - Math.random() * 15;
                 
                 // 随机旋转
                 itemGroup.rotation.x = Math.random() * Math.PI;
@@ -694,16 +695,16 @@
         
         function createGlowParticles() {
             var geometry = new THREE.BufferGeometry();
-            var count = 500;
+            var count = 1500;
             var positions = new Float32Array(count * 3);
             var colors = new Float32Array(count * 3);
             var sizes = new Float32Array(count);
             
             for (var i = 0; i < count; i++) {
                 var i3 = i * 3;
-                positions[i3] = (Math.random() - 0.5) * 50;
-                positions[i3 + 1] = (Math.random() - 0.5) * 30;
-                positions[i3 + 2] = -20 - Math.random() * 20;
+                positions[i3] = (Math.random() - 0.5) * 80;
+                positions[i3 + 1] = (Math.random() - 0.5) * 50;
+                positions[i3 + 2] = -30 - Math.random() * 30;
                 
                 // 彩色粒子
                 var colorChoice = Math.random();
