@@ -1078,8 +1078,29 @@
                 node.style.top = 'calc(50% + ' + y + 'px - 75px)';
                 
                 node.addEventListener('click', function(e) {
-                    zoomAndNavigate(mod, e);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    zoomAndNavigate(mod, node);
                 });
+                
+                // 也给模块内的文字添加点击
+                var moduleText = node.querySelector('.module-title');
+                if (moduleText) {
+                    moduleText.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        zoomAndNavigate(mod, node);
+                    });
+                }
+                
+                var moduleIcon = node.querySelector('.module-icon');
+                if (moduleIcon) {
+                    moduleIcon.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        zoomAndNavigate(mod, node);
+                    });
+                }
                 
                 node.addEventListener('mouseenter', function() {
                     dimOtherModules(mod.id);
@@ -1134,7 +1155,7 @@
         }
         
         // ========== 核心：拉近导航效果 ==========
-        function zoomAndNavigate(module, event) {
+        function zoomAndNavigate(module, node) {
             if (state.isAnimating) return;
             state.isAnimating = true;
             
@@ -1143,7 +1164,7 @@
             var backBtn = document.getElementById('backBtn');
             
             // 获取点击位置
-            var rect = event.target.getBoundingClientRect();
+            var rect = node.getBoundingClientRect();
             var tx = ((rect.left + rect.width / 2) / window.innerWidth) * 100;
             var ty = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
             
