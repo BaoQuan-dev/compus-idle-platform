@@ -1175,7 +1175,7 @@
             
             // 保存原始位置
             var originalPositions = [];
-            goodsGroup.children.forEach(function(item, i) {
+            floatingItems.forEach(function(item) {
                 originalPositions.push({
                     x: item.position.x,
                     y: item.position.y,
@@ -1208,7 +1208,7 @@
                 camera.position.z = startZ + (targetZ - startZ) * easeProgress;
                 
                 // 物品向点击位置聚拢（越近越快）
-                goodsGroup.children.forEach(function(item, i) {
+                floatingItems.forEach(function(item, i) {
                     var orig = originalPositions[i];
                     var itemTargetX = orig.x * (1 - easeProgress * 0.8) + (targetX * 2) * easeProgress * 0.5;
                     var itemTargetY = orig.y * (1 - easeProgress * 0.8) + (targetY * 2) * easeProgress * 0.5;
