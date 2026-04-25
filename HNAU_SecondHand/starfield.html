@@ -757,7 +757,7 @@
             scene = new THREE.Scene();
             
             camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 8;
+            camera.position.z = 6; // 拉近相机，更容易看到物品
             
             renderer = new THREE.WebGLRenderer({
                 canvas: document.getElementById('cosmic-canvas'),
@@ -838,13 +838,13 @@
         }
         
         function createFloatingItems() {
-            // 3D星系环绕效果 - 紧密围绕中心模块
+            // 3D星系环绕效果 - 围绕中心模块
             var orbits = [
-                { radius: 2.5, count: 6, speed: 0.15, direction: 1, ySpread: 0.15, zSpread: 1 },   // 内层 - 最靠近中心
-                { radius: 3.5, count: 8, speed: 0.12, direction: -1, ySpread: 0.2, zSpread: 1.5 }, // 第二层
-                { radius: 4.5, count: 10, speed: 0.1, direction: 1, ySpread: 0.25, zSpread: 2 }, // 第三层
-                { radius: 5.5, count: 12, speed: 0.08, direction: -1, ySpread: 0.3, zSpread: 2.5 }, // 第四层
-                { radius: 6.5, count: 14, speed: 0.06, direction: 1, ySpread: 0.35, zSpread: 3 }  // 外层 - 刚好围绕5个模块
+                { radius: 5, count: 8, speed: 0.12, direction: 1, ySpread: 0.8, zSpread: 2 },    // 内层
+                { radius: 7, count: 10, speed: 0.1, direction: -1, ySpread: 1, zSpread: 2.5 },   // 第二层
+                { radius: 9, count: 12, speed: 0.08, direction: 1, ySpread: 1.2, zSpread: 3 },  // 第三层
+                { radius: 11, count: 14, speed: 0.06, direction: -1, ySpread: 1.5, zSpread: 3.5 },// 第四层
+                { radius: 13, count: 16, speed: 0.05, direction: 1, ySpread: 1.8, zSpread: 4 }  // 外层
             ];
             
             var orbitGroup = new THREE.Group();
@@ -858,9 +858,9 @@
                     var emoji = ITEMS[Math.floor(Math.random() * ITEMS.length)];
                     var color = ITEM_COLORS[Math.floor(Math.random() * ITEM_COLORS.length)];
                     
-                    // 远近层次感：外层物品更小（更小尺寸）
-                    var baseSize = 0.8 - (o / orbits.length) * 0.4;
-                    var size = baseSize + Math.random() * 0.2;
+                    // 远近层次感：内层物品大，外层小
+                    var baseSize = 4 - (o / orbits.length) * 1.8;
+                    var size = baseSize + Math.random() * 1;
                     
                     // 创建emoji精灵
                     var sprite = createGoodsSprite(emoji, color);
@@ -893,6 +893,7 @@
                 }
             }
             
+            scene.add(itemGroup); // 添加物品组到场景
             scene.add(orbitGroup);
         }
         
