@@ -965,7 +965,7 @@
         }
         
         function animate() {
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animateCat);
             
             var time = Date.now() * 0.001;
             
@@ -1040,7 +1040,7 @@
                 glowParticles.position.y = -targetY * 0.2;
             }
             
-            renderer.render(scene, camera);
+            renderer.render(catScene, catCamera);
         }
         
         // ========== DOM 操作 ==========
@@ -1201,7 +1201,7 @@
         
         // ========== 初始化 ==========
         function init() {
-            initThree();
+            initCatScene();
             createModuleNodes();
             
             // 显示标题和底部栏
@@ -1457,7 +1457,7 @@
         var bubble = document.getElementById('hnau-cat-bubble');
         var bubbleTxt = bubble.querySelector('.hnau-cat-bubble-txt');
         
-        var scene, camera, renderer, catGroup, particles;
+        var catScene, catCamera, renderer, catGroup, particles;
         var mouseX = 0, mouseY = 0;
         var targetRotX = 0, targetRotY = 0;
         var currentRotX = 0, currentRotY = 0;
@@ -1641,7 +1641,7 @@
             catGroup.add(disc);
             
             createParticles();
-            scene.add(catGroup);
+            catScene.add(catGroup);
         }
         
         function createParticles() {
@@ -1659,29 +1659,31 @@
             geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
             var mat = new THREE.PointsMaterial({ size: 0.05, vertexColors: true, transparent: true, opacity: 0, blending: THREE.AdditiveBlending });
             particles = new THREE.Points(geo, mat);
-            scene.add(particles);
+            catScene.add(particles);
         }
         
-        function initThree() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(50, box.offsetWidth / box.offsetHeight, 0.1, 100);
-            camera.position.set(0, 1.5, 3.5);
-            camera.lookAt(0, 1, 0);
+        // 3D猫独立场景初始化
+        function initCatScene() {
+            catScene = new THREE.Scene();
+            catCamera = new THREE.PerspectiveCamera(50, box.offsetWidth / box.offsetHeight, 0.1, 100);
+            catCamera.position.set(0, 1.5, 3.5);
+            catCamera.lookAt(0, 1, 0);
             renderer = new THREE.WebGLRenderer({ canvas: threeCanvas, alpha: true, antialias: true });
             renderer.setSize(box.offsetWidth, box.offsetHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             renderer.setClearColor(0x000000, 0);
             var ambient = new THREE.AmbientLight(0x404040, 0.3);
-            scene.add(ambient);
+            catScene.add(ambient);
             var point = new THREE.PointLight(0x40ffaa, 0.8, 10);
             point.position.set(0, 3, 2);
-            scene.add(point);
+            catScene.add(point);
             createCat();
-            animate();
+            createParticles();
+            animateCat();
         }
         
-        function animate() {
-            requestAnimationFrame(animate);
+        function animateCat() {
+            requestAnimationFrame(animateCat);
             var time = Date.now();
             
             if (catGroup) {
