@@ -17,7 +17,6 @@
             min-height: 100vh;
             overflow: hidden;
             color: white;
-            perspective: 1000px;
         }
 
         /* 粒子背景 */
@@ -143,23 +142,10 @@
             z-index: 5;
             cursor: grab;
             user-select: none;
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out;
         }
 
         .modules-container:active {
             cursor: grabbing;
-        }
-
-        /* 3D 舞台 */
-        .scene-stage {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-            pointer-events: none;
         }
 
         /* 模块节点 */
@@ -178,23 +164,20 @@
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             opacity: 0.7;
-            transform-style: preserve-3d;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
         }
 
         .module-node:hover {
             opacity: 1;
-            transform: scale(1.1) translateZ(30px);
+            transform: scale(1.1);
             z-index: 20;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
         .module-node.active {
             opacity: 1;
-            transform: scale(1.15) translateZ(50px);
+            transform: scale(1.15);
             z-index: 20;
             background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
         }
 
         .module-node .icon {
@@ -376,9 +359,7 @@
     </div>
 
     <!-- 模块容器 -->
-    <div class="modules-container" id="modulesContainer">
-        <div class="scene-stage" id="sceneStage"></div>
-    </div>
+    <div class="modules-container" id="modulesContainer"></div>
 
     <!-- 拖拽提示 -->
     <div class="drag-indicator">
@@ -445,11 +426,6 @@
         let moduleElements = [];
         let containerCenterX = window.innerWidth / 2;
         let containerCenterY = window.innerHeight / 2;
-        
-        // 3D 旋转状态
-        let currentRotX = 0, currentRotY = 0;
-        let targetRotX = 0, targetRotY = 0;
-        const maxRotX = 15, maxRotY = 20;
 
         // 初始化
         function init() {
@@ -479,31 +455,24 @@
 
         // 创建模块
         function createModules() {
-            const container = document.getElementById('sceneStage');
+            const container = document.getElementById('modulesContainer');
             
-            // 环形排列 - 使用 3D 球面分布
+            // 环形排列
             const radius = Math.min(window.innerWidth, window.innerHeight) * 0.32;
             const angleStep = (Math.PI * 2) / modules.length;
             const startAngle = -Math.PI / 2; // 从顶部开始
-            const sphereRadius = radius * 0.6; // 球面深度
 
             modules.forEach((module, index) => {
                 const angle = startAngle + angleStep * index;
-                const sphereAngle = angle;
-                
-                // 计算 3D 位置
-                const x = Math.cos(angle) * radius;
-                const y = Math.sin(angle) * radius;
-                const z = Math.sin(sphereAngle) * sphereRadius; // 3D 深度
-                
-                // 计算旋转角度（用于 3D 效果）
-                const rotateY = -angle * (180 / Math.PI); // 绕 Y 轴旋转
-                const rotateX = Math.sin(sphereAngle) * 15; // 上下有轻微倾斜
+                const x = containerCenterX + Math.cos(angle) * radius;
+                const y = containerCenterY + Math.sin(angle) * radius;
 
                 const node = document.createElement('div');
                 node.className = 'module-node';
                 node.dataset.index = index;
-                node.style.transform = `translate(-50%, -50%) translateX(${x}px) translateY(${y}px) translateZ(${z}px) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
+                node.style.left = x + 'px';
+                node.style.top = y + 'px';
+                node.style.transform = 'translate(-50%, -50%)';
                 node.style.borderColor = module.color + '40';
 
                 node.innerHTML = `
@@ -516,8 +485,9 @@
                 node.addEventListener('mouseenter', () => setActive(index));
                 node.addEventListener('mouseleave', () => clearActive());
                 node.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    enterModule(module.link, e);
+                    if (!isDragging && Math.abs(velocityX) < 5 && Math.abs(velocityY) < 5) {
+                        enterModule(module.link, e);
+                    }
                 });
 
                 container.appendChild(node);
@@ -525,11 +495,8 @@
                     element: node,
                     baseX: x,
                     baseY: y,
-                    baseZ: z,
                     angle: angle,
-                    radius: radius,
-                    rotateY: rotateY,
-                    rotateX: rotateX
+                    radius: radius
                 });
             });
         }
@@ -580,14 +547,6 @@
         });
 
         moduleContainer.addEventListener('mousemove', (e) => {
-            // 3D 旋转跟随
-            if (!isDragging) {
-                const centerX = window.innerWidth / 2;
-                const centerY = window.innerHeight / 2;
-                targetRotY = ((e.clientX - centerX) / centerX) * maxRotY;
-                targetRotX = ((e.clientY - centerY) / centerY) * maxRotX;
-            }
-            
             if (!isDragging) return;
             
             const deltaX = e.clientX - startX;
@@ -619,9 +578,6 @@
                 isDragging = false;
                 animateInertia();
             }
-            // 鼠标离开时回归中心
-            targetRotX = 0;
-            targetRotY = 0;
         });
 
         // 触摸事件
@@ -688,27 +644,15 @@
             // 平滑跟随
             currentOffsetX += (targetOffsetX - currentOffsetX) * 0.1;
             currentOffsetY += (targetOffsetY - currentOffsetY) * 0.1;
-            
-            // 3D 旋转平滑跟随
-            currentRotX += (targetRotX - currentRotX) * 0.08;
-            currentRotY += (targetRotY - currentRotY) * 0.08;
-
-            // 更新舞台 3D 变换
-            const stage = document.getElementById('sceneStage');
-            stage.style.transform = `rotateX(${-currentRotX}deg) rotateY(${currentRotY}deg)`;
 
             // 更新模块位置
             moduleElements.forEach((m, index) => {
                 const wobble = Math.sin(Date.now() * 0.001 + index) * 5;
                 const x = m.baseX + currentOffsetX + wobble * Math.cos(m.angle);
                 const y = m.baseY + currentOffsetY + wobble * Math.sin(m.angle) * 0.3;
-                const z = m.baseZ; // 保持原有 Z 深度
                 
-                // 添加旋转影响
-                const rotX = m.rotateX + currentRotX * 0.5;
-                const rotY = m.rotateY + currentRotY;
-                
-                m.element.style.transform = `translate(-50%, -50%) translateX(${x}px) translateY(${y}px) translateZ(${z}px) rotateY(${rotY}deg) rotateX(${rotX}deg)`;
+                m.element.style.left = x + 'px';
+                m.element.style.top = y + 'px';
             });
 
             requestAnimationFrame(animate);
