@@ -2,9 +2,9 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>农大闲置 - 探索</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>探索 - 农大闲置</title>
+    <link rel="stylesheet" href="script/common.css">
     <style>
         * {
             margin: 0;
@@ -12,283 +12,233 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #2e7d32;
-            --gold: #f5a623;
-            --bg-dark: #0a0f1a;
-            --card-bg: rgba(20, 30, 50, 0.85);
-            --text-light: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.6);
-        }
-
         body {
-            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-dark);
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #0a0a12;
             min-height: 100vh;
-            overflow-x: hidden;
-            color: var(--text-light);
+            overflow: hidden;
+            color: #fff;
         }
 
         /* 星空背景 */
-        .starfield-bg {
+        .star-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 0;
-            background: radial-gradient(ellipse at 30% 20%, #1a1f35 0%, #0a0f1a 50%, #050810 100%);
         }
 
         .star {
             position: absolute;
-            width: 2px;
-            height: 2px;
             background: #fff;
             border-radius: 50%;
-            animation: twinkle var(--duration) ease-in-out infinite;
+            animation: twinkle 2s infinite;
         }
 
         @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.5); }
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
         }
 
-        /* 金色粒子 */
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--gold);
-            border-radius: 50%;
-            animation: float-particle 8s ease-in-out infinite;
-            box-shadow: 0 0 10px var(--gold);
+        /* 麦穗装饰 */
+        .wheat-decor {
+            position: fixed;
+            font-size: 60px;
+            opacity: 0.15;
+            animation: float 6s ease-in-out infinite;
+            z-index: 1;
+            pointer-events: none;
         }
 
-        @keyframes float-particle {
-            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
-            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+        .wheat-1 { top: 10%; left: 5%; animation-delay: 0s; }
+        .wheat-2 { top: 20%; right: 8%; animation-delay: 1s; }
+        .wheat-3 { bottom: 15%; left: 10%; animation-delay: 2s; }
+        .wheat-4 { bottom: 25%; right: 5%; animation-delay: 3s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
         }
 
         /* 顶部标题 */
         .header {
-            position: relative;
-            z-index: 10;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
             padding: 20px;
             text-align: center;
         }
 
-        .header-title {
-            display: inline-flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 2.2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--gold) 0%, #ffd700 50%, var(--gold) 100%);
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f5d742, #f5a623, #f5d742);
+            background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: title-glow 3s ease-in-out infinite;
-            text-shadow: 0 0 30px rgba(245, 166, 35, 0.5);
+            animation: gradientFlow 3s ease infinite;
         }
 
-        .wheat-icon {
-            font-size: 2rem;
-            animation: sway 2s ease-in-out infinite;
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        @keyframes sway {
-            0%, 100% { transform: rotate(-5deg); }
-            50% { transform: rotate(5deg); }
+        .header .subtitle {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 5px;
+            letter-spacing: 2px;
         }
 
-        @keyframes title-glow {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.2); }
-        }
-
-        /* 麦穗装饰线 */
-        .wheat-divider {
-            position: absolute;
-            top: 50%;
-            width: 100px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--gold), transparent);
-        }
-
-        .wheat-divider.left { left: 20px; }
-        .wheat-divider.right { right: 20px; }
-
-        /* 轮播容器 */
-        .carousel-container {
-            position: relative;
-            z-index: 10;
-            height: calc(100vh - 180px);
+        /* 返回按钮 */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 101;
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
+        }
+
+        /* 中心麦穗 */
+        .center-wheat {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 50;
+            font-size: 100px;
+            animation: sway 3s ease-in-out infinite;
+            text-shadow: 0 0 60px rgba(245, 215, 66, 0.5);
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: translate(-50%, -50%) rotate(-5deg); }
+            50% { transform: translate(-50%, -50%) rotate(5deg); }
+        }
+
+        /* 轮播容器 */
+        .carousel-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            z-index: 10;
         }
 
         .carousel-track {
             display: flex;
-            gap: 20px;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: grab;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .carousel-track:active {
-            cursor: grabbing;
-        }
-
-        /* 轮播卡片 */
-        .carousel-card {
+        /* 模块卡片 */
+        .module-card {
             flex-shrink: 0;
-            width: 420px;
-            height: 580px;
-            background: var(--card-bg);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 320px;
+            height: 480px;
+            margin: 0 20px;
+            background: rgba(20, 20, 35, 0.85);
             backdrop-filter: blur(20px);
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 30px;
             display: flex;
             flex-direction: column;
+            opacity: 0.4;
+            transform: scale(0.85);
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
 
-        .carousel-card::before {
+        .module-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 200px;
-            background: linear-gradient(180deg, var(--card-accent, #43a047) 0%, transparent 100%);
-            opacity: 0.15;
-            pointer-events: none;
+            height: 4px;
+            background: var(--card-color);
         }
 
-        .carousel-card.active {
+        .module-card.active {
+            opacity: 1;
+            transform: scale(1);
+            border-color: var(--card-color);
+            box-shadow: 0 0 60px rgba(var(--card-color-rgb), 0.3);
+        }
+
+        .module-card:hover {
+            transform: scale(1.05);
+        }
+
+        .module-card.active:hover {
             transform: scale(1.08);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 
-                        0 0 60px var(--card-accent, rgba(255,255,255,0.2));
-            border-color: var(--card-accent, rgba(255,255,255,0.3));
-            z-index: 5;
-        }
-
-        .carousel-card:not(.active) {
-            transform: scale(0.85) translateY(30px);
-            opacity: 0.5;
-            filter: blur(2px);
         }
 
         /* 卡片头部 */
         .card-header {
-            padding: 25px 20px 15px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 25px;
         }
 
         .card-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 14px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--card-color), rgba(var(--card-color-rgb), 0.5));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.6rem;
-            background: linear-gradient(135deg, var(--card-accent), rgba(255,255,255,0.2));
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            font-size: 28px;
+            margin-right: 16px;
         }
 
         .card-title {
-            font-size: 1.4rem;
+            font-size: 22px;
             font-weight: 700;
             color: #fff;
         }
 
         .card-subtitle {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        /* 卡片内容区 */
-        .card-content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255,255,255,0.2) transparent;
-        }
-
-        .card-content::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .card-content::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.2);
-            border-radius: 2px;
-        }
-
-        /* 商品卡片网格 */
-        .goods-grid-preview {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .goods-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 12px;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .goods-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .goods-img {
-            width: 100%;
-            aspect-ratio: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-        }
-
-        .goods-name {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #fff;
-            margin-bottom: 4px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .goods-price {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--gold);
-        }
-
-        .goods-tag {
-            display: inline-block;
-            font-size: 0.65rem;
-            padding: 2px 6px;
-            background: rgba(46, 125, 50, 0.3);
-            border-radius: 4px;
-            color: #81c784;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
             margin-top: 4px;
         }
 
@@ -296,205 +246,124 @@
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 15px;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 14px;
-            padding: 16px;
+        .stat-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 18px;
             text-align: center;
         }
 
         .stat-value {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--card-accent, #fff);
-            display: block;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--card-color);
         }
 
         .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 4px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 5px;
         }
 
-        /* 排行榜 */
-        .leaderboard {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 14px;
-            padding: 15px;
-        }
-
-        .leaderboard-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .leader-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .leader-item:last-child {
-            border-bottom: none;
-        }
-
-        .leader-rank {
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .leader-rank.gold { background: linear-gradient(135deg, #ffd700, #ffb300); color: #000; }
-        .leader-rank.silver { background: linear-gradient(135deg, #c0c0c0, #a0a0a0); color: #000; }
-        .leader-rank.bronze { background: linear-gradient(135deg, #cd7f32, #b8702d); color: #fff; }
-
-        .leader-name {
+        /* 功能列表 */
+        .feature-list {
             flex: 1;
-            font-size: 0.85rem;
-        }
-
-        .leader-value {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--card-accent, #fff);
-        }
-
-        /* 快捷功能 */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        .quick-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 14px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
+            gap: 12px;
         }
 
-        .quick-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--card-accent);
-        }
-
-        .quick-btn-icon {
-            font-size: 1.5rem;
-        }
-
-        .quick-btn-text {
-            font-size: 0.8rem;
-            color: var(--text-light);
-        }
-
-        /* 分类标签 */
-        .category-tags {
+        .feature-item {
             display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .category-tag {
-            padding: 6px 14px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: var(--text-light);
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid transparent;
-        }
-
-        .category-tag:hover, .category-tag.active {
-            background: var(--card-accent);
-            border-color: var(--card-accent);
-        }
-
-        /* 卡片底部 */
-        .card-footer {
-            padding: 15px 20px 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .enter-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--card-accent), rgba(255,255,255,0.2));
-            border: none;
+            align-items: center;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.05);
             border-radius: 12px;
-            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+
+        .feature-icon {
+            font-size: 20px;
+            margin-right: 12px;
+        }
+
+        .feature-text {
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .feature-tag {
+            margin-left: auto;
+            font-size: 11px;
+            padding: 4px 10px;
+            background: rgba(var(--card-color-rgb), 0.2);
+            color: var(--card-color);
+            border-radius: 20px;
+        }
+
+        /* 进入按钮 */
+        .enter-btn {
+            margin-top: auto;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--card-color), rgba(var(--card-color-rgb), 0.7));
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
             font-weight: 600;
             color: #fff;
             cursor: pointer;
-            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            transition: all 0.3s;
         }
 
         .enter-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(var(--card-color-rgb), 0.4);
         }
 
-        /* 指示器 */
-        .carousel-indicators {
+        .enter-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+        /* 底部指示器 */
+        .indicators {
             position: fixed;
-            bottom: 30px;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 20;
+            z-index: 100;
             display: flex;
             gap: 12px;
-            padding: 12px 20px;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .indicator {
-            width: 40px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 2px;
+            width: 8px;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.3);
             cursor: pointer;
             transition: all 0.3s;
         }
 
         .indicator.active {
-            background: var(--gold);
-            width: 50px;
-            box-shadow: 0 0 10px var(--gold);
-        }
-
-        .indicator:hover {
-            background: rgba(255, 255, 255, 0.6);
+            width: 32px;
+            background: #f5d742;
         }
 
         /* 拖拽提示 */
@@ -503,610 +372,490 @@
             bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 20;
-            color: var(--text-muted);
-            font-size: 0.85rem;
+            z-index: 100;
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
             display: flex;
             align-items: center;
             gap: 8px;
-            animation: hint-pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes hint-pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
         }
 
         .drag-hint svg {
-            animation: drag-icon 1.5s ease-in-out infinite;
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            animation: swipe 2s ease-in-out infinite;
         }
 
-        @keyframes drag-icon {
+        @keyframes swipe {
             0%, 100% { transform: translateX(-5px); }
             50% { transform: translateX(5px); }
         }
 
-        /* 返回按钮 */
-        .back-btn {
+        /* 箭头提示 */
+        .arrow-nav {
             position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 30;
-            width: 44px;
-            height: 44px;
-            background: rgba(0, 0, 0, 0.5);
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s;
-            color: #fff;
-            font-size: 1.2rem;
         }
 
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: scale(1.05);
+        .arrow-nav:hover {
+            background: rgba(255,255,255,0.2);
         }
 
-        /* 背景麦穗装饰 */
-        .bg-wheat {
-            position: fixed;
-            font-size: 4rem;
-            opacity: 0.08;
-            z-index: 1;
-            animation: float-wheat 6s ease-in-out infinite;
+        .arrow-nav.prev { left: 20px; }
+        .arrow-nav.next { right: 20px; }
+
+        .arrow-nav svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
         }
 
-        .bg-wheat:nth-child(1) { top: 15%; left: 5%; animation-delay: 0s; }
-        .bg-wheat:nth-child(2) { top: 60%; left: 8%; animation-delay: 1s; }
-        .bg-wheat:nth-child(3) { top: 20%; right: 5%; animation-delay: 2s; }
-        .bg-wheat:nth-child(4) { top: 70%; right: 8%; animation-delay: 1.5s; }
-
-        @keyframes float-wheat {
-            0%, 100% { transform: translateY(0) rotate(-10deg); }
-            50% { transform: translateY(-20px) rotate(10deg); }
-        }
-
-        /* 响应式 */
+        /* 移动端适配 */
         @media (max-width: 768px) {
-            .header-title { font-size: 1.6rem; }
-            .wheat-divider { display: none; }
-            
-            .carousel-card {
-                width: 320px;
-                height: 480px;
+            .module-card {
+                width: 280px;
+                height: 420px;
+                margin: 0 15px;
             }
-            
-            .carousel-card:not(.active) {
-                transform: scale(0.75) translateY(20px);
+
+            .card-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 24px;
             }
-            
-            .goods-grid-preview {
-                grid-template-columns: 1fr;
+
+            .card-title {
+                font-size: 18px;
             }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
+
+            .stat-value {
+                font-size: 22px;
+            }
+
+            .arrow-nav {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
     <!-- 星空背景 -->
-    <div class="starfield-bg" id="starfield"></div>
-    
-    <!-- 麦穗装饰 -->
-    <div class="bg-wheat">🌾</div>
-    <div class="bg-wheat">🌾</div>
-    <div class="bg-wheat">🌾</div>
-    <div class="bg-wheat">🌾</div>
+    <div class="star-bg" id="starBg"></div>
 
-    <!-- 返回按钮 -->
-    <button class="back-btn" onclick="goBack()">←</button>
+    <!-- 麦穗装饰 -->
+    <div class="wheat-decor wheat-1">🌾</div>
+    <div class="wheat-decor wheat-2">🌾</div>
+    <div class="wheat-decor wheat-3">🌾</div>
+    <div class="wheat-decor wheat-4">🌾</div>
 
     <!-- 顶部标题 -->
-    <header class="header">
-        <div style="position: relative; display: inline-block;">
-            <div class="wheat-divider left"></div>
-            <div class="wheat-divider right"></div>
-            <h1 class="header-title">
-                <span class="wheat-icon">🌾</span>
-                农大闲置
-                <span class="wheat-icon">🌾</span>
-            </h1>
-        </div>
-    </header>
+    <div class="header">
+        <h1>🌾 农大闲置 🌾</h1>
+        <div class="subtitle">探索校园闲置 · 开启绿色循环</div>
+    </div>
+
+    <!-- 返回按钮 -->
+    <a href="starfield.html" class="back-btn">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+
+    <!-- 中心麦穗 -->
+    <div class="center-wheat">🌾</div>
 
     <!-- 轮播容器 -->
-    <div class="carousel-container">
-        <div class="carousel-track" id="carouselTrack">
-            <!-- 卡片1: 闲置市场 -->
-            <div class="carousel-card active" style="--card-accent: #ff6b6b;" data-index="0">
-                <div class="card-header">
-                    <div class="card-icon">🏪</div>
-                    <div>
-                        <div class="card-title">闲置市场</div>
-                        <div class="card-subtitle">发现校园好物</div>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <div class="category-tags">
-                        <span class="category-tag active">全部</span>
-                        <span class="category-tag">书籍教材</span>
-                        <span class="category-tag">数码电子</span>
-                        <span class="category-tag">生活用品</span>
-                        <span class="category-tag">运动户外</span>
-                    </div>
-                    <div class="goods-grid-preview" id="marketGoods">
-                        <!-- JS渲染 -->
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <button class="enter-btn" onclick="enterModule('market')">
-                        进入市场 →
-                    </button>
-                </div>
-            </div>
-
-            <!-- 卡片2: 发布闲置 -->
-            <div class="carousel-card" style="--card-accent: #ffd93d;" data-index="1">
+    <div class="carousel-container" id="carousel">
+        <div class="carousel-track" id="track">
+            <!-- 发布闲置 -->
+            <div class="module-card" style="--card-color: #ffd93d; --card-color-rgb: 255, 217, 61;" data-index="0" data-page="release_goods.html">
                 <div class="card-header">
                     <div class="card-icon">📦</div>
                     <div>
                         <div class="card-title">发布闲置</div>
-                        <div class="card-subtitle">让闲置焕发新生</div>
+                        <div class="card-subtitle">闲置好物，快速发布</div>
                     </div>
                 </div>
-                <div class="card-content">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <span class="stat-value" id="myPublishCount">0</span>
-                            <span class="stat-label">我的发布</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-value" id="totalGoods">0</span>
-                            <span class="stat-label">全校闲置</span>
-                        </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">128</div>
+                        <div class="stat-label">今日发布</div>
                     </div>
-                    <div class="leaderboard">
-                        <div class="leaderboard-title">🏆 发布排行榜</div>
-                        <div class="leader-item">
-                            <span class="leader-rank gold">1</span>
-                            <span class="leader-name">机电学院</span>
-                            <span class="leader-value">128件</span>
-                        </div>
-                        <div class="leader-item">
-                            <span class="leader-rank silver">2</span>
-                            <span class="leader-name">农学院</span>
-                            <span class="leader-value">96件</span>
-                        </div>
-                        <div class="leader-item">
-                            <span class="leader-rank bronze">3</span>
-                            <span class="leader-name">经管学院</span>
-                            <span class="leader-value">87件</span>
-                        </div>
-                        <div class="leader-item">
-                            <span class="leader-rank">4</span>
-                            <span class="leader-name">信管学院</span>
-                            <span class="leader-value">73件</span>
-                        </div>
+                    <div class="stat-item">
+                        <div class="stat-value">89%</div>
+                        <div class="stat-label">成交率</div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <button class="enter-btn" onclick="enterModule('release')">
-                        立即发布 →
-                    </button>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-icon">📷</span>
+                        <span class="feature-text">拍照上传</span>
+                        <span class="feature-tag">便捷</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🏷️</span>
+                        <span class="feature-text">分类标签</span>
+                        <span class="feature-tag">精准</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">💰</span>
+                        <span class="feature-text">价格设置</span>
+                        <span class="feature-tag">灵活</span>
+                    </div>
                 </div>
+                <button class="enter-btn">
+                    立即发布
+                    <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
             </div>
 
-            <!-- 卡片3: 公益转赠 -->
-            <div class="carousel-card" style="--card-accent: #ff9ff3;" data-index="2">
+            <!-- 公益转赠 -->
+            <div class="module-card" style="--card-color: #ff9ff3; --card-color-rgb: 255, 159, 243;" data-index="1" data-page="donation_publish.html">
                 <div class="card-header">
                     <div class="card-icon">💝</div>
                     <div>
                         <div class="card-title">公益转赠</div>
-                        <div class="card-subtitle">传递爱心 循环绿色</div>
+                        <div class="card-subtitle">传递爱心，闲置重生</div>
                     </div>
                 </div>
-                <div class="card-content">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <span class="stat-value" id="totalDonations">0</span>
-                            <span class="stat-label">累计转赠</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-value" id="myDonations">0</span>
-                            <span class="stat-label">我的转赠</span>
-                        </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">56</div>
+                        <div class="stat-label">转赠物品</div>
                     </div>
-                    <div class="quick-actions">
-                        <div class="quick-btn" onclick="enterModule('donation_list')">
-                            <span class="quick-btn-icon">🔍</span>
-                            <span class="quick-btn-text">浏览转赠</span>
-                        </div>
-                        <div class="quick-btn" onclick="enterModule('donation_publish')">
-                            <span class="quick-btn-icon">➕</span>
-                            <span class="quick-btn-text">发布转赠</span>
-                        </div>
-                        <div class="quick-btn" onclick="enterModule('donation_my')">
-                            <span class="quick-btn-icon">📋</span>
-                            <span class="quick-btn-text">我的转赠</span>
-                        </div>
-                        <div class="quick-btn" onclick="enterModule('demand_board')">
-                            <span class="quick-btn-icon">💡</span>
-                            <span class="quick-btn-text">需求广场</span>
-                        </div>
+                    <div class="stat-item">
+                        <div class="stat-value">32</div>
+                        <div class="stat-label">受益同学</div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <button class="enter-btn" onclick="enterModule('donation_list')">
-                        浏览转赠 →
-                    </button>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-icon">🎁</span>
+                        <span class="feature-text">免费转赠</span>
+                        <span class="feature-tag">公益</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">♻️</span>
+                        <span class="feature-text">环保理念</span>
+                        <span class="feature-tag">绿色</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🤝</span>
+                        <span class="feature-text">爱心传递</span>
+                        <span class="feature-tag">互助</span>
+                    </div>
                 </div>
+                <button class="enter-btn">
+                    浏览转赠
+                    <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
             </div>
 
-            <!-- 卡片4: 碳足迹 -->
-            <div class="carousel-card" style="--card-accent: #6bcb77;" data-index="3">
+            <!-- 需求广场 -->
+            <div class="module-card" style="--card-color: #54a0ff; --card-color-rgb: 84, 160, 255;" data-index="2" data-page="demand_board.html">
+                <div class="card-header">
+                    <div class="card-icon">🔍</div>
+                    <div>
+                        <div class="card-title">需求广场</div>
+                        <div class="card-subtitle">发布需求，快速匹配</div>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">234</div>
+                        <div class="stat-label">需求总数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">156</div>
+                        <div class="stat-label">已匹配</div>
+                    </div>
+                </div>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-icon">📝</span>
+                        <span class="feature-text">发布需求</span>
+                        <span class="feature-tag">求购</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🔎</span>
+                        <span class="feature-text">快速搜索</span>
+                        <span class="feature-tag">智能</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">💬</span>
+                        <span class="feature-text">在线沟通</span>
+                        <span class="feature-tag">便捷</span>
+                    </div>
+                </div>
+                <button class="enter-btn">
+                    查看需求
+                    <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+
+            <!-- 碳足迹 -->
+            <div class="module-card" style="--card-color: #6bcb77; --card-color-rgb: 107, 203, 119;" data-index="3" data-page="carbon.html">
                 <div class="card-header">
                     <div class="card-icon">🌱</div>
                     <div>
                         <div class="card-title">碳足迹</div>
-                        <div class="card-subtitle">绿色校园 低碳生活</div>
+                        <div class="card-subtitle">绿色生活，减排记录</div>
                     </div>
                 </div>
-                <div class="card-content">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <span class="stat-value" id="myCarbon">0</span>
-                            <span class="stat-label">我的减排(kg)</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-value" id="schoolCarbon">0</span>
-                            <span class="stat-label">全校减排(kg)</span>
-                        </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">1.2t</div>
+                        <div class="stat-label">减排总量</div>
                     </div>
-                    <div class="leaderboard">
-                        <div class="leaderboard-title">🏆 碳减排排行</div>
-                        <div class="leader-item">
-                            <span class="leader-rank gold">🥇</span>
-                            <span class="leader-name">农学院</span>
-                            <span class="leader-value">285.6kg</span>
-                        </div>
-                        <div class="leader-item">
-                            <span class="leader-rank silver">🥈</span>
-                            <span class="leader-name">林学院</span>
-                            <span class="leader-value">241.3kg</span>
-                        </div>
-                        <div class="leader-item">
-                            <span class="leader-rank bronze">🥉</span>
-                            <span class="leader-name">园艺学院</span>
-                            <span class="leader-value">198.7kg</span>
-                        </div>
-                        <div class="leader-item">
-                            <span class="leader-rank">4</span>
-                            <span class="leader-name">动医学院</span>
-                            <span class="leader-value">156.2kg</span>
-                        </div>
+                    <div class="stat-item">
+                        <div class="stat-value">TOP5</div>
+                        <div class="stat-label">校园排名</div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <button class="enter-btn" onclick="enterModule('carbon')">
-                        查看碳足迹 →
-                    </button>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <span class="feature-text">数据统计</span>
+                        <span class="feature-tag">全面</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🏆</span>
+                        <span class="feature-text">排行榜</span>
+                        <span class="feature-tag">激励</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🎖️</span>
+                        <span class="feature-text">徽章系统</span>
+                        <span class="feature-tag">荣誉</span>
+                    </div>
                 </div>
+                <button class="enter-btn">
+                    查看碳足迹
+                    <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
             </div>
 
-            <!-- 卡片5: 个人中心 -->
-            <div class="carousel-card" style="--card-accent: #a29bfe;" data-index="4">
+            <!-- 个人中心 -->
+            <div class="module-card" style="--card-color: #a29bfe; --card-color-rgb: 162, 155, 254;" data-index="4" data-page="user_center.html">
                 <div class="card-header">
                     <div class="card-icon">👤</div>
                     <div>
                         <div class="card-title">个人中心</div>
-                        <div class="card-subtitle">管理我的信息</div>
+                        <div class="card-subtitle">管理信息，查看数据</div>
                     </div>
                 </div>
-                <div class="card-content">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <span class="stat-value" id="userPublish">0</span>
-                            <span class="stat-label">发布数</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-value" id="userFavorites">0</span>
-                            <span class="stat-label">收藏数</span>
-                        </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">发布物品</div>
                     </div>
-                    <div class="quick-actions">
-                        <div class="quick-btn" onclick="enterModule('user_center')">
-                            <span class="quick-btn-icon">📝</span>
-                            <span class="quick-btn-text">基本信息</span>
-                        </div>
-                        <div class="quick-btn" onclick="enterModule('stu_check')">
-                            <span class="quick-btn-icon">🎓</span>
-                            <span class="quick-btn-text">校园认证</span>
-                        </div>
-                        <div class="quick-btn" onclick="enterModule('login')">
-                            <span class="quick-btn-icon">🔑</span>
-                            <span class="quick-btn-text">登录注册</span>
-                        </div>
-                        <div class="quick-btn" onclick="enterModule('admin')">
-                            <span class="quick-btn-icon">⚙️</span>
-                            <span class="quick-btn-text">管理入口</span>
-                        </div>
+                    <div class="stat-item">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">交易成功</div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <button class="enter-btn" onclick="enterModule('user_center')">
-                        进入中心 →
-                    </button>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-icon">📋</span>
+                        <span class="feature-text">认证管理</span>
+                        <span class="feature-tag">校园认证</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📦</span>
+                        <span class="feature-text">我的发布</span>
+                        <span class="feature-tag">管理</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">❤️</span>
+                        <span class="feature-text">我的收藏</span>
+                        <span class="feature-tag">关注</span>
+                    </div>
                 </div>
+                <button class="enter-btn">
+                    进入中心
+                    <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- 箭头导航 -->
+    <div class="arrow-nav prev" id="prevBtn">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </div>
+    <div class="arrow-nav next" id="nextBtn">
+        <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+
     <!-- 拖拽提示 -->
     <div class="drag-hint">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M5 12H19M5 12L9 8M5 12L9 16M19 12L15 8M19 12L15 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        左右滑动切换 · 点击进入
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        左右滑动切换
     </div>
 
-    <!-- 指示器 -->
-    <div class="carousel-indicators">
-        <div class="indicator active" onclick="goToSlide(0)"></div>
-        <div class="indicator" onclick="goToSlide(1)"></div>
-        <div class="indicator" onclick="goToSlide(2)"></div>
-        <div class="indicator" onclick="goToSlide(3)"></div>
-        <div class="indicator" onclick="goToSlide(4)"></div>
-    </div>
+    <!-- 底部指示器 -->
+    <div class="indicators" id="indicators"></div>
 
     <script>
-        // 生成星空背景
-        function createStarfield() {
-            const container = document.getElementById('starfield');
-            const starCount = 150;
-            const particleCount = 30;
-
-            // 星星
-            for (let i = 0; i < starCount; i++) {
+        // 星空背景
+        function createStars() {
+            const bg = document.getElementById('starBg');
+            for (let i = 0; i < 100; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
                 star.style.left = Math.random() * 100 + '%';
                 star.style.top = Math.random() * 100 + '%';
-                star.style.setProperty('--duration', (2 + Math.random() * 3) + 's');
-                star.style.width = star.style.height = (1 + Math.random() * 2) + 'px';
-                container.appendChild(star);
-            }
-
-            // 金色粒子
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = (50 + Math.random() * 50) + '%';
-                particle.style.animationDelay = Math.random() * 8 + 's';
-                particle.style.animationDuration = (6 + Math.random() * 4) + 's';
-                container.appendChild(particle);
+                star.style.width = star.style.height = Math.random() * 3 + 1 + 'px';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                bg.appendChild(star);
             }
         }
+        createStars();
 
-        // 轮播控制
-        let currentSlide = 0;
-        const totalSlides = 5;
-        const track = document.getElementById('carouselTrack');
-        const cards = document.querySelectorAll('.carousel-card');
-        const indicators = document.querySelectorAll('.indicator');
+        // 轮播逻辑
+        const track = document.getElementById('track');
+        const cards = document.querySelectorAll('.module-card');
+        const indicators = document.getElementById('indicators');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        let currentIndex = 2; // 默认显示中间卡片
+        const totalCards = cards.length;
+
+        // 创建指示器
+        cards.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'indicator' + (i === currentIndex ? ' active' : '');
+            dot.addEventListener('click', () => goToCard(i));
+            indicators.appendChild(dot);
+        });
 
         function updateCarousel() {
-            const offset = -(currentSlide * 460); // 卡片宽度 + 间距
-            track.style.transform = `translateX(${offset}px)`;
-            
-            cards.forEach((card, index) => {
-                card.classList.toggle('active', index === currentSlide);
+            const offset = currentIndex - 2;
+            track.style.transform = `translateX(${offset * -340}px)`;
+
+            cards.forEach((card, i) => {
+                card.classList.remove('active');
+                if (i === currentIndex) {
+                    card.classList.add('active');
+                }
             });
-            
-            indicators.forEach((ind, index) => {
-                ind.classList.toggle('active', index === currentSlide);
+
+            document.querySelectorAll('.indicator').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentIndex);
             });
         }
 
-        function goToSlide(index) {
-            currentSlide = Math.max(0, Math.min(index, totalSlides - 1));
+        function goToCard(index) {
+            currentIndex = Math.max(0, Math.min(totalCards - 1, index));
             updateCarousel();
         }
 
-        function nextSlide() {
-            goToSlide((currentSlide + 1) % totalSlides);
+        function nextCard() {
+            goToCard((currentIndex + 1) % totalCards);
         }
 
-        function prevSlide() {
-            goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
+        function prevCard() {
+            goToCard((currentIndex - 1 + totalCards) % totalCards);
         }
 
-        // 拖拽控制
-        let isDragging = false;
+        prevBtn.addEventListener('click', prevCard);
+        nextBtn.addEventListener('click', nextCard);
+
+        // 触摸滑动
         let startX = 0;
-        let currentX = 0;
-        let dragOffset = 0;
+        let isDragging = false;
 
-        track.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            startX = e.clientX;
-            track.style.cursor = 'grabbing';
-            track.style.transition = 'none';
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            currentX = e.clientX;
-            dragOffset = currentX - startX;
-            const baseOffset = -(currentSlide * 460);
-            track.style.transform = `translateX(${baseOffset + dragOffset}px)`;
-        });
-
-        document.addEventListener('mouseup', () => {
-            if (!isDragging) return;
-            isDragging = false;
-            track.style.cursor = 'grab';
-            track.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-
-            if (dragOffset < -80) {
-                nextSlide();
-            } else if (dragOffset > 80) {
-                prevSlide();
-            } else {
-                updateCarousel();
-            }
-            dragOffset = 0;
-        });
-
-        // 触摸支持
         track.addEventListener('touchstart', (e) => {
-            isDragging = true;
             startX = e.touches[0].clientX;
-            track.style.transition = 'none';
+            isDragging = true;
         });
 
         track.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
-            currentX = e.touches[0].clientX;
-            dragOffset = currentX - startX;
-            const baseOffset = -(currentSlide * 460);
-            track.style.transform = `translateX(${baseOffset + dragOffset}px)`;
+            e.preventDefault();
         });
 
-        track.addEventListener('touchend', () => {
+        track.addEventListener('touchend', (e) => {
             if (!isDragging) return;
+            const endX = e.changedTouches[0].clientX;
+            const diff = startX - endX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) nextCard();
+                else prevCard();
+            }
             isDragging = false;
-            track.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-
-            if (dragOffset < -60) {
-                nextSlide();
-            } else if (dragOffset > 60) {
-                prevSlide();
-            } else {
-                updateCarousel();
-            }
-            dragOffset = 0;
         });
 
-        // 键盘支持
+        // 鼠标拖拽
+        let mouseStartX = 0;
+        track.addEventListener('mousedown', (e) => {
+            mouseStartX = e.clientX;
+            isDragging = true;
+        });
+
+        document.addEventListener('mouseup', (e) => {
+            if (!isDragging) return;
+            const diff = mouseStartX - e.clientX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) nextCard();
+                else prevCard();
+            }
+            isDragging = false;
+        });
+
+        // 键盘控制
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') prevSlide();
-            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'Enter') {
+                const activeCard = document.querySelector('.module-card.active');
+                if (activeCard) {
+                    window.location.href = activeCard.dataset.page;
+                }
+            }
         });
 
-        // 进入模块
-        function enterModule(module) {
-            const routes = {
-                market: 'home.html',
-                release: 'release_goods.html',
-                donation_list: 'donation_list.html',
-                donation_publish: 'donation_publish.html',
-                donation_my: 'donation_my.html',
-                demand_board: 'demand_board.html',
-                carbon: 'user_center.html',
-                user_center: 'user_center.html',
-                stu_check: 'stu_check.html',
-                login: 'user_login.html',
-                admin: 'manage_admin.html'
-            };
-
-            if (routes[module]) {
-                window.location.href = routes[module];
-            }
-        }
-
-        // 返回
-        function goBack() {
-            window.location.href = 'starfield.html';
-        }
-
-        // 加载数据
-        function loadData() {
-            // 加载商品数据
-            try {
-                const goods = JSON.parse(localStorage.getItem('hnau_goods') || '[]');
-                document.getElementById('totalGoods').textContent = goods.length;
-                
-                const marketGoods = document.getElementById('marketGoods');
-                const previewGoods = goods.slice(0, 4);
-                if (previewGoods.length > 0) {
-                    marketGoods.innerHTML = previewGoods.map(item => `
-                        <div class="goods-item">
-                            <div class="goods-img">${item.image ? '📷' : '📦'}</div>
-                            <div class="goods-name">${item.name || '闲置物品'}</div>
-                            <div class="goods-price">¥${item.price || 0}</div>
-                        </div>
-                    `).join('');
+        // 点击卡片进入
+        cards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.enter-btn')) {
+                    window.location.href = card.dataset.page;
                 } else {
-                    marketGoods.innerHTML = `
-                        <div class="goods-item">
-                            <div class="goods-img">📱</div>
-                            <div class="goods-name">暂无闲置</div>
-                            <div class="goods-price">¥0</div>
-                        </div>
-                        <div class="goods-item">
-                            <div class="goods-img">💻</div>
-                            <div class="goods-name">暂无闲置</div>
-                            <div class="goods-price">¥0</div>
-                        </div>
-                        <div class="goods-item">
-                            <div class="goods-img">👕</div>
-                            <div class="goods-name">暂无闲置</div>
-                            <div class="goods-price">¥0</div>
-                        </div>
-                        <div class="goods-item">
-                            <div class="goods-img">🎮</div>
-                            <div class="goods-name">暂无闲置</div>
-                            <div class="goods-price">¥0</div>
-                        </div>
-                    `;
+                    goToCard(parseInt(card.dataset.index));
                 }
-            } catch (e) {
-                console.log('加载商品数据失败');
+            });
+        });
+
+        // 自动轮播
+        let autoPlayInterval = setInterval(nextCard, 5000);
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                clearInterval(autoPlayInterval);
+            } else {
+                autoPlayInterval = setInterval(nextCard, 5000);
             }
-
-            // 加载转赠数据
-            try {
-                const donations = JSON.parse(localStorage.getItem('hnau_donation_list') || '[]');
-                document.getElementById('totalDonations').textContent = donations.length;
-            } catch (e) {}
-
-            // 加载碳足迹数据
-            try {
-                const carbon = JSON.parse(localStorage.getItem('hnau_carbon_data') || '{"totalCarbon":0,"totalTrades":0}');
-                document.getElementById('myCarbon').textContent = (carbon.totalCarbon || 0).toFixed(1);
-                document.getElementById('schoolCarbon').textContent = ((carbon.totalCarbon || 0) * 10).toFixed(1);
-            } catch (e) {}
-
-            // 加载用户数据
-            try {
-                const user = JSON.parse(localStorage.getItem('hnau_user') || '{}');
-                document.getElementById('myPublishCount').textContent = user.publishCount || 0;
-                document.getElementById('userPublish').textContent = user.publishCount || 0;
-                document.getElementById('userFavorites').textContent = user.favorites?.length || 0;
-            } catch (e) {}
-        }
+        });
 
         // 初始化
-        createStarfield();
-        loadData();
-        
-        // 触摸提示（移动端）
-        if ('ontouchstart' in window) {
-            document.querySelector('.drag-hint').innerHTML = `
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M8 12L5 9V5L9 9M16 12L19 15V19L15 15M12 16L9 19H5L9 15M12 8L15 5H19L15 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                左右滑动切换 · 点击进入
-            `;
-        }
+        updateCarousel();
     </script>
 </body>
 </html>
