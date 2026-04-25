@@ -836,17 +836,17 @@
                 // 随机选择商品emoji
                 var emoji = ITEMS[Math.floor(Math.random() * ITEMS.length)];
                 var color = ITEM_COLORS[Math.floor(Math.random() * ITEM_COLORS.length)];
-                var size = 0.6 + Math.random() * 0.8;
+                var size = 1.2 + Math.random() * 1.2; // 增大物品尺寸
                 
                 // 创建emoji精灵
                 var sprite = createGoodsSprite(emoji, color);
                 sprite.scale.set(size, size, 1);
                 itemGroup.add(sprite);
                 
-                // 随机位置 - 覆盖整个屏幕
-                itemGroup.position.x = (Math.random() - 0.5) * 45;
-                itemGroup.position.y = (Math.random() - 0.5) * 25;
-                itemGroup.position.z = -5 - Math.random() * 20;
+                // 随机位置 - 覆盖整个屏幕（调整到更靠近镜头）
+                itemGroup.position.x = (Math.random() - 0.5) * 40;
+                itemGroup.position.y = (Math.random() - 0.5) * 22;
+                itemGroup.position.z = -3 - Math.random() * 12;
                 
                 // 存储动画参数
                 itemGroup.userData = {
@@ -1228,6 +1228,11 @@
                         item.visible = false;
                     }
                 });
+                
+                // 强制更新矩阵
+                if (scene) {
+                    scene.updateMatrixWorld(true);
+                }
                 
                 // 相机拉近
                 if (camera) {
