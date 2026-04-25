@@ -30,11 +30,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at var(--tx, 50%) var(--ty, 50%), #00ffc8 0%, #000 70%);
+            background: radial-gradient(circle at var(--tx, 50%) var(--ty, 50%), rgba(0, 255, 200, 0.9) 0%, #000 70%);
             z-index: 1000;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.5s ease;
         }
         
         .transition-overlay.active {
@@ -77,12 +77,13 @@
         /* 顶部标题 */
         .header {
             position: absolute;
-            top: 50px;
+            top: 40px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
             opacity: 0;
             transition: opacity 0.8s ease;
+            z-index: 10;
         }
         
         .header.visible {
@@ -90,9 +91,9 @@
         }
         
         .header h1 {
-            font-size: 42px;
+            font-size: 48px;
             font-weight: 900;
-            letter-spacing: 12px;
+            letter-spacing: 14px;
             background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6);
             background-size: 300% 300%;
             -webkit-background-clip: text;
@@ -108,10 +109,10 @@
         }
         
         .header p {
-            font-size: 14px;
+            font-size: 15px;
             color: rgba(255, 255, 255, 0.6);
-            letter-spacing: 6px;
-            margin-top: 10px;
+            letter-spacing: 8px;
+            margin-top: 12px;
         }
         
         /* 中心指示器 */
@@ -124,6 +125,7 @@
             pointer-events: auto;
             cursor: pointer;
             transition: all 0.5s ease;
+            z-index: 10;
         }
         
         .center-indicator.hidden {
@@ -132,51 +134,51 @@
         }
         
         .center-circle {
-            width: 120px;
-            height: 120px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+            width: 140px;
+            height: 140px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 15px;
             animation: pulse-ring 2s ease-in-out infinite;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
         }
         
         .center-indicator:hover .center-circle {
             border-color: rgba(255, 255, 255, 0.8);
             transform: scale(1.15);
-            box-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.4);
         }
         
         .center-icon {
-            font-size: 48px;
+            font-size: 56px;
             animation: float 3s ease-in-out infinite;
         }
         
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-12px); }
         }
         
         .center-indicator span {
-            font-size: 14px;
+            font-size: 15px;
             color: rgba(255, 255, 255, 0.7);
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             text-transform: uppercase;
         }
         
         @keyframes pulse-ring {
-            0%, 100% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.1), 0 0 60px rgba(255, 255, 255, 0.05); }
-            50% { box-shadow: 0 0 50px rgba(255, 255, 255, 0.2), 0 0 100px rgba(255, 255, 255, 0.1); }
+            0%, 100% { box-shadow: 0 0 40px rgba(255, 255, 255, 0.15), 0 0 80px rgba(255, 255, 255, 0.08); }
+            50% { box-shadow: 0 0 60px rgba(255, 255, 255, 0.25), 0 0 120px rgba(255, 255, 255, 0.12); }
         }
         
-        /* 模块节点 - 放大版 */
+        /* 模块节点 */
         .module-node {
             position: absolute;
-            width: 140px;
-            height: 140px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
             display: flex;
             flex-direction: column;
@@ -195,14 +197,14 @@
         }
         
         .module-node.dimmed {
-            opacity: 0.2 !important;
-            transform: scale(0.7) !important;
-            filter: blur(4px);
+            opacity: 0.15 !important;
+            transform: scale(0.65) !important;
+            filter: blur(6px);
         }
         
         .module-node.active {
             opacity: 1 !important;
-            transform: scale(1.3) !important;
+            transform: scale(1.4) !important;
             z-index: 100;
         }
         
@@ -211,34 +213,34 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(40, 50, 70, 0.9), rgba(15, 20, 35, 0.95));
-            border: 3px solid var(--module-color, rgba(255, 255, 255, 0.3));
+            background: radial-gradient(circle at 30% 30%, rgba(50, 60, 90, 0.95), rgba(20, 30, 50, 0.98));
+            border: 4px solid var(--module-color, rgba(255, 255, 255, 0.3));
             transition: all 0.5s ease;
-            box-shadow: 0 0 30px var(--module-color, transparent),
-                        inset 0 0 30px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 40px var(--module-color, transparent),
+                        inset 0 0 40px rgba(255, 255, 255, 0.08);
         }
         
         .module-node:hover .module-node-bg,
         .module-node.active .module-node-bg {
-            border-width: 4px;
-            box-shadow: 0 0 50px var(--module-color, rgba(255, 255, 255, 0.5)),
-                        inset 0 0 40px rgba(255, 255, 255, 0.1);
+            border-width: 5px;
+            box-shadow: 0 0 70px var(--module-color, rgba(255, 255, 255, 0.6)),
+                        inset 0 0 50px rgba(255, 255, 255, 0.15);
         }
         
         .module-node-ring {
             position: absolute;
-            width: calc(100% + 15px);
-            height: calc(100% + 15px);
+            width: calc(100% + 20px);
+            height: calc(100% + 20px);
             border-radius: 50%;
             border: 2px solid var(--module-color, rgba(255, 255, 255, 0.2));
-            opacity: 0.5;
+            opacity: 0.6;
             transition: all 0.5s ease;
         }
         
         .module-node:hover .module-node-ring,
         .module-node.active .module-node-ring {
             opacity: 1;
-            animation: rotate-ring 6s linear infinite;
+            animation: rotate-ring 5s linear infinite;
         }
         
         @keyframes rotate-ring {
@@ -247,48 +249,26 @@
         }
         
         .module-icon {
-            font-size: 48px;
-            margin-bottom: 8px;
-            filter: drop-shadow(0 0 15px var(--module-color, rgba(255, 255, 255, 0.5)));
+            font-size: 56px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 20px var(--module-color, rgba(255, 255, 255, 0.6)));
             transition: transform 0.3s ease;
         }
         
         .module-node:hover .module-icon {
-            transform: scale(1.2) rotate(10deg);
+            transform: scale(1.25) rotate(10deg);
         }
         
         .module-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--module-color-text, #fff);
-            letter-spacing: 2px;
-            text-shadow: 0 0 20px var(--module-color, rgba(255, 255, 255, 0.5));
+            letter-spacing: 3px;
+            text-shadow: 0 0 25px var(--module-color, rgba(255, 255, 255, 0.6));
             text-align: center;
         }
         
-        /* 粒子尾迹 */
-        .module-node::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--module-color, transparent) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            animation: particle-pulse 2s ease-in-out infinite;
-        }
-        
-        .module-node:hover::after {
-            opacity: 0.3;
-        }
-        
-        @keyframes particle-pulse {
-            0%, 100% { transform: scale(1); opacity: 0.2; }
-            50% { transform: scale(1.2); opacity: 0.4; }
-        }
-        
-        /* 底部快捷入口 - 改进版 */
+        /* 底部快捷入口 */
         .bottom-bar {
             position: absolute;
             bottom: 30px;
@@ -298,7 +278,7 @@
             transition: opacity 0.8s ease;
             pointer-events: auto;
             width: 90%;
-            max-width: 800px;
+            max-width: 900px;
             z-index: 10;
         }
         
@@ -309,35 +289,29 @@
         .quick-links {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 18px;
             flex-wrap: wrap;
         }
         
         .quick-link {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 14px 28px;
-            background: rgba(20, 30, 50, 0.85);
-            border: 1px solid var(--link-color, rgba(255, 255, 255, 0.2));
-            border-radius: 30px;
+            gap: 10px;
+            padding: 16px 32px;
+            background: rgba(25, 35, 60, 0.9);
+            border: 2px solid var(--link-color, rgba(255, 255, 255, 0.25));
+            border-radius: 35px;
             cursor: pointer;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            font-size: 0;
-        }
-        
-        .quick-link * {
-            pointer-events: none;
+            backdrop-filter: blur(12px);
         }
         
         .quick-link:hover {
-            background: rgba(30, 45, 70, 0.95);
-            border-color: var(--link-color, rgba(255, 255, 255, 0.5));
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
-                        0 0 20px var(--link-color, rgba(255, 255, 255, 0.2));
+            background: rgba(45, 60, 100, 0.95);
+            border-color: var(--link-color, rgba(255, 255, 255, 0.6));
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4),
+                        0 0 25px var(--link-color, rgba(255, 255, 255, 0.3));
         }
         
         .quick-link:active {
@@ -345,62 +319,32 @@
         }
         
         .quick-link-icon {
-            font-size: 24px;
+            font-size: 28px;
         }
         
         .quick-link-text {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 500;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.95);
         }
         
-        /* 底部说明 */
         .bottom-hint {
             text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
-            letter-spacing: 2px;
-        }
-        
-        /* 返回按钮 */
-        .back-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
-            padding: 12px 24px;
-            background: rgba(20, 30, 50, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            color: #fff;
-            font-size: 14px;
-            cursor: pointer;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        
-        .back-btn.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        .back-btn:hover {
-            background: rgba(40, 60, 100, 0.9);
-            transform: translateX(5px);
+            margin-top: 22px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 3px;
         }
         
         /* 拖拽提示 */
         .drag-hint {
             position: fixed;
-            bottom: 120px;
+            bottom: 140px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.3);
-            letter-spacing: 2px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.35);
+            letter-spacing: 3px;
             opacity: 0;
             transition: opacity 1s ease;
             pointer-events: none;
@@ -414,59 +358,48 @@
         /* 响应式 */
         @media (max-width: 768px) {
             .header h1 {
-                font-size: 28px;
-                letter-spacing: 6px;
+                font-size: 32px;
+                letter-spacing: 8px;
             }
             
             .module-node {
-                width: 100px;
-                height: 100px;
+                width: 110px;
+                height: 110px;
             }
             
             .module-icon {
-                font-size: 36px;
+                font-size: 40px;
             }
             
             .module-title {
-                font-size: 12px;
+                font-size: 13px;
             }
             
             .quick-link {
-                padding: 12px 20px;
+                padding: 14px 24px;
             }
             
             .quick-link-icon {
-                font-size: 20px;
+                font-size: 22px;
             }
             
             .quick-link-text {
-                font-size: 13px;
+                font-size: 14px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 过渡动画遮罩 -->
     <div class="transition-overlay" id="transitionOverlay"></div>
-    
-    <!-- 返回按钮 -->
-    <button class="back-btn" id="backBtn" onclick="goBack()">← 返回首页</button>
-    
-    <!-- Three.js Canvas -->
     <canvas id="cosmic-canvas"></canvas>
-    
-    <!-- 拖拽提示 -->
     <div class="drag-hint" id="dragHint">拖拽星空探索更多</div>
     
-    <!-- 主界面 -->
     <div class="main-container" id="mainContainer">
-        <!-- 标题 -->
         <div class="header" id="header">
             <h1>HNAU 闲置星球</h1>
             <p>探索校园闲置 · 开启绿色循环</p>
         </div>
         
-        <!-- 中心指示器 -->
         <div class="center-indicator" id="centerIndicator" onclick="awakenAll()">
             <div class="center-circle">
                 <span class="center-icon">🌟</span>
@@ -475,7 +408,6 @@
         </div>
     </div>
     
-    <!-- 底部快捷入口 - 独立于主容器 -->
     <div class="bottom-bar" id="bottomBar">
         <div class="quick-links">
             <div class="quick-link" style="--link-color: #ff6b6b;" onclick="goToPage('home.html')">
@@ -503,64 +435,15 @@
         // ========== 配置 ==========
         var CONFIG = {
             modules: [
-                {
-                    id: 'market',
-                    icon: '🏪',
-                    title: '闲置市场',
-                    color: '#ff6b6b',
-                    colorText: '#ff6b6b',
-                    desc: '浏览校园二手好物',
-                    url: 'home.html'
-                },
-                {
-                    id: 'publish',
-                    icon: '📦',
-                    title: '发布闲置',
-                    color: '#ffd93d',
-                    colorText: '#ffd93d',
-                    desc: '一键发布闲置物品',
-                    url: 'release_goods.html'
-                },
-                {
-                    id: 'donation',
-                    icon: '💝',
-                    title: '公益转赠',
-                    color: '#ff9ff3',
-                    colorText: '#ff9ff3',
-                    desc: '传递爱心温暖',
-                    url: 'donation_list.html'
-                },
-                {
-                    id: 'demand',
-                    icon: '🔍',
-                    title: '需求广场',
-                    color: '#54a0ff',
-                    colorText: '#54a0ff',
-                    desc: '寻找有缘人',
-                    url: 'demand_board.html'
-                },
-                {
-                    id: 'carbon',
-                    icon: '🌱',
-                    title: '碳足迹',
-                    color: '#6bcb77',
-                    colorText: '#6bcb77',
-                    desc: '记录环保行动',
-                    url: 'carbon_ai.html'
-                },
-                {
-                    id: 'profile',
-                    icon: '👤',
-                    title: '个人中心',
-                    color: '#a29bfe',
-                    colorText: '#a29bfe',
-                    desc: '管理我的信息',
-                    url: 'user_center.html'
-                }
+                { id: 'market', icon: '🏪', title: '闲置市场', color: '#ff6b6b', colorText: '#ff6b6b', url: 'home.html' },
+                { id: 'publish', icon: '📦', title: '发布闲置', color: '#ffd93d', colorText: '#ffd93d', url: 'release_goods.html' },
+                { id: 'donation', icon: '💝', title: '公益转赠', color: '#ff9ff3', colorText: '#ff9ff3', url: 'donation_list.html' },
+                { id: 'demand', icon: '🔍', title: '需求广场', color: '#54a0ff', colorText: '#54a0ff', url: 'demand_board.html' },
+                { id: 'carbon', icon: '🌱', title: '碳足迹', color: '#6bcb77', colorText: '#6bcb77', url: 'carbon_ai.html' },
+                { id: 'profile', icon: '👤', title: '个人中心', color: '#a29bfe', colorText: '#a29bfe', url: 'user_center.html' }
             ]
         };
         
-        // ========== 状态 ==========
         var state = {
             isAnimating: false,
             allAwakened: false,
@@ -574,17 +457,16 @@
         
         // ========== Three.js ==========
         var scene, camera, renderer;
-        var starField, nebulaClouds, particles, shootingStars, dustClouds;
+        var galaxyCore, nebulaLayers = [], starClusters = [], dustClouds, shootingStars;
         var mouseX = 0, mouseY = 0;
         var rotationX = 0, rotationY = 0;
         var time = 0;
         
         function initThree() {
             scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x000510, 0.008);
             
-            camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 6;
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+            camera.position.z = 8;
             
             renderer = new THREE.WebGLRenderer({
                 canvas: document.getElementById('cosmic-canvas'),
@@ -593,13 +475,30 @@
             });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.setClearColor(0x000510, 1);
+            renderer.setClearColor(0x000000, 1);
             
-            createStarField();
-            createNebulaClouds();
-            createAmbientParticles();
-            createDustClouds();
+            // 创建银河核心
+            createGalaxyCore();
+            
+            // 创建多层星云（参考图的朦胧效果）
+            createNebulaLayer(0x1a0a2e, 3000, 40, 50, 0.08, 0);      // 深紫色星云
+            createNebulaLayer(0x0a1628, 2500, 50, 60, 0.06, 1);      // 深蓝色星云
+            createNebulaLayer(0x0a2820, 2000, 45, 55, 0.05, 2);       // 青绿色星云
+            
+            // 创建星系旋臂粒子（围绕中心的漩涡）
+            createGalaxySpiralArms();
+            
+            // 创建星团（模块对应的聚集区）
+            createStarClusters();
+            
+            // 创建尘埃云
+            createCosmicDust();
+            
+            // 创建流星
             createShootingStars();
+            
+            // 创建背景星空
+            createBackgroundStars();
             
             document.addEventListener('mousemove', onMouseMove);
             document.addEventListener('mousedown', onMouseDown);
@@ -610,149 +509,31 @@
             window.addEventListener('resize', onResize);
         }
         
-        // 创建丰富星空
-        function createStarField() {
+        // 银河核心 - 中心明亮光点
+        function createGalaxyCore() {
             var geometry = new THREE.BufferGeometry();
+            var count = 500;
+            var positions = new Float32Array(count * 3);
+            var colors = new Float32Array(count * 3);
+            var sizes = new Float32Array(count);
             
-            // 主星星 - 12000颗
-            var mainCount = 12000;
-            var positions = new Float32Array(mainCount * 3);
-            var colors = new Float32Array(mainCount * 3);
-            var sizes = new Float32Array(mainCount);
-            var twinkle = new Float32Array(mainCount);
-            
-            for (var i = 0; i < mainCount; i++) {
+            for (var i = 0; i < count; i++) {
                 var i3 = i * 3;
-                
-                // 球形分布，更密集
+                var r = Math.random() * 5;
                 var theta = Math.random() * Math.PI * 2;
                 var phi = Math.acos(2 * Math.random() - 1);
-                var r = 30 + Math.random() * 150;
                 
                 positions[i3] = r * Math.sin(phi) * Math.cos(theta);
                 positions[i3 + 1] = r * Math.sin(phi) * Math.sin(theta);
                 positions[i3 + 2] = r * Math.cos(phi);
                 
-                // 多彩星星
-                var colorChoice = Math.random();
-                if (colorChoice < 0.3) {
-                    // 白色星星
-                    colors[i3] = 1;
-                    colors[i3 + 1] = 1;
-                    colors[i3 + 2] = 1;
-                } else if (colorChoice < 0.5) {
-                    // 蓝白色
-                    colors[i3] = 0.7;
-                    colors[i3 + 1] = 0.85;
-                    colors[i3 + 2] = 1;
-                } else if (colorChoice < 0.7) {
-                    // 淡黄色
-                    colors[i3] = 1;
-                    colors[i3 + 1] = 0.95;
-                    colors[i3 + 2] = 0.8;
-                } else if (colorChoice < 0.85) {
-                    // 橙色
-                    colors[i3] = 1;
-                    colors[i3 + 1] = 0.7;
-                    colors[i3 + 2] = 0.4;
-                } else if (colorChoice < 0.95) {
-                    // 蓝色
-                    colors[i3] = 0.5;
-                    colors[i3 + 1] = 0.7;
-                    colors[i3 + 2] = 1;
-                } else {
-                    // 红色/粉色
-                    colors[i3] = 1;
-                    colors[i3 + 1] = 0.6;
-                    colors[i3 + 2] = 0.7;
-                }
+                // 核心颜色：青白色到蓝紫色
+                var t = r / 5;
+                colors[i3] = 0.3 + t * 0.7;      // R
+                colors[i3 + 1] = 0.6 + t * 0.4;  // G
+                colors[i3 + 2] = 0.8 + t * 0.2;  // B
                 
-                sizes[i] = Math.random() * 2 + 0.5;
-                twinkle[i] = Math.random(); // 闪烁相位
-            }
-            
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-            geometry.setAttribute('twinkle', new THREE.BufferAttribute(twinkle, 1));
-            
-            var material = new THREE.PointsMaterial({
-                size: 1.5,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.95,
-                sizeAttenuation: true
-            });
-            
-            starField = new THREE.Points(geometry, material);
-            scene.add(starField);
-            
-            // 小星星层 - 更密集
-            var smallGeometry = new THREE.BufferGeometry();
-            var smallCount = 8000;
-            var smallPositions = new Float32Array(smallCount * 3);
-            
-            for (var j = 0; j < smallCount; j++) {
-                var j3 = j * 3;
-                smallPositions[j3] = (Math.random() - 0.5) * 200;
-                smallPositions[j3 + 1] = (Math.random() - 0.5) * 120;
-                smallPositions[j3 + 2] = -20 - Math.random() * 80;
-            }
-            
-            smallGeometry.setAttribute('position', new THREE.BufferAttribute(smallPositions, 3));
-            
-            var smallMaterial = new THREE.PointsMaterial({
-                size: 0.3,
-                color: 0xffffff,
-                transparent: true,
-                opacity: 0.6,
-                sizeAttenuation: true
-            });
-            
-            var smallStars = new THREE.Points(smallGeometry, smallMaterial);
-            scene.add(smallStars);
-        }
-        
-        // 创建星云
-        function createNebulaClouds() {
-            var geometry = new THREE.BufferGeometry();
-            var count = 2000;
-            var positions = new Float32Array(count * 3);
-            var colors = new Float32Array(count * 3);
-            var sizes = new Float32Array(count);
-            
-            for (var i = 0; i < count; i++) {
-                var i3 = i * 3;
-                
-                // 集中在某个区域形成星云
-                var cluster = Math.floor(Math.random() * 3);
-                if (cluster === 0) {
-                    // 紫色星云
-                    positions[i3] = -30 + (Math.random() - 0.5) * 40;
-                    positions[i3 + 1] = (Math.random() - 0.5) * 25;
-                    positions[i3 + 2] = -50 - Math.random() * 30;
-                    colors[i3] = 0.6;
-                    colors[i3 + 1] = 0.3;
-                    colors[i3 + 2] = 0.8;
-                } else if (cluster === 1) {
-                    // 蓝色星云
-                    positions[i3] = 20 + (Math.random() - 0.5) * 35;
-                    positions[i3 + 1] = -10 + (Math.random() - 0.5) * 20;
-                    positions[i3 + 2] = -40 - Math.random() * 25;
-                    colors[i3] = 0.2;
-                    colors[i3 + 1] = 0.5;
-                    colors[i3 + 2] = 0.9;
-                } else {
-                    // 青色星云
-                    positions[i3] = (Math.random() - 0.5) * 50;
-                    positions[i3 + 1] = 15 + (Math.random() - 0.5) * 20;
-                    positions[i3 + 2] = -35 - Math.random() * 20;
-                    colors[i3] = 0.1;
-                    colors[i3 + 1] = 0.7;
-                    colors[i3 + 2] = 0.7;
-                }
-                
-                sizes[i] = Math.random() * 15 + 5;
+                sizes[i] = (5 - r) * 0.5 + Math.random() * 0.5;
             }
             
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -760,43 +541,110 @@
             geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
             
             var material = new THREE.PointsMaterial({
-                size: 12,
+                size: 3,
                 vertexColors: true,
                 transparent: true,
-                opacity: 0.06,
+                opacity: 0.9,
                 sizeAttenuation: true,
                 blending: THREE.AdditiveBlending
             });
             
-            nebulaClouds = new THREE.Points(geometry, material);
-            scene.add(nebulaClouds);
+            galaxyCore = new THREE.Points(geometry, material);
+            scene.add(galaxyCore);
         }
         
-        // 环境粒子
-        function createAmbientParticles() {
+        // 星云层 - 参考图的大范围朦胧效果
+        function createNebulaLayer(color, count, spreadX, spreadY, opacity, index) {
             var geometry = new THREE.BufferGeometry();
-            var count = 1500;
+            var positions = new Float32Array(count * 3);
+            var colors = new Float32Array(count * 3);
+            var sizes = new Float32Array(count);
+            
+            var colorObj = new THREE.Color(color);
+            
+            for (var i = 0; i < count; i++) {
+                var i3 = i * 3;
+                
+                // 椭圆形分布，形成平面星云
+                var angle = Math.random() * Math.PI * 2;
+                var radius = Math.sqrt(Math.random()) * 30;
+                var thickness = (Math.random() - 0.5) * 15;
+                
+                positions[i3] = Math.cos(angle) * radius * (spreadX / 30);
+                positions[i3 + 1] = Math.sin(angle) * radius * 0.6 * (spreadY / 30) + thickness * 0.3;
+                positions[i3 + 2] = thickness;
+                
+                colors[i3] = colorObj.r;
+                colors[i3 + 1] = colorObj.g;
+                colors[i3 + 2] = colorObj.b;
+                
+                sizes[i] = Math.random() * 20 + 8;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            
+            var material = new THREE.PointsMaterial({
+                size: 15,
+                vertexColors: true,
+                transparent: true,
+                opacity: opacity,
+                sizeAttenuation: true,
+                blending: THREE.AdditiveBlending
+            });
+            
+            var nebula = new THREE.Points(geometry, material);
+            nebula.userData.index = index;
+            nebulaLayers.push(nebula);
+            scene.add(nebula);
+        }
+        
+        // 星系旋臂 - 漩涡状分布
+        function createGalaxySpiralArms() {
+            var geometry = new THREE.BufferGeometry();
+            var count = 8000;
             var positions = new Float32Array(count * 3);
             var colors = new Float32Array(count * 3);
             
             for (var i = 0; i < count; i++) {
                 var i3 = i * 3;
-                positions[i3] = (Math.random() - 0.5) * 60;
-                positions[i3 + 1] = (Math.random() - 0.5) * 40;
-                positions[i3 + 2] = (Math.random() - 0.5) * 30;
                 
-                var c = Math.random();
-                if (c < 0.33) {
-                    colors[i3] = 0;
-                    colors[i3 + 1] = 1;
+                // 漩涡臂公式
+                var arm = Math.floor(Math.random() * 3); // 3条旋臂
+                var angle = (i / count) * Math.PI * 12 + (arm * Math.PI * 2 / 3);
+                var radius = 5 + Math.random() * 45;
+                
+                // 添加随机扰动
+                var spread = 3 + Math.random() * 5;
+                var heightSpread = 2 + Math.random() * 3;
+                
+                positions[i3] = Math.cos(angle) * radius + (Math.random() - 0.5) * spread;
+                positions[i3 + 1] = (Math.random() - 0.5) * heightSpread;
+                positions[i3 + 2] = Math.sin(angle) * radius * 0.4 + (Math.random() - 0.5) * spread * 0.5;
+                
+                // 颜色：蓝色到紫色渐变
+                var t = radius / 50;
+                var colorChoice = Math.random();
+                if (colorChoice < 0.4) {
+                    // 蓝色系
+                    colors[i3] = 0.3 - t * 0.1;
+                    colors[i3 + 1] = 0.5 - t * 0.1;
+                    colors[i3 + 2] = 0.9;
+                } else if (colorChoice < 0.7) {
+                    // 紫色系
+                    colors[i3] = 0.5 - t * 0.1;
+                    colors[i3 + 1] = 0.2;
                     colors[i3 + 2] = 0.8;
-                } else if (c < 0.66) {
-                    colors[i3] = 0.4;
-                    colors[i3 + 1] = 0.6;
-                    colors[i3 + 2] = 1;
+                } else if (colorChoice < 0.9) {
+                    // 青色系
+                    colors[i3] = 0.1;
+                    colors[i3 + 1] = 0.7;
+                    colors[i3 + 2] = 0.7;
                 } else {
-                    colors[i3] = 1;
-                    colors[i3 + 1] = 1;
+                    // 白色亮点
+                    colors[i3] = 0.9;
+                    colors[i3 + 1] = 0.9;
                     colors[i3 + 2] = 1;
                 }
             }
@@ -805,39 +653,111 @@
             geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
             
             var material = new THREE.PointsMaterial({
-                size: 0.2,
+                size: 1.2,
                 vertexColors: true,
                 transparent: true,
-                opacity: 0.6
+                opacity: 0.85,
+                sizeAttenuation: true
             });
             
-            particles = new THREE.Points(geometry, material);
-            scene.add(particles);
+            var spiralArms = new THREE.Points(geometry, material);
+            scene.add(spiralArms);
         }
         
-        // 尘埃云
-        function createDustClouds() {
+        // 星团 - 每个模块对应的粒子聚集区
+        function createStarClusters() {
+            var clusterAngles = [0, 60, 120, 180, 240, 300]; // 6个模块对应位置
+            var clusterColors = ['#ff6b6b', '#ffd93d', '#ff9ff3', '#54a0ff', '#6bcb77', '#a29bfe'];
+            
+            clusterAngles.forEach(function(angleDeg, index) {
+                var geometry = new THREE.BufferGeometry();
+                var count = 800;
+                var positions = new Float32Array(count * 3);
+                var colors = new Float32Array(count * 3);
+                var sizes = new Float32Array(count);
+                var phases = new Float32Array(count); // 闪烁相位
+                
+                var angle = (angleDeg - 90) * Math.PI / 180;
+                var distance = 15 + Math.random() * 5;
+                var centerX = Math.cos(angle) * distance;
+                var centerY = Math.sin(angle) * distance;
+                
+                var colorObj = new THREE.Color(clusterColors[index]);
+                
+                for (var i = 0; i < count; i++) {
+                    var i3 = i * 3;
+                    
+                    // 高斯分布，形成圆形聚集
+                    var r = gaussianRandom() * 4;
+                    var theta = Math.random() * Math.PI * 2;
+                    
+                    positions[i3] = centerX + r * Math.cos(theta);
+                    positions[i3 + 1] = centerY + r * Math.sin(theta) * 0.6;
+                    positions[i3 + 2] = gaussianRandom() * 2;
+                    
+                    // 模块对应颜色
+                    colors[i3] = colorObj.r;
+                    colors[i3 + 1] = colorObj.g;
+                    colors[i3 + 2] = colorObj.b;
+                    
+                    sizes[i] = Math.random() * 2 + 0.5;
+                    phases[i] = Math.random() * Math.PI * 2;
+                }
+                
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+                geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+                geometry.setAttribute('phase', new THREE.BufferAttribute(phases, 1));
+                
+                var material = new THREE.PointsMaterial({
+                    size: 2,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.7,
+                    sizeAttenuation: true
+                });
+                
+                var cluster = new THREE.Points(geometry, material);
+                cluster.userData.moduleIndex = index;
+                cluster.userData.centerX = centerX;
+                cluster.userData.centerY = centerY;
+                starClusters.push(cluster);
+                scene.add(cluster);
+            });
+        }
+        
+        // 宇宙尘埃
+        function createCosmicDust() {
             var geometry = new THREE.BufferGeometry();
-            var count = 500;
+            var count = 2000;
             var positions = new Float32Array(count * 3);
-            var sizes = new Float32Array(count);
+            var colors = new Float32Array(count * 3);
             
             for (var i = 0; i < count; i++) {
                 var i3 = i * 3;
-                positions[i3] = (Math.random() - 0.5) * 80;
-                positions[i3 + 1] = (Math.random() - 0.5) * 50;
-                positions[i3 + 2] = -10 - Math.random() * 50;
-                sizes[i] = Math.random() * 8 + 3;
+                
+                positions[i3] = (Math.random() - 0.5) * 100;
+                positions[i3 + 1] = (Math.random() - 0.5) * 60;
+                positions[i3 + 2] = -20 - Math.random() * 50;
+                
+                var c = Math.random();
+                if (c < 0.33) {
+                    colors[i3] = 0.2; colors[i3 + 1] = 0.15; colors[i3 + 2] = 0.3;
+                } else if (c < 0.66) {
+                    colors[i3] = 0.1; colors[i3 + 1] = 0.2; colors[i3 + 2] = 0.3;
+                } else {
+                    colors[i3] = 0.15; colors[i3 + 1] = 0.25; colors[i3 + 2] = 0.25;
+                }
             }
             
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
             
             var material = new THREE.PointsMaterial({
-                size: 6,
-                color: 0x4466aa,
+                size: 8,
+                vertexColors: true,
                 transparent: true,
-                opacity: 0.03,
+                opacity: 0.04,
                 sizeAttenuation: true,
                 blending: THREE.AdditiveBlending
             });
@@ -846,22 +766,56 @@
             scene.add(dustClouds);
         }
         
-        // 流星
-        var shootingStarGeometries = [];
-        var shootingStarMesh = null;
+        // 背景星空
+        function createBackgroundStars() {
+            var geometry = new THREE.BufferGeometry();
+            var count = 5000;
+            var positions = new Float32Array(count * 3);
+            var colors = new Float32Array(count * 3);
+            
+            for (var i = 0; i < count; i++) {
+                var i3 = i * 3;
+                
+                positions[i3] = (Math.random() - 0.5) * 300;
+                positions[i3 + 1] = (Math.random() - 0.5) * 200;
+                positions[i3 + 2] = -50 - Math.random() * 150;
+                
+                var c = Math.random();
+                if (c < 0.6) {
+                    colors[i3] = 1; colors[i3 + 1] = 1; colors[i3 + 2] = 1;
+                } else if (c < 0.8) {
+                    colors[i3] = 0.7; colors[i3 + 1] = 0.8; colors[i3 + 2] = 1;
+                } else {
+                    colors[i3] = 1; colors[i3 + 1] = 0.9; colors[i3 + 2] = 0.7;
+                }
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            var material = new THREE.PointsMaterial({
+                size: 0.8,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6
+            });
+            
+            var backgroundStars = new THREE.Points(geometry, material);
+            scene.add(backgroundStars);
+        }
         
+        // 流星
         function createShootingStars() {
-            // 创建多个流星轨道
             var group = new THREE.Group();
             
-            for (var i = 0; i < 3; i++) {
+            for (var i = 0; i < 4; i++) {
                 var geometry = new THREE.BufferGeometry();
-                var positions = new Float32Array(30); // 流星尾巴
+                var positions = new Float32Array(40);
                 
-                for (var j = 0; j < 30; j++) {
-                    positions[j * 3] = j * 0.5;
-                    positions[j * 3 + 1] = j * 0.1 * (Math.random() > 0.5 ? 1 : -1);
-                    positions[j * 3 + 2] = -j * 0.3;
+                for (var j = 0; j < 40; j++) {
+                    positions[j * 3] = j * 0.8;
+                    positions[j * 3 + 1] = j * 0.15 * (Math.random() > 0.5 ? 1 : -1);
+                    positions[j * 3 + 2] = -j * 0.4;
                 }
                 
                 geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -877,8 +831,8 @@
                 line.userData = {
                     active: false,
                     progress: 0,
-                    speed: 0.01 + Math.random() * 0.02,
-                    delay: i * 3000 + Math.random() * 2000,
+                    speed: 0.008 + Math.random() * 0.015,
+                    delay: i * 4000 + Math.random() * 3000,
                     startTime: Date.now()
                 };
                 
@@ -889,30 +843,37 @@
             shootingStars = group;
         }
         
+        // 高斯随机数
+        function gaussianRandom() {
+            var u = 0, v = 0;
+            while (u === 0) u = Math.random();
+            while (v === 0) v = Math.random();
+            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        }
+        
+        // 更新流星
         function updateShootingStars() {
             if (!shootingStars) return;
             
             var now = Date.now();
             shootingStars.children.forEach(function(star) {
                 if (!star.visible) {
-                    // 检查是否应该激活
                     if (now - star.userData.startTime > star.userData.delay) {
                         star.visible = true;
                         star.userData.active = true;
                         star.userData.progress = 0;
                         
-                        // 随机起点
-                        var x = (Math.random() - 0.5) * 40;
-                        var y = 15 + Math.random() * 10;
-                        star.position.set(x, y, -20);
-                        star.rotation.z = -Math.PI / 4 + (Math.random() - 0.5) * 0.3;
+                        var x = (Math.random() - 0.5) * 60;
+                        var y = 20 + Math.random() * 15;
+                        star.position.set(x, y, -30);
+                        star.rotation.z = -Math.PI / 4 + (Math.random() - 0.5) * 0.4;
                     }
                 }
                 
                 if (star.userData.active) {
                     star.userData.progress += star.userData.speed;
-                    star.material.opacity = Math.sin(star.userData.progress * Math.PI);
-                    star.scale.setScalar(1 + star.userData.progress * 2);
+                    star.material.opacity = Math.sin(star.userData.progress * Math.PI) * 0.8;
+                    star.scale.setScalar(1 + star.userData.progress * 3);
                     
                     if (star.userData.progress >= 1) {
                         star.visible = false;
@@ -941,16 +902,14 @@
                 var deltaX = e.clientX - state.previousMouseX;
                 var deltaY = e.clientY - state.previousMouseY;
                 
-                state.rotationVelocityY = deltaX * 0.003;
-                state.rotationVelocityX = deltaY * 0.003;
+                state.rotationVelocityY = deltaX * 0.004;
+                state.rotationVelocityX = deltaY * 0.004;
                 
                 rotationY += state.rotationVelocityY;
                 rotationX += state.rotationVelocityX;
                 
                 state.previousMouseX = e.clientX;
                 state.previousMouseY = e.clientY;
-                
-                hideDragHint();
             }
             
             mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
@@ -972,8 +931,8 @@
                 var deltaX = e.touches[0].clientX - state.previousMouseX;
                 var deltaY = e.touches[0].clientY - state.previousMouseY;
                 
-                state.rotationVelocityY = deltaX * 0.003;
-                state.rotationVelocityX = deltaY * 0.003;
+                state.rotationVelocityY = deltaX * 0.004;
+                state.rotationVelocityX = deltaY * 0.004;
                 
                 rotationY += state.rotationVelocityY;
                 rotationX += state.rotationVelocityX;
@@ -1002,59 +961,69 @@
         
         function animate() {
             requestAnimationFrame(animate);
-            time += 0.01;
+            time += 0.008;
             
             // 惯性旋转
             if (!state.isDragging) {
                 rotationY += state.rotationVelocityY;
                 rotationX += state.rotationVelocityX;
-                state.rotationVelocityY *= 0.98;
-                state.rotationVelocityX *= 0.98;
+                state.rotationVelocityY *= 0.97;
+                state.rotationVelocityX *= 0.97;
                 
-                // 自动缓慢旋转
-                rotationY += 0.0003;
+                // 缓慢自动旋转
+                rotationY += 0.0004;
             }
             
-            if (starField) {
-                starField.rotation.x = rotationX;
-                starField.rotation.y = rotationY;
+            // 银河核心旋转
+            if (galaxyCore) {
+                galaxyCore.rotation.z += 0.001;
+                galaxyCore.rotation.x = rotationX * 0.3;
+                galaxyCore.rotation.y = rotationY * 0.3;
+            }
+            
+            // 星云层旋转
+            nebulaLayers.forEach(function(nebula, index) {
+                nebula.rotation.z = time * (0.02 + index * 0.01);
+                nebula.rotation.x = rotationX * 0.2 + Math.sin(time * 0.3) * 0.03;
+                nebula.rotation.y = rotationY * 0.2 + Math.cos(time * 0.2) * 0.03;
+            });
+            
+            // 星团闪烁和跟随
+            starClusters.forEach(function(cluster, index) {
+                // 星团缓慢脉动
+                var pulse = 0.7 + 0.3 * Math.sin(time * 2 + index);
                 
-                // 星星闪烁效果
-                var sizes = starField.geometry.attributes.size;
-                var twinkle = starField.geometry.attributes.twinkle;
-                for (var i = 0; i < sizes.count; i += 50) {
-                    var base = sizes.array[i];
-                    var phase = twinkle.array[i];
-                    sizes.array[i] = base * (0.7 + 0.3 * Math.sin(time * 3 + phase * 10));
+                // 根据模块状态调整
+                var moduleId = CONFIG.modules[index] ? CONFIG.modules[index].id : '';
+                var node = document.getElementById('module-' + moduleId);
+                
+                if (node && node.classList.contains('dimmed')) {
+                    cluster.material.opacity = 0.2;
+                    cluster.scale.setScalar(0.7);
+                } else if (node && node.classList.contains('active')) {
+                    cluster.material.opacity = 1;
+                    cluster.scale.setScalar(1.3);
+                } else {
+                    cluster.material.opacity = 0.5 + pulse * 0.3;
+                    cluster.scale.setScalar(0.9 + pulse * 0.1);
                 }
-                sizes.needsUpdate = true;
-            }
+                
+                // 星团跟随整体旋转
+                cluster.rotation.z = rotationY * 0.1;
+            });
             
-            if (nebulaClouds) {
-                nebulaClouds.rotation.x = rotationX * 0.5 + Math.sin(time * 0.5) * 0.05;
-                nebulaClouds.rotation.y = rotationY * 0.5 + Math.cos(time * 0.3) * 0.05;
-            }
-            
+            // 尘埃云
             if (dustClouds) {
-                dustClouds.rotation.x = rotationX * 0.3;
-                dustClouds.rotation.y = rotationY * 0.3;
+                dustClouds.rotation.x = rotationX * 0.15;
+                dustClouds.rotation.y = rotationY * 0.15;
             }
             
-            if (particles) {
-                particles.rotation.y += 0.001;
-                var positions = particles.geometry.attributes.position.array;
-                for (var k = 0; k < positions.length; k += 3) {
-                    positions[k + 1] += Math.sin(time * 2 + k) * 0.002;
-                }
-                particles.geometry.attributes.position.needsUpdate = true;
-            }
-            
-            // 更新流星
+            // 流星
             updateShootingStars();
             
             // 相机轻微跟随
-            camera.position.x += (mouseX * 0.3 - camera.position.x) * 0.02;
-            camera.position.y += (-mouseY * 0.2 - camera.position.y) * 0.02;
+            camera.position.x += (mouseX * 0.4 - camera.position.x) * 0.03;
+            camera.position.y += (-mouseY * 0.3 - camera.position.y) * 0.03;
             camera.lookAt(0, 0, 0);
             
             renderer.render(scene, camera);
@@ -1063,7 +1032,7 @@
         // ========== DOM 操作 ==========
         function createModuleNodes() {
             var container = document.getElementById('mainContainer');
-            var radius = window.innerWidth < 768 ? 160 : 220;
+            var radius = window.innerWidth < 768 ? 180 : 240;
             
             CONFIG.modules.forEach(function(mod, index) {
                 var node = document.createElement('div');
@@ -1080,8 +1049,8 @@
                 var x = Math.cos(angle) * radius;
                 var y = Math.sin(angle) * radius;
                 
-                node.style.left = 'calc(50% + ' + x + 'px - 70px)';
-                node.style.top = 'calc(50% + ' + y + 'px - 70px)';
+                node.style.left = 'calc(50% + ' + x + 'px - 80px)';
+                node.style.top = 'calc(50% + ' + y + 'px - 80px)';
                 
                 node.addEventListener('click', function(e) {
                     zoomAndNavigate(mod, e);
@@ -1139,7 +1108,6 @@
             }, 3000);
         }
         
-        // ========== 核心：拉近导航效果 ==========
         function zoomAndNavigate(module, event) {
             if (state.isAnimating) return;
             state.isAnimating = true;
@@ -1147,21 +1115,12 @@
             var mainContainer = document.getElementById('mainContainer');
             var overlay = document.getElementById('transitionOverlay');
             
-            // 获取点击位置
-            var tx, ty;
-            if (event.clientX !== undefined) {
-                tx = (event.clientX / window.innerWidth) * 100;
-                ty = (event.clientY / window.innerHeight) * 100;
-            } else {
-                tx = 50;
-                ty = 50;
-            }
+            var tx = event.clientX !== undefined ? (event.clientX / window.innerWidth) * 100 : 50;
+            var ty = event.clientY !== undefined ? (event.clientY / window.innerHeight) * 100 : 50;
             
-            // 设置渐变中心
             overlay.style.setProperty('--tx', tx + '%');
             overlay.style.setProperty('--ty', ty + '%');
             
-            // 相机拉近动画
             var startZ = camera.position.z;
             var targetZ = 1.5;
             var zoomDuration = 600;
@@ -1177,11 +1136,9 @@
                 if (progress < 1) {
                     requestAnimationFrame(zoomIn);
                 } else {
-                    // 缩放主容器
                     mainContainer.classList.add('zooming');
                     overlay.classList.add('active');
                     
-                    // 等待动画完成后跳转
                     setTimeout(function() {
                         window.location.href = module.url;
                     }, 400);
@@ -1191,26 +1148,19 @@
             zoomIn();
         }
         
-        function goBack() {
-            window.location.href = 'starfield.html';
-        }
-        
         function goToPage(url) {
             window.location.href = url;
         }
         
-        // ========== 初始化 ==========
         function init() {
             initThree();
             createModuleNodes();
             
-            // 显示标题和底部栏
             setTimeout(function() {
                 document.getElementById('header').classList.add('visible');
                 document.getElementById('bottomBar').classList.add('visible');
             }, 200);
             
-            // 显示拖拽提示
             setTimeout(function() {
                 document.getElementById('dragHint').classList.add('visible');
             }, 1500);
