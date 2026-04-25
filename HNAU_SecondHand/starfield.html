@@ -1003,40 +1003,53 @@
             
             camera.lookAt(0, 0, 0);
             
-            // 动画漂浮物品（增强视差层次感）
+            // ========== 星系环绕效果 ==========
+            // 外层星系旋转（慢）
+            var galaxyAngle = time * 0.08;
+            var galaxyTiltX = Math.sin(time * 0.05) * 0.3;
+            var galaxyTiltZ = Math.cos(time * 0.03) * 0.2;
+            
             floatingItems.forEach(function(item, index) {
                 var data = item.userData;
                 
-                // 物品本身的漂浮动画
-                var floatY = Math.sin(time * data.floatSpeed + data.floatOffset) * 0.8;
-                var floatX = Math.cos(time * data.floatSpeed * 0.7 + data.floatOffset) * 0.3;
+                // 星系环绕参数
+                var orbitSpeed = data.orbitSpeed || (0.1 + Math.random() * 0.15);
+                var orbitAngle = data.orbitOffset + time * orbitSpeed;
+                var orbitRadiusX = data.orbitRadiusX || (5 + Math.random() * 10);
+                var orbitRadiusY = data.orbitRadiusY || (3 + Math.random() * 6);
                 
-                // 基于深度的视差效果（远处的物品跟随少）
-                var depthFactor = Math.max(0.3, 1 - (Math.abs(data.baseZ) / 25));
-                var parallaxX = targetX * depthFactor * 1.5;
-                var parallaxY = targetY * depthFactor * 1.2;
+                // 计算环绕位置（椭圆轨道 + 星系倾斜）
+                var x = Math.cos(orbitAngle) * orbitRadiusX;
+                var y = Math.sin(orbitAngle) * orbitRadiusY * 0.6;
+                var z = Math.sin(orbitAngle * 0.7) * data.orbitDepth * galaxyTiltX;
                 
-                // 拖拽滑动效果（远处的物品跟随更多）
-                var dragFactor = Math.max(0.2, 0.5 + (Math.abs(data.baseZ) / 25) * 0.5);
+                // 应用星系整体旋转
+                var rotatedX = x * Math.cos(galaxyAngle) - y * Math.sin(galaxyAngle);
+                var rotatedY = x * Math.sin(galaxyAngle) * 0.5 + y * Math.cos(galaxyAngle);
+                var rotatedZ = z + x * Math.sin(galaxyAngle) * galaxyTiltZ;
                 
-                item.position.x = data.baseX + floatX + parallaxX * dragFactor + (isDragging ? velocityX * 50 * dragFactor : 0);
-                item.position.y = data.baseY + floatY + parallaxY * dragFactor + (isDragging ? -velocityY * 30 * dragFactor : 0);
+                // 鼠标/拖拽视差效果
+                var depthFactor = Math.max(0.2, 1 - (Math.abs(rotatedZ) / 25));
+                var parallaxX = targetX * depthFactor * 2;
+                var parallaxY = -targetY * depthFactor * 1.5;
                 
-                // 物品轻微旋转
-                item.rotation.z = Math.sin(time * 0.5 + data.floatOffset) * 0.1;
+                item.position.x = rotatedX + parallaxX + (isDragging ? velocityX * 30 * depthFactor : 0);
+                item.position.y = rotatedY + parallaxY + (isDragging ? -velocityY * 20 * depthFactor : 0);
+                item.position.z = rotatedZ;
                 
-                // 物品大小随距离变化
-                var scaleMod = 0.7 + (1 - Math.abs(data.baseZ) / 25) * 0.6;
+                // 物品自身旋转
+                item.rotation.z = Math.sin(time * 0.5 + data.floatOffset) * 0.2;
+                item.rotation.y = Math.cos(time * 0.3 + data.floatOffset) * 0.15;
+                
+                // 物品大小
                 item.children[0].scale.set(data.baseScale || 1, data.baseScale || 1, 1);
             });
             
-            // 粒子效果（跟随滑动）
+            // 粒子跟随星系旋转
             if (glowParticles) {
-                glowParticles.rotation.y += 0.0005;
-                glowParticles.rotation.x = Math.sin(time * 0.3) * 0.15;
-                glowParticles.rotation.z = Math.cos(time * 0.2) * 0.1;
-                
-                // 粒子视差跟随
+                glowParticles.rotation.y = galaxyAngle * 0.5;
+                glowParticles.rotation.x = galaxyTiltX * 0.5;
+                glowParticles.rotation.z = galaxyTiltZ * 0.5;
                 glowParticles.position.x = targetX * 0.3;
                 glowParticles.position.y = -targetY * 0.2;
             }
