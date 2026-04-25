@@ -734,13 +734,6 @@
         var scene, camera, renderer;
         var floatingItems = [];
         var glowParticles;
-        var mouseX = 0, mouseY = 0;
-        var targetX = 0, targetY = 0;
-        var velocityX = 0, velocityY = 0;
-        var isDragging = false;
-        var lastX = 0, lastY = 0;
-        var dragSensitivity = 3;
-        var returnSpeed = 0.08;
         
         function initThree() {
             scene = new THREE.Scene();
@@ -766,13 +759,7 @@
             // 创建发光粒子
             createGlowParticles();
             
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mousedown', onDragStart);
-            document.addEventListener('mouseup', onDragEnd);
-            document.addEventListener('mouseleave', onDragEnd);
-            document.addEventListener('touchstart', onTouchStart, { passive: false });
-            document.addEventListener('touchmove', onTouchMove, { passive: false });
-            document.addEventListener('touchend', onDragEnd);
+            document.addEventListener('click', onClick);
             window.addEventListener('resize', onResize);
         }
         
@@ -936,55 +923,7 @@
             scene.add(glowParticles);
         }
         
-        function onMouseMove(e) {
-            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-        }
-        
-        function onDragStart(e) {
-            isDragging = true;
-            lastX = e.clientX;
-            lastY = e.clientY;
-            velocityX = 0;
-            velocityY = 0;
-            document.body.style.cursor = 'grabbing';
-        }
-        
-        function onDragEnd() {
-            isDragging = false;
-            document.body.style.cursor = 'default';
-        }
-        
-        function onTouchStart(e) {
-            if (e.touches.length === 1) {
-                isDragging = true;
-                lastX = e.touches[0].clientX;
-                lastY = e.touches[0].clientY;
-                velocityX = 0;
-                velocityY = 0;
-            }
-        }
-        
-        function onTouchMove(e) {
-            if (isDragging && e.touches.length === 1) {
-                e.preventDefault();
-                var deltaX = e.touches[0].clientX - lastX;
-                var deltaY = e.touches[0].clientY - lastY;
-                
-                velocityX = deltaX * 0.01;
-                velocityY = -deltaY * 0.01;
-                
-                targetX += velocityX;
-                targetY += velocityY;
-                
-                // 限制范围
-                targetX = Math.max(-3, Math.min(3, targetX));
-                targetY = Math.max(-2, Math.min(2, targetY));
-                
-                lastX = e.touches[0].clientX;
-                lastY = e.touches[0].clientY;
-            }
-        }
+        // 纯粹的星系公转动画 - 无拖拽
         
         function onResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
@@ -997,40 +936,15 @@
             
             var time = Date.now() * 0.001;
             
-            // 鼠标/拖拽驱动的目标位置
-            if (!isDragging) {
-                // 鼠标悬停影响
-                targetX += (mouseX * 2 - targetX) * 0.05;
-                targetY += (-mouseY * 1.5 - targetY) * 0.05;
-                
-                // 添加惯性滑动
-                targetX += velocityX;
-                targetY += velocityY;
-                
-                // 阻力衰减
-                velocityX *= 0.95;
-                velocityY *= 0.95;
-                
-                // 缓慢回归中心
-                targetX *= 0.995;
-                targetY *= 0.995;
-            }
-            
-            // 限制范围
-            targetX = Math.max(-3, Math.min(3, targetX));
-            targetY = Math.max(-2, Math.min(2, targetY));
-            
-            // 相机跟随（增强滑动感）
-            camera.position.x += (targetX - camera.position.x) * 0.1;
-            camera.position.y += (targetY - camera.position.y) * 0.1;
-            
-            // 相机旋转（视差效果）
-            camera.rotation.y = -targetX * 0.08;
-            camera.rotation.x = targetY * 0.05;
+            // 相机固定在中心，不跟随鼠标（纯粹的星系公转）
+            camera.position.x += (0 - camera.position.x) * 0.02;
+            camera.position.y += (0 - camera.position.y) * 0.02;
+            camera.rotation.y *= 0.98;
+            camera.rotation.x *= 0.98;
             
             camera.lookAt(0, 0, 0);
             
-            // 星系公转动画（丝滑低饱和）
+            // 星系公转动画（丝滑缓慢，行星环绕）
             floatingItems.forEach(function(item) {
                 var data = item.userData;
                 
@@ -1053,15 +967,14 @@
                 item.children[0].scale.set(data.baseScale, data.baseScale, 1);
             });
             
-            // 粒子效果（跟随滑动）
+            // 粒子效果（纯粹的缓慢旋转）
             if (glowParticles) {
-                glowParticles.rotation.y += 0.0005;
-                glowParticles.rotation.x = Math.sin(time * 0.3) * 0.15;
-                glowParticles.rotation.z = Math.cos(time * 0.2) * 0.1;
-                
-                // 粒子视差跟随
-                glowParticles.position.x = targetX * 0.3;
-                glowParticles.position.y = -targetY * 0.2;
+                glowParticles.rotation.y += 0.0003;
+                glowParticles.rotation.x = Math.sin(time * 0.2) * 0.1;
+                glowParticles.rotation.z = Math.cos(time * 0.15) * 0.08;
+                // 固定位置，不跟随滑动
+                glowParticles.position.x = 0;
+                glowParticles.position.y = 0;
             }
             
             renderer.render(scene, camera);
