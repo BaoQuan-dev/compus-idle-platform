@@ -17,7 +17,7 @@
         body {
             font-family: 'Noto Sans SC', sans-serif;
             overflow: hidden;
-            background: #000;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
             color: #fff;
         }
         
@@ -70,7 +70,7 @@
         /* 顶部标题 */
         .header {
             position: absolute;
-            top: 50px;
+            top: 40px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
@@ -83,28 +83,27 @@
         }
         
         .header h1 {
-            font-size: 42px;
+            font-size: 48px;
             font-weight: 900;
-            letter-spacing: 12px;
+            letter-spacing: 8px;
             background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6);
             background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: gradient-shift 5s ease infinite;
-            text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+        }
+        
+        .header p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 4px;
+            margin-top: 12px;
         }
         
         @keyframes gradient-shift {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
-        }
-        
-        .header p {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.6);
-            letter-spacing: 6px;
-            margin-top: 10px;
         }
         
         /* 中心指示器 */
@@ -125,11 +124,12 @@
         }
         
         .center-circle {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             margin: 0 auto 15px;
@@ -144,8 +144,15 @@
         }
         
         .center-icon {
-            font-size: 48px;
+            font-size: 56px;
             animation: float 3s ease-in-out infinite;
+        }
+        
+        .center-text {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 5px;
+            font-weight: 500;
         }
         
         @keyframes float {
@@ -168,8 +175,8 @@
         /* 模块节点 - 放大版 */
         .module-node {
             position: absolute;
-            width: 140px;
-            height: 140px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
             display: flex;
             flex-direction: column;
@@ -188,14 +195,14 @@
         }
         
         .module-node.dimmed {
-            opacity: 0.2 !important;
-            transform: scale(0.7) !important;
-            filter: blur(4px);
+            opacity: 0.15 !important;
+            transform: scale(0.6) !important;
+            filter: blur(3px);
         }
         
         .module-node.active {
             opacity: 1 !important;
-            transform: scale(1.3) !important;
+            transform: scale(1.35) !important;
             z-index: 100;
         }
         
@@ -204,7 +211,7 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(40, 50, 70, 0.9), rgba(15, 20, 35, 0.95));
+            background: radial-gradient(circle at 30% 30%, rgba(40, 50, 70, 0.95), rgba(15, 20, 35, 0.98));
             border: 3px solid var(--module-color, rgba(255, 255, 255, 0.3));
             transition: all 0.5s ease;
             box-shadow: 0 0 30px var(--module-color, transparent),
@@ -214,8 +221,8 @@
         .module-node:hover .module-node-bg,
         .module-node.active .module-node-bg {
             border-width: 4px;
-            box-shadow: 0 0 50px var(--module-color, rgba(255, 255, 255, 0.5)),
-                        inset 0 0 40px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 60px var(--module-color, rgba(255, 255, 255, 0.5)),
+                        inset 0 0 40px rgba(255, 255, 255, 0.15);
         }
         
         .module-node-ring {
@@ -240,7 +247,7 @@
         }
         
         .module-icon {
-            font-size: 48px;
+            font-size: 52px;
             margin-bottom: 8px;
             filter: drop-shadow(0 0 15px var(--module-color, rgba(255, 255, 255, 0.5)));
             transition: transform 0.3s ease;
@@ -251,7 +258,7 @@
         }
         
         .module-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--module-color-text, #fff);
             letter-spacing: 2px;
@@ -281,7 +288,7 @@
             50% { transform: scale(1.2); opacity: 0.4; }
         }
         
-        /* 底部快捷入口 - 改进版 */
+        /* 底部快捷入口 */
         .bottom-bar {
             position: absolute;
             bottom: 30px;
@@ -291,7 +298,7 @@
             transition: opacity 0.8s ease;
             pointer-events: auto;
             width: 90%;
-            max-width: 800px;
+            max-width: 850px;
         }
         
         .bottom-bar.visible {
@@ -301,47 +308,47 @@
         .quick-links {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 18px;
             flex-wrap: wrap;
         }
         
         .quick-link {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            background: rgba(20, 30, 50, 0.8);
-            border: 1px solid var(--link-color, rgba(255, 255, 255, 0.2));
-            border-radius: 30px;
+            gap: 10px;
+            padding: 14px 28px;
+            background: rgba(20, 30, 50, 0.85);
+            border: 2px solid var(--link-color, rgba(255, 255, 255, 0.2));
+            border-radius: 35px;
             cursor: pointer;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
         }
         
         .quick-link:hover {
-            background: rgba(30, 45, 70, 0.9);
-            border-color: var(--link-color, rgba(255, 255, 255, 0.5));
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
-                        0 0 20px var(--link-color, rgba(255, 255, 255, 0.2));
+            background: rgba(30, 45, 70, 0.95);
+            border-color: var(--link-color, rgba(255, 255, 255, 0.6));
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4),
+                        0 0 30px var(--link-color, rgba(255, 255, 255, 0.3));
         }
         
         .quick-link-icon {
-            font-size: 20px;
+            font-size: 24px;
         }
         
         .quick-link-text {
-            font-size: 14px;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
         }
         
         /* 底部说明 */
         .bottom-hint {
             text-align: center;
             margin-top: 20px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
             letter-spacing: 2px;
         }
         
@@ -377,29 +384,42 @@
         /* 响应式 */
         @media (max-width: 768px) {
             .header h1 {
-                font-size: 28px;
-                letter-spacing: 6px;
+                font-size: 32px;
+                letter-spacing: 4px;
+            }
+            
+            .header p {
+                font-size: 13px;
             }
             
             .module-node {
-                width: 100px;
-                height: 100px;
+                width: 110px;
+                height: 110px;
             }
             
             .module-icon {
-                font-size: 36px;
+                font-size: 40px;
             }
             
             .module-title {
-                font-size: 12px;
+                font-size: 14px;
+            }
+            
+            .center-circle {
+                width: 110px;
+                height: 110px;
+            }
+            
+            .center-icon {
+                font-size: 44px;
             }
             
             .quick-link {
-                padding: 10px 18px;
+                padding: 12px 20px;
             }
             
             .quick-link-text {
-                font-size: 12px;
+                font-size: 13px;
             }
         }
     </style>
@@ -425,7 +445,8 @@
         <!-- 中心指示器 -->
         <div class="center-indicator" id="centerIndicator" onclick="awakenAll()">
             <div class="center-circle">
-                <span class="center-icon">🌟</span>
+                <span class="center-icon">🎁</span>
+                <span class="center-text">闲置星球</span>
             </div>
             <span>点击唤醒全部</span>
         </div>
@@ -435,20 +456,24 @@
     <div class="bottom-bar" id="bottomBar">
         <div class="quick-links">
             <div class="quick-link" style="--link-color: #ff6b6b;" onclick="goToPage('home.html')">
-                <span class="quick-link-icon">🏪</span>
+                <span class="quick-link-icon">👟</span>
                 <span class="quick-link-text">闲置市场</span>
             </div>
             <div class="quick-link" style="--link-color: #ffd93d;" onclick="goToPage('user_login.html')">
-                <span class="quick-link-icon">🔑</span>
+                <span class="quick-link-icon">👕</span>
                 <span class="quick-link-text">登录/注册</span>
             </div>
             <div class="quick-link" style="--link-color: #6bcb77;" onclick="goToPage('stu_check.html')">
-                <span class="quick-link-icon">🎓</span>
+                <span class="quick-link-icon">📱</span>
                 <span class="quick-link-text">校园认证</span>
             </div>
             <div class="quick-link" style="--link-color: #4d96ff;" onclick="goToPage('carbon_ai.html')">
-                <span class="quick-link-icon">🤖</span>
+                <span class="quick-link-icon">💻</span>
                 <span class="quick-link-text">碳足迹AI</span>
+            </div>
+            <div class="quick-link" style="--link-color: #ff9ff3;" onclick="goToPage('donation_list.html')">
+                <span class="quick-link-icon">🎧</span>
+                <span class="quick-link-text">公益转赠</span>
             </div>
         </div>
         <div class="bottom-hint">点击上方图标快速进入对应功能</div>
@@ -456,12 +481,27 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // ========== 配置 ==========
+        // ========== 闲置物品配置 ==========
+        var ITEMS = [
+            '👟', '👕', '👖', '👗', '🧥', '👠', '👡', '👢',
+            '🎒', '👝', '👜', '💼', '🎒', '🕶', '⌚', '📱',
+            '💻', '⌨️', '🖥', '🖨', '📷', '🎮', '🎧', '📚',
+            '🎸', '🎮', '⚽', '🏀', '🎯', '🎲', '🧸', '🎁',
+            '💄', '💍', '📱', '🔧', '🔨', '✂️', '📏', '🖊',
+            '🪑', '💡', '🏷️', '📦', '🎁', '🧲', '🔑', '🎵'
+        ];
+        
+        var ITEM_COLORS = [
+            0xff6b6b, 0xffd93d, 0x6bcb77, 0x4d96ff, 0xff9ff3,
+            0xa29bfe, 0xfd79a8, 0xfdcb6e, 0x00b894, 0x0984e3
+        ];
+        
+        // ========== 模块配置 ==========
         var CONFIG = {
             modules: [
                 {
                     id: 'market',
-                    icon: '🏪',
+                    icon: '👟',
                     title: '闲置市场',
                     color: '#ff6b6b',
                     colorText: '#ff6b6b',
@@ -524,15 +564,15 @@
         
         // ========== Three.js ==========
         var scene, camera, renderer;
-        var starField, nebulaClouds, particles;
+        var floatingItems = [];
+        var glowParticles;
         var mouseX = 0, mouseY = 0;
         
         function initThree() {
             scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x000510, 0.012);
             
             camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 6;
+            camera.position.z = 8;
             
             renderer = new THREE.WebGLRenderer({
                 canvas: document.getElementById('cosmic-canvas'),
@@ -541,56 +581,143 @@
             });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.setClearColor(0x000510, 1);
+            renderer.setClearColor(0x000000, 0);
             
-            createStarField();
-            createNebulaClouds();
-            createAmbientParticles();
+            // 创建渐变背景
+            createGradientBackground();
+            
+            // 创建漂浮的闲置物品
+            createFloatingItems();
+            
+            // 创建发光粒子
+            createGlowParticles();
             
             document.addEventListener('mousemove', onMouseMove);
             window.addEventListener('resize', onResize);
         }
         
-        function createStarField() {
+        function createGradientBackground() {
+            var canvas = document.createElement('canvas');
+            canvas.width = 2;
+            canvas.height = 512;
+            var ctx = canvas.getContext('2d');
+            
+            var gradient = ctx.createLinearGradient(0, 0, 0, 512);
+            gradient.addColorStop(0, '#1a1a2e');
+            gradient.addColorStop(0.5, '#16213e');
+            gradient.addColorStop(1, '#0f0f23');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 2, 512);
+            
+            var texture = new THREE.CanvasTexture(canvas);
+            scene.background = texture;
+        }
+        
+        function createFloatingItems() {
+            // 使用简单的几何图形代表物品
+            var itemCount = 60;
+            
+            for (var i = 0; i < itemCount; i++) {
+                var itemGroup = new THREE.Group();
+                
+                // 随机选择物品类型（用不同几何形状表示）
+                var shapeType = Math.floor(Math.random() * 4);
+                var color = ITEM_COLORS[Math.floor(Math.random() * ITEM_COLORS.length)];
+                var size = 0.15 + Math.random() * 0.25;
+                
+                var geometry, material;
+                
+                if (shapeType === 0) {
+                    // 球体（代表鞋子/球类）
+                    geometry = new THREE.SphereGeometry(size, 16, 16);
+                } else if (shapeType === 1) {
+                    // 立方体（代表书籍/盒子）
+                    geometry = new THREE.BoxGeometry(size * 1.2, size * 1.5, size * 0.6);
+                } else if (shapeType === 2) {
+                    // 圆柱体（代表瓶子/罐子）
+                    geometry = new THREE.CylinderGeometry(size * 0.5, size * 0.5, size * 2, 16);
+                } else {
+                    // 八面体（代表配饰/珠宝）
+                    geometry = new THREE.OctahedronGeometry(size * 0.8);
+                }
+                
+                material = new THREE.MeshPhongMaterial({
+                    color: color,
+                    emissive: color,
+                    emissiveIntensity: 0.3,
+                    transparent: true,
+                    opacity: 0.85,
+                    shininess: 100
+                });
+                
+                var mesh = new THREE.Mesh(geometry, material);
+                itemGroup.add(mesh);
+                
+                // 添加发光效果
+                var glowGeometry = geometry.clone();
+                var glowMaterial = new THREE.MeshBasicMaterial({
+                    color: color,
+                    transparent: true,
+                    opacity: 0.15
+                });
+                var glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
+                glowMesh.scale.multiplyScalar(1.3);
+                itemGroup.add(glowMesh);
+                
+                // 随机位置
+                var angle = Math.random() * Math.PI * 2;
+                var radius = 3 + Math.random() * 8;
+                itemGroup.position.x = Math.cos(angle) * radius;
+                itemGroup.position.y = (Math.random() - 0.5) * 8;
+                itemGroup.position.z = -5 - Math.random() * 10;
+                
+                // 随机旋转
+                itemGroup.rotation.x = Math.random() * Math.PI;
+                itemGroup.rotation.y = Math.random() * Math.PI;
+                
+                // 存储动画参数
+                itemGroup.userData = {
+                    baseX: itemGroup.position.x,
+                    baseY: itemGroup.position.y,
+                    baseZ: itemGroup.position.z,
+                    rotSpeedX: (Math.random() - 0.5) * 0.02,
+                    rotSpeedY: (Math.random() - 0.5) * 0.02,
+                    floatSpeed: 0.5 + Math.random() * 1,
+                    floatOffset: Math.random() * Math.PI * 2
+                };
+                
+                scene.add(itemGroup);
+                floatingItems.push(itemGroup);
+            }
+        }
+        
+        function createGlowParticles() {
             var geometry = new THREE.BufferGeometry();
-            var count = 4000;
+            var count = 500;
             var positions = new Float32Array(count * 3);
             var colors = new Float32Array(count * 3);
             var sizes = new Float32Array(count);
             
             for (var i = 0; i < count; i++) {
                 var i3 = i * 3;
+                positions[i3] = (Math.random() - 0.5) * 50;
+                positions[i3 + 1] = (Math.random() - 0.5) * 30;
+                positions[i3 + 2] = -20 - Math.random() * 20;
                 
-                // 球形分布
-                var theta = Math.random() * Math.PI * 2;
-                var phi = Math.acos(2 * Math.random() - 1);
-                var r = 50 + Math.random() * 100;
-                
-                positions[i3] = r * Math.sin(phi) * Math.cos(theta);
-                positions[i3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-                positions[i3 + 2] = r * Math.cos(phi);
-                
-                // 渐变色彩
+                // 彩色粒子
                 var colorChoice = Math.random();
-                if (colorChoice < 0.5) {
-                    colors[i3] = 1;
-                    colors[i3 + 1] = 1;
-                    colors[i3 + 2] = 1;
+                if (colorChoice < 0.25) {
+                    colors[i3] = 1; colors[i3 + 1] = 0.42; colors[i3 + 2] = 0.42; // 红
+                } else if (colorChoice < 0.5) {
+                    colors[i3] = 1; colors[i3 + 1] = 0.85; colors[i3 + 2] = 0.24; // 黄
                 } else if (colorChoice < 0.75) {
-                    colors[i3] = 0.6;
-                    colors[i3 + 1] = 0.8;
-                    colors[i3 + 2] = 1;
-                } else if (colorChoice < 0.9) {
-                    colors[i3] = 1;
-                    colors[i3 + 1] = 0.9;
-                    colors[i3 + 2] = 0.7;
+                    colors[i3] = 0.42; colors[i3 + 1] = 0.8; colors[i3 + 2] = 0.47; // 绿
                 } else {
-                    colors[i3] = 0.8;
-                    colors[i3 + 1] = 0.6;
-                    colors[i3 + 2] = 1;
+                    colors[i3] = 0.29; colors[i3 + 1] = 0.59; colors[i3 + 2] = 1; // 蓝
                 }
                 
-                sizes[i] = Math.random() * 2.5 + 0.5;
+                sizes[i] = Math.random() * 2 + 0.5;
             }
             
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -598,66 +725,15 @@
             geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
             
             var material = new THREE.PointsMaterial({
-                size: 1.8,
+                size: 0.08,
                 vertexColors: true,
                 transparent: true,
-                opacity: 0.9,
+                opacity: 0.6,
                 sizeAttenuation: true
             });
             
-            starField = new THREE.Points(geometry, material);
-            scene.add(starField);
-        }
-        
-        function createNebulaClouds() {
-            var geometry = new THREE.BufferGeometry();
-            var count = 600;
-            var positions = new Float32Array(count * 3);
-            
-            for (var i = 0; i < count; i++) {
-                var i3 = i * 3;
-                positions[i3] = (Math.random() - 0.5) * 100;
-                positions[i3 + 1] = (Math.random() - 0.5) * 60;
-                positions[i3 + 2] = -30 - Math.random() * 40;
-            }
-            
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            
-            var material = new THREE.PointsMaterial({
-                size: 12,
-                color: 0x9b59b6,
-                transparent: true,
-                opacity: 0.04,
-                sizeAttenuation: true
-            });
-            
-            nebulaClouds = new THREE.Points(geometry, material);
-            scene.add(nebulaClouds);
-        }
-        
-        function createAmbientParticles() {
-            var geometry = new THREE.BufferGeometry();
-            var count = 300;
-            var positions = new Float32Array(count * 3);
-            
-            for (var i = 0; i < count; i++) {
-                var i3 = i * 3;
-                positions[i3] = (Math.random() - 0.5) * 40;
-                positions[i3 + 1] = (Math.random() - 0.5) * 25;
-                positions[i3 + 2] = (Math.random() - 0.5) * 15;
-            }
-            
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            
-            var material = new THREE.PointsMaterial({
-                size: 0.15,
-                color: 0x00ffc8,
-                transparent: true,
-                opacity: 0.5
-            });
-            
-            particles = new THREE.Points(geometry, material);
-            scene.add(particles);
+            glowParticles = new THREE.Points(geometry, material);
+            scene.add(glowParticles);
         }
         
         function onMouseMove(e) {
@@ -674,30 +750,25 @@
         function animate() {
             requestAnimationFrame(animate);
             
-            var time = Date.now() * 0.0001;
+            var time = Date.now() * 0.001;
             
-            if (starField) {
-                starField.rotation.y += 0.00008;
-                starField.rotation.x += 0.00003;
-            }
+            // 动画漂浮物品
+            floatingItems.forEach(function(item) {
+                var data = item.userData;
+                item.rotation.x += data.rotSpeedX;
+                item.rotation.y += data.rotSpeedY;
+                item.position.y = data.baseY + Math.sin(time * data.floatSpeed + data.floatOffset) * 0.5;
+            });
             
-            if (nebulaClouds) {
-                nebulaClouds.rotation.y += 0.00015;
-                nebulaClouds.rotation.x = Math.sin(time) * 0.08;
-            }
-            
-            if (particles) {
-                particles.rotation.y += 0.0008;
-                var positions = particles.geometry.attributes.position.array;
-                for (var i = 0; i < positions.length; i += 3) {
-                    positions[i + 1] += Math.sin(time * 10 + i) * 0.001;
-                }
-                particles.geometry.attributes.position.needsUpdate = true;
+            // 粒子效果
+            if (glowParticles) {
+                glowParticles.rotation.y += 0.0003;
+                glowParticles.rotation.x = Math.sin(time * 0.2) * 0.1;
             }
             
             // 相机轻微跟随
-            camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.015;
-            camera.position.y += (-mouseY * 0.3 - camera.position.y) * 0.015;
+            camera.position.x += (mouseX * 0.3 - camera.position.x) * 0.02;
+            camera.position.y += (-mouseY * 0.2 - camera.position.y) * 0.02;
             camera.lookAt(0, 0, 0);
             
             renderer.render(scene, camera);
@@ -706,7 +777,7 @@
         // ========== DOM 操作 ==========
         function createModuleNodes() {
             var container = document.getElementById('mainContainer');
-            var radius = window.innerWidth < 768 ? 160 : 220;
+            var radius = window.innerWidth < 768 ? 170 : 240;
             
             CONFIG.modules.forEach(function(mod, index) {
                 var node = document.createElement('div');
@@ -723,8 +794,8 @@
                 var x = Math.cos(angle) * radius;
                 var y = Math.sin(angle) * radius;
                 
-                node.style.left = 'calc(50% + ' + x + 'px - 70px)';
-                node.style.top = 'calc(50% + ' + y + 'px - 70px)';
+                node.style.left = 'calc(50% + ' + x + 'px - 75px)';
+                node.style.top = 'calc(50% + ' + y + 'px - 75px)';
                 
                 node.addEventListener('click', function(e) {
                     zoomAndNavigate(mod, e);
