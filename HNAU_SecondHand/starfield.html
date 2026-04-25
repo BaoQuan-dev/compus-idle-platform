@@ -1223,7 +1223,7 @@
         right: 25px;
         width: 200px;
         height: 280px;
-        z-index: 1000;
+        z-index: 99999;
         pointer-events: auto;
         cursor: pointer;
         transform-origin: center bottom;
@@ -1265,7 +1265,21 @@
             margin: 0 !important;
             padding: 0 !important;
         }
-        #hnau-cat-box { will-change: transform; backface-visibility: hidden; transition: transform 0.15s ease; }
+        #hnau-cat-box { 
+            position: fixed !important; 
+            width: 180px; 
+            height: 240px; 
+            bottom: 100px; 
+            right: 20px; 
+            z-index: 9999 !important;
+            pointer-events: auto !important;
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+            transition: transform 0.15s ease;
+        }
+        #hnau-cat-box * {
+            z-index: 9999 !important;
+        }
         #hnau-cat-box:hover { transform: scale(1.05); }
         
         .hnau-cat-bubble {
