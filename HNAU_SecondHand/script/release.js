@@ -78,7 +78,7 @@ const ReleaseModule = {
                     <div class="status-card-icon" style="color: var(--error-color);">🔒</div>
                     <h2 class="status-card-title">暂无访问权限</h2>
                     <p class="status-card-text">${message}</p>
-                    <a href="home.html" class="btn btn-primary">返回首页</a>
+                    <a href="starfield.html" class="btn btn-primary">返回首页</a>
                 </div>
             </div>
         `;
@@ -656,7 +656,7 @@ const ReleaseModule = {
 
                 // 1.5秒后跳转
                 setTimeout(() => {
-                    Utils.跳转('home.html');
+                    Utils.跳转('starfield.html');
                 }, 1500);
             } catch (e) {
                 // 确保任何异常都被处理

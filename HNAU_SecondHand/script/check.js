@@ -183,7 +183,7 @@ const CheckModule = {
                     <div class="status-card-icon">⏳</div>
                     <h2 class="status-card-title">认证待审核</h2>
                     <p class="status-card-text">您的认证信息已提交，等待管理员审核中...</p>
-                    <a href="home.html" class="btn btn-primary">返回首页</a>
+                    <a href="starfield.html" class="btn btn-primary">返回首页</a>
                 </div>
             </div>
         `;

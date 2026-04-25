@@ -259,7 +259,7 @@ const CenterModule = {
                 <div class="empty-state">
                     <div class="empty-state-icon">❤️</div>
                     <p class="empty-state-text">暂无收藏商品</p>
-                    <a href="home.html" class="btn btn-primary mt-md">去逛逛</a>
+                    <a href="starfield.html" class="btn btn-primary mt-md">去逛逛</a>
                 </div>
             `;
         }

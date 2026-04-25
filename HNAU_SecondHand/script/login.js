@@ -519,7 +519,7 @@ const LoginModule = {
 
             // 1.5秒后跳转到首页
             setTimeout(() => {
-                Utils.跳转('home.html');
+                Utils.跳转('starfield.html');
             }, 1500);
 
         }, 500);

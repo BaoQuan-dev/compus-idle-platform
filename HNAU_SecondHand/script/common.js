@@ -1057,7 +1057,7 @@ const Navbar = {
      * 高亮当前页面菜单
      */
     highlightCurrentPage() {
-        const currentPage = window.location.pathname.split('/').pop() || 'home.html';
+        const currentPage = window.location.pathname.split('/').pop() || 'starfield.html';
         const menuLinks = document.querySelectorAll('.navbar-menu-link, .navbar-mobile-menu-item');
 
         menuLinks.forEach(link => {
