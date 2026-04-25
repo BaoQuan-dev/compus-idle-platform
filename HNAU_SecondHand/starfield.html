@@ -136,7 +136,7 @@
         /* 中心指示器 */
         .center-indicator {
             position: absolute;
-            top: 50%;
+            top: calc(50% + 80px);
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
@@ -1062,7 +1062,7 @@
                 var y = Math.sin(angle) * radius;
                 
                 node.style.left = 'calc(50% + ' + x + 'px - 75px)';
-                node.style.top = 'calc(50% + ' + y + 'px - 75px)';
+                node.style.top = 'calc(50% + ' + y + 'px - 75px + 80px)'; // 往下偏移80px
                 
                 node.addEventListener('click', function(e) {
                     e.preventDefault();
