@@ -609,8 +609,10 @@
     <!-- 返回按钮 -->
     <button class="back-btn" id="backBtn" onclick="goBack()">← 返回首页</button>
     
-    <!-- Three.js Canvas -->
-    <canvas id="cosmic-canvas"></canvas>
+    <!-- Three.js Canvas 包装器 -->
+    <div id="canvas-wrapper" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; transform-style: preserve-3d;">
+        <canvas id="cosmic-canvas"></canvas>
+    </div>
     
     <!-- 主界面 -->
     <div class="main-container" id="mainContainer">
@@ -1142,38 +1144,21 @@
             }, 3000);
         }
         
-        // ========== 核心：旋转式拉近导航效果 ==========
+        // ========== 核心：旋转式拉近导航效果（流畅3D版） ==========
         function zoomAndNavigate(module, node) {
             if (state.isAnimating) return;
             state.isAnimating = true;
             
             var mainContainer = document.getElementById('mainContainer');
             var overlay = document.getElementById('transitionOverlay');
+            var canvasWrapper = document.getElementById('canvas-wrapper');
             
             // 获取点击位置（用于确定旋转方向）
             var rect = node.getBoundingClientRect();
-            var clickX = (rect.left + rect.width / 2) / window.innerWidth;
-            var clickY = (rect.top + rect.height / 2) / window.innerHeight;
-            
-            // ========== 旋转式拉近动画 ==========
-            var startTime = Date.now();
-            var zoomDuration = 1200; // 1.2秒，平滑流畅
-            
-            // 保存物品原始位置
-            var originalPositions = [];
-            var originalRotations = [];
-            floatingItems.forEach(function(item) {
-                originalPositions.push({
-                    x: item.position.x,
-                    y: item.position.y,
-                    z: item.position.z
-                });
-                originalRotations.push({
-                    x: item.rotation.x,
-                    y: item.rotation.y,
-                    z: item.rotation.z
-                });
-            });
+            var clickX = rect.left + rect.width / 2;
+            var clickY = rect.top + rect.height / 2;
+            var centerX = window.innerWidth / 2;
+            var rotationDirection = clickX > centerX ? 1 : -1;
             
             // 模块节点放大高亮
             node.style.transform = 'scale(1.3)';
@@ -1187,75 +1172,59 @@
                 }
             });
             
-            function rotateAndZoom() {
-                var elapsed = Date.now() - startTime;
+            // ========== 使用CSS transition实现流畅3D旋转 ==========
+            // 设置初始状态
+            canvasWrapper.style.transition = 'none';
+            canvasWrapper.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+            
+            // 强制重绘
+            canvasWrapper.offsetHeight;
+            
+            // 启动3D旋转动画
+            var startTime = performance.now();
+            var zoomDuration = 1200; // 1.2秒
+            
+            function animate3D(currentTime) {
+                var elapsed = currentTime - startTime;
                 var progress = Math.min(elapsed / zoomDuration, 1);
                 
-                // 平滑的缓动函数（ease-in-out）
-                var easeProgress = progress < 0.5 
-                    ? 2 * progress * progress 
-                    : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                // 更平滑的缓动
+                var easeProgress = 1 - Math.pow(1 - progress, 3);
                 
-                // ========== 核心旋转效果 ==========
-                // 整个物品组绕着中心旋转（像进入漩涡）
-                var rotationAngle = easeProgress * Math.PI * 4; // 旋转2圈
-                var rotationDirection = clickX > 0.5 ? 1 : -1; // 根据点击位置决定旋转方向
+                // 3D透视旋转角度（旋转3圈）
+                var rotateY = easeProgress * 1080 * rotationDirection;
+                var rotateX = easeProgress * 180; // 上下俯仰
                 
-                // 物品组整体旋转
-                floatingItems.forEach(function(item, i) {
-                    var orig = originalPositions[i];
-                    var origRot = originalRotations[i];
-                    
-                    // 计算当前物品的半径和角度
-                    var radius = Math.sqrt(orig.x * orig.x + orig.y * orig.y);
-                    var angle = Math.atan2(orig.y, orig.x);
-                    
-                    // 新的旋转角度
-                    var newAngle = angle + rotationAngle * rotationDirection;
-                    
-                    // 物品从外圈向内聚拢
-                    var shrinkFactor = 1 - easeProgress * 0.95; // 逐渐缩小到中心
-                    var newRadius = radius * shrinkFactor;
-                    
-                    // 物品向屏幕中心聚拢
-                    item.position.x = Math.cos(newAngle) * newRadius;
-                    item.position.y = Math.sin(newAngle) * newRadius;
-                    
-                    // 物品向相机靠近（z轴拉近）
-                    var depthFactor = 1 - easeProgress * 0.9;
-                    item.position.z = orig.z * depthFactor + (1 - depthFactor) * (-5);
-                    
-                    // 物品自身旋转
-                    item.rotation.x = origRot.x + easeProgress * Math.PI * 6;
-                    item.rotation.y = origRot.y + easeProgress * Math.PI * 4;
-                    item.rotation.z = origRot.z + easeProgress * Math.PI * 2;
-                });
+                // 缩放和位移
+                var scale = 1 - easeProgress * 0.85;
+                var translateZ = easeProgress * 400;
                 
-                // ========== 相机拉近 ==========
-                camera.position.z = 15 - easeProgress * 14.5; // 从15拉近到0.5
+                // 应用3D变换
+                canvasWrapper.style.transform = 
+                    'perspective(1200px) ' +
+                    'rotateY(' + rotateY + 'deg) ' +
+                    'rotateX(' + rotateX + 'deg) ' +
+                    'scale(' + scale + ') ' +
+                    'translateZ(' + translateZ + 'px)';
                 
-                // 相机轻微摆动
-                camera.position.x = Math.sin(rotationAngle * 0.5) * 0.5;
-                camera.position.y = Math.cos(rotationAngle * 0.5) * 0.3;
+                // 相机跟随拉近
+                if (camera) {
+                    camera.position.z = 15 - easeProgress * 14;
+                }
                 
-                // ========== 整体效果 ==========
-                // 主容器缩放
-                var scale = 1 - easeProgress * 0.3;
-                mainContainer.style.transform = 'scale(' + scale + ')';
-                mainContainer.style.opacity = 1 - easeProgress * 0.4;
-                
-                // 遮罩透明度（物品消失后显现）
+                // 整体淡出
+                var containerOpacity = 1 - easeProgress * 0.7;
+                mainContainer.style.opacity = containerOpacity;
                 overlay.style.opacity = easeProgress * 0.3;
                 
                 if (progress < 1) {
-                    requestAnimationFrame(rotateAndZoom);
+                    requestAnimationFrame(animate3D);
                 } else {
-                    // 动画完成，跳转
                     window.location.href = 'explore.html';
                 }
             }
             
-            rotateAndZoom();
+            requestAnimationFrame(animate3D);
         }
         
         function goBack() {
