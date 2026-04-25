@@ -2,851 +2,664 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>农大闲置 - 探索</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1a2e 100%);
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0d1f0d 100%);
             min-height: 100vh;
             overflow: hidden;
             color: white;
         }
-        
-        /* Three.js Canvas */
-        #bg-canvas {
+
+        /* 粒子背景 */
+        .particles {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            pointer-events: none;
             z-index: 0;
         }
-        
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 215, 0, 0.6);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+            25% { transform: translateY(-30px) translateX(10px); opacity: 0.8; }
+            50% { transform: translateY(-15px) translateX(-10px); opacity: 0.5; }
+            75% { transform: translateY(-40px) translateX(5px); opacity: 0.7; }
+        }
+
         /* 顶部标题 */
         .header {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 100;
             text-align: center;
-            padding: 20px;
+            padding: 40px 20px 20px;
+            z-index: 100;
             background: linear-gradient(to bottom, rgba(10,10,26,0.9) 0%, transparent 100%);
         }
-        
+
         .header h1 {
-            font-size: 32px;
-            font-weight: bold;
-            background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #54a0ff, #a29bfe);
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffd700, #90EE90, #ffd700);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-shadow: 0 0 30px rgba(255,255,255,0.3);
-            animation: titleGlow 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            margin-bottom: 8px;
         }
-        
-        .header .subtitle {
+
+        .header p {
             font-size: 14px;
-            color: rgba(255,255,255,0.6);
-            margin-top: 8px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 2px;
         }
-        
-        @keyframes titleGlow {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.2); }
-        }
-        
+
         /* 返回按钮 */
         .back-btn {
             position: fixed;
             top: 20px;
             left: 20px;
-            z-index: 101;
             width: 44px;
             height: 44px;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
             border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            z-index: 101;
             transition: all 0.3s ease;
-        }
-        
-        .back-btn:hover {
-            background: rgba(255,255,255,0.2);
-            transform: scale(1.1);
-        }
-        
-        .back-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: white;
-        }
-        
-        /* 拖拽提示 */
-        .drag-hint {
-            position: fixed;
-            bottom: 120px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: rgba(255,255,255,0.8);
-            animation: pulse 2s ease-in-out infinite;
-            pointer-events: none;
         }
-        
-        .drag-hint span {
-            margin-right: 8px;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
-            50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
-        }
-        
-        /* 主容器 */
-        .main-container {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            touch-action: none;
-        }
-        
-        /* 卡片区域 */
-        .cards-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* 功能卡片 */
-        .feature-card {
-            position: absolute;
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 30px;
-            cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transform-style: preserve-3d;
-        }
-        
-        .feature-card:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.3);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-        }
-        
-        .feature-card.dimmed {
-            opacity: 0.3;
-            transform: scale(0.9);
-        }
-        
-        .feature-card.highlighted {
-            transform: scale(1.1);
-            z-index: 50;
-        }
-        
-        .feature-card.highlighted .card-icon {
-            animation: iconFloat 1s ease-in-out infinite;
-        }
-        
-        @keyframes iconFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .card-icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
-        }
-        
-        .feature-card:hover .card-icon {
-            transform: scale(1.1);
-        }
-        
-        .card-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: white;
-        }
-        
-        .card-desc {
-            font-size: 14px;
-            color: rgba(255,255,255,0.7);
-            margin-bottom: 20px;
-        }
-        
-        .card-stats {
-            display: flex;
-            gap: 15px;
-            font-size: 12px;
-            color: rgba(255,255,255,0.6);
-        }
-        
-        .card-stats span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        /* 进入按钮 */
-        .card-enter {
-            margin-top: 15px;
-            padding: 10px 25px;
-            background: linear-gradient(135deg, var(--card-color), var(--card-color-light));
-            border: none;
-            border-radius: 25px;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        
-        .feature-card:hover .card-enter,
-        .feature-card.highlighted .card-enter {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .card-enter:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px var(--card-color);
-        }
-        
 
-        
-        /* 加载动画 */
-        .loading-overlay {
+        .back-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: rgba(255, 215, 0, 0.5);
+            transform: scale(1.1);
+        }
+
+        .back-btn span {
+            font-size: 20px;
+        }
+
+        /* 中心麦穗容器 */
+        .center-wheat {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+        }
+
+        .wheat-icon {
+            font-size: 80px;
+            animation: sway 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .center-text {
+            margin-top: 20px;
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 4px;
+        }
+
+        /* 模块容器 */
+        .modules-container {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(10,10,26,1);
-            z-index: 1000;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .modules-container:active {
+            cursor: grabbing;
+        }
+
+        /* 模块节点 */
+        .module-node {
+            position: absolute;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.5s ease;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0.7;
+            transform: scale(0.9);
         }
-        
-        .loading-overlay.hidden {
+
+        .module-node:hover {
+            opacity: 1;
+            transform: scale(1.1);
+            z-index: 20;
+        }
+
+        .module-node.active {
+            opacity: 1;
+            transform: scale(1.15);
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .module-node .icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .module-node .name {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            text-align: center;
+        }
+
+        .module-node .desc {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+        }
+
+        /* 进入按钮 */
+        .enter-btn {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 16px;
+            background: linear-gradient(135deg, #ffd700, #90EE90);
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #1a1a2e;
+            cursor: pointer;
             opacity: 0;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .module-node:hover .enter-btn,
+        .module-node.active .enter-btn {
+            opacity: 1;
+        }
+
+        .enter-btn:hover {
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        /* 底部提示 */
+        .footer-hint {
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 100;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+        }
+
+        .footer-hint span {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 装饰麦穗 */
+        .wheat-decoration {
+            position: fixed;
+            font-size: 40px;
+            opacity: 0.15;
+            z-index: 1;
+            animation: floatDecor 8s ease-in-out infinite;
+        }
+
+        @keyframes floatDecor {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        /* 拖拽提示 */
+        .drag-indicator {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            z-index: 100;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .drag-indicator span:first-child {
+            font-size: 18px;
+            animation: swipe 1.5s ease-in-out infinite;
+        }
+
+        @keyframes swipe {
+            0%, 100% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+        }
+
+        .drag-indicator span:last-child {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 麦穗光线 */
+        .wheat-ray {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            transform: translate(-50%, -50%);
+            z-index: 2;
             pointer-events: none;
         }
-        
-        .loader {
-            width: 60px;
-            height: 60px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: #ff6b6b;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+
+        .wheat-ray::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(from 0deg, transparent, rgba(255, 215, 0, 0.1), transparent, rgba(144, 238, 144, 0.1), transparent);
+            transform: translate(-50%, -50%);
+            animation: rotateRay 20s linear infinite;
         }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .loading-text {
-            margin-top: 20px;
-            font-size: 14px;
-            color: rgba(255,255,255,0.6);
-        }
-        
-        /* 移动端适配 */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 24px;
-            }
-            
-            .feature-card {
-                padding: 20px;
-                width: 200px !important;
-                height: auto !important;
-            }
-            
-            .card-icon {
-                font-size: 48px;
-            }
-            
-            .card-title {
-                font-size: 16px;
-            }
-            
-            .card-desc {
-                font-size: 12px;
-            }
-            
-            .quick-links {
-                gap: 10px;
-            }
-            
-            .quick-link {
-                padding: 10px 15px;
-            }
-            
-            .quick-link .icon {
-                font-size: 22px;
-            }
+
+        @keyframes rotateRay {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- 加载动画 -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loader"></div>
-        <div class="loading-text">正在加载...</div>
-    </div>
-    
-    <!-- 背景Canvas -->
-    <canvas id="bg-canvas"></canvas>
-    
     <!-- 返回按钮 -->
     <div class="back-btn" onclick="goBack()">
-        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        <span>←</span>
     </div>
-    
+
     <!-- 顶部标题 -->
     <div class="header">
-        <h1>🌟 农大闲置探索 🌟</h1>
-        <p class="subtitle">探索校园闲置 · 开启绿色循环</p>
+        <h1>🌾 农大闲置 🌾</h1>
+        <p>探索校园闲置 · 开启绿色循环</p>
     </div>
-    
-    <!-- 拖拽提示 -->
-    <div class="drag-hint">
-        <span>✋</span> 拖拽探索 · 点击进入
-    </div>
-    
-    <!-- 主容器 -->
-    <div class="main-container" id="mainContainer">
-        <div class="cards-wrapper" id="cardsWrapper">
-            <!-- 卡片由JS生成 -->
-        </div>
-    </div>
-    
 
-    
+    <!-- 粒子背景 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 麦穗光线 -->
+    <div class="wheat-ray"></div>
+
+    <!-- 装饰麦穗 -->
+    <div class="wheat-decoration" style="top: 15%; left: 10%;">🌾</div>
+    <div class="wheat-decoration" style="top: 20%; right: 8%; animation-delay: -2s;">🌾</div>
+    <div class="wheat-decoration" style="bottom: 25%; left: 5%; animation-delay: -4s;">🌾</div>
+    <div class="wheat-decoration" style="bottom: 20%; right: 12%; animation-delay: -6s;">🌾</div>
+
+    <!-- 中心麦穗 -->
+    <div class="center-wheat">
+        <div class="wheat-icon">🌾</div>
+        <div class="center-text">DRAG TO EXPLORE</div>
+    </div>
+
+    <!-- 模块容器 -->
+    <div class="modules-container" id="modulesContainer"></div>
+
+    <!-- 拖拽提示 -->
+    <div class="drag-indicator">
+        <span>👆</span>
+        <span>拖拽探索更多功能</span>
+    </div>
+
+    <!-- 底部提示 -->
+    <div class="footer-hint">
+        <span>点击卡片进入功能 · 拖拽浏览全部</span>
+    </div>
+
     <script>
-        // ============ Three.js 背景 ============
-        let scene, camera, renderer;
-        let particles, nebula;
-        
-        function initThree() {
-            const canvas = document.getElementById('bg-canvas');
-            
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 30;
-            
-            renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            
-            // 创建粒子背景
-            createParticles();
-            
-            // 创建星云效果
-            createNebula();
-            
-            // 动画循环
-            animate();
-            
-            // 响应式
-            window.addEventListener('resize', onResize);
-        }
-        
-        function createParticles() {
-            const geometry = new THREE.BufferGeometry();
-            const count = 2000;
-            const positions = new Float32Array(count * 3);
-            const colors = new Float32Array(count * 3);
-            
-            for (let i = 0; i < count * 3; i += 3) {
-                positions[i] = (Math.random() - 0.5) * 100;
-                positions[i + 1] = (Math.random() - 0.5) * 100;
-                positions[i + 2] = (Math.random() - 0.5) * 100;
-                
-                const color = new THREE.Color();
-                color.setHSL(Math.random() * 0.2 + 0.5, 0.8, 0.6);
-                colors[i] = color.r;
-                colors[i + 1] = color.g;
-                colors[i + 2] = color.b;
-            }
-            
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-            
-            const material = new THREE.PointsMaterial({
-                size: 0.5,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.8,
-                blending: THREE.AdditiveBlending
-            });
-            
-            particles = new THREE.Points(geometry, material);
-            scene.add(particles);
-        }
-        
-        function createNebula() {
-            const geometry = new THREE.SphereGeometry(40, 32, 32);
-            const material = new THREE.MeshBasicMaterial({
-                color: 0x1a0a3e,
-                transparent: true,
-                opacity: 0.3,
-                side: THREE.BackSide
-            });
-            
-            nebula = new THREE.Mesh(geometry, material);
-            scene.add(nebula);
-        }
-        
-        let mouseX = 0, mouseY = 0;
-        let targetX = 0, targetY = 0;
-        
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            // 平滑跟随鼠标
-            targetX += (mouseX - targetX) * 0.02;
-            targetY += (mouseY - targetY) * 0.02;
-            
-            if (particles) {
-                particles.rotation.x += 0.0003;
-                particles.rotation.y += 0.0005;
-                particles.rotation.x += (targetY * 0.001 - particles.rotation.x * 0.1) * 0.05;
-                particles.rotation.y += (targetX * 0.001 - particles.rotation.y * 0.1) * 0.05;
-            }
-            
-            if (nebula) {
-                nebula.rotation.x += 0.0001;
-                nebula.rotation.y += 0.0002;
-            }
-            
-            renderer.render(scene, camera);
-        }
-        
-        function onResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-        
-        // ============ 卡片拖拽系统 ============
-        const cardsData = [
+        // 模块数据
+        const modules = [
             {
                 id: 'release',
                 icon: '📦',
-                title: '发布闲置',
-                desc: '发布你的闲置物品',
+                name: '发布闲置',
+                desc: '发布你的物品',
                 color: '#ffd93d',
-                colorLight: '#ffe066',
-                stats: { total: 89, new: 12 },
-                link: 'release_goods.html',
-                tags: ['new']
+                link: 'release_goods.html'
             },
             {
                 id: 'donation',
                 icon: '💝',
-                title: '公益转赠',
-                desc: '免费转赠闲置物品',
+                name: '公益转赠',
+                desc: '传递爱心',
                 color: '#ff9ff3',
-                colorLight: '#ffb3ff',
-                stats: { total: 45, new: 8 },
-                link: 'donation_list.html',
-                tags: ['free', 'eco']
+                link: 'donation_publish.html'
             },
             {
                 id: 'demand',
                 icon: '🔍',
-                title: '需求广场',
-                desc: '发布你需要的物品',
+                name: '需求广场',
+                desc: '寻找物品',
                 color: '#54a0ff',
-                colorLight: '#74b9ff',
-                stats: { total: 67, new: 15 },
-                link: 'demand_board.html',
-                tags: ['trending']
+                link: 'demand_board.html'
             },
             {
                 id: 'carbon',
                 icon: '🌱',
-                title: '碳足迹',
-                desc: '记录你的绿色足迹',
+                name: '碳足迹',
+                desc: '绿色生活',
                 color: '#6bcb77',
-                colorLight: '#8fd99f',
-                stats: { total: 234, new: 31 },
-                link: 'carbon_footprint.html',
-                tags: ['eco', 'trending']
+                link: 'carbon.html'
             },
             {
-                id: 'profile',
+                id: 'user',
                 icon: '👤',
-                title: '个人中心',
-                desc: '管理你的信息和发布',
+                name: '个人中心',
+                desc: '管理信息',
                 color: '#a29bfe',
-                colorLight: '#b8b5ff',
-                stats: { total: 12, new: 3 },
-                link: 'user_center.html',
-                tags: ['new']
+                link: 'user_center.html'
             }
         ];
-        
-        let currentCategory = 'all';
-        let currentIndex = 0;
+
+        // 状态变量
         let isDragging = false;
-        let startX, startY;
-        let offsetX = 0, offsetY = 0;
-        let velocityX = 0;
-        
-        function createCards() {
-            const wrapper = document.getElementById('cardsWrapper');
-            wrapper.innerHTML = '';
+        let startX = 0, startY = 0;
+        let currentOffsetX = 0, currentOffsetY = 0;
+        let targetOffsetX = 0, targetOffsetY = 0;
+        let velocityX = 0, velocityY = 0;
+        let moduleElements = [];
+        let containerCenterX = window.innerWidth / 2;
+        let containerCenterY = window.innerHeight / 2;
+
+        // 初始化
+        function init() {
+            createParticles();
+            createModules();
+            updateContainerCenter();
+            animate();
             
-            const filteredCards = getFilteredCards();
+            // 事件监听
+            window.addEventListener('resize', updateContainerCenter);
+        }
+
+        // 创建粒子
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 100; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = -Math.random() * 15 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                particle.style.opacity = 0.2 + Math.random() * 0.4;
+                container.appendChild(particle);
+            }
+        }
+
+        // 创建模块
+        function createModules() {
+            const container = document.getElementById('modulesContainer');
             
-            filteredCards.forEach((card, index) => {
-                const cardEl = document.createElement('div');
-                cardEl.className = 'feature-card';
-                cardEl.dataset.id = card.id;
-                cardEl.dataset.index = index;
-                cardEl.style.cssText = `
-                    --card-color: ${card.color};
-                    --card-color-light: ${card.colorLight};
-                    width: 280px;
-                    height: auto;
-                    min-height: 320px;
+            // 环形排列
+            const radius = Math.min(window.innerWidth, window.innerHeight) * 0.32;
+            const angleStep = (Math.PI * 2) / modules.length;
+            const startAngle = -Math.PI / 2; // 从顶部开始
+
+            modules.forEach((module, index) => {
+                const angle = startAngle + angleStep * index;
+                const x = containerCenterX + Math.cos(angle) * radius;
+                const y = containerCenterY + Math.sin(angle) * radius;
+
+                const node = document.createElement('div');
+                node.className = 'module-node';
+                node.dataset.index = index;
+                node.style.left = x + 'px';
+                node.style.top = y + 'px';
+                node.style.transform = 'translate(-50%, -50%)';
+                node.style.borderColor = module.color + '40';
+
+                node.innerHTML = `
+                    <div class="icon">${module.icon}</div>
+                    <div class="name">${module.name}</div>
+                    <div class="desc">${module.desc}</div>
+                    <button class="enter-btn" onclick="enterModule('${module.link}', event)">进入 →</button>
                 `;
-                
-                cardEl.innerHTML = `
-                    <div class="card-icon">${card.icon}</div>
-                    <div class="card-title">${card.title}</div>
-                    <div class="card-desc">${card.desc}</div>
-                    <div class="card-stats">
-                        <span>📦 ${card.stats.total}件</span>
-                        <span>✨ ${card.stats.new}件新增</span>
-                    </div>
-                    <button class="card-enter" onclick="enterModule('${card.link}')">
-                        进入 →
-                    </button>
-                `;
-                
-                // 点击事件
-                cardEl.addEventListener('click', (e) => {
-                    if (!isDragging && Math.abs(offsetX) < 10 && Math.abs(offsetY) < 10) {
-                        enterModule(card.link);
+
+                node.addEventListener('mouseenter', () => setActive(index));
+                node.addEventListener('mouseleave', () => clearActive());
+                node.addEventListener('click', (e) => {
+                    if (!isDragging && Math.abs(velocityX) < 5 && Math.abs(velocityY) < 5) {
+                        enterModule(module.link, e);
                     }
                 });
-                
-                // 悬停效果
-                cardEl.addEventListener('mouseenter', () => highlightCard(cardEl));
-                cardEl.addEventListener('mouseleave', () => resetCards());
-                
-                wrapper.appendChild(cardEl);
-            });
-            
-            updateCardPositions();
-        }
-        
-        function getFilteredCards() {
-            if (currentCategory === 'all') return cardsData;
-            return cardsData.filter(card => card.tags.includes(currentCategory));
-        }
-        
-        function updateCardPositions() {
-            const cards = document.querySelectorAll('.feature-card');
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2 - 50;
-            const radius = Math.min(window.innerWidth * 0.35, 300);
-            
-            cards.forEach((card, index) => {
-                const total = cards.length;
-                const angle = (index / total) * Math.PI * 2 - Math.PI / 2;
-                
-                // 添加中心偏移
-                const x = centerX + Math.cos(angle) * radius + offsetX;
-                const y = centerY + Math.sin(angle) * radius * 0.6 + offsetY;
-                
-                // 计算缩放（中间的大，两边的小）
-                const normalizedIndex = (index - currentIndex + total) % total;
-                const scale = normalizedIndex === 0 ? 1.15 : 
-                              normalizedIndex === 1 || normalizedIndex === total - 1 ? 0.9 : 0.75;
-                
-                card.style.transform = `translate(${x - centerX}px, ${y - centerY}px) scale(${scale})`;
-                card.style.zIndex = normalizedIndex === 0 ? 50 : 10 + total - normalizedIndex;
-                card.style.opacity = normalizedIndex === 0 ? 1 : normalizedIndex < 3 ? 0.7 : 0.4;
-                
-                // 更新指示器
-                if (normalizedIndex === 0) {
-                    updateIndicators(index);
-                }
-            });
-        }
-        
-        function highlightCard(cardEl) {
-            document.querySelectorAll('.feature-card').forEach(card => {
-                card.classList.remove('highlighted', 'dimmed');
-                if (card !== cardEl) {
-                    card.classList.add('dimmed');
-                }
-            });
-            cardEl.classList.add('highlighted');
-        }
-        
-        function resetCards() {
-            document.querySelectorAll('.feature-card').forEach(card => {
-                card.classList.remove('highlighted', 'dimmed');
-            });
-        }
-        
-        function updateIndicators(index) {
-            const filteredCards = getFilteredCards();
-            currentIndex = index;
-            
-            document.querySelectorAll('.indicator').forEach((ind, i) => {
-                ind.classList.toggle('active', i === index % 5);
-            });
-            
-            // 更新标题
-            const card = filteredCards[index];
-            if (card) {
-                document.querySelector('.header h1').textContent = `🌟 ${card.title} · 农大闲置 🌟`;
-            }
-        }
-        
-        // ============ 拖拽交互 ============
-        function initDrag() {
-            const container = document.getElementById('mainContainer');
-            
-            container.addEventListener('mousedown', startDrag);
-            container.addEventListener('mousemove', drag);
-            container.addEventListener('mouseup', endDrag);
-            container.addEventListener('mouseleave', endDrag);
-            
-            container.addEventListener('touchstart', startDrag, { passive: true });
-            container.addEventListener('touchmove', drag, { passive: true });
-            container.addEventListener('touchend', endDrag);
-            
-            // 鼠标移动更新背景
-            document.addEventListener('mousemove', (e) => {
-                mouseX = (e.clientX - window.innerWidth / 2);
-                mouseY = (e.clientY - window.innerHeight / 2);
-            });
-        }
-        
-        let dragStartTime;
-        
-        function startDrag(e) {
-            isDragging = false;
-            dragStartTime = Date.now();
-            
-            const point = e.touches ? e.touches[0] : e;
-            startX = point.clientX - offsetX;
-            startY = point.clientY - offsetY;
-            velocityX = 0;
-        }
-        
-        function drag(e) {
-            const point = e.touches ? e.touches[0] : e;
-            const currentX = point.clientX - startX;
-            const currentY = point.clientY - startY;
-            
-            // 检测是否在拖拽
-            if (Math.abs(currentX - offsetX) > 5 || Math.abs(currentY - offsetY) > 5) {
-                isDragging = true;
-            }
-            
-            velocityX = currentX - offsetX;
-            offsetX = currentX;
-            offsetY = currentY;
-            
-            updateCardPositions();
-        }
-        
-        function endDrag() {
-            const dragDuration = Date.now() - dragStartTime;
-            
-            // 惯性滑动
-            if (Math.abs(velocityX) > 30 && dragDuration < 300) {
-                const direction = velocityX > 0 ? 1 : -1;
-                
-                // 计算新的索引
-                const filteredCards = getFilteredCards();
-                let newIndex = currentIndex - direction;
-                if (newIndex < 0) newIndex = filteredCards.length - 1;
-                if (newIndex >= filteredCards.length) newIndex = 0;
-                
-                animateToIndex(newIndex);
-            }
-            
-            // 缓慢回归
-            animateOffset(0, 0, 500);
-        }
-        
-        function animateOffset(targetX, targetY, duration) {
-            const startX = offsetX;
-            const startY = offsetY;
-            const startTime = performance.now();
-            
-            function step(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const eased = 1 - Math.pow(1 - progress, 3);
-                
-                offsetX = startX + (targetX - startX) * eased;
-                offsetY = startY + (targetY - startY) * eased;
-                
-                updateCardPositions();
-                
-                if (progress < 1) {
-                    requestAnimationFrame(step);
-                }
-            }
-            
-            requestAnimationFrame(step);
-        }
-        
-        function animateToIndex(index) {
-            const cards = document.querySelectorAll('.feature-card');
-            const total = cards.length;
-            
-            // 计算方向
-            let steps = index - currentIndex;
-            if (steps > total / 2) steps -= total;
-            if (steps < -total / 2) steps += total;
-            
-            // 动画移动
-            const angleStep = (Math.PI * 2) / total;
-            const radius = Math.min(window.innerWidth * 0.35, 300);
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2 - 50;
-            
-            const startAngle = (currentIndex / total) * Math.PI * 2;
-            const endAngle = (index / total) * Math.PI * 2;
-            
-            const startTime = performance.now();
-            const duration = 400;
-            
-            function step(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const eased = 1 - Math.pow(1 - progress, 3);
-                
-                const currentAngle = startAngle + (endAngle - startAngle) * eased;
-                
-                cards.forEach((card, i) => {
-                    const cardAngle = currentAngle + (i / total) * Math.PI * 2;
-                    const x = centerX + Math.cos(cardAngle) * radius + offsetX;
-                    const y = centerY + Math.sin(cardAngle) * radius * 0.6 + offsetY;
-                    
-                    const normalizedIndex = (i - index + total) % total;
-                    const scale = normalizedIndex === 0 ? 1.15 : 
-                                  normalizedIndex === 1 || normalizedIndex === total - 1 ? 0.9 : 0.75;
-                    
-                    card.style.transform = `translate(${x - centerX}px, ${y - centerY}px) scale(${scale})`;
-                    card.style.zIndex = normalizedIndex === 0 ? 50 : 10 + total - normalizedIndex;
+
+                container.appendChild(node);
+                moduleElements.push({
+                    element: node,
+                    baseX: x,
+                    baseY: y,
+                    angle: angle,
+                    radius: radius
                 });
+            });
+        }
+
+        // 更新容器中心
+        function updateContainerCenter() {
+            containerCenterX = window.innerWidth / 2;
+            containerCenterY = window.innerHeight / 2;
+        }
+
+        // 设置激活状态
+        function setActive(index) {
+            moduleElements.forEach((m, i) => {
+                m.element.classList.toggle('active', i === index);
+            });
+        }
+
+        // 清除激活状态
+        function clearActive() {
+            moduleElements.forEach(m => {
+                m.element.classList.remove('active');
+            });
+        }
+
+        // 进入模块
+        function enterModule(link, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            // 跳转
+            window.location.href = link;
+        }
+
+        // 返回
+        function goBack() {
+            window.location.href = 'starfield.html';
+        }
+
+        // 鼠标/触摸事件
+        const moduleContainer = document.getElementById('modulesContainer');
+
+        moduleContainer.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            velocityX = 0;
+            velocityY = 0;
+        });
+
+        moduleContainer.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+            
+            velocityX = deltaX * 0.1;
+            velocityY = deltaY * 0.1;
+            
+            targetOffsetX += deltaX * 0.3;
+            targetOffsetY += deltaY * 0.3;
+            
+            // 限制拖拽范围
+            const maxOffset = 300;
+            targetOffsetX = Math.max(-maxOffset, Math.min(maxOffset, targetOffsetX));
+            targetOffsetY = Math.max(-maxOffset, Math.min(maxOffset, targetOffsetY));
+            
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+
+        moduleContainer.addEventListener('mouseup', () => {
+            isDragging = false;
+            // 惯性
+            animateInertia();
+        });
+
+        moduleContainer.addEventListener('mouseleave', () => {
+            if (isDragging) {
+                isDragging = false;
+                animateInertia();
+            }
+        });
+
+        // 触摸事件
+        moduleContainer.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            velocityX = 0;
+            velocityY = 0;
+        });
+
+        moduleContainer.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            
+            const deltaX = e.touches[0].clientX - startX;
+            const deltaY = e.touches[0].clientY - startY;
+            
+            velocityX = deltaX * 0.1;
+            velocityY = deltaY * 0.1;
+            
+            targetOffsetX += deltaX * 0.3;
+            targetOffsetY += deltaY * 0.3;
+            
+            const maxOffset = 300;
+            targetOffsetX = Math.max(-maxOffset, Math.min(maxOffset, targetOffsetX));
+            targetOffsetY = Math.max(-maxOffset, Math.min(maxOffset, targetOffsetY));
+            
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
+
+        moduleContainer.addEventListener('touchend', () => {
+            isDragging = false;
+            animateInertia();
+        });
+
+        // 惯性动画
+        function animateInertia() {
+            const friction = 0.95;
+            const minVelocity = 0.5;
+            
+            function step() {
+                if (Math.abs(velocityX) < minVelocity && Math.abs(velocityY) < minVelocity) return;
                 
-                if (progress < 1) {
-                    requestAnimationFrame(step);
-                } else {
-                    currentIndex = index;
-                    updateCardPositions();
-                }
+                velocityX *= friction;
+                velocityY *= friction;
+                
+                targetOffsetX += velocityX;
+                targetOffsetY += velocityY;
+                
+                const maxOffset = 300;
+                targetOffsetX = Math.max(-maxOffset, Math.min(maxOffset, targetOffsetX));
+                targetOffsetY = Math.max(-maxOffset, Math.min(maxOffset, targetOffsetY));
+                
+                requestAnimationFrame(step);
             }
             
-            requestAnimationFrame(step);
+            step();
         }
-        
-        // ============ 指示器点击 ============
-        document.querySelectorAll('.indicator').forEach(ind => {
-            ind.addEventListener('click', () => {
-                const index = parseInt(ind.dataset.index);
-                const filteredCards = getFilteredCards();
-                animateToIndex(index % filteredCards.length);
+
+        // 主动画循环
+        function animate() {
+            // 平滑跟随
+            currentOffsetX += (targetOffsetX - currentOffsetX) * 0.1;
+            currentOffsetY += (targetOffsetY - currentOffsetY) * 0.1;
+
+            // 更新模块位置
+            moduleElements.forEach((m, index) => {
+                const wobble = Math.sin(Date.now() * 0.001 + index) * 5;
+                const x = m.baseX + currentOffsetX + wobble * Math.cos(m.angle);
+                const y = m.baseY + currentOffsetY + wobble * Math.sin(m.angle) * 0.3;
+                
+                m.element.style.left = x + 'px';
+                m.element.style.top = y + 'px';
             });
-        });
-        
-        // ============ 分类标签 ============
-        document.querySelectorAll('.category-tag').forEach(tag => {
-            tag.addEventListener('click', () => {
-                document.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
-                tag.classList.add('active');
-                currentCategory = tag.dataset.category;
-                currentIndex = 0;
-                offsetX = 0;
-                offsetY = 0;
-                createCards();
-            });
-        });
-        
-        // ============ 进入模块 ============
-        function enterModule(link) {
-            if (!link) return;
-            
-            // 添加跳转动画
-            document.body.style.transition = 'opacity 0.3s ease';
-            document.body.style.opacity = '0';
-            
-            setTimeout(() => {
-                window.location.href = link;
-            }, 300);
+
+            requestAnimationFrame(animate);
         }
-        
-        // ============ 返回 ============
-        function goBack() {
-            document.body.style.opacity = '0';
-            setTimeout(() => {
-                window.location.href = 'starfield.html';
-            }, 300);
-        }
-        
-        // ============ 初始化 ============
-        window.addEventListener('load', () => {
-            initThree();
-            createCards();
-            initDrag();
-            
-            // 隐藏加载动画
-            setTimeout(() => {
-                document.getElementById('loadingOverlay').classList.add('hidden');
-            }, 500);
-        });
+
+        // 启动
+        init();
     </script>
 </body>
 </html>
