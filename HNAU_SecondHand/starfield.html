@@ -83,22 +83,49 @@
         }
         
         .header h1 {
-            font-size: 48px;
+            font-size: 56px;
             font-weight: 900;
-            letter-spacing: 8px;
+            letter-spacing: 10px;
             background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6);
             background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: gradient-shift 5s ease infinite;
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+            position: relative;
+        }
+        
+        .header h1::before,
+        .header h1::after {
+            content: '✨';
+            position: absolute;
+            -webkit-text-fill-color: initial;
+            font-size: 24px;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        
+        .header h1::before {
+            left: -50px;
+            animation-delay: 0s;
+        }
+        
+        .header h1::after {
+            right: -50px;
+            animation-delay: 1s;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
         }
         
         .header p {
-            font-size: 16px;
-            color: rgba(255, 255, 255, 0.7);
-            letter-spacing: 4px;
-            margin-top: 12px;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 6px;
+            margin-top: 15px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
         }
         
         @keyframes gradient-shift {
@@ -124,9 +151,9 @@
         }
         
         .center-circle {
-            width: 140px;
-            height: 140px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+            width: 160px;
+            height: 160px;
+            border: 4px solid rgba(255, 255, 255, 0.4);
             border-radius: 50%;
             display: flex;
             flex-direction: column;
@@ -134,25 +161,55 @@
             justify-content: center;
             margin: 0 auto 15px;
             animation: pulse-ring 2s ease-in-out infinite;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            position: relative;
+        }
+        
+        .center-circle::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
         .center-indicator:hover .center-circle {
-            border-color: rgba(255, 255, 255, 0.8);
+            border-color: rgba(255, 255, 255, 0.9);
             transform: scale(1.15);
-            box-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.4),
+                        0 0 100px rgba(255, 215, 0, 0.3);
         }
         
         .center-icon {
-            font-size: 56px;
+            font-size: 50px;
             animation: float 3s ease-in-out infinite;
         }
         
         .center-text {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.8);
-            margin-top: 5px;
-            font-weight: 500;
+            font-size: 22px;
+            font-weight: 900;
+            color: #fff;
+            margin-top: 8px;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8),
+                         0 0 40px rgba(255, 215, 0, 0.4);
+            background: linear-gradient(135deg, #ffd700, #ff6b6b, #ffd700);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: text-shine 3s ease-in-out infinite;
+        }
+        
+        @keyframes text-shine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         
         @keyframes float {
@@ -298,12 +355,45 @@
         }
         
         .module-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--module-color-text, #fff);
-            letter-spacing: 2px;
-            text-shadow: 0 0 20px var(--module-color, rgba(255, 255, 255, 0.5));
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 3px;
             text-align: center;
+            margin-top: 12px;
+            position: relative;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.6));
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--module-color, rgba(255,255,255,0.2));
+            box-shadow: 0 0 20px var(--module-color, rgba(255,255,255,0.1));
+        }
+        
+        .module-title::before {
+            content: '♦';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: var(--module-color);
+            animation: sparkle 1.5s ease-in-out infinite;
+        }
+        
+        .module-title::after {
+            content: '♦';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: var(--module-color);
+            animation: sparkle 1.5s ease-in-out infinite 0.75s;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.3; transform: translateY(-50%) scale(0.8); }
+            50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
         }
         
         /* 粒子尾迹 */
@@ -355,16 +445,33 @@
         .quick-link {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 14px 28px;
+            gap: 12px;
+            padding: 16px 32px;
             background: rgba(20, 30, 50, 0.85);
             border: 2px solid var(--link-color, rgba(255, 255, 255, 0.2));
-            border-radius: 35px;
+            border-radius: 40px;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             backdrop-filter: blur(10px);
             /* 增强滑动感 */
             will-change: transform, box-shadow;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .quick-link:hover::before {
+            left: 100%;
         }
         
         .quick-link:hover {
@@ -381,13 +488,21 @@
         }
         
         .quick-link-icon {
-            font-size: 26px;
+            font-size: 30px;
             transition: transform 0.3s ease;
         }
         
         .quick-link:hover .quick-link-icon {
             transform: scale(1.2) rotate(5deg);
             animation: bounce-icon 0.6s ease infinite;
+        }
+        
+        .quick-link-text {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--link-color, rgba(255,255,255,0.3));
         }
         
         @keyframes bounce-icon {
@@ -500,7 +615,7 @@
     <div class="main-container" id="mainContainer">
         <!-- 标题 -->
         <div class="header" id="header">
-            <h1>HNAU 闲置星球</h1>
+            <h1>🌟 农大闲置 🌟</h1>
             <p>探索校园闲置 · 开启绿色循环</p>
         </div>
         
@@ -508,7 +623,7 @@
         <div class="center-indicator" id="centerIndicator" onclick="awakenAll()">
             <div class="center-circle">
                 <span class="center-icon">🎁</span>
-                <span class="center-text">闲置星球</span>
+                <span class="center-text">农大闲置</span>
             </div>
             <span>点击唤醒全部</span>
         </div>
