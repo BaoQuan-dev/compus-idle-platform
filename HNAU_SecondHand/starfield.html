@@ -184,26 +184,66 @@
             justify-content: center;
             cursor: pointer;
             pointer-events: auto;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.1s ease-out;
             opacity: 0;
             transform: scale(0);
+            /* 增强悬浮滑动感 */
+            will-change: transform, opacity, left, top;
         }
         
         .module-node.visible {
             opacity: 1;
             transform: scale(1);
+            animation: float-in 0.8s ease-out forwards;
+        }
+        
+        @keyframes float-in {
+            0% {
+                opacity: 0;
+                transform: scale(0) translateY(50px);
+            }
+            60% {
+                transform: scale(1.1) translateY(-5px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        /* 鼠标悬浮时的滑动效果 */
+        .module-node:hover {
+            transform: scale(1.15) translateY(-8px);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                        box-shadow 0.3s ease,
+                        border-color 0.3s ease;
+        }
+        
+        .module-node:active {
+            transform: scale(1.05);
+            transition: transform 0.1s ease;
         }
         
         .module-node.dimmed {
             opacity: 0.15 !important;
-            transform: scale(0.6) !important;
+            transform: scale(0.6) translateY(0) !important;
             filter: blur(3px);
         }
         
         .module-node.active {
             opacity: 1 !important;
-            transform: scale(1.35) !important;
+            transform: scale(1.35) translateY(-15px) !important;
             z-index: 100;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                filter: brightness(1) drop-shadow(0 0 20px var(--module-color, rgba(255, 255, 255, 0.5)));
+            }
+            50% {
+                filter: brightness(1.2) drop-shadow(0 0 40px var(--module-color, rgba(255, 255, 255, 0.8)));
+            }
         }
         
         .module-node-bg {
@@ -321,16 +361,38 @@
             border: 2px solid var(--link-color, rgba(255, 255, 255, 0.2));
             border-radius: 35px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             backdrop-filter: blur(10px);
+            /* 增强滑动感 */
+            will-change: transform, box-shadow;
         }
         
         .quick-link:hover {
             background: rgba(30, 45, 70, 0.95);
             border-color: var(--link-color, rgba(255, 255, 255, 0.6));
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4),
-                        0 0 30px var(--link-color, rgba(255, 255, 255, 0.3));
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5),
+                        0 0 40px var(--link-color, rgba(255, 255, 255, 0.4));
+        }
+        
+        .quick-link:active {
+            transform: translateY(-2px) scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .quick-link-icon {
+            font-size: 26px;
+            transition: transform 0.3s ease;
+        }
+        
+        .quick-link:hover .quick-link-icon {
+            transform: scale(1.2) rotate(5deg);
+            animation: bounce-icon 0.6s ease infinite;
+        }
+        
+        @keyframes bounce-icon {
+            0%, 100% { transform: scale(1.2) translateY(0); }
+            50% { transform: scale(1.2) translateY(-3px); }
         }
         
         .quick-link-icon {
@@ -568,6 +630,12 @@
         var floatingItems = [];
         var glowParticles;
         var mouseX = 0, mouseY = 0;
+        var targetX = 0, targetY = 0;
+        var velocityX = 0, velocityY = 0;
+        var isDragging = false;
+        var lastX = 0, lastY = 0;
+        var dragSensitivity = 3;
+        var returnSpeed = 0.08;
         
         function initThree() {
             scene = new THREE.Scene();
@@ -594,6 +662,12 @@
             createGlowParticles();
             
             document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mousedown', onDragStart);
+            document.addEventListener('mouseup', onDragEnd);
+            document.addEventListener('mouseleave', onDragEnd);
+            document.addEventListener('touchstart', onTouchStart, { passive: false });
+            document.addEventListener('touchmove', onTouchMove, { passive: false });
+            document.addEventListener('touchend', onDragEnd);
             window.addEventListener('resize', onResize);
         }
         
@@ -674,6 +748,7 @@
                     baseX: itemGroup.position.x,
                     baseY: itemGroup.position.y,
                     baseZ: itemGroup.position.z,
+                    baseScale: size,
                     rotSpeedX: 0,
                     rotSpeedY: 0,
                     floatSpeed: 0.3 + Math.random() * 0.8,
@@ -734,6 +809,51 @@
             mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
         }
         
+        function onDragStart(e) {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            velocityX = 0;
+            velocityY = 0;
+            document.body.style.cursor = 'grabbing';
+        }
+        
+        function onDragEnd() {
+            isDragging = false;
+            document.body.style.cursor = 'default';
+        }
+        
+        function onTouchStart(e) {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+                velocityX = 0;
+                velocityY = 0;
+            }
+        }
+        
+        function onTouchMove(e) {
+            if (isDragging && e.touches.length === 1) {
+                e.preventDefault();
+                var deltaX = e.touches[0].clientX - lastX;
+                var deltaY = e.touches[0].clientY - lastY;
+                
+                velocityX = deltaX * 0.01;
+                velocityY = -deltaY * 0.01;
+                
+                targetX += velocityX;
+                targetY += velocityY;
+                
+                // 限制范围
+                targetX = Math.max(-3, Math.min(3, targetX));
+                targetY = Math.max(-2, Math.min(2, targetY));
+                
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+            }
+        }
+        
         function onResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
@@ -745,24 +865,76 @@
             
             var time = Date.now() * 0.001;
             
-            // 动画漂浮物品
-            floatingItems.forEach(function(item) {
-                var data = item.userData;
-                item.rotation.x += data.rotSpeedX;
-                item.rotation.y += data.rotSpeedY;
-                item.position.y = data.baseY + Math.sin(time * data.floatSpeed + data.floatOffset) * 0.5;
-            });
-            
-            // 粒子效果
-            if (glowParticles) {
-                glowParticles.rotation.y += 0.0003;
-                glowParticles.rotation.x = Math.sin(time * 0.2) * 0.1;
+            // 鼠标/拖拽驱动的目标位置
+            if (!isDragging) {
+                // 鼠标悬停影响
+                targetX += (mouseX * 2 - targetX) * 0.05;
+                targetY += (-mouseY * 1.5 - targetY) * 0.05;
+                
+                // 添加惯性滑动
+                targetX += velocityX;
+                targetY += velocityY;
+                
+                // 阻力衰减
+                velocityX *= 0.95;
+                velocityY *= 0.95;
+                
+                // 缓慢回归中心
+                targetX *= 0.995;
+                targetY *= 0.995;
             }
             
-            // 相机轻微跟随
-            camera.position.x += (mouseX * 0.3 - camera.position.x) * 0.02;
-            camera.position.y += (-mouseY * 0.2 - camera.position.y) * 0.02;
+            // 限制范围
+            targetX = Math.max(-3, Math.min(3, targetX));
+            targetY = Math.max(-2, Math.min(2, targetY));
+            
+            // 相机跟随（增强滑动感）
+            camera.position.x += (targetX - camera.position.x) * 0.1;
+            camera.position.y += (targetY - camera.position.y) * 0.1;
+            
+            // 相机旋转（视差效果）
+            camera.rotation.y = -targetX * 0.08;
+            camera.rotation.x = targetY * 0.05;
+            
             camera.lookAt(0, 0, 0);
+            
+            // 动画漂浮物品（增强视差层次感）
+            floatingItems.forEach(function(item, index) {
+                var data = item.userData;
+                
+                // 物品本身的漂浮动画
+                var floatY = Math.sin(time * data.floatSpeed + data.floatOffset) * 0.8;
+                var floatX = Math.cos(time * data.floatSpeed * 0.7 + data.floatOffset) * 0.3;
+                
+                // 基于深度的视差效果（远处的物品跟随少）
+                var depthFactor = Math.max(0.3, 1 - (Math.abs(data.baseZ) / 25));
+                var parallaxX = targetX * depthFactor * 1.5;
+                var parallaxY = targetY * depthFactor * 1.2;
+                
+                // 拖拽滑动效果（远处的物品跟随更多）
+                var dragFactor = Math.max(0.2, 0.5 + (Math.abs(data.baseZ) / 25) * 0.5);
+                
+                item.position.x = data.baseX + floatX + parallaxX * dragFactor + (isDragging ? velocityX * 50 * dragFactor : 0);
+                item.position.y = data.baseY + floatY + parallaxY * dragFactor + (isDragging ? -velocityY * 30 * dragFactor : 0);
+                
+                // 物品轻微旋转
+                item.rotation.z = Math.sin(time * 0.5 + data.floatOffset) * 0.1;
+                
+                // 物品大小随距离变化
+                var scaleMod = 0.7 + (1 - Math.abs(data.baseZ) / 25) * 0.6;
+                item.children[0].scale.set(data.baseScale || 1, data.baseScale || 1, 1);
+            });
+            
+            // 粒子效果（跟随滑动）
+            if (glowParticles) {
+                glowParticles.rotation.y += 0.0005;
+                glowParticles.rotation.x = Math.sin(time * 0.3) * 0.15;
+                glowParticles.rotation.z = Math.cos(time * 0.2) * 0.1;
+                
+                // 粒子视差跟随
+                glowParticles.position.x = targetX * 0.3;
+                glowParticles.position.y = -targetY * 0.2;
+            }
             
             renderer.render(scene, camera);
         }
