@@ -150,17 +150,18 @@
             stroke-width: 2;
         }
 
-        /* 主场景容器 */
+        /* 主场景容器 - 只占屏幕上半部分 */
         .scene-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: calc(100vh - 250px);
             z-index: 10;
             display: flex;
             align-items: center;
             justify-content: center;
+            pointer-events: auto;
         }
 
         /* 中心麦穗容器 */
