@@ -863,6 +863,35 @@
                 scene.add(itemGroup);
                 floatingItems.push(itemGroup);
             }
+            
+            // ========== 创建中心悬浮展示区 ==========
+            var centerItems = ['👟', '📱', '💻', '🎮', '📚', '👕', '🎧', '⌚'];
+            var centerGroup = new THREE.Group();
+            
+            for (var j = 0; j < centerItems.length; j++) {
+                var emoji = centerItems[j];
+                var angle = (j / centerItems.length) * Math.PI * 2;
+                var radius = 1.8;
+                
+                var sprite = createGoodsSprite(emoji, ITEM_COLORS[j % ITEM_COLORS.length]);
+                sprite.scale.set(1.2, 1.2, 1);
+                sprite.position.x = Math.cos(angle) * radius;
+                sprite.position.y = Math.sin(angle) * radius;
+                sprite.position.z = 0;
+                
+                sprite.userData = {
+                    orbitAngle: angle,
+                    orbitRadius: radius,
+                    orbitSpeed: 0.15 + Math.random() * 0.1,
+                    selfRotation: Math.random() * Math.PI * 2,
+                    floatOffset: j * 0.5
+                };
+                
+                centerGroup.add(sprite);
+            }
+            
+            scene.add(centerGroup);
+            floatingItems.push(centerGroup);
         }
         
         function createGlowParticles() {
