@@ -1276,6 +1276,7 @@
             will-change: transform, opacity;
             backface-visibility: hidden;
             transition: transform 0.15s ease;
+            background: transparent;
         }
         #hnau-cat-box * {
             z-index: 9999 !important;
@@ -1840,10 +1841,24 @@
             window.location.href = 'user_login.html';
         };
         
-        initThree();
-        setTimeout(function() { showBubble(getGreeting()); }, 1000);
-        setTimeout(function() { doJump(); }, 2000);
-        startIdleTimer();
+        // 延迟初始化，等待DOM完全加载
+        function safeInit() {
+            var box = document.getElementById('hnau-cat-box');
+            if (!box) {
+                setTimeout(safeInit, 100);
+                return;
+            }
+            initThree();
+            setTimeout(function() { showBubble(getGreeting()); }, 1000);
+            setTimeout(function() { doJump(); }, 2000);
+            startIdleTimer();
+        }
+        
+        if (document.readyState === 'complete') {
+            safeInit();
+        } else {
+            window.addEventListener('load', safeInit);
+        }
     })();
     </script>
 </body>
