@@ -801,10 +801,21 @@
             canvas.height = 128;
             var ctx = canvas.getContext('2d');
             
-            // 发光背景
-            var hex = '#' + color.toString(16).padStart(6, '0');
+            // 发光背景 - 统一处理颜色格式
+            var hex;
+            if (typeof color === 'number') {
+                // 数字类型：转换为hex字符串
+                hex = '#' + color.toString(16).padStart(6, '0');
+            } else if (typeof color === 'string') {
+                // 字符串类型：去除可能存在的#号
+                hex = color.replace(/^#/, '');
+                hex = '#' + hex;
+            } else {
+                hex = '#ffd93d'; // 默认颜色
+            }
+            
             var gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-            gradient.addColorStop(0, hex + 'aa');
+            gradient.addColorStop(0, hex + 'cc');
             gradient.addColorStop(0.5, hex + '44');
             gradient.addColorStop(1, 'transparent');
             ctx.fillStyle = gradient;
@@ -1082,65 +1093,84 @@
             targetY = Math.max(-2, Math.min(2, targetY));
             
             // 相机跟随（增强滑动感）
-            camera.position.x += (targetX - camera.position.x) * 0.1;
-            camera.position.y += (targetY - camera.position.y) * 0.1;
-            
-            // 相机旋转（视差效果）
-            camera.rotation.y = -targetX * 0.08;
-            camera.rotation.x = targetY * 0.05;
-            
-            camera.lookAt(0, 0, 0);
+            if (camera && camera.position) {
+                camera.position.x += (targetX - camera.position.x) * 0.1;
+                camera.position.y += (targetY - camera.position.y) * 0.1;
+                
+                // 相机旋转（视差效果）
+                camera.rotation.y = -targetX * 0.08;
+                camera.rotation.x = targetY * 0.05;
+                
+                camera.lookAt(0, 0, 0);
+            }
             
             // 动画漂浮物品 - 围绕模块的环形星轨效果
-            floatingItems.forEach(function(item, index) {
-                var data = item.userData;
+            if (floatingItems && floatingItems.length > 0) {
+                floatingItems.forEach(function(item, index) {
+                    if (!item || !item.userData) return;
+                    var data = item.userData;
+                    if (!data) return;
+                    if (typeof data.orbitAngle !== 'number') data.orbitAngle = 0;
+                    if (typeof data.orbitSpeed !== 'number') data.orbitSpeed = 0.02;
+                    if (typeof data.orbitDirection !== 'number') data.orbitDirection = 1;
+                    if (typeof data.orbitRadius !== 'number') data.orbitRadius = 2;
+                    if (typeof data.ySpread !== 'number') data.ySpread = 0.1;
+                    if (typeof data.centerX !== 'number') data.centerX = 0;
+                    if (typeof data.centerY !== 'number') data.centerY = 0;
+                    if (typeof data.centerZ !== 'number') data.centerZ = 0;
+                    if (typeof data.baseScale !== 'number') data.baseScale = 1;
                 
-                // 沿轨道公转
-                data.orbitAngle += data.orbitSpeed * data.orbitDirection;
-                
-                // 计算相对中心的位置
-                var localX = Math.cos(data.orbitAngle) * data.orbitRadius;
-                var localZ = Math.sin(data.orbitAngle) * data.orbitRadius * 0.5;
-                var localY = Math.sin(data.orbitAngle * 3) * data.ySpread;
-                
-                // 加上中心位置（模块位置）
-                item.position.x = data.centerX + localX;
-                item.position.y = data.centerY + localY;
-                item.position.z = data.centerZ + localZ;
-                
-                // 物品自身旋转
-                var rotSpeed = (data.baseScale || 1) * 0.02;
-                item.rotation.z += rotSpeed;
-                if (item.children[0]) {
-                    item.children[0].rotation.z = Math.sin(time * 2 + index) * 0.2;
-                }
-                
-                // 近大远小效果（基于实际Z位置）
-                var distance = Math.abs(data.centerZ + localZ);
-                var scaleMod = Math.max(0.4, 1 - (distance / 20) * 0.5);
-                if (item.children[0]) {
-                    item.children[0].scale.set(data.baseScale * scaleMod, data.baseScale * scaleMod, 1);
-                }
-                
-                // 鼠标拖拽视差效果
-                var parallaxFactor = Math.max(0.3, 1 - (distance / 20) * 0.5);
-                item.position.x += targetX * parallaxFactor * 1.5;
-                item.position.y += targetY * parallaxFactor * 1;
-                item.position.z += targetX * parallaxFactor * 0.3;
-            });
+                    // 沿轨道公转
+                    data.orbitAngle += data.orbitSpeed * data.orbitDirection;
+                    
+                    // 计算相对中心的位置
+                    var localX = Math.cos(data.orbitAngle) * data.orbitRadius;
+                    var localZ = Math.sin(data.orbitAngle) * data.orbitRadius * 0.5;
+                    var localY = Math.sin(data.orbitAngle * 3) * data.ySpread;
+                    
+                    // 加上中心位置（模块位置）
+                    item.position.x = data.centerX + localX;
+                    item.position.y = data.centerY + localY;
+                    item.position.z = data.centerZ + localZ;
+                    
+                    // 物品自身旋转
+                    var rotSpeed = data.baseScale * 0.02;
+                    item.rotation.z += rotSpeed;
+                    if (item.children && item.children[0]) {
+                        item.children[0].rotation.z = Math.sin(time * 2 + index) * 0.2;
+                    }
+                    
+                    // 近大远小效果（基于实际Z位置）
+                    var distance = Math.abs(data.centerZ + localZ);
+                    var scaleMod = Math.max(0.4, 1 - (distance / 20) * 0.5);
+                    if (item.children && item.children[0]) {
+                        item.children[0].scale.set(data.baseScale * scaleMod, data.baseScale * scaleMod, 1);
+                    }
+                    
+                    // 鼠标拖拽视差效果
+                    var parallaxFactor = Math.max(0.3, 1 - (distance / 20) * 0.5);
+                    item.position.x += targetX * parallaxFactor * 1.5;
+                    item.position.y += targetY * parallaxFactor * 1;
+                    item.position.z += targetX * parallaxFactor * 0.3;
+                });
+            }
             
             // 粒子效果（跟随滑动）
-            if (glowParticles) {
+            if (glowParticles && glowParticles.rotation) {
                 glowParticles.rotation.y += 0.0005;
                 glowParticles.rotation.x = Math.sin(time * 0.3) * 0.15;
                 glowParticles.rotation.z = Math.cos(time * 0.2) * 0.1;
                 
                 // 粒子视差跟随
-                glowParticles.position.x = targetX * 0.3;
-                glowParticles.position.y = -targetY * 0.2;
+                if (glowParticles.position) {
+                    glowParticles.position.x = targetX * 0.3;
+                    glowParticles.position.y = -targetY * 0.2;
+                }
             }
             
-            renderer.render(scene, camera);
+            if (renderer && scene) {
+                renderer.render(scene, camera);
+            }
         }
         
         // ========== DOM 操作 ==========
@@ -1212,6 +1242,7 @@
         function dimOtherModules(activeId) {
             CONFIG.modules.forEach(function(mod) {
                 var node = document.getElementById('module-' + mod.id);
+                if (!node) return;
                 if (mod.id !== activeId) {
                     node.classList.add('dimmed');
                     node.classList.remove('active');
@@ -1225,7 +1256,9 @@
         function resetModules() {
             CONFIG.modules.forEach(function(mod) {
                 var node = document.getElementById('module-' + mod.id);
-                node.classList.remove('dimmed', 'active');
+                if (node) {
+                    node.classList.remove('dimmed', 'active');
+                }
             });
         }
         
@@ -1233,8 +1266,10 @@
             state.allAwakened = true;
             CONFIG.modules.forEach(function(mod) {
                 var node = document.getElementById('module-' + mod.id);
-                node.classList.remove('dimmed');
-                node.classList.add('active');
+                if (node) {
+                    node.classList.remove('dimmed');
+                    node.classList.add('active');
+                }
             });
             
             setTimeout(function() {
@@ -1246,6 +1281,7 @@
         // ========== 核心：物品漩涡旋转拉近效果 ==========
         function zoomAndNavigate(module, node) {
             if (state.isAnimating) return;
+            if (!node) return;
             state.isAnimating = true;
             
             var mainContainer = document.getElementById('mainContainer');
@@ -1263,7 +1299,7 @@
             
             // 其他模块变暗缩小
             document.querySelectorAll('.module-node').forEach(function(m) {
-                if (m !== node) {
+                if (m && m !== node) {
                     m.style.opacity = '0.3';
                     m.style.transform = 'scale(0.7)';
                 }
@@ -1276,12 +1312,12 @@
             // 保存物品原始数据
             var itemsData = floatingItems.map(function(item) {
                 return {
-                    x: item.position.x,
-                    y: item.position.y,
-                    z: item.position.z,
-                    rx: item.rotation.x,
-                    ry: item.rotation.y,
-                    rz: item.rotation.z
+                    x: item ? item.position.x : 0,
+                    y: item ? item.position.y : 0,
+                    z: item ? item.position.z : 0,
+                    rx: item ? item.rotation.x : 0,
+                    ry: item ? item.rotation.y : 0,
+                    rz: item ? item.rotation.z : 0
                 };
             });
             
@@ -1299,6 +1335,7 @@
                 // 物品漩涡旋转聚拢
                 floatingItems.forEach(function(item, index) {
                     var data = itemsData[index];
+                    if (!item || !data) return;
                     var delay = (index % 10) * 0.05; // 错开延迟
                     var localProgress = Math.max(0, Math.min(1, (easeProgress - delay) / (1 - delay)));
                     var easeLocal = 1 - Math.pow(1 - localProgress, 2);
@@ -1335,18 +1372,20 @@
                 
                 // 标题和底部栏淡出
                 var uiOpacity = 1 - easeProgress;
-                document.getElementById('header').style.opacity = uiOpacity;
-                document.getElementById('bottomBar').style.opacity = uiOpacity;
+                var headerEl = document.getElementById('header');
+                var bottomBarEl = document.getElementById('bottomBar');
+                if (headerEl) headerEl.style.opacity = uiOpacity;
+                if (bottomBarEl) bottomBarEl.style.opacity = uiOpacity;
                 
                 // 遮罩淡入
-                overlay.style.opacity = easeProgress * 0.5;
+                if (overlay) overlay.style.opacity = easeProgress * 0.5;
                 
                 if (progress < 1) {
                     requestAnimationFrame(animateVortex);
                 } else {
                     // 恢复物品可见性
                     floatingItems.forEach(function(item) {
-                        item.visible = true;
+                        if (item) item.visible = true;
                     });
                     window.location.href = 'explore.html';
                 }
