@@ -1024,37 +1024,30 @@
             
             camera.lookAt(0, 0, 0);
             
-            // 动画漂浮物品 - 3D星系环绕效果
+            // 动画漂浮物品（增强视差层次感）
             floatingItems.forEach(function(item, index) {
                 var data = item.userData;
                 
-                // 沿轨道公转
-                data.orbitAngle += data.orbitSpeed * data.orbitDirection;
+                // 物品本身的漂浮动画
+                var floatY = Math.sin(time * data.floatSpeed + data.floatOffset) * 0.8;
+                var floatX = Math.cos(time * data.floatSpeed * 0.7 + data.floatOffset) * 0.3;
                 
-                // 计算新位置（椭圆轨道，XZ平面椭圆，Y轴轻微波动）
-                var x = Math.cos(data.orbitAngle) * data.orbitRadius;
-                var z = Math.sin(data.orbitAngle) * data.orbitRadius * 0.4;
-                var y = Math.sin(data.orbitAngle * 2) * data.ySpread;
+                // 基于深度的视差效果（远处的物品跟随少）
+                var depthFactor = Math.max(0.3, 1 - (Math.abs(data.baseZ) / 25));
+                var parallaxX = targetX * depthFactor * 1.5;
+                var parallaxY = targetY * depthFactor * 1.2;
                 
-                item.position.x = x;
-                item.position.y = y;
-                item.position.z = z;
+                // 拖拽滑动效果（远处的物品跟随更多）
+                var dragFactor = Math.max(0.2, 0.5 + (Math.abs(data.baseZ) / 25) * 0.5);
                 
-                // 物品自身旋转（近处的旋转快，远处的慢）
-                var rotSpeed = (data.baseScale || 1) * 0.02;
-                item.rotation.z += rotSpeed;
-                item.children[0].rotation.z = Math.sin(time * 2 + index) * 0.2;
+                item.position.x = data.baseX + floatX + parallaxX * dragFactor + (isDragging ? velocityX * 50 * dragFactor : 0);
+                item.position.y = data.baseY + floatY + parallaxY * dragFactor + (isDragging ? -velocityY * 30 * dragFactor : 0);
                 
-                // 近大远小效果
-                var distance = data.orbitRadius;
-                var scaleMod = Math.max(0.3, 1 - (distance / 30));
-                item.children[0].scale.set(data.baseScale * scaleMod, data.baseScale * scaleMod, 1);
+                // 物品轻微旋转
+                item.rotation.z = Math.sin(time * 0.5 + data.floatOffset) * 0.1;
                 
-                // 鼠标拖拽视差效果（近处的跟随多，远处的跟随少）
-                var parallaxFactor = Math.max(0.2, 1 - (distance / 30) * 0.5);
-                item.position.x += targetX * parallaxFactor * 2;
-                item.position.y += targetY * parallaxFactor * 1.5;
-                item.position.z += targetX * parallaxFactor * 0.5;
+                // 物品大小随距离变化
+                item.children[0].scale.set(data.baseScale || 1, data.baseScale || 1, 1);
             });
             
             // 粒子效果（跟随滑动）
