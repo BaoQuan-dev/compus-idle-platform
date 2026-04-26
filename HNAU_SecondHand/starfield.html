@@ -1016,7 +1016,9 @@
                 item.position.x = data.baseX + floatX * 0.3 + parallaxX + dragX;
                 item.position.y = data.baseY + floatY + parallaxY + dragY;
                 
-                // 物品轻微旋转
+                // 物品自旋转（多轴旋转）
+                item.rotation.x = Math.sin(time * data.floatSpeed * 0.7 + data.floatOffset) * 0.3;
+                item.rotation.y = Math.cos(time * data.floatSpeed * 0.5 + data.floatOffset * 0.8) * 0.4;
                 item.rotation.z = Math.sin(time * data.floatSpeed + data.floatOffset) * 0.15;
             });
             
