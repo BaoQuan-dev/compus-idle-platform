@@ -1007,24 +1007,27 @@
             
             camera.lookAt(0, 0, 0);
             
-            // 动画漂浮物品（无规则上下左右浮动）
+            // 动画漂浮物品（固定范围浮动，不飘走）
             floatingItems.forEach(function(item, index) {
                 var data = item.userData;
                 
-                // 无规则浮动动画
+                // 无规则浮动动画（基于初始位置浮动，不累积位移）
                 var floatY = Math.sin(time * data.floatSpeed + data.floatOffset) * data.floatRange;
                 var floatX = Math.cos(time * data.floatSpeed * 0.6 + data.floatOffset * 1.3) * data.floatRange * 0.6;
                 
                 // 基于深度的视差效果
-                var depthFactor = Math.max(0.3, 1 - (Math.abs(item.position.z + 15) / 25));
-                var parallaxX = targetX * depthFactor * 2;
-                var parallaxY = targetY * depthFactor * 1.5;
+                var depthFactor = Math.max(0.3, 1 - (Math.abs(data.baseX - 0) / 20));
+                var parallaxX = targetX * depthFactor * 1.5;
+                var parallaxY = targetY * depthFactor * 1.2;
                 
                 // 拖拽滑动效果
-                var dragFactor = Math.max(0.2, 0.5 + (Math.abs(item.position.z + 15) / 25) * 0.5);
+                var dragFactor = Math.max(0.2, 0.5 + (Math.abs(data.baseX - 0) / 20) * 0.5);
+                var dragX = isDragging ? velocityX * 50 * dragFactor * 0.03 : 0;
+                var dragY = isDragging ? -velocityY * 30 * dragFactor * 0.03 : 0;
                 
-                item.position.x = item.position.x + floatX * 0.05 + parallaxX * 0.02 + (isDragging ? velocityX * 50 * dragFactor * 0.02 : 0);
-                item.position.y = data.baseY + floatY + parallaxY * 0.02 + (isDragging ? -velocityY * 30 * dragFactor * 0.02 : 0);
+                // 物品位置 = 初始位置 + 浮动 + 视差 + 拖拽（无累积）
+                item.position.x = data.baseX + floatX * 0.3 + parallaxX + dragX;
+                item.position.y = data.baseY + floatY + parallaxY + dragY;
                 
                 // 物品轻微旋转
                 item.rotation.z = Math.sin(time * data.floatSpeed + data.floatOffset) * 0.15;
