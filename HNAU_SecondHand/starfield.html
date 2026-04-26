@@ -68,21 +68,10 @@
             opacity: 0;
         }
         
-        /* 3D画布层级 */
-        #three-canvas {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            z-index: 0 !important;
-        }
-        
         /* 顶部标题 */
         .header {
             position: absolute;
             top: 40px;
-            z-index: 10;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
@@ -757,7 +746,7 @@
             scene = new THREE.Scene();
             
             camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 6; // 拉近相机，更容易看到物品
+            camera.position.z = 8;
             
             renderer = new THREE.WebGLRenderer({
                 canvas: document.getElementById('cosmic-canvas'),
@@ -838,13 +827,14 @@
         }
         
         function createFloatingItems() {
-            // 3D星系环绕效果 - 围绕中心模块
+            // 3D星系环绕效果 - 多层环形轨道
             var orbits = [
-                { radius: 5, count: 8, speed: 0.12, direction: 1, ySpread: 0.8, zSpread: 2 },    // 内层
-                { radius: 7, count: 10, speed: 0.1, direction: -1, ySpread: 1, zSpread: 2.5 },   // 第二层
-                { radius: 9, count: 12, speed: 0.08, direction: 1, ySpread: 1.2, zSpread: 3 },  // 第三层
-                { radius: 11, count: 14, speed: 0.06, direction: -1, ySpread: 1.5, zSpread: 3.5 },// 第四层
-                { radius: 13, count: 16, speed: 0.05, direction: 1, ySpread: 1.8, zSpread: 4 }  // 外层
+                { radius: 6, count: 8, speed: 0.08, direction: 1, ySpread: 0.3, zSpread: 2 },   // 内层 - 最快
+                { radius: 9, count: 10, speed: 0.05, direction: -1, ySpread: 0.5, zSpread: 3 }, // 第二层
+                { radius: 12, count: 12, speed: 0.03, direction: 1, ySpread: 0.8, zSpread: 4 }, // 第三层
+                { radius: 16, count: 15, speed: 0.02, direction: -1, ySpread: 1, zSpread: 5 },   // 第四层
+                { radius: 20, count: 18, speed: 0.015, direction: 1, ySpread: 1.2, zSpread: 6 }, // 外层 - 最慢
+                { radius: 25, count: 20, speed: 0.01, direction: -1, ySpread: 1.5, zSpread: 8 }  // 最外层
             ];
             
             var orbitGroup = new THREE.Group();
@@ -858,9 +848,9 @@
                     var emoji = ITEMS[Math.floor(Math.random() * ITEMS.length)];
                     var color = ITEM_COLORS[Math.floor(Math.random() * ITEM_COLORS.length)];
                     
-                    // 远近层次感：内层物品大，外层小
-                    var baseSize = 4 - (o / orbits.length) * 1.8;
-                    var size = baseSize + Math.random() * 1;
+                    // 远近层次感：外层物品更小
+                    var baseSize = 1.2 - (o / orbits.length) * 0.6;
+                    var size = baseSize + Math.random() * 0.3;
                     
                     // 创建emoji精灵
                     var sprite = createGoodsSprite(emoji, color);
@@ -893,7 +883,6 @@
                 }
             }
             
-            scene.add(itemGroup); // 添加物品组到场景
             scene.add(orbitGroup);
         }
         
@@ -1042,34 +1031,30 @@
                 // 沿轨道公转
                 data.orbitAngle += data.orbitSpeed * data.orbitDirection;
                 
-                // 计算新位置 - 真正的3D环绕
-                // XZ平面椭圆轨道，Y轴波动，Z轴有前后穿梭感
+                // 计算新位置（椭圆轨道，XZ平面椭圆，Y轴轻微波动）
                 var x = Math.cos(data.orbitAngle) * data.orbitRadius;
-                var z = Math.sin(data.orbitAngle) * data.orbitRadius * 0.6; // Z轴椭圆
-                var y = Math.sin(data.orbitAngle * 2) * data.ySpread + Math.sin(data.orbitAngle) * 0.5;
+                var z = Math.sin(data.orbitAngle) * data.orbitRadius * 0.4;
+                var y = Math.sin(data.orbitAngle * 2) * data.ySpread;
                 
                 item.position.x = x;
                 item.position.y = y;
                 item.position.z = z;
                 
-                // 物品自身旋转
-                item.rotation.z += (data.baseScale || 1) * 0.03;
-                item.children[0].rotation.z = Math.sin(time * 2 + index) * 0.3;
+                // 物品自身旋转（近处的旋转快，远处的慢）
+                var rotSpeed = (data.baseScale || 1) * 0.02;
+                item.rotation.z += rotSpeed;
+                item.children[0].rotation.z = Math.sin(time * 2 + index) * 0.2;
                 
-                // 近大远小效果 - 增强层次感
-                var distance = Math.sqrt(x * x + z * z);
-                var scaleMod = Math.max(0.4, 1.2 - (distance / 8));
+                // 近大远小效果
+                var distance = data.orbitRadius;
+                var scaleMod = Math.max(0.3, 1 - (distance / 30));
                 item.children[0].scale.set(data.baseScale * scaleMod, data.baseScale * scaleMod, 1);
                 
-                // Z轴透明度效果 - 远处半透明，近处清晰
-                var zFactor = Math.abs(z) / 8;
-                item.children[0].element.style.opacity = 0.5 + (1 - zFactor) * 0.5;
-                
                 // 鼠标拖拽视差效果（近处的跟随多，远处的跟随少）
-                var parallaxFactor = Math.max(0.2, 1 - (distance / 10) * 0.5);
-                item.position.x += targetX * parallaxFactor * 3;
-                item.position.y += targetY * parallaxFactor * 2;
-                item.position.z += targetX * parallaxFactor * 1.5;
+                var parallaxFactor = Math.max(0.2, 1 - (distance / 30) * 0.5);
+                item.position.x += targetX * parallaxFactor * 2;
+                item.position.y += targetY * parallaxFactor * 1.5;
+                item.position.z += targetX * parallaxFactor * 0.5;
             });
             
             // 粒子效果（跟随滑动）
