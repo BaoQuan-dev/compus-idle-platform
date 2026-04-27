@@ -979,8 +979,9 @@
             font-size: 15px;
             color: #555;
             white-space: nowrap;
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+            animation: bubbleWobble 2s ease-in-out infinite;
             pointer-events: none;
             font-weight: 500;
         }
@@ -1114,10 +1115,10 @@
             }
         }
         
-        /* 打字机效果气泡 */
+        /* 打字机效果气泡 - 默认显示 */
         .speech-bubble {
-            opacity: 0;
-            transform: translateX(-50%) translateY(0);
+            opacity: 1 !important;
+            transform: translateX(-50%) translateY(-5px);
             overflow: hidden;
         }
         
@@ -2301,12 +2302,31 @@
         }
         
         // 页面加载后初始化交互
+        function initCatInteraction() {
+            if (!document.querySelector('.cat-container')) {
+                // 元素还没显示，延迟再试
+                setTimeout(initCatInteraction, 500);
+                return;
+            }
+            
+            // 初始化眼睛跟随
+            initEyeFollow();
+            
+            // 启动自动效果
+            autoSpawnEffects();      // 自动喷发爱心
+            startAutoShake();        // 自动抖动
+            cycleSpeechText();       // 打字机效果 - 默认显示
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(initCatInteraction, 1200);
+            // 先显示猫组件
+            checkLoginAndShowPrompt();
+            // 延迟启动交互效果
+            setTimeout(initCatInteraction, 1500);
         });
         
         // 页面加载时检查登录状态
-        checkLoginAndShowPrompt();
+        // checkLoginAndShowPrompt(); // 已移到 DOMContentLoaded 中
         
         // 监听storage事件，登录成功后自动隐藏提示
         window.addEventListener('storage', function(e) {
