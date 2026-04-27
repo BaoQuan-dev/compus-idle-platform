@@ -23,43 +23,52 @@
             pointer-events: none;
             z-index: 0;
             overflow: hidden;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
         }
         
         .mini-star {
             position: absolute;
             background: #fff;
             border-radius: 50%;
-            opacity: 0.6;
+            opacity: 0.9;
         }
         
         .mini-star.small {
-            width: 2px;
-            height: 2px;
-            animation: twinkle 3s infinite;
+            width: 3px;
+            height: 3px;
+            animation: twinkle 2s infinite;
+            box-shadow: 0 0 4px 1px rgba(255,255,255,0.4);
         }
         
         .mini-star.medium {
-            width: 3px;
-            height: 3px;
-            animation: twinkle 2s infinite 0.5s;
+            width: 5px;
+            height: 5px;
+            animation: twinkle 1.5s infinite 0.3s;
+            box-shadow: 0 0 8px 2px rgba(255,255,255,0.5);
         }
         
         .mini-star.large {
-            width: 4px;
-            height: 4px;
-            box-shadow: 0 0 6px 2px rgba(255,255,255,0.3);
-            animation: twinkle 1.5s infinite 1s;
+            width: 8px;
+            height: 8px;
+            animation: twinkle 1s infinite 0.6s;
+            box-shadow: 0 0 12px 4px rgba(255,255,255,0.6), 0 0 20px 6px rgba(135,206,235,0.3);
         }
         
         @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); }
         }
         
         /* 确保页面内容在星空之上 */
         .page-header, .page-container, .stats-row, .donation-card, .modal, .page-content {
             position: relative;
             z-index: 1;
+        }
+        
+        /* 页面内容增加半透明背景 */
+        .page-container {
+            background: rgba(255,255,255,0.92) !important;
+            backdrop-filter: blur(10px);
         }
         
         .page-header {
@@ -599,7 +608,7 @@
         (function(){
             const layer = document.getElementById('starLayer');
             if(!layer) return;
-            const count = Math.min(80, Math.floor(window.innerWidth * window.innerHeight / 15000));
+            const count = Math.min(200, Math.floor(window.innerWidth * window.innerHeight / 5000));
             for(let i = 0; i < count; i++){
                 const star = document.createElement('div');
                 star.className = 'mini-star ' + ['small','medium','large'][Math.floor(Math.random()*3)];
