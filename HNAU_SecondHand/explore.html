@@ -404,44 +404,6 @@
             50% { transform: translateX(5px); }
         }
 
-        /* 箭头导航 */
-        .arrow-nav {
-            position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 100;
-            width: 50px;
-            height: 50px;
-            background: rgba(30, 60, 120, 0.8);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(96, 165, 250, 0.5);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
-        }
-
-        .arrow-nav:hover {
-            background: rgba(59, 130, 246, 0.9);
-            border-color: rgba(96, 165, 250, 0.8);
-            box-shadow: 0 0 30px rgba(96, 165, 250, 0.5);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .arrow-nav.prev { left: 30px; }
-        .arrow-nav.next { right: 30px; }
-
-        .arrow-nav svg {
-            width: 28px;
-            height: 28px;
-            fill: none;
-            stroke: #fff;
-            stroke-width: 2.5;
-        }
-
         /* 移动端适配 */
         @media (max-width: 768px) {
             .module-card {
@@ -707,14 +669,6 @@
         </div>
     </div>
 
-    <!-- 箭头导航 -->
-    <div class="arrow-nav prev" id="prevBtn">
-        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-    </div>
-    <div class="arrow-nav next" id="nextBtn">
-        <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-    </div>
-
     <!-- 拖拽提示 -->
     <div class="drag-hint">
         <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -831,20 +785,9 @@
             goToCard((currentIndex - 1 + totalCards) % totalCards);
         }
 
-        prevBtn.addEventListener('click', prevCard);
-        nextBtn.addEventListener('click', nextCard);
-
         // 触摸滑动
         let startX = 0;
         let isDragging = false;
-
-        // 自动播放（已移除拖拽切换）
-                const activeCard = document.querySelector('.module-card.active');
-                if (activeCard) {
-                    window.location.href = activeCard.dataset.page;
-                }
-            }
-        });
 
         // 点击卡片进入
         cards.forEach(card => {
