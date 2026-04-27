@@ -1424,8 +1424,6 @@
     <div class="video-overlay"></div>
     
     <!-- 主界面 -->
-    <!-- 漂浮商品层 -->
-    <div class="floating-layer" id="floatingLayer"></div>
     
     <div class="main-container" id="mainContainer">
         <!-- 标题 -->
@@ -1572,8 +1570,8 @@
             // 创建渐变背景
             createGradientBackground();
             
-            // 创建漂浮的闲置物品
-            createFloatingItems();
+            // 禁用漂浮商品创建
+            // // createFloatingItems(); // 已禁用
             
             // 创建发光粒子
             createGlowParticles();
@@ -1638,35 +1636,6 @@
             return new THREE.Sprite(material);
         }
         
-        function createFloatingItems() {
-            var count = 300;
-            
-            for (var i = 0; i < count; i++) {
-                var emoji = ITEMS[Math.floor(Math.random() * ITEMS.length)];
-                var color = ITEM_COLORS[Math.floor(Math.random() * ITEM_COLORS.length)];
-                
-                var size = 1.0 + Math.random() * 1.5;
-                var x = (Math.random() - 0.5) * 50;
-                var y = (Math.random() - 0.5) * 30;
-                var z = -5 - Math.random() * 15;
-                
-                var sprite = createGoodsSprite(emoji, color);
-                sprite.scale.set(size, size, 1);
-                sprite.position.set(x, y, z);
-                sprite.userData = {
-                    floatSpeed: 0.3 + Math.random() * 0.7,
-                    floatRange: 0.8 + Math.random() * 1.5,
-                    floatOffset: Math.random() * Math.PI * 2,
-                    rotateSpeed: (Math.random() - 0.5) * 0.02,
-                    baseX: x,
-                    baseY: y,
-                    baseScale: size
-                };
-                
-                scene.add(sprite);
-                floatingItems.push(sprite);
-            }
-        }
         
         function createGlowParticles() {
             var geometry = new THREE.BufferGeometry();
