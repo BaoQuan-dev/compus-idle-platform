@@ -600,6 +600,376 @@
                 font-size: 13px;
             }
         }
+        
+        /* ========== 登录提示组件 ========== */
+        .login-prompt {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            z-index: 200;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            animation: loginFloat 3s ease-in-out infinite;
+        }
+        
+        .login-prompt.show {
+            display: flex;
+        }
+        
+        @keyframes loginFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        /* 猫咪容器 */
+        .cat-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .cat-container:hover {
+            transform: scale(1.1);
+        }
+        
+        /* 猫咪身体 */
+        .cat-body {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 100px;
+            background: linear-gradient(135deg, #FFB347 0%, #FF8C00 100%);
+            border-radius: 60px 60px 50px 50px;
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.4);
+            animation: catBreathe 2s ease-in-out infinite;
+        }
+        
+        @keyframes catBreathe {
+            0%, 100% { transform: translateX(-50%) scaleY(1); }
+            50% { transform: translateX(-50%) scaleY(1.05); }
+        }
+        
+        /* 猫咪头 */
+        .cat-head {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 90px;
+            background: linear-gradient(135deg, #FFB347 0%, #FFA500 100%);
+            border-radius: 50%;
+            box-shadow: 0 5px 20px rgba(255, 140, 0, 0.3);
+        }
+        
+        /* 猫咪耳朵 */
+        .cat-ear {
+            position: absolute;
+            top: -15px;
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-bottom: 30px solid #FFB347;
+        }
+        
+        .cat-ear.left { left: 5px; transform: rotate(-15deg); }
+        .cat-ear.right { right: 5px; transform: rotate(15deg); }
+        
+        .cat-ear::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: -8px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 18px solid #FF6B6B;
+        }
+        
+        /* 猫咪眼睛 */
+        .cat-eyes {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 25px;
+        }
+        
+        .cat-eye {
+            width: 22px;
+            height: 28px;
+            background: #333;
+            border-radius: 50%;
+            position: relative;
+            animation: catBlink 4s ease-in-out infinite;
+        }
+        
+        .cat-eye::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        
+        @keyframes catBlink {
+            0%, 45%, 55%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.1); }
+        }
+        
+        /* 猫咪鼻子 */
+        .cat-nose {
+            position: absolute;
+            top: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 10px;
+            background: #FF6B6B;
+            border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
+        }
+        
+        /* 猫咪嘴巴 */
+        .cat-mouth {
+            position: absolute;
+            top: 62px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 10px;
+            border-bottom: 3px solid #333;
+            border-radius: 0 0 50% 50%;
+        }
+        
+        /* 猫咪胡须 */
+        .cat-whiskers {
+            position: absolute;
+            top: 55px;
+            width: 100%;
+        }
+        
+        .whisker {
+            position: absolute;
+            width: 30px;
+            height: 2px;
+            background: #333;
+            border-radius: 2px;
+        }
+        
+        .whisker.left-1 { left: -5px; top: 0; transform: rotate(-10deg); }
+        .whisker.left-2 { left: -8px; top: 8px; transform: rotate(0deg); }
+        .whisker.left-3 { left: -5px; top: 16px; transform: rotate(10deg); }
+        .whisker.right-1 { right: -5px; top: 0; transform: rotate(10deg); }
+        .whisker.right-2 { right: -8px; top: 8px; transform: rotate(0deg); }
+        .whisker.right-3 { right: -5px; top: 16px; transform: rotate(-10deg); }
+        
+        /* 猫咪腮红 */
+        .cat-blush {
+            position: absolute;
+            top: 50px;
+            width: 18px;
+            height: 10px;
+            background: rgba(255, 150, 150, 0.5);
+            border-radius: 50%;
+        }
+        
+        .cat-blush.left { left: 12px; }
+        .cat-blush.right { right: 12px; }
+        
+        /* 猫咪尾巴 */
+        .cat-tail {
+            position: absolute;
+            bottom: 20px;
+            right: -20px;
+            width: 60px;
+            height: 20px;
+            background: linear-gradient(90deg, #FF8C00, #FFB347);
+            border-radius: 20px;
+            transform-origin: left center;
+            animation: tailWag 1s ease-in-out infinite;
+        }
+        
+        @keyframes tailWag {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(20deg); }
+        }
+        
+        /* 猫咪爪子 */
+        .cat-paws {
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+        }
+        
+        .cat-paw {
+            width: 25px;
+            height: 15px;
+            background: #FFB347;
+            border-radius: 50%;
+        }
+        
+        /* 提示气泡 */
+        .speech-bubble {
+            position: absolute;
+            bottom: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+            font-size: 14px;
+            color: #333;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 12px solid white;
+        }
+        
+        .cat-container:hover .speech-bubble {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+        
+        /* 登录按钮 */
+        .login-btn {
+            margin-top: 15px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            animation: btnPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes btnPulse {
+            0%, 100% { box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+            50% { box-shadow: 0 5px 30px rgba(102, 126, 234, 0.6); }
+        }
+        
+        .login-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
+        }
+        
+        /* 科技装饰 */
+        .tech-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 180px;
+            border: 2px dashed rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            animation: ringRotate 10s linear infinite;
+        }
+        
+        .tech-ring::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: #667eea;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #667eea;
+        }
+        
+        @keyframes ringRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        /* 浮动粒子 */
+        .cat-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: particleFloat 3s ease-in-out infinite;
+        }
+        
+        .cat-particle:nth-child(1) { top: 10px; left: 10px; animation-delay: 0s; }
+        .cat-particle:nth-child(2) { top: 10px; right: 10px; animation-delay: 0.5s; }
+        .cat-particle:nth-child(3) { bottom: 10px; left: 10px; animation-delay: 1s; }
+        .cat-particle:nth-child(4) { bottom: 10px; right: 10px; animation-delay: 1.5s; }
+        
+        @keyframes particleFloat {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .login-prompt {
+                top: 80px;
+                right: 15px;
+            }
+            
+            .cat-container {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .cat-body {
+                width: 80px;
+                height: 65px;
+            }
+            
+            .cat-head {
+                bottom: 45px;
+                width: 65px;
+                height: 60px;
+            }
+            
+            .cat-eye {
+                width: 14px;
+                height: 18px;
+            }
+            
+            .login-btn {
+                padding: 10px 20px;
+                font-size: 13px;
+            }
+            
+            .speech-bubble {
+                font-size: 12px;
+                padding: 10px 15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -608,6 +978,70 @@
     
     <!-- 返回按钮 -->
     <button class="back-btn" id="backBtn" onclick="goBack()">← 返回首页</button>
+    
+    <!-- 登录提示组件 - 可爱的橘猫 -->
+    <div class="login-prompt" id="loginPrompt">
+        <div class="cat-container" onclick="goToLogin()">
+            <!-- 科技装饰环 -->
+            <div class="tech-ring"></div>
+            
+            <!-- 浮动粒子 -->
+            <div class="cat-particle"></div>
+            <div class="cat-particle"></div>
+            <div class="cat-particle"></div>
+            <div class="cat-particle"></div>
+            
+            <!-- 猫咪身体 -->
+            <div class="cat-body">
+                <div class="cat-tail"></div>
+                <div class="cat-paws">
+                    <div class="cat-paw"></div>
+                    <div class="cat-paw"></div>
+                </div>
+            </div>
+            
+            <!-- 猫咪头部 -->
+            <div class="cat-head">
+                <!-- 耳朵 -->
+                <div class="cat-ear left"></div>
+                <div class="cat-ear right"></div>
+                
+                <!-- 眼睛 -->
+                <div class="cat-eyes">
+                    <div class="cat-eye"></div>
+                    <div class="cat-eye"></div>
+                </div>
+                
+                <!-- 鼻子和嘴巴 -->
+                <div class="cat-nose"></div>
+                <div class="cat-mouth"></div>
+                
+                <!-- 腮红 -->
+                <div class="cat-blush left"></div>
+                <div class="cat-blush right"></div>
+                
+                <!-- 胡须 -->
+                <div class="cat-whiskers">
+                    <div class="whisker left-1"></div>
+                    <div class="whisker left-2"></div>
+                    <div class="whisker left-3"></div>
+                    <div class="whisker right-1"></div>
+                    <div class="whisker right-2"></div>
+                    <div class="whisker right-3"></div>
+                </div>
+            </div>
+            
+            <!-- 提示气泡 -->
+            <div class="speech-bubble">
+                👋 登录后享受更多功能！
+            </div>
+        </div>
+        
+        <!-- 登录按钮 -->
+        <button class="login-btn" onclick="goToLogin()">
+            🔐 立即登录
+        </button>
+    </div>
     
     <!-- Three.js Canvas 包装器 -->
     <div id="canvas-wrapper" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; transform-style: preserve-3d;">
@@ -1271,6 +1705,42 @@
         }
         
         init();
+        
+        // ========== 登录状态检查 ==========
+        function checkLoginAndShowPrompt() {
+            // 检查是否已登录（通过localStorage中的用户信息）
+            var isLoggedIn = localStorage.getItem('hnau_login_info') || 
+                            localStorage.getItem('hnau_user_info') ||
+                            localStorage.getItem('hnau_verify_info');
+            
+            var loginPrompt = document.getElementById('loginPrompt');
+            
+            if (!isLoggedIn) {
+                // 未登录，显示登录提示组件
+                setTimeout(function() {
+                    loginPrompt.classList.add('visible');
+                }, 800);
+            } else {
+                // 已登录，隐藏登录提示组件
+                loginPrompt.classList.remove('visible');
+            }
+        }
+        
+        function goToLogin() {
+            window.location.href = 'user_login.html';
+        }
+        
+        // 页面加载时检查登录状态
+        checkLoginAndShowPrompt();
+        
+        // 监听storage事件，登录成功后自动隐藏提示
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'hnau_login_info' || 
+                e.key === 'hnau_user_info' || 
+                e.key === 'hnau_verify_info') {
+                checkLoginAndShowPrompt();
+            }
+        });
     </script>
 </body>
 </html>
