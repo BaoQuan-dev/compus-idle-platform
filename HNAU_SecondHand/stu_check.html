@@ -3,123 +3,554 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="河南农业大学校园认证">
     <title>校园认证 - 农大闲置</title>
     <link rel="stylesheet" href="./style/main.css">
+    <style>
+        /* ========== 星空背景 ========== */
+        body { position: relative; }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: url('./images/bg-starry.jpg') center center / cover no-repeat;
+        }
+        
+        /* ========== 校园认证 - 星空玻璃拟态风格 ========== */
+        
+        .page-header {
+            background: transparent;
+            padding: calc(var(--nav-height, 64px) + 24px) 20px 0;
+            text-align: left;
+        }
+        
+        .page-header h1 {
+            margin: 0 0 8px 0;
+            font-size: 26px;
+            font-weight: 700;
+            background: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .page-header p {
+            margin: 0;
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+        }
+        
+        .page-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 24px 16px 100px;
+        }
+        
+        /* ========== 状态卡片 ========== */
+        .status-card {
+            background: transparent;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            padding: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .status-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+        
+        .status-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            background: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .status-desc {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            margin: 0 0 20px 0;
+            line-height: 1.6;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .status-badge.pending {
+            background: rgba(251,191,36,0.15);
+            border: 1px solid rgba(251,191,36,0.3);
+            color: #fbbf24;
+        }
+        
+        .status-badge.approved {
+            background: rgba(52,211,153,0.15);
+            border: 1px solid rgba(52,211,153,0.3);
+            color: #34d399;
+        }
+        
+        .status-badge.rejected {
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: #ef4444;
+        }
+        
+        /* ========== 信息卡片 ========== */
+        .info-card {
+            background: transparent;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .info-card h3 {
+            margin: 0 0 20px 0;
+            font-size: 16px;
+            font-weight: 600;
+            background: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .info-item:first-of-type {
+            padding-top: 0;
+        }
+        
+        .info-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .info-value {
+            font-size: 14px;
+            font-weight: 500;
+            background: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* ========== 表单卡片 ========== */
+        .form-card {
+            background: transparent;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .form-card h3 {
+            margin: 0 0 20px 0;
+            font-size: 16px;
+            font-weight: 600;
+            background: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            background: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .form-label::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #60A5FA, #C084FC);
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            font-size: 15px;
+            color: #fff;
+            outline: none;
+            transition: all 0.25s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-input:focus,
+        .form-select:focus {
+            border-color: rgba(96,165,250,0.5);
+            background: rgba(255,255,255,0.12);
+            box-shadow: 0 0 20px rgba(96,165,250,0.15);
+        }
+        
+        .form-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.6)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+        
+        .form-select option {
+            background: #1a1a2e;
+            color: #fff;
+        }
+        
+        /* ========== 图片上传 ========== */
+        .id-upload-area {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .id-upload-item {
+            flex: 1;
+            min-width: 140px;
+            height: 100px;
+            background: rgba(255,255,255,0.05);
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .id-upload-item:hover {
+            border-color: rgba(96,165,250,0.5);
+            background: rgba(96,165,250,0.1);
+        }
+        
+        .id-upload-item.has-image {
+            border-style: solid;
+            border-color: rgba(96,165,250,0.3);
+        }
+        
+        .id-upload-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .id-upload-icon {
+            font-size: 28px;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 4px;
+        }
+        
+        .id-upload-text {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .id-upload-remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            background: rgba(239,68,68,0.8);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .id-upload-item:hover .id-upload-remove {
+            display: flex;
+        }
+        
+        /* ========== 提交按钮 ========== */
+        .submit-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: transparent;
+            border: 1px solid rgba(96,165,250,0.5);
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+        
+        .submit-btn:hover {
+            background: rgba(96,165,250,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(96,165,250,0.3);
+        }
+        
+        /* ========== 优势卡片 ========== */
+        .benefits-card {
+            background: transparent;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(52,211,153,0.25);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .benefits-card h4 {
+            margin: 0 0 16px 0;
+            font-size: 14px;
+            background: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .benefits-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .benefit-icon {
+            font-size: 18px;
+        }
+        
+        /* ========== 隐私提示 ========== */
+        .privacy-tip {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            text-align: center;
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+    </style>
 </head>
-<body style="background: transparent;">
-    <div class="cosmos-bg">
-        <div class="cosmos-stars"></div>
-        <div class="cosmos-nebula"></div>
-    </div>
-    <!-- 导航栏 -->
+<body>
+    <!-- 顶部导航 -->
     <nav class="navbar">
-        <div class="navbar-container">
-            <!-- Logo -->
-            <a href="starfield.html" class="navbar-brand">
-                <img src="./images/logo.png" alt="农大闲置" class="navbar-logo" onerror="this.style.display='none'">
-                <span>🌟 农大闲置</span>
-            </a>
-
-            <!-- 导航菜单（PC端） -->
-            <ul class="navbar-menu">
-                <li class="navbar-menu-item">
-                    <a href="starfield.html" class="navbar-menu-link">首页</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="javascript:void(0)" class="navbar-menu-link" id="releaseBtn">发布闲置</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="stu_check.html" class="navbar-menu-link active">校园认证</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="user_center.html" class="navbar-menu-link">个人中心</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="carbon_ai.html" class="navbar-menu-link">🤖 碳足迹AI助手</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="donation_list.html" class="navbar-menu-link">🌟 公益转赠通道</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="demand_board.html" class="navbar-menu-link">📋 需求公告板</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="manage_admin.html" class="navbar-menu-link">管理员</a>
-                </li>
-            </ul>
-
-            <!-- 用户操作 -->
-            <div class="navbar-actions">
-                <!-- JS渲染 -->
-            </div>
-
-            <!-- 汉堡菜单按钮（移动端） -->
-            <button class="navbar-hamburger" aria-label="菜单">
-                <span class="navbar-hamburger-line"></span>
-                <span class="navbar-hamburger-line"></span>
-                <span class="navbar-hamburger-line"></span>
-            </button>
+        <div class="navbar-brand">
+            <span class="navbar-logo">🌟</span>
+            <span>🌟 农大闲置</span>
         </div>
-
-        <!-- 移动端菜单 -->
-        <div class="navbar-mobile-menu">
-            <a href="starfield.html" class="navbar-mobile-menu-item">首页</a>
-            <a href="javascript:void(0)" class="navbar-mobile-menu-item" id="mobileReleaseBtn">发布闲置</a>
-            <a href="stu_check.html" class="navbar-mobile-menu-item active">校园认证</a>
-            <a href="user_center.html" class="navbar-mobile-menu-item">个人中心</a>
-            <a href="carbon_ai.html" class="navbar-mobile-menu-item">🤖 碳足迹AI助手</a>
-            <a href="donation_list.html" class="navbar-mobile-menu-item">🌟 公益转赠通道</a>
-            <a href="manage_admin.html" class="navbar-mobile-menu-item">管理员</a>
-            <div class="navbar-mobile-actions">
-                <!-- JS渲染 -->
-            </div>
+        <div class="navbar-menu">
+            <a href="home.html" class="navbar-menu-link">首页</a>
+            <a href="release_goods.html" class="navbar-menu-link">📦 发布闲置</a>
+            <a href="demand_board.html" class="navbar-menu-link">💫 需求</a>
+            <a href="carbon_ai.html" class="navbar-menu-link">🤖 AI助手</a>
+            <a href="donation_list.html" class="navbar-menu-link">🌟 公益</a>
+            <a href="user_center.html" class="navbar-menu-link">👤 个人中心</a>
         </div>
-
-        <!-- 遮罩层 -->
-        <div class="navbar-overlay"></div>
     </nav>
 
-    <!-- 主内容区域 -->
-    <main class="main-content">
-        <!-- 页面标题 -->
-        <div class="page-header">
-            <div class="container">
-                <h1>🎓 校园认证</h1>
-                <p>完成认证后即可发布闲置商品</p>
+    <!-- 页面标题 -->
+    <div class="page-header">
+        <h1>校园身份认证</h1>
+        <p>认证学生身份，解锁更多功能与服务</p>
+    </div>
+
+    <!-- 主内容 -->
+    <div class="page-container">
+        <!-- 认证优势 -->
+        <div class="benefits-card">
+            <h4>认证会员专属权益</h4>
+            <div class="benefits-list">
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>发布闲置物品</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>参与公益转赠</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>发布求购需求</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>信任度更高</span>
+                </div>
             </div>
         </div>
 
-        <!-- 认证内容区 -->
-        <section class="container" style="padding-top: 30px; padding-bottom: 30px;">
-            <div id="checkContent">
-                <!-- JS渲染 -->
-            </div>
-        </section>
-    </main>
-
-    <!-- 页脚 -->
-    <footer class="footer">
-        <div class="container">
-            <p class="footer-text">🌟 河南农业大学·星空校园闲置循环平台 | 践行双碳目标，共建星空校园</p>
+        <!-- 当前状态 -->
+        <div class="status-card">
+            <div class="status-icon">🎓</div>
+            <h3 class="status-title">未认证</h3>
+            <p class="status-desc">完成校园身份认证，解锁全部功能</p>
+            <span class="status-badge pending">等待认证</span>
         </div>
-    </footer>
 
-    <!-- 脚本 -->
-    <script src="./script/common.js"></script>
-    <script src="./script/check.js"></script>
+        <!-- 认证表单 -->
+        <div class="form-card">
+            <h3>填写认证信息</h3>
+            
+            <!-- 姓名 -->
+            <div class="form-group">
+                <label class="form-label">真实姓名</label>
+                <input type="text" class="form-input" placeholder="请输入您的真实姓名" maxlength="20">
+            </div>
+            
+            <!-- 学号 -->
+            <div class="form-group">
+                <label class="form-label">学号</label>
+                <input type="text" class="form-input" placeholder="请输入您的学号" maxlength="20">
+            </div>
+            
+            <!-- 学院 -->
+            <div class="form-group">
+                <label class="form-label">所属学院</label>
+                <select class="form-select">
+                    <option value="">请选择学院</option>
+                    <option value="农学院">🌾 农学院</option>
+                    <option value="林学院">🌲 林学院</option>
+                    <option value="畜牧兽医学院">🐄 畜牧兽医学院</option>
+                    <option value="机电工程学院">⚙️ 机电工程学院</option>
+                    <option value="经济与管理学院">📊 经济与管理学院</option>
+                    <option value="食品科学技术学院">🍎 食品科学技术学院</option>
+                    <option value="资源与环境学院">🌍 资源与环境学院</option>
+                    <option value="信息与管理科学学院">💻 信息与管理科学学院</option>
+                    <option value="生命科学学院">🧬 生命科学学院</option>
+                    <option value="外国语学院">🌍 外国语学院</option>
+                    <option value="其他">📦 其他</option>
+                </select>
+            </div>
+            
+            <!-- 年级 -->
+            <div class="form-group">
+                <label class="form-label">年级</label>
+                <select class="form-select">
+                    <option value="">请选择年级</option>
+                    <option value="2024">🎒 2024级</option>
+                    <option value="2023">🎒 2023级</option>
+                    <option value="2022">🎒 2022级</option>
+                    <option value="2021">🎒 2021级</option>
+                    <option value="2020">🎒 2020级</option>
+                    <option value="研究生">🎓 研究生</option>
+                </select>
+            </div>
+            
+            <!-- 证件照上传 -->
+            <div class="form-group">
+                <label class="form-label">学生证/校园卡照片</label>
+                <div class="id-upload-area">
+                    <div class="id-upload-item" onclick="document.getElementById('idPhoto').click()">
+                        <span class="id-upload-icon">📷</span>
+                        <span class="id-upload-text">点击上传</span>
+                        <button class="id-upload-remove" onclick="removeIdPhoto(event)">×</button>
+                    </div>
+                    <input type="file" id="idPhoto" accept="image/*" style="display:none" onchange="previewIdPhoto(this)">
+                </div>
+            </div>
+            
+            <!-- 提交按钮 -->
+            <button type="button" class="submit-btn" onclick="submitCertification()">
+                🚀 提交认证
+            </button>
+            
+            <p class="privacy-tip">您的信息仅用于身份验证，我们将严格保护您的隐私安全</p>
+        </div>
+    </div>
+
     <script>
-        // 移动端发布按钮
-        document.addEventListener('DOMContentLoaded', function() {
-            var mobileReleaseBtn = document.getElementById('mobileReleaseBtn');
-            if (mobileReleaseBtn) {
-                mobileReleaseBtn.addEventListener('click', function() {
-                    Auth.requireReleasePermission(function() {
-                        Utils.跳转('release_goods.html');
-                    });
-                });
+        function previewIdPhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const item = input.parentElement;
+                    item.classList.add('has-image');
+                    item.innerHTML = `
+                        <img src="${e.target.result}" alt="证件照">
+                        <button class="id-upload-remove" onclick="removeIdPhoto(event)">×</button>
+                    `;
+                };
+                reader.readAsDataURL(input.files[0]);
             }
-        });
+        }
+        
+        function removeIdPhoto(event) {
+            event.stopPropagation();
+            const item = event.target.parentElement;
+            item.classList.remove('has-image');
+            item.innerHTML = `
+                <span class="id-upload-icon">📷</span>
+                <span class="id-upload-text">点击上传</span>
+                <button class="id-upload-remove" onclick="removeIdPhoto(event)">×</button>
+            `;
+            document.getElementById('idPhoto').value = '';
+        }
+        
+        function submitCertification() {
+            alert('认证功能开发中...');
+        }
     </script>
 </body>
 </html>

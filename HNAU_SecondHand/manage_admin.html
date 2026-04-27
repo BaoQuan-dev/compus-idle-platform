@@ -2,22 +2,10 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="河南农业大学管理员后台">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理员后台 - 农大闲置</title>
     <link rel="stylesheet" href="./style/main.css">
-    <link rel="stylesheet" href="./css/mobile.css">
     <style>
-        /* ========== 内嵌星空背景 ========== */
-        body { position: relative; }
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-            background: url('./images/bg-starry.jpg') center center / cover no-repeat;
-        }
         /* ========== 星空背景 ========== */
         body { position: relative; }
         body::before {
@@ -28,399 +16,661 @@
             z-index: -1;
             background: url('./images/bg-starry.jpg') center center / cover no-repeat;
         }
-        /* 通知面板样式 */
-        .notification-badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background: #dc3545;
-            color: white;
-            font-size: 10px;
-            min-width: 18px;
-            height: 18px;
-            border-radius: 9px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
+        
+        /* ========== 管理员后台 - 星空玻璃拟态风格 ========== */
+        
+        .page-header {
+            background: transparent;
+            padding: calc(var(--nav-height, 64px) + 24px) 20px 0;
+            text-align: left;
         }
-        .notification-panel {
-            position: fixed;
-            top: 60px;
-            right: 16px;
-            width: 360px;
-            max-height: 480px;
-            background: var(--card-bg);
+        
+        .page-header h1 {
+            margin: 0 0 8px 0;
+            font-size: 26px;
+            font-weight: 700;
+            background: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .page-header p {
+            margin: 0;
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+        }
+        
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 16px 100px;
+        }
+        
+        /* ========== 统计卡片 ========== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .stat-card {
+            background: transparent;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.12);
             border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            z-index: 1001;
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
         }
-        .notification-panel.show {
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(96,165,250,0.3);
+        }
+        
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            background: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        /* ========== 标签页 ========== */
+        .tabs-container {
+            margin-bottom: 20px;
+        }
+        
+        .tabs-header {
             display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
         }
-        .notification-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border-color);
+        
+        .tab-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        
+        .tab-btn.active {
+            background: rgba(96,165,250,0.2);
+            border-color: rgba(96,165,250,0.4);
+            color: #60a5fa;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* ========== 数据表格 ========== */
+        .data-card {
+            background: transparent;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .data-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
         }
-        .notification-header h3 {
-            margin: 0;
+        
+        .data-title {
             font-size: 16px;
+            font-weight: 600;
+            background: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .notification-list {
-            flex: 1;
-            overflow-y: auto;
-            max-height: 400px;
+        
+        .data-actions {
+            display: flex;
+            gap: 8px;
         }
-        .notification-item {
-            padding: 14px 20px;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .notification-item:hover {
-            background: var(--hover-bg);
-        }
-        .notification-item.unread {
-            background: rgba(37, 166, 73, 0.05);
-        }
-        .notification-item.unread::before {
-            content: '';
-            position: absolute;
-            left: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 8px;
-            height: 8px;
-            background: #25a649;
-            border-radius: 50%;
-        }
-        .notification-item {
-            position: relative;
-        }
-        .notification-icon {
-            font-size: 20px;
-            margin-right: 12px;
-        }
-        .notification-content {
-            flex: 1;
-        }
-        .notification-title {
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 4px;
-        }
-        .notification-text {
+        
+        .data-btn {
+            padding: 6px 12px;
+            background: rgba(96,165,250,0.15);
+            border: 1px solid rgba(96,165,250,0.25);
+            border-radius: 6px;
+            color: #60a5fa;
             font-size: 12px;
-            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.25s ease;
         }
-        .notification-time {
+        
+        .data-btn:hover {
+            background: rgba(96,165,250,0.3);
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 14px 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .data-table th {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .data-table td {
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .data-table tr:hover td {
+            background: rgba(255,255,255,0.03);
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* ========== 状态标签 ========== */
+        .status-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
             font-size: 11px;
-            color: var(--text-hint);
-            margin-top: 4px;
+            font-weight: 600;
         }
-        .notification-empty {
-            padding: 60px 20px;
-            text-align: center;
-            color: var(--text-hint);
+        
+        .status-tag.pending {
+            background: rgba(251,191,36,0.15);
+            color: #fbbf24;
         }
-        .notification-empty-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
+        
+        .status-tag.approved {
+            background: rgba(52,211,153,0.15);
+            color: #34d399;
         }
-        .notification-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.3);
-            z-index: 1000;
-            display: none;
+        
+        .status-tag.rejected {
+            background: rgba(239,68,68,0.15);
+            color: #ef4444;
         }
-        .notification-overlay.show {
-            display: block;
+        
+        .status-tag.active {
+            background: rgba(96,165,250,0.15);
+            color: #60a5fa;
+        }
+        
+        /* ========== 操作按钮 ========== */
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: none;
+        }
+        
+        .action-btn.approve {
+            background: rgba(52,211,153,0.15);
+            color: #34d399;
+        }
+        
+        .action-btn.approve:hover {
+            background: rgba(52,211,153,0.3);
+        }
+        
+        .action-btn.reject {
+            background: rgba(239,68,68,0.15);
+            color: #ef4444;
+        }
+        
+        .action-btn.reject:hover {
+            background: rgba(239,68,68,0.3);
+        }
+        
+        .action-btn.view {
+            background: rgba(96,165,250,0.15);
+            color: #60a5fa;
+        }
+        
+        .action-btn.view:hover {
+            background: rgba(96,165,250,0.3);
+        }
+        
+        /* ========== 分页 ========== */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 20px;
+        }
+        
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        
+        .page-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        
+        .page-btn.active {
+            background: rgba(96,165,250,0.2);
+            border-color: rgba(96,165,250,0.4);
+            color: #60a5fa;
+        }
+        
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        /* ========== 搜索栏 ========== */
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            font-size: 14px;
+            color: #fff;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+        
+        .search-input:focus {
+            border-color: rgba(96,165,250,0.5);
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .search-btn {
+            padding: 12px 24px;
+            background: rgba(96,165,250,0.15);
+            border: 1px solid rgba(96,165,250,0.25);
+            border-radius: 12px;
+            color: #60a5fa;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        
+        .search-btn:hover {
+            background: rgba(96,165,250,0.3);
         }
     </style>
 </head>
-<body style="background: transparent;">
-    <div class="cosmos-bg">
-        <div class="cosmos-stars"></div>
-        <div class="cosmos-nebula"></div>
-    </div>
-    <!-- 导航栏 -->
+<body>
+    <!-- 顶部导航 -->
     <nav class="navbar">
-        <div class="navbar-container">
-            <!-- Logo -->
-            <a href="starfield.html" class="navbar-brand">
-                <img src="./images/logo.png" alt="农大闲置" class="navbar-logo" onerror="this.style.display='none'">
-                <span>🌟 农大闲置</span>
-            </a>
-
-            <!-- 导航菜单（PC端） -->
-            <ul class="navbar-menu">
-                <li class="navbar-menu-item">
-                    <a href="starfield.html" class="navbar-menu-link">首页</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="javascript:void(0)" class="navbar-menu-link" id="releaseBtn">发布闲置</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="stu_check.html" class="navbar-menu-link">校园认证</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="user_center.html" class="navbar-menu-link">个人中心</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="carbon_ai.html" class="navbar-menu-link">🤖 碳足迹AI助手</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="donation_list.html" class="navbar-menu-link">🌟 公益转赠通道</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="manage_admin.html" class="navbar-menu-link active">管理员</a>
-                </li>
-            </ul>
-
-            <!-- 用户操作 -->
-            <div class="navbar-actions">
-                <!-- 主题切换按钮 -->
-                <button class="header-btn" id="themeToggleBtn" title="切换主题" style="background: rgba(255,255,255,0.2); border: none; cursor: pointer;">
-                    🌞
-                </button>
-                <!-- 通知按钮 -->
-                <button class="header-btn" id="notificationBtn" title="消息通知" style="background: rgba(255,255,255,0.2); border: none; cursor: pointer; position: relative;">
-                    🔔
-                    <span class="notification-badge" id="notificationBadge">0</span>
-                </button>
-            </div>
-
-            <!-- 汉堡菜单按钮（移动端） -->
-            <button class="navbar-hamburger" aria-label="菜单">
-                <span class="navbar-hamburger-line"></span>
-                <span class="navbar-hamburger-line"></span>
-                <span class="navbar-hamburger-line"></span>
-            </button>
+        <div class="navbar-brand">
+            <span class="navbar-logo">🌟</span>
+            <span>🌟 农大闲置</span>
         </div>
-
-        <!-- 移动端菜单 -->
-        <div class="navbar-mobile-menu">
-            <a href="starfield.html" class="navbar-mobile-menu-item">首页</a>
-            <a href="javascript:void(0)" class="navbar-mobile-menu-item" id="mobileReleaseBtn">发布闲置</a>
-            <a href="stu_check.html" class="navbar-mobile-menu-item">校园认证</a>
-            <a href="user_center.html" class="navbar-mobile-menu-item">个人中心</a>
-            <a href="carbon_ai.html" class="navbar-mobile-menu-item">🤖 碳足迹AI助手</a>
-            <a href="donation_list.html" class="navbar-mobile-menu-item">🌟 公益转赠通道</a>
-            <a href="manage_admin.html" class="navbar-mobile-menu-item active">管理员</a>
-            <div class="navbar-mobile-actions">
-                <!-- JS渲染 -->
-            </div>
+        <div class="navbar-menu">
+            <a href="home.html" class="navbar-menu-link">首页</a>
+            <a href="release_goods.html" class="navbar-menu-link">📦 发布闲置</a>
+            <a href="demand_board.html" class="navbar-menu-link">💫 需求</a>
+            <a href="carbon_ai.html" class="navbar-menu-link">🤖 AI助手</a>
+            <a href="donation_list.html" class="navbar-menu-link">🌟 公益</a>
+            <a href="user_center.html" class="navbar-menu-link">👤 个人中心</a>
         </div>
-
-        <!-- 遮罩层 -->
-        <div class="navbar-overlay"></div>
     </nav>
 
-    <!-- 通知面板遮罩 -->
-    <div class="notification-overlay" id="notificationOverlay"></div>
-    
-    <!-- 通知面板 -->
-    <div class="notification-panel" id="notificationPanel">
-        <div class="notification-header">
-            <h3>📬 消息通知</h3>
-            <div>
-                <button class="btn-link" id="markAllReadBtn" style="background: none; border: none; color: #25a649; cursor: pointer; font-size: 13px;">全部已读</button>
-                <button class="btn-link" id="clearAllBtn" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 13px; margin-left: 12px;">清空</button>
+    <!-- 页面标题 -->
+    <div class="page-header">
+        <h1>管理员后台</h1>
+        <p>管理平台数据与用户认证审核</p>
+    </div>
+
+    <!-- 主内容 -->
+    <div class="page-container">
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-value">128</div>
+                <div class="stat-label">闲置物品</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value">56</div>
+                <div class="stat-label">认证用户</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-value">12</div>
+                <div class="stat-label">待审核</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎁</div>
+                <div class="stat-value">34</div>
+                <div class="stat-label">公益转赠</div>
             </div>
         </div>
-        <div class="notification-list" id="notificationList">
-            <div class="notification-empty">
-                <div class="notification-empty-icon">📭</div>
-                <p>暂无消息通知</p>
+
+        <!-- 标签页 -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="switchTab('users')">👥 用户管理</button>
+                <button class="tab-btn" onclick="switchTab('goods')">📦 物品管理</button>
+                <button class="tab-btn" onclick="switchTab('certifications')">🎓 认证审核</button>
+                <button class="tab-btn" onclick="switchTab('donations')">🎁 公益审核</button>
+            </div>
+
+            <!-- 用户管理 -->
+            <div id="tab-users" class="tab-content active">
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="搜索用户名、学号...">
+                    <button class="search-btn">🔍 搜索</button>
+                </div>
+                
+                <div class="data-card">
+                    <div class="data-header">
+                        <span class="data-title">用户列表</span>
+                        <div class="data-actions">
+                            <button class="data-btn">📊 导出数据</button>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>用户ID</th>
+                                <th>用户名</th>
+                                <th>学号</th>
+                                <th>学院</th>
+                                <th>认证状态</th>
+                                <th>注册时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#1001</td>
+                                <td>张同学</td>
+                                <td>2022010123</td>
+                                <td>农学院</td>
+                                <td><span class="status-tag approved">已认证</span></td>
+                                <td>2024-01-15</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn view">查看</button>
+                                        <button class="action-btn reject">禁用</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#1002</td>
+                                <td>李同学</td>
+                                <td>2022010234</td>
+                                <td>机电学院</td>
+                                <td><span class="status-tag approved">已认证</span></td>
+                                <td>2024-01-16</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn view">查看</button>
+                                        <button class="action-btn reject">禁用</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#1003</td>
+                                <td>王同学</td>
+                                <td>2023010456</td>
+                                <td>经管学院</td>
+                                <td><span class="status-tag pending">待审核</span></td>
+                                <td>2024-01-18</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn view">查看</button>
+                                        <button class="action-btn approve">审核</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <button class="page-btn" disabled>‹</button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn">›</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 物品管理 -->
+            <div id="tab-goods" class="tab-content">
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="搜索物品名称...">
+                    <button class="search-btn">🔍 搜索</button>
+                </div>
+                
+                <div class="data-card">
+                    <div class="data-header">
+                        <span class="data-title">物品列表</span>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>物品ID</th>
+                                <th>物品名称</th>
+                                <th>分类</th>
+                                <th>价格</th>
+                                <th>发布者</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#G001</td>
+                                <td>高数教材</td>
+                                <td>图书教材</td>
+                                <td>¥25</td>
+                                <td>张同学</td>
+                                <td><span class="status-tag active">在售</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn view">查看</button>
+                                        <button class="action-btn reject">下架</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#G002</td>
+                                <td>无线耳机</td>
+                                <td>数码电子</td>
+                                <td>¥120</td>
+                                <td>李同学</td>
+                                <td><span class="status-tag active">在售</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn view">查看</button>
+                                        <button class="action-btn reject">下架</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 认证审核 -->
+            <div id="tab-certifications" class="tab-content">
+                <div class="data-card">
+                    <div class="data-header">
+                        <span class="data-title">待审核认证申请</span>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>申请ID</th>
+                                <th>姓名</th>
+                                <th>学号</th>
+                                <th>学院</th>
+                                <th>提交时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#C001</td>
+                                <td>王同学</td>
+                                <td>2023010456</td>
+                                <td>经管学院</td>
+                                <td>2024-01-18 10:30</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn view">查看</button>
+                                        <button class="action-btn approve">通过</button>
+                                        <button class="action-btn reject">拒绝</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#C002</td>
+                                <td>赵同学</td>
+                                <td>2024010789</td>
+                                <td>林学院</td>
+                                <td>2024-01-18 14:20</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn view">查看</button>
+                                        <button class="action-btn approve">通过</button>
+                                        <button class="action-btn reject">拒绝</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 公益审核 -->
+            <div id="tab-donations" class="tab-content">
+                <div class="data-card">
+                    <div class="data-header">
+                        <span class="data-title">待审核公益捐赠</span>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>捐赠ID</th>
+                                <th>物品名称</th>
+                                <th>捐赠者</th>
+                                <th>类型</th>
+                                <th>提交时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#D001</td>
+                                <td>冬季衣物</td>
+                                <td>张同学</td>
+                                <td><span class="status-tag">物品捐赠</span></td>
+                                <td>2024-01-17 09:15</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn view">查看</button>
+                                        <button class="action-btn approve">通过</button>
+                                        <button class="action-btn reject">拒绝</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-    
-    <!-- 主内容区域 -->
-    <main class="main-content">
-        <!-- 页面标题 -->
-        <div class="page-header">
-            <div class="container">
-                <h1>⚙️ 管理员后台</h1>
-                <p>管理用户认证和商品审核</p>
-            </div>
-        </div>
 
-        <!-- 数据可视化区域 -->
-        <section class="container" style="padding-top: 20px;">
-            <div id="chartContainer"></div>
-        </section>
-
-        <!-- 管理员内容区 -->
-        <section class="container" style="padding-top: 20px; padding-bottom: 30px;">
-            <div id="adminContent">
-                <!-- JS渲染 -->
-            </div>
-        </section>
-    </main>
-
-    <!-- 页脚 -->
-    <footer class="footer">
-        <div class="container">
-            <p class="footer-text">🌟 河南农业大学·星空校园闲置循环平台 | 践行双碳目标，共建星空校园</p>
-        </div>
-    </footer>
-
-    <!-- 脚本 -->
-    <script src="./script/common.js"></script>
-    <script src="./script/theme.js"></script>
-    <script src="./script/notification.js"></script>
-    <script src="./script/visualization.js"></script>
-    <script src="./script/admin.js"></script>
     <script>
-        // 页面初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 移动端发布按钮
-            var mobileReleaseBtn = document.getElementById('mobileReleaseBtn');
-            if (mobileReleaseBtn) {
-                mobileReleaseBtn.addEventListener('click', function() {
-                    Auth.requireReleasePermission(function() {
-                        Utils.跳转('release_goods.html');
-                    });
-                });
-            }
+        function switchTab(tabName) {
+            // 移除所有active
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
-            // 初始化主题
-            ThemeManager.init();
-            
-            // 初始化通知系统
-            initNotificationSystem();
-            
-            // 初始化数据可视化
-            setTimeout(function() {
-                DataVisualization.init('chartContainer');
-            }, 100);
-        });
-        
-        // 通知系统初始化
-        function initNotificationSystem() {
-            var notificationBtn = document.getElementById('notificationBtn');
-            var notificationPanel = document.getElementById('notificationPanel');
-            var notificationOverlay = document.getElementById('notificationOverlay');
-            var markAllReadBtn = document.getElementById('markAllReadBtn');
-            var clearAllBtn = document.getElementById('clearAllBtn');
-            
-            // 显示/隐藏通知面板
-            if (notificationBtn) {
-                notificationBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    var isShow = notificationPanel.classList.contains('show');
-                    notificationPanel.classList.toggle('show');
-                    notificationOverlay.classList.toggle('show');
-                    if (!isShow) {
-                        renderNotificationList();
-                    }
-                });
-            }
-            
-            // 点击遮罩关闭
-            if (notificationOverlay) {
-                notificationOverlay.addEventListener('click', function() {
-                    notificationPanel.classList.remove('show');
-                    notificationOverlay.classList.remove('show');
-                });
-            }
-            
-            // 全部已读
-            if (markAllReadBtn) {
-                markAllReadBtn.addEventListener('click', function() {
-                    NotificationSystem.markAllAsRead();
-                    renderNotificationList();
-                });
-            }
-            
-            // 清空全部
-            if (clearAllBtn) {
-                clearAllBtn.addEventListener('click', function() {
-                    NotificationSystem.clearAll();
-                    renderNotificationList();
-                });
-            }
-            
-            // 更新红点
-            NotificationSystem.updateBadge();
-            
-            // 监听消息变化
-            window.addEventListener('notificationschange', function() {
-                NotificationSystem.updateBadge();
-                if (notificationPanel.classList.contains('show')) {
-                    renderNotificationList();
-                }
-            });
-        }
-        
-        // 渲染通知列表
-        function renderNotificationList() {
-            var notificationList = document.getElementById('notificationList');
-            if (!notificationList) return;
-            
-            var data = NotificationSystem.getList(1, 20);
-            
-            if (data.list.length === 0) {
-                notificationList.innerHTML = `
-                    <div class="notification-empty">
-                        <div class="notification-empty-icon">📭</div>
-                        <p>暂无消息通知</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            var html = '';
-            data.list.forEach(function(item) {
-                var typeConfig = NotificationSystem.types[item.type] || NotificationSystem.types.system;
-                var timeAgo = formatTimeAgo(item.timestamp);
-                
-                html += `
-                    <div class="notification-item ${item.read ? '' : 'unread'}" data-id="${item.id}">
-                        <span class="notification-icon">${typeConfig.icon}</span>
-                        <div class="notification-content">
-                            <div class="notification-title">${item.title}</div>
-                            <div class="notification-text">${item.content}</div>
-                            <div class="notification-time">${timeAgo}</div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            notificationList.innerHTML = html;
-            
-            // 绑定点击事件
-            notificationList.querySelectorAll('.notification-item').forEach(function(el) {
-                el.addEventListener('click', function() {
-                    var id = this.dataset.id;
-                    NotificationSystem.markAsRead(id);
-                    this.classList.remove('unread');
-                });
-            });
-        }
-        
-        // 格式化时间
-        function formatTimeAgo(timestamp) {
-            var date = new Date(timestamp);
-            var now = new Date();
-            var diff = Math.floor((now - date) / 1000);
-            
-            if (diff < 60) return '刚刚';
-            if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
-            if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
-            if (diff < 604800) return Math.floor(diff / 86400) + '天前';
-            return date.toLocaleDateString();
+            // 添加active到当前
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
         }
     </script>
 </body>
