@@ -2683,3 +2683,139 @@ input:focus, textarea:focus, select:focus {
     transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
+
+/* ============================================
+   全局星空背景强制覆盖样式
+   ============================================ */
+
+/* 强制星空背景 */
+html, body {
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f23 100%) !important;
+    min-height: 100vh;
+}
+
+/* 星空粒子效果 - 大密度星星 */
+body::before {
+    content: "";
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-image:
+        /* 第一层 - 小星星 */
+        radial-gradient(1px 1px at 10px 20px, rgba(255,255,255,0.9), transparent),
+        radial-gradient(1px 1px at 30px 60px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 50px 100px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1px 1px at 70px 40px, rgba(255,255,255,0.95), transparent),
+        radial-gradient(1px 1px at 90px 80px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 110px 120px, rgba(255,255,255,0.85), transparent),
+        radial-gradient(1px 1px at 130px 20px, rgba(255,255,255,0.75), transparent),
+        radial-gradient(1px 1px at 150px 60px, rgba(255,255,255,0.9), transparent),
+        radial-gradient(1px 1px at 170px 100px, rgba(255,255,255,0.65), transparent),
+        radial-gradient(1px 1px at 190px 140px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 210px 30px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1px 1px at 230px 70px, rgba(255,255,255,0.95), transparent),
+        radial-gradient(1px 1px at 250px 110px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 270px 50px, rgba(255,255,255,0.85), transparent),
+        radial-gradient(1px 1px at 290px 90px, rgba(255,255,255,0.75), transparent),
+        radial-gradient(1px 1px at 310px 130px, rgba(255,255,255,0.9), transparent),
+        radial-gradient(1px 1px at 330px 20px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1px 1px at 350px 60px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 370px 100px, rgba(255,255,255,0.65), transparent),
+        radial-gradient(1px 1px at 390px 140px, rgba(255,255,255,0.95), transparent),
+        /* 第二层 - 中等星星 */
+        radial-gradient(2px 2px at 20px 30px, rgba(200,220,255,0.9), transparent),
+        radial-gradient(2px 2px at 80px 70px, rgba(200,220,255,0.8), transparent),
+        radial-gradient(2px 2px at 140px 50px, rgba(200,220,255,0.95), transparent),
+        radial-gradient(2px 2px at 200px 90px, rgba(200,220,255,0.7), transparent),
+        radial-gradient(2px 2px at 260px 30px, rgba(200,220,255,0.85), transparent),
+        radial-gradient(2px 2px at 320px 110px, rgba(200,220,255,0.75), transparent),
+        radial-gradient(2px 2px at 380px 60px, rgba(200,220,255,0.9), transparent),
+        radial-gradient(2px 2px at 440px 100px, rgba(200,220,255,0.8), transparent),
+        /* 第三层 - 大星星（亮点） */
+        radial-gradient(3px 3px at 100px 150px, rgba(255,255,255,1), transparent),
+        radial-gradient(3px 3px at 250px 50px, rgba(255,255,255,1), transparent),
+        radial-gradient(3px 3px at 400px 120px, rgba(200,230,255,1), transparent),
+        radial-gradient(3px 3px at 50px 180px, rgba(255,255,255,1), transparent),
+        radial-gradient(3px 3px at 300px 80px, rgba(255,255,255,1), transparent);
+    background-repeat: repeat !important;
+    background-size: 500px 200px !important;
+    z-index: -1 !important;
+    pointer-events: none !important;
+    animation: starTwinkle 3s ease-in-out infinite !important;
+}
+
+@keyframes starTwinkle {
+    0%, 100% { opacity: 0.8 !important; transform: scale(1); }
+    50% { opacity: 1 !important; transform: scale(1.02); }
+}
+
+/* 强制深色背景元素 */
+.container, .main-content, .content, .page-content,
+.card, .panel, .box, .form-container, .login-box,
+.header, .footer, .sidebar, .wrapper, .inner,
+.main, .page-main, .content-wrapper, .app-container {
+    background: rgba(15, 15, 30, 0.9) !important;
+    backdrop-filter: blur(15px) !important;
+}
+
+/* 强制深色按钮 */
+.btn, .button, button, input[type="submit"],
+.btn-primary, .btn-secondary, .btn-success {
+    background: rgba(30, 30, 60, 0.95) !important;
+    border: 1px solid rgba(100, 150, 255, 0.4) !important;
+    color: #fff !important;
+    box-shadow: 0 0 15px rgba(100, 150, 255, 0.2) !important;
+}
+
+.btn:hover, .button:hover, button:hover,
+input[type="submit"]:hover {
+    background: rgba(50, 50, 100, 0.95) !important;
+    box-shadow: 0 0 25px rgba(100, 150, 255, 0.4) !important;
+}
+
+/* 强制深色输入框 */
+input, textarea, select, .form-input {
+    background: rgba(20, 20, 45, 0.95) !important;
+    border: 1px solid rgba(100, 150, 255, 0.3) !important;
+    color: #fff !important;
+}
+
+input:focus, textarea:focus, select:focus,
+.form-input:focus {
+    border-color: rgba(100, 150, 255, 0.6) !important;
+    box-shadow: 0 0 15px rgba(100, 150, 255, 0.3) !important;
+}
+
+/* 强制深色表格 */
+table, tr, td, th, .table, .table-row, .table-cell {
+    background: rgba(15, 15, 30, 0.9) !important;
+    color: #fff !important;
+    border-color: rgba(100, 150, 255, 0.2) !important;
+}
+
+/* 强制深色下拉框 */
+select option {
+    background: #1a1a2e !important;
+    color: #fff !important;
+}
+
+/* 强制白色文字 */
+h1, h2, h3, h4, h5, h6, p, span, div, label,
+a, li, td, th {
+    color: #fff !important;
+}
+
+/* 次要文字用半透明白 */
+.text-muted, .text-secondary, .muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* 强制覆盖任何白色背景 */
+*[style*="background: white"],
+*[style*="background:#fff"],
+*[style*="background: #fff"],
+*[style*="background:white"] {
+    background: rgba(15, 15, 30, 0.95) !important;
+}
