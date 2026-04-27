@@ -86,16 +86,16 @@ body::after {
 
 /* ========== CSS变量定义 ========== */
 :root {
-    /* 品牌色 - 环保绿色主题 */
-    --primary-color: #10B981;
-    --primary-dark: #059669;
-    --primary-light: #34D399;
-    --primary-lighter: #A7F3D0;
-    --accent-color: #F59E0B;
+    /* 品牌色 - 星空科技风格 */
+    --primary-color: #60A5FA;
+    --primary-dark: #3B82F6;
+    --primary-light: #93C5FD;
+    --primary-lighter: #BFDBFE;
+    --accent-color: #C084FC;
     
     /* 主色调渐变 */
-    --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-    --gradient-hero: linear-gradient(135deg, #064E3B 0%, #047857 50%, #059669 100%);
+    --gradient-primary: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+    --gradient-hero: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 50%, #3B82F6 100%);
     
     /* 星空主题背景 */
     --gradient-card: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
@@ -107,7 +107,7 @@ body::after {
     --bg-card: rgba(255,255,255,0.06);
     --border-color: rgba(255,255,255,0.1);
     --border-light: rgba(255,255,255,0.05);
-    --border-focus: #10B981;
+    --border-focus: #60A5FA;
 
     /* 文字颜色 - 适配深色背景 */
     --text-primary: #FFFFFF;
@@ -116,8 +116,8 @@ body::after {
     --text-white: #FFFFFF;
 
     /* 状态色 - 更鲜明的配色 */
-    --success-color: #10B981;
-    --success-light: #D1FAE5;
+    --success-color: #60A5FA;
+    --success-light: #DBEAFE;
     --error-color: #EF4444;
     --error-light: #FEE2E2;
     --warning-color: #F59E0B;
@@ -131,7 +131,7 @@ body::after {
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.25);
+    --shadow-glow: 0 0 20px rgba(96, 165, 250, 0.25);
     --shadow-card-hover: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
 
     /* 圆角 - 更现代的圆角系统 */
@@ -224,7 +224,7 @@ body {
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
     z-index: 1000;
-    border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+    border-bottom: 1px solid rgba(96, 165, 250, 0.2);
     overflow: visible;
 }
 
@@ -253,7 +253,7 @@ body {
 .navbar-brand:hover {
     color: var(--primary-color);
     transform: translateX(2px);
-    text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+    text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
 }
 
 .navbar-logo {
@@ -296,13 +296,13 @@ body {
 
 .navbar-menu-link:hover {
     color: var(--primary-light);
-    background-color: rgba(16, 185, 129, 0.15);
+    background-color: rgba(96, 165, 250, 0.15);
 }
 
 .navbar-menu-link.active {
     color: var(--primary-light);
     font-weight: 600;
-    background-color: rgba(16, 185, 129, 0.2);
+    background-color: rgba(96, 165, 250, 0.2);
 }
 
 .navbar-menu-link.active::after {
@@ -458,7 +458,7 @@ body {
     transition: transform var(--transition-normal);
     z-index: 999;
     overflow-y: auto;
-    border-top: 1px solid rgba(16, 185, 129, 0.2);
+    border-top: 1px solid rgba(96, 165, 250, 0.2);
 }
 
 .navbar-mobile-menu.show {
@@ -556,13 +556,13 @@ body {
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     padding: var(--spacing-xl);
     margin-bottom: var(--spacing-xl);
-    border: 1px solid rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(96, 165, 250, 0.15);
     transition: all var(--transition-normal);
 }
 
 .card:hover {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    border-color: rgba(16, 185, 129, 0.3);
+    border-color: rgba(96, 165, 250, 0.3);
     transform: translateY(-2px);
 }
 
@@ -584,8 +584,8 @@ body {
 
 /* 卡片变体 */
 .card-bordered {
-    border: 2px solid rgba(16, 185, 129, 0.3);
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+    border: 2px solid rgba(96, 165, 250, 0.3);
+    box-shadow: 0 0 20px rgba(96, 165, 250, 0.1);
 }
 
 .card-elevated {
@@ -594,7 +594,7 @@ body {
 
 .card-flat {
     box-shadow: none;
-    border: 1px solid rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(96, 165, 250, 0.15);
 }
 
 /* ========== 按钮组件 ========== */
@@ -636,17 +636,17 @@ body {
 .btn-primary {
     background: var(--gradient-primary);
     color: var(--text-white);
-    box-shadow: 0 2px 12px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 2px 12px rgba(96, 165, 250, 0.4);
 }
 
 .btn-primary:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(16, 185, 129, 0.5);
+    box-shadow: 0 6px 24px rgba(96, 165, 250, 0.5);
 }
 
 .btn-primary:active:not(:disabled) {
     transform: translateY(0);
-    box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 2px 10px rgba(96, 165, 250, 0.4);
 }
 
 .btn-secondary {
@@ -656,22 +656,22 @@ body {
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background: rgba(16, 185, 129, 0.2);
+    background: rgba(96, 165, 250, 0.2);
     border-color: var(--primary-color);
     color: var(--primary-light);
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 4px 16px rgba(96, 165, 250, 0.2);
 }
 
 .btn-success {
     background: var(--gradient-primary);
     color: var(--text-white);
-    box-shadow: 0 2px 12px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 2px 12px rgba(96, 165, 250, 0.4);
 }
 
 .btn-success:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(16, 185, 129, 0.5);
+    box-shadow: 0 6px 24px rgba(96, 165, 250, 0.5);
 }
 
 .btn-danger {
@@ -698,16 +698,16 @@ body {
 
 .btn-outline {
     background: transparent;
-    border: 2px solid rgba(16, 185, 129, 0.4);
+    border: 2px solid rgba(96, 165, 250, 0.4);
     color: var(--primary-light);
 }
 
 .btn-outline:hover:not(:disabled) {
     border-color: var(--primary-color);
     color: var(--primary-light);
-    background: rgba(16, 185, 129, 0.1);
+    background: rgba(96, 165, 250, 0.1);
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 4px 16px rgba(96, 165, 250, 0.2);
 }
 
 .btn-ghost {
@@ -716,7 +716,7 @@ body {
 }
 
 .btn-ghost:hover:not(:disabled) {
-    background: rgba(16, 185, 129, 0.15);
+    background: rgba(96, 165, 250, 0.15);
     color: var(--primary-light);
 }
 
@@ -825,14 +825,14 @@ body {
 .form-input:hover,
 .form-select:hover,
 .form-textarea:hover {
-    border-color: rgba(16, 185, 129, 0.4);
+    border-color: rgba(96, 165, 250, 0.4);
 }
 
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
     background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -847,7 +847,7 @@ body {
 .form-select.success,
 .form-textarea.success {
     border-color: var(--success-color);
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.15);
 }
 
 .form-input::placeholder,
@@ -2506,7 +2506,7 @@ body {
         padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
         transform: translateX(100%) !important;
         transition: transform 0.3s ease !important;
-        border-top: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border-top: 1px solid rgba(96, 165, 250, 0.2) !important;
     }
     
     .navbar-mobile-menu.show {
@@ -2523,7 +2523,7 @@ body {
     line-height: 1.4 !important;
     font-size: 16px !important;
     color: rgba(255, 255, 255, 0.85) !important;
-    -webkit-tap-highlight-color: rgba(16, 185, 129, 0.1) !important;
+    -webkit-tap-highlight-color: rgba(96, 165, 250, 0.1) !important;
     /* 确保足够大的点击区域 */
     margin: 0 !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -2532,7 +2532,7 @@ body {
 /* 移动端菜单项点击效果 */
 .navbar-mobile-menu a:active,
 .navbar-mobile-menu-item:active {
-    background-color: rgba(16, 185, 129, 0.15) !important;
+    background-color: rgba(96, 165, 250, 0.15) !important;
     color: var(--primary-light) !important;
 }
 
