@@ -790,31 +790,6 @@
             96% { transform: scaleY(0.1); }
         }
         
-        /* 爱心眼睛状态 */
-        .cat-container.love-eyes .cat-eye {
-            background: transparent !important;
-            animation: none !important;
-        }
-        
-        .cat-container.love-eyes .cat-eye::before {
-            content: '💕';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 28px;
-            animation: heartBeat 0.5s ease-in-out infinite;
-        }
-        
-        .cat-container.love-eyes .cat-eye::after {
-            display: none;
-        }
-        
-        @keyframes heartBeat {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.2); }
-        }
-        
         /* 猫咪鼻子 - 小三角 - 粉色 */
         .cat-nose {
             position: absolute;
@@ -940,8 +915,7 @@
             50% { transform: rotate(8deg); }
         }
         
-        .cat-container:hover .cat-tail,
-        .cat-container.love-eyes .cat-tail {
+        .cat-container:hover .cat-tail {
             animation: tailWagFast 0.6s ease-in-out infinite;
         }
         
@@ -1072,34 +1046,8 @@
         
         /* ========== 增强交互样式 ========== */
         
-        /* 爱心眼状态 */
-        .cat-container.love-eyes .cat-eye {
-            background: transparent !important;
-            animation: none !important;
-        }
-        
-        .cat-container.love-eyes .cat-eye::before {
-            content: '💕';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 26px;
-            animation: heartBeat 0.4s ease-in-out infinite;
-        }
-        
-        .cat-container.love-eyes .cat-eye::after {
-            display: none;
-        }
-        
-        @keyframes heartBeat {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.2); }
-        }
-        
         /* 害羞脸红加强 */
-        .cat-container:hover .cat-blush,
-        .cat-container.love-eyes .cat-blush {
+        .cat-container:hover .cat-blush {
             background: rgba(255, 100, 100, 0.7);
             width: 22px;
             height: 14px;
@@ -1270,7 +1218,6 @@
         }
         
         /* 尾巴兴奋摇动 */
-        .cat-container.love-eyes .cat-tail,
         .cat-container:hover .cat-tail {
             animation: tailWagFast 0.3s ease-in-out infinite;
         }
@@ -1415,7 +1362,7 @@
         
         <!-- 登录按钮 -->
         <button class="login-btn" onclick="goToLogin()">
-            🔐 立即登录
+            立即登录
         </button>
     </div>
     
@@ -2110,10 +2057,10 @@
         
         // 打字机效果文字
         const speechTexts = [
-            '👋 登录后享受更多功能！',
-            '🐱 快来领养我吧~',
-            '✨ 注册成为校园用户',
-            '🎁 新用户有好礼相送'
+            '喵~',
+            '你好呀~',
+            '一起玩吧~',
+            '摸摸我~'
         ];
         let currentTextIndex = 0;
         let isTyping = false;
@@ -2203,21 +2150,6 @@
                     effect.remove();
                 }, 1300);
             }, 1500); // 更频繁喷发
-        }
-        
-        // 自动爱心眼效果
-        let loveEyesInterval;
-        function startLoveEyes() {
-            const catContainer = document.querySelector('.cat-container');
-            if (!catContainer) return;
-            
-            // 每隔几秒自动爱心眼，更频繁
-            loveEyesInterval = setInterval(() => {
-                catContainer.classList.add('love-eyes');
-                setTimeout(() => {
-                    catContainer.classList.remove('love-eyes');
-                }, 1500);
-            }, 3000);
         }
         
         // 自动抖动
@@ -2343,7 +2275,6 @@
             
             // 启动自动效果
             autoSpawnEffects();      // 自动喷发爱心
-            startLoveEyes();         // 自动爱心眼
             startAutoShake();        // 自动抖动
             cycleSpeechText();       // 打字机效果
             
