@@ -15,7 +15,7 @@
         .page-header {
             background: linear-gradient(135deg, #1e40af, #2563eb);
             color: #fff;
-            padding: 24px 20px;
+            padding: calc(var(--nav-height, 64px) + 20px) 20px 24px;
         }
         
         .page-header h1 {
@@ -547,7 +547,7 @@
         <div class="navbar-container">
             <a href="starfield.html" class="navbar-brand">
                 <img src="./images/logo.png" alt="农大闲置" class="navbar-logo" onerror="this.style.display='none'">
-                <span>🌱 农大闲置</span>
+                <span>🌟 农大闲置</span>
             </a>
             <ul class="navbar-menu">
                 <li class="navbar-menu-item">
@@ -566,7 +566,7 @@
                     <a href="carbon_ai.html" class="navbar-menu-link">🤖 碳足迹AI助手</a>
                 </li>
                 <li class="navbar-menu-item">
-                    <a href="donation_list.html" class="navbar-menu-link active">🌱 公益转赠通道</a>
+                    <a href="donation_list.html" class="navbar-menu-link active">🌟 公益转赠通道</a>
                 </li>
                 <li class="navbar-menu-item">
                     <a href="demand_board.html" class="navbar-menu-link">📋 需求公告板</a>
@@ -583,7 +583,7 @@
             <a href="stu_check.html" class="navbar-mobile-menu-item">校园认证</a>
             <a href="user_center.html" class="navbar-mobile-menu-item">个人中心</a>
             <a href="carbon_ai.html" class="navbar-mobile-menu-item">🤖 碳足迹AI助手</a>
-            <a href="donation_list.html" class="navbar-mobile-menu-item active">🌱 公益转赠通道</a>
+            <a href="donation_list.html" class="navbar-mobile-menu-item active">🌟 公益转赠通道</a>
             <a href="demand_board.html" class="navbar-mobile-menu-item">📋 需求公告板</a>
             <a href="manage_admin.html" class="navbar-mobile-menu-item">管理员</a>
         </div>
@@ -591,7 +591,7 @@
     
     <!-- 页面头部 -->
     <div class="page-header">
-        <h1>🌱 公益转赠通道</h1>
+        <h1>🌟 公益转赠通道</h1>
         <p>让爱心传递，让闲置继续发光</p>
     </div>
     
@@ -636,7 +636,7 @@
         
         <!-- 空状态 -->
         <div class="empty-state" id="emptyState" style="display: none;">
-            <div class="empty-icon">🌱</div>
+            <div class="empty-icon">🌟</div>
             <div class="empty-text">暂无转赠物品</div>
             <button class="publish-btn" onclick="window.location.href='donation_publish.html'">
                 <span>+</span>
@@ -678,7 +678,7 @@
                     </div>
                 </div>
                 <div class="detail-action-area">
-                    <button class="apply-btn" id="applyBtn">🌱 申请接收</button>
+                    <button class="apply-btn" id="applyBtn">🌟 申请接收</button>
                 </div>
             </div>
         </div>
@@ -687,7 +687,7 @@
     <!-- 申请弹窗 -->
     <div class="apply-modal" id="applyModal">
         <div class="apply-content">
-            <div class="apply-title">🌱 申请接收转赠</div>
+            <div class="apply-title">🌟 申请接收转赠</div>
             <textarea class="apply-input" id="applyReason" rows="4" placeholder="请简单说明您需要这件物品的原因，以及打算如何使用~"></textarea>
             <div class="apply-btns">
                 <button class="apply-btn-cancel" id="applyCancel">取消</button>
@@ -971,7 +971,7 @@
                 applyBtn.textContent = '↻ 重新申请';
                 applyBtn.disabled = false;
             } else {
-                applyBtn.textContent = '🌱 申请接收';
+                applyBtn.textContent = '🌟 申请接收';
                 applyBtn.disabled = false;
             }
             
@@ -1005,7 +1005,7 @@
             detailModal.classList.remove('active');
             
             // 提示发布者确认
-            alert('申请已提交！\n\n请等待发布者确认，确认后转赠完成。\n\n感谢您的爱心！🌱');
+            alert('申请已提交！\n\n请等待发布者确认，确认后转赠完成。\n\n感谢您的爱心！🌟');
             
             updateStats();
             renderList(document.querySelector('.filter-tab.active').dataset.filter);

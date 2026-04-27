@@ -517,10 +517,11 @@ body {
 .page-header {
     background: var(--gradient-hero);
     color: var(--text-white);
-    padding: var(--spacing-3xl) 0;
+    padding: calc(var(--nav-height) + 24px) 0 24px;
     text-align: center;
     position: relative;
     overflow: hidden;
+    margin-top: 0;
 }
 
 .page-header::before {
@@ -2052,7 +2053,7 @@ body {
     
     
     .page-header {
-        padding: var(--spacing-lg) 0;
+        padding: calc(var(--nav-height, 64px) + 16px) 0 16px;
     }
 
     .page-header h1 {
