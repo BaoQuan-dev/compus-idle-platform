@@ -1443,7 +1443,7 @@
         var mouseX = 0, mouseY = 0;
         var targetX = 0, targetY = 0;
         var velocityX = 0, velocityY = 0;
-        var isDragging = false;
+        var catDragging = false;
         var lastX = 0, lastY = 0;
         var dragSensitivity = 3;
         var returnSpeed = 0.08;
@@ -1612,7 +1612,7 @@
         }
         
         function onDragStart(e) {
-            isDragging = true;
+            catDragging = true;
             lastX = e.clientX;
             lastY = e.clientY;
             velocityX = 0;
@@ -1621,13 +1621,13 @@
         }
         
         function onDragEnd() {
-            isDragging = false;
+            catDragging = false;
             document.body.style.cursor = 'default';
         }
         
         function onTouchStart(e) {
             if (e.touches.length === 1) {
-                isDragging = true;
+                catDragging = true;
                 lastX = e.touches[0].clientX;
                 lastY = e.touches[0].clientY;
                 velocityX = 0;
@@ -1636,7 +1636,7 @@
         }
         
         function onTouchMove(e) {
-            if (isDragging && e.touches.length === 1) {
+            if (catDragging && e.touches.length === 1) {
                 e.preventDefault();
                 var deltaX = e.touches[0].clientX - lastX;
                 var deltaY = e.touches[0].clientY - lastY;
@@ -1668,7 +1668,7 @@
             var time = Date.now() * 0.001;
             
             // 鼠标/拖拽驱动的目标位置
-            if (!isDragging) {
+            if (!catDragging) {
                 // 鼠标悬停影响
                 targetX += (mouseX * 2 - targetX) * 0.05;
                 targetY += (-mouseY * 1.5 - targetY) * 0.05;
@@ -1715,8 +1715,8 @@
                 
                 // 拖拽滑动效果
                 var dragFactor = Math.max(0.2, 0.5 + (Math.abs(data.baseX - 0) / 20) * 0.5);
-                var dragX = isDragging ? velocityX * 50 * dragFactor * 0.03 : 0;
-                var dragY = isDragging ? -velocityY * 30 * dragFactor * 0.03 : 0;
+                var dragX = catDragging ? velocityX * 50 * dragFactor * 0.03 : 0;
+                var dragY = catDragging ? -velocityY * 30 * dragFactor * 0.03 : 0;
                 
                 // 物品位置 = 初始位置 + 浮动 + 视差 + 拖拽（无累积）
                 item.position.x = data.baseX + floatX * 0.3 + parallaxX + dragX;
@@ -2135,7 +2135,6 @@
         }
         
         // ========== 拖动功能 ==========
-        let isDragging = false;
         let dragOffsetX = 0;
         let dragOffsetY = 0;
         let loginPrompt = null;
@@ -2150,7 +2149,7 @@
             // 鼠标拖动
             catContainer.addEventListener('mousedown', function(e) {
                 if (e.target.closest('.login-btn')) return;
-                isDragging = true;
+                catDragging = true;
                 loginPrompt.style.cursor = 'grabbing';
                 
                 const rect = loginPrompt.getBoundingClientRect();
@@ -2162,7 +2161,7 @@
             });
             
             document.addEventListener('mousemove', function(e) {
-                if (!isDragging) return;
+                if (!catDragging) return;
                 
                 const x = e.clientX - dragOffsetX;
                 const y = e.clientY - dragOffsetY;
@@ -2178,8 +2177,8 @@
             });
             
             document.addEventListener('mouseup', function() {
-                if (isDragging) {
-                    isDragging = false;
+                if (catDragging) {
+                    catDragging = false;
                     if (loginPrompt) {
                         loginPrompt.style.cursor = 'pointer';
                     }
@@ -2189,7 +2188,7 @@
             // 触摸拖动
             catContainer.addEventListener('touchstart', function(e) {
                 if (e.target.closest('.login-btn')) return;
-                isDragging = true;
+                catDragging = true;
                 
                 const touch = e.touches[0];
                 const rect = loginPrompt.getBoundingClientRect();
@@ -2201,7 +2200,7 @@
             });
             
             document.addEventListener('touchmove', function(e) {
-                if (!isDragging) return;
+                if (!catDragging) return;
                 
                 const touch = e.touches[0];
                 const x = touch.clientX - dragOffsetX;
@@ -2219,7 +2218,7 @@
             });
             
             document.addEventListener('touchend', function() {
-                isDragging = false;
+                catDragging = false;
             });
             
             // 双击跳转登录
