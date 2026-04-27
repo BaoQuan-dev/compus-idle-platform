@@ -652,14 +652,14 @@
             cursor: grabbing;
         }
         
-        /* 猫咪身体 - 趴着的扁椭圆 */
+        /* 猫咪身体 - 趴着的纤细椭圆 */
         .cat-body {
             position: absolute;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 150px;
-            height: 70px;
+            width: 90px;
+            height: 45px;
             background: linear-gradient(180deg, #FFD59E 0%, #FFB87A 50%, #FFA050 100%);
             border-radius: 75px 75px 60px 60px;
             box-shadow: 
@@ -672,23 +672,23 @@
         .cat-body::before {
             content: '';
             position: absolute;
-            top: 10px;
+            top: 5px;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
-            height: 40px;
+            width: 60px;
+            height: 28px;
             background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,252,245,0.85));
-            border-radius: 50px 50px 40px 40px;
+            border-radius: 30px 30px 25px 25px;
         }
         
         /* 猫咪头 - 趴着的圆圆头 */
         .cat-head {
             position: absolute;
-            bottom: 45px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            width: 110px;
-            height: 85px;
+            width: 75px;
+            height: 60px;
             background: linear-gradient(160deg, #FFE4C4 0%, #FFD59E 50%, #FFB87A 100%);
             border-radius: 50%;
             box-shadow: 
@@ -698,22 +698,22 @@
             z-index: 2;
         }
         
-        /* 猫咪耳朵 - 圆圆的耳朵 */
+        /* 猫咪耳朵 - 小巧的耳朵 */
         .cat-ear {
             position: absolute;
-            top: -5px;
-            width: 35px;
-            height: 30px;
+            top: -3px;
+            width: 25px;
+            height: 22px;
             background: linear-gradient(160deg, #FFD59E 0%, #FFB87A 100%);
             border-radius: 50% 50% 0 0;
         }
         
         .cat-ear.left { 
-            left: 8px; 
+            left: 6px; 
             transform: rotate(-15deg); 
         }
         .cat-ear.right { 
-            right: 8px; 
+            right: 6px; 
             transform: rotate(15deg); 
         }
         
@@ -721,11 +721,11 @@
         .cat-ear::before {
             content: '';
             position: absolute;
-            top: 5px;
+            top: 3px;
             left: 50%;
             transform: translateX(-50%);
-            width: 18px;
-            height: 15px;
+            width: 13px;
+            height: 11px;
             background: linear-gradient(180deg, #FFB6C1, #FF91A4);
             border-radius: 50% 50% 0 0;
         }
@@ -738,19 +738,19 @@
             transform: rotate(25deg) translateY(-3px);
         }
         
-        /* 猫咪眼睛 - 超大圆眼睛 */
+        /* 猫咪眼睛 - 大圆眼睛 */
         .cat-eyes {
             position: absolute;
-            top: 28px;
+            top: 18px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 25px;
+            gap: 18px;
         }
         
         .cat-eye {
-            width: 30px;
-            height: 30px;
+            width: 22px;
+            height: 22px;
             background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
             border-radius: 50%;
             position: relative;
@@ -758,14 +758,14 @@
             overflow: hidden;
         }
         
-        /* 眼睛高光 - 大眼睛 */
+        /* 眼睛高光 */
         .cat-eye::before {
             content: '';
             position: absolute;
-            top: 5px;
-            left: 6px;
-            width: 12px;
-            height: 12px;
+            top: 3px;
+            left: 4px;
+            width: 9px;
+            height: 9px;
             background: white;
             border-radius: 50%;
             animation: eyeSparkle 2s ease-in-out infinite;
@@ -775,10 +775,10 @@
         .cat-eye::after {
             content: '';
             position: absolute;
-            top: 12px;
-            left: 16px;
-            width: 5px;
-            height: 5px;
+            top: 9px;
+            left: 12px;
+            width: 4px;
+            height: 4px;
             background: rgba(255, 255, 255, 0.8);
             border-radius: 50%;
         }
@@ -821,24 +821,24 @@
         /* 猫咪鼻子 - 小三角 */
         .cat-nose {
             position: absolute;
-            top: 48px;
+            top: 42px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 6px solid transparent;
-            border-right: 6px solid transparent;
-            border-top: 8px solid #FF8C7B;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid #FF8C7B;
         }
         
         /* 猫咪嘴巴 - 可爱W */
         .cat-mouth {
             position: absolute;
-            top: 55px;
+            top: 48px;
             left: 50%;
             transform: translateX(-50%);
-            width: 20px;
-            height: 10px;
+            width: 16px;
+            height: 8px;
         }
         
         .cat-mouth::before,
@@ -846,9 +846,9 @@
             content: '';
             position: absolute;
             top: 0;
-            width: 10px;
-            height: 10px;
-            border-bottom: 2.5px solid #555;
+            width: 8px;
+            height: 8px;
+            border-bottom: 2px solid #555;
             border-radius: 0 0 50% 50%;
         }
         
@@ -863,25 +863,25 @@
         /* 猫咪胡须 */
         .cat-whiskers {
             position: absolute;
-            top: 45px;
+            top: 40px;
             width: 100%;
         }
         
         .whisker {
             position: absolute;
-            width: 28px;
-            height: 2px;
+            width: 20px;
+            height: 1.5px;
             background: linear-gradient(90deg, #666, #999);
             border-radius: 2px;
             animation: whiskerWave 3s ease-in-out infinite;
         }
         
-        .whisker.left-1 { left: -8px; top: 0; transform: rotate(-5deg); animation-delay: 0s; }
-        .whisker.left-2 { left: -10px; top: 8px; transform: rotate(0deg); animation-delay: 0.3s; }
-        .whisker.left-3 { left: -8px; top: 16px; transform: rotate(5deg); animation-delay: 0.6s; }
-        .whisker.right-1 { right: -8px; top: 0; transform: rotate(5deg); animation-delay: 0.1s; }
-        .whisker.right-2 { right: -10px; top: 8px; transform: rotate(0deg); animation-delay: 0.4s; }
-        .whisker.right-3 { right: -8px; top: 16px; transform: rotate(-5deg); animation-delay: 0.5s; }
+        .whisker.left-1 { left: -6px; top: 0; transform: rotate(-5deg); animation-delay: 0s; }
+        .whisker.left-2 { left: -8px; top: 6px; transform: rotate(0deg); animation-delay: 0.3s; }
+        .whisker.left-3 { left: -6px; top: 12px; transform: rotate(5deg); animation-delay: 0.6s; }
+        .whisker.right-1 { right: -6px; top: 0; transform: rotate(5deg); animation-delay: 0.1s; }
+        .whisker.right-2 { right: -8px; top: 6px; transform: rotate(0deg); animation-delay: 0.4s; }
+        .whisker.right-3 { right: -6px; top: 12px; transform: rotate(-5deg); animation-delay: 0.5s; }
         
         @keyframes whiskerWave {
             0%, 100% { transform: rotate(var(--base-rotate, 0deg)); }
@@ -891,16 +891,16 @@
         /* 猫咪腮红 */
         .cat-blush {
             position: absolute;
-            top: 45px;
-            width: 16px;
-            height: 10px;
+            top: 40px;
+            width: 12px;
+            height: 8px;
             background: radial-gradient(ellipse, rgba(255, 150, 170, 0.7), rgba(255, 130, 150, 0.4));
             border-radius: 50%;
             animation: blushPulse 3s ease-in-out infinite;
         }
         
-        .cat-blush.left { left: 12px; animation-delay: 0.5s; }
-        .cat-blush.right { right: 12px; animation-delay: 0.8s; }
+        .cat-blush.left { left: 8px; animation-delay: 0.5s; }
+        .cat-blush.right { right: 8px; animation-delay: 0.8s; }
         
         @keyframes blushPulse {
             0%, 100% { opacity: 0.5; }
@@ -916,12 +916,12 @@
         /* 猫咪尾巴 - 卷起来的 */
         .cat-tail {
             position: absolute;
-            bottom: 15px;
-            right: -15px;
-            width: 50px;
-            height: 20px;
+            bottom: 10px;
+            right: -10px;
+            width: 35px;
+            height: 14px;
             background: linear-gradient(90deg, #FFA050, #FFB87A, #FFD59E);
-            border-radius: 25px 25px 25px 15px;
+            border-radius: 20px 20px 20px 12px;
             transform-origin: left center;
             animation: tailCurl 3s ease-in-out infinite;
         }
@@ -929,11 +929,11 @@
         .cat-tail::after {
             content: '';
             position: absolute;
-            right: -8px;
+            right: -6px;
             top: 50%;
             transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
+            width: 13px;
+            height: 13px;
             background: linear-gradient(135deg, #FFD59E, #FFB87A);
             border-radius: 50%;
         }
@@ -960,12 +960,12 @@
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 40px;
+            gap: 25px;
         }
         
         .cat-paw {
-            width: 28px;
-            height: 16px;
+            width: 20px;
+            height: 12px;
             background: linear-gradient(180deg, #FFE4C4, #FFD59E);
             border-radius: 50% 50% 40% 40%;
             position: relative;
@@ -1377,24 +1377,24 @@
             }
             
             .cat-container {
-                width: 100px;
-                height: 100px;
+                width: 80px;
+                height: 80px;
             }
             
             .cat-body {
-                width: 80px;
-                height: 65px;
+                width: 60px;
+                height: 35px;
             }
             
             .cat-head {
-                bottom: 45px;
-                width: 65px;
-                height: 60px;
+                bottom: 22px;
+                width: 55px;
+                height: 45px;
             }
             
             .cat-eye {
-                width: 14px;
-                height: 18px;
+                width: 16px;
+                height: 16px;
             }
             
             .login-btn {
