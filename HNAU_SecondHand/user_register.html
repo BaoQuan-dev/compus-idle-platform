@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="河南农业大学登录注册">
-    <title>登录/注册 - 农大闲置</title>
+    <meta name="description" content="河南农业大学注册">
+    <title>注册 - 农大闲置</title>
     <link rel="stylesheet" href="./style/main.css">
     <style>
         /* ========== 内嵌星空背景 ========== */
@@ -19,7 +19,7 @@
         }
 
         /* ========== 页面容器 ========== */
-        .login-wrapper {
+        .register-wrapper {
             min-height: calc(100vh - var(--nav-height, 64px));
             display: flex;
             align-items: center;
@@ -28,9 +28,9 @@
         }
 
         /* ========== 玻璃拟态卡片 ========== */
-        .login-card {
+        .register-card {
             width: 100%;
-            max-width: 480px;
+            max-width: 520px;
             background: linear-gradient(135deg, rgba(30, 40, 80, 0.85) 0%, rgba(15, 25, 60, 0.9) 100%);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
@@ -44,12 +44,12 @@
         }
 
         /* ========== 标题区域 ========== */
-        .login-header {
+        .register-header {
             text-align: center;
             margin-bottom: 36px;
         }
 
-        .login-header h1 {
+        .register-header h1 {
             font-size: 32px;
             font-weight: 700;
             background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #A78BFA 100%);
@@ -60,58 +60,10 @@
             letter-spacing: 2px;
         }
 
-        .login-header p {
+        .register-header p {
             color: rgba(255, 255, 255, 0.6);
             font-size: 15px;
             margin: 0;
-        }
-
-        /* ========== 选项卡切换 ========== */
-        .login-tabs {
-            display: flex;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 32px;
-        }
-
-        .login-tab {
-            flex: 1;
-            padding: 12px 20px;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 15px;
-            font-weight: 500;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            background: transparent;
-        }
-
-        .login-tab:hover {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .login-tab.active {
-            background: linear-gradient(135deg, rgba(96, 165, 250, 0.6) 0%, rgba(59, 130, 246, 0.6) 100%);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.3);
-        }
-
-        /* ========== 表单区域 ========== */
-        .login-panel {
-            display: none;
-        }
-
-        .login-panel.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ========== 输入框 ========== */
@@ -211,39 +163,51 @@
             text-decoration: underline;
         }
 
+        /* ========== 协议 ========== */
+        .agreement {
+            margin-top: 20px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+        }
+
+        .agreement a {
+            color: #60A5FA;
+            text-decoration: none;
+        }
+
+        .agreement a:hover {
+            text-decoration: underline;
+        }
+
         /* ========== 页脚 ========== */
-        .login-footer {
+        .register-footer {
             text-align: center;
             margin-top: 32px;
             padding-top: 24px;
             border-top: 1px solid rgba(96, 165, 250, 0.15);
         }
 
-        .login-footer p {
+        .register-footer p {
             color: rgba(255, 255, 255, 0.4);
             font-size: 13px;
             margin: 0;
         }
 
-        .login-footer .highlight {
+        .register-footer .highlight {
             color: #60A5FA;
         }
 
         /* ========== 响应式 ========== */
         @media (max-width: 640px) {
-            .login-card {
+            .register-card {
                 padding: 32px 24px;
                 border-radius: 20px;
                 margin: 0 12px;
             }
 
-            .login-header h1 {
+            .register-header h1 {
                 font-size: 26px;
-            }
-
-            .login-tab {
-                padding: 10px 16px;
-                font-size: 14px;
             }
         }
     </style>
@@ -288,76 +252,51 @@
 
     <!-- 主内容 -->
     <main class="main-content">
-        <div class="login-wrapper">
-            <div class="login-card">
+        <div class="register-wrapper">
+            <div class="register-card">
                 <!-- 标题 -->
-                <div class="login-header">
-                    <h1>欢迎回来</h1>
-                    <p>登录或注册账号，开启星空之旅</p>
+                <div class="register-header">
+                    <h1>创建账号</h1>
+                    <p>加入星空校园，开启闲置循环之旅</p>
                 </div>
 
-                <!-- 选项卡 -->
-                <div class="login-tabs">
-                    <button class="login-tab active" data-tab="login">登录</button>
-                    <button class="login-tab" data-tab="register">注册</button>
-                </div>
+                <!-- 注册表单 -->
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label" for="regUsername">用户名</label>
+                        <input type="text" id="regUsername" class="form-input" 
+                               placeholder="请输入6-20位字母、数字或下划线" 
+                               maxlength="20" autocomplete="username">
+                        <p class="form-error" id="regUsernameError"></p>
+                        <p class="form-help">仅允许字母、数字、下划线，长度6-20位</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="regPassword">密码</label>
+                        <input type="password" id="regPassword" class="form-input" 
+                               placeholder="请输入6-16位密码" 
+                               maxlength="16" autocomplete="new-password">
+                        <p class="form-error" id="regPasswordError"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="regConfirmPassword">确认密码</label>
+                        <input type="password" id="regConfirmPassword" class="form-input" 
+                               placeholder="请再次输入密码" 
+                               maxlength="16" autocomplete="new-password">
+                        <p class="form-error" id="regConfirmError"></p>
+                    </div>
+                    <button type="submit" class="btn-submit" id="registerBtn" disabled>注 册</button>
+                </form>
 
-                <!-- 登录面板 -->
-                <div class="login-panel active" id="loginPanel">
-                    <form id="loginForm">
-                        <div class="form-group">
-                            <label class="form-label" for="loginUsername">用户名</label>
-                            <input type="text" id="loginUsername" class="form-input" 
-                                   placeholder="请输入用户名" autocomplete="username">
-                            <p class="form-error" id="loginUsernameError"></p>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="loginPassword">密码</label>
-                            <input type="password" id="loginPassword" class="form-input" 
-                                   placeholder="请输入密码" autocomplete="current-password">
-                            <p class="form-error" id="loginPasswordError"></p>
-                        </div>
-                        <button type="submit" class="btn-submit" id="loginBtn" disabled>登 录</button>
-                    </form>
-                    <p class="switch-text">
-                        还没有账号？<a href="javascript:void(0)" class="switch-link" id="goRegister">立即注册</a>
-                    </p>
-                </div>
+                <p class="switch-text">
+                    已有账号？<a href="user_login.html" class="switch-link">立即登录</a>
+                </p>
 
-                <!-- 注册面板 -->
-                <div class="login-panel" id="registerPanel">
-                    <form id="registerForm">
-                        <div class="form-group">
-                            <label class="form-label" for="regUsername">用户名</label>
-                            <input type="text" id="regUsername" class="form-input" 
-                                   placeholder="请输入6-20位字母、数字或下划线" 
-                                   maxlength="20" autocomplete="username">
-                            <p class="form-error" id="regUsernameError"></p>
-                            <p class="form-help">仅允许字母、数字、下划线，长度6-20位</p>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="regPassword">密码</label>
-                            <input type="password" id="regPassword" class="form-input" 
-                                   placeholder="请输入6-16位密码" 
-                                   maxlength="16" autocomplete="new-password">
-                            <p class="form-error" id="regPasswordError"></p>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="regConfirmPassword">确认密码</label>
-                            <input type="password" id="regConfirmPassword" class="form-input" 
-                                   placeholder="请再次输入密码" 
-                                   maxlength="16" autocomplete="new-password">
-                            <p class="form-error" id="regConfirmError"></p>
-                        </div>
-                        <button type="submit" class="btn-submit" id="registerBtn" disabled>注 册</button>
-                    </form>
-                    <p class="switch-text">
-                        已有账号？<a href="javascript:void(0)" class="switch-link" id="goLogin">立即登录</a>
-                    </p>
+                <div class="agreement">
+                    注册即表示同意 <a href="#">用户协议</a> 和 <a href="#">隐私政策</a>
                 </div>
 
                 <!-- 页脚 -->
-                <div class="login-footer">
+                <div class="register-footer">
                     <p>🌟 <span class="highlight">河南农业大学</span> · 星空校园闲置循环平台</p>
                 </div>
             </div>
@@ -368,30 +307,6 @@
     <script src="./script/common.js"></script>
     <script src="./script/login.js"></script>
     <script>
-        // 选项卡切换
-        document.querySelectorAll('.login-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                const target = this.dataset.tab;
-                
-                // 切换tab
-                document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                
-                // 切换面板
-                document.querySelectorAll('.login-panel').forEach(p => p.classList.remove('active'));
-                document.getElementById(target + 'Panel').classList.add('active');
-            });
-        });
-
-        // 切换链接
-        document.getElementById('goRegister')?.addEventListener('click', function() {
-            document.querySelector('[data-tab="register"]').click();
-        });
-
-        document.getElementById('goLogin')?.addEventListener('click', function() {
-            document.querySelector('[data-tab="login"]').click();
-        });
-
         // 移动端发布按钮
         document.getElementById('mobileReleaseBtn')?.addEventListener('click', function() {
             Auth.requireReleasePermission(function() {
