@@ -12,44 +12,44 @@
     --primary-lighter: #A7F3D0;
     --accent-color: #F59E0B;
     
-    /* 主色调渐变 */
-    --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-    --gradient-hero: linear-gradient(135deg, #064E3B 0%, #047857 50%, #059669 100%);
-    --gradient-card: linear-gradient(180deg, #FFFFFF 0%, #F9FAFB 100%);
+    /* 主色调渐变 - 深色主题 */
+    --gradient-primary: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+    --gradient-hero: linear-gradient(135deg, #1a2a4c 0%, #2a3a5c 50%, #1a2a4c 100%);
+    --gradient-card: linear-gradient(180deg, rgba(30,30,60,0.9) 0%, rgba(40,40,80,0.9) 100%);
 
-    /* 背景与边框 */
-    --bg-white: #FFFFFF;
-    --bg-gray: #F3F4F6;
-    --bg-light: #F9FAFB;
-    --bg-card: #FFFFFF;
-    --border-color: #E5E7EB;
-    --border-light: #F3F4F6;
-    --border-focus: #10B981;
+    /* 背景与边框 - 深色星空主题 */
+    --bg-white: #1a1a2e;
+    --bg-gray: rgba(30,30,60,0.85);
+    --bg-light: rgba(40,40,80,0.7);
+    --bg-card: rgba(30,30,60,0.85);
+    --border-color: rgba(255,255,255,0.15);
+    --border-light: rgba(255,255,255,0.1);
+    --border-focus: #4fc3f7;
 
-    /* 文字颜色 - 更清晰的层级 */
-    --text-primary: #111827;
-    --text-secondary: #4B5563;
-    --text-hint: #9CA3AF;
-    --text-white: #FFFFFF;
+    /* 文字颜色 - 深色主题 */
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0bec5;
+    --text-hint: #78909c;
+    --text-white: #ffffff;
 
-    /* 状态色 - 更鲜明的配色 */
-    --success-color: #10B981;
-    --success-light: #D1FAE5;
-    --error-color: #EF4444;
-    --error-light: #FEE2E2;
-    --warning-color: #F59E0B;
-    --warning-light: #FEF3C7;
-    --info-color: #3B82F6;
-    --info-light: #DBEAFE;
+    /* 状态色 - 深色主题适配 */
+    --success-color: #4fc3f7;
+    --success-light: rgba(79,195,247,0.2);
+    --error-color: #ef5350;
+    --error-light: rgba(239,83,80,0.2);
+    --warning-color: #ffb74d;
+    --warning-light: rgba(255,183,77,0.2);
+    --info-color: #64b5f6;
+    --info-light: rgba(100,181,246,0.2);
 
-    /* 阴影 - 更精致的层次 */
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.25);
-    --shadow-card-hover: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+    /* 阴影 - 深色主题 */
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.4);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.4);
+    --shadow-xl: 0 20px 25px rgba(0,0,0,0.4);
+    --shadow-glow: 0 0 20px rgba(79,195,247,0.3);
+    --shadow-card-hover: 0 14px 28px rgba(0,0,0,0.5);
 
     /* 圆角 - 更现代的圆角系统 */
     --radius-xs: 4px;
@@ -106,7 +106,7 @@ body {
     font-size: var(--font-md);
     line-height: 1.6;
     color: var(--text-primary);
-    background-color: var(--bg-gray);
+    background: linear-gradient(135deg, #0a0a1a, #1a1a3e, #0f0f2e);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -548,17 +548,17 @@ body {
 .btn-primary {
     background: var(--gradient-primary);
     color: var(--text-white);
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 2px 8px rgba(79,195,247,0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 6px 16px rgba(79,195,247,0.4);
 }
 
 .btn-primary:active:not(:disabled) {
     transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 2px 6px rgba(79,195,247,0.3);
 }
 
 .btn-secondary {
