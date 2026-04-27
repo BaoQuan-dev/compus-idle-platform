@@ -816,7 +816,34 @@
                 gap: 8px;
             }
         }
-    </style>
+    
+        /* 页面头部 */
+        .page-header {
+            padding: 80px 20px 20px;
+            text-align: left;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .page-header p {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin: 0;
+        }
+        .page-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 16px 100px;
+        }
+        </style>
 </head>
 <body style="background: transparent;">
     <div class="cosmos-bg">
@@ -824,50 +851,6 @@
         <div class="cosmos-nebula"></div>
     </div>
     <!-- 导航栏 -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="starfield.html" class="navbar-brand">
-                <img src="./images/logo.png" alt="农大闲置" class="navbar-logo" onerror="this.style.display='none'">
-                <span>🌟 农大闲置</span>
-            </a>
-            <ul class="navbar-menu">
-                <li class="navbar-menu-item">
-                    <a href="starfield.html" class="navbar-menu-link">首页</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="release_goods.html" class="navbar-menu-link">发布闲置</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="stu_check.html" class="navbar-menu-link">校园认证</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="user_center.html" class="navbar-menu-link">个人中心</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="carbon_ai.html" class="navbar-menu-link">🤖 碳足迹AI助手</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="donation_list.html" class="navbar-menu-link active">🌟 公益转赠通道</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="demand_board.html" class="navbar-menu-link">📋 需求公告板</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="manage_admin.html" class="navbar-menu-link">管理员</a>
-                </li>
-            </ul>
-            <button class="navbar-toggle" id="navbarToggle">☰</button>
-        </div>
-        <div class="navbar-mobile-menu" id="mobileMenu">
-            <a href="starfield.html" class="navbar-mobile-menu-item">首页</a>
-            <a href="release_goods.html" class="navbar-mobile-menu-item">发布闲置</a>
-            <a href="stu_check.html" class="navbar-mobile-menu-item">校园认证</a>
-            <a href="user_center.html" class="navbar-mobile-menu-item">个人中心</a>
-            <a href="carbon_ai.html" class="navbar-mobile-menu-item">🤖 碳足迹AI助手</a>
-            <a href="donation_list.html" class="navbar-mobile-menu-item active">🌟 公益转赠通道</a>
-            <a href="manage_admin.html" class="navbar-mobile-menu-item">管理员</a>
-        </div>
-    </nav>
     
     <!-- 页面头部 -->
     <div class="page-header">
@@ -875,7 +858,8 @@
         <p>记录每一份爱心，传递每一份温暖</p>
     </div>
     
-    <div class="page-container">
+    <div class="page-header"><h1>我的公益</h1><p>追踪你的爱心足迹</p></div>
+        <div class="page-container">
         <!-- 统计卡片 -->
         <div class="stats-card">
             <div class="stats-card-title">

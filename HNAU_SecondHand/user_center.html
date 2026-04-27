@@ -13,73 +13,6 @@
         <div class="cosmos-nebula"></div>
     </div>
     <!-- 导航栏 -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <!-- Logo -->
-            <a href="starfield.html" class="navbar-brand">
-                <img src="./images/logo.png" alt="农大闲置" class="navbar-logo" onerror="this.style.display='none'">
-                <span>🌟 农大闲置</span>
-            </a>
-
-            <!-- 导航菜单（PC端） -->
-            <ul class="navbar-menu">
-                <li class="navbar-menu-item">
-                    <a href="starfield.html" class="navbar-menu-link">首页</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="javascript:void(0)" class="navbar-menu-link" id="releaseBtn">发布闲置</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="stu_check.html" class="navbar-menu-link">校园认证</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="user_center.html" class="navbar-menu-link active">个人中心</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="carbon_ai.html" class="navbar-menu-link">🤖 碳足迹AI助手</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="donation_list.html" class="navbar-menu-link">🌟 公益转赠通道</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="demand_board.html" class="navbar-menu-link">📋 需求公告板</a>
-                </li>
-                <li class="navbar-menu-item">
-                    <a href="manage_admin.html" class="navbar-menu-link">管理员</a>
-                </li>
-            </ul>
-
-            <!-- 用户操作 -->
-            <div class="navbar-actions">
-                <!-- JS渲染 -->
-            </div>
-
-            <!-- 汉堡菜单按钮（移动端） -->
-            <button class="navbar-hamburger" aria-label="菜单">
-                <span class="navbar-hamburger-line"></span>
-                <span class="navbar-hamburger-line"></span>
-                <span class="navbar-hamburger-line"></span>
-            </button>
-        </div>
-
-        <!-- 移动端菜单 -->
-        <div class="navbar-mobile-menu">
-            <a href="starfield.html" class="navbar-mobile-menu-item">首页</a>
-            <a href="javascript:void(0)" class="navbar-mobile-menu-item" id="mobileReleaseBtn">发布闲置</a>
-            <a href="stu_check.html" class="navbar-mobile-menu-item">校园认证</a>
-            <a href="user_center.html" class="navbar-mobile-menu-item active">个人中心</a>
-            <a href="carbon_ai.html" class="navbar-mobile-menu-item">🤖 碳足迹AI助手</a>
-            <a href="donation_list.html" class="navbar-mobile-menu-item">🌟 公益转赠通道</a>
-            <a href="demand_board.html" class="navbar-mobile-menu-item">📋 需求公告板</a>
-            <a href="manage_admin.html" class="navbar-mobile-menu-item">管理员</a>
-            <div class="navbar-mobile-actions">
-                <!-- JS渲染 -->
-            </div>
-        </div>
-
-        <!-- 遮罩层 -->
-        <div class="navbar-overlay"></div>
-    </nav>
 
     <!-- 主内容区域 -->
     <main class="main-content">
@@ -763,7 +696,34 @@
                 margin-top: 8px;
             }
         }
-    </style>
+    
+        /* 页面头部 */
+        .page-header {
+            padding: 80px 20px 20px;
+            text-align: left;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .page-header p {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin: 0;
+        }
+        .page-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 16px 100px;
+        }
+        </style>
     
     <!-- 碳足迹逻辑 -->
     <script>

@@ -374,24 +374,37 @@
         .search-btn:hover {
             background: rgba(96,165,250,0.3);
         }
-    </style>
+    
+        /* 页面头部 */
+        .page-header {
+            padding: 80px 20px 20px;
+            text-align: left;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .page-header p {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin: 0;
+        }
+        .page-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 16px 100px;
+        }
+        </style>
 </head>
 <body>
     <!-- 顶部导航 -->
-    <nav class="navbar">
-        <div class="navbar-brand">
-            <span class="navbar-logo">🌟</span>
-            <span>🌟 农大闲置</span>
-        </div>
-        <div class="navbar-menu">
-            <a href="home.html" class="navbar-menu-link">首页</a>
-            <a href="release_goods.html" class="navbar-menu-link">📦 发布闲置</a>
-            <a href="demand_board.html" class="navbar-menu-link">💫 需求</a>
-            <a href="carbon_ai.html" class="navbar-menu-link">🤖 AI助手</a>
-            <a href="donation_list.html" class="navbar-menu-link">🌟 公益</a>
-            <a href="user_center.html" class="navbar-menu-link">👤 个人中心</a>
-        </div>
-    </nav>
 
     <!-- 页面标题 -->
     <div class="page-header">
@@ -400,7 +413,8 @@
     </div>
 
     <!-- 主内容 -->
-    <div class="page-container">
+    <div class="page-header"><h1>管理后台</h1><p>平台数据管理与用户审核</p></div>
+        <div class="page-container">
         <!-- 统计卡片 -->
         <div class="stats-grid">
             <div class="stat-card">
