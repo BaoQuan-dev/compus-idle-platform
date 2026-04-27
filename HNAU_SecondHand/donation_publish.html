@@ -8,62 +8,8 @@
     <style>
         /* ========== 公益转赠发布页样式 ========== */
         body {
-            background: linear-gradient(135deg, #0a0a1a, #1a1a3e, #0f0f2e);
+            background: linear-gradient(135deg, #f0f9f0, #e8f5e9);
             min-height: 100vh;
-            position: relative;
-        }
-        
-        /* 星空背景层 */
-        .star-layer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-            background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
-        }
-        
-        .mini-star {
-            position: absolute;
-            background: #fff;
-            border-radius: 50%;
-            opacity: 0.9;
-        }
-        
-        .mini-star.small {
-            width: 3px;
-            height: 3px;
-            animation: twinkle 2s infinite;
-            box-shadow: 0 0 4px 1px rgba(255,255,255,0.4);
-        }
-        
-        .mini-star.medium {
-            width: 5px;
-            height: 5px;
-            animation: twinkle 1.5s infinite 0.3s;
-            box-shadow: 0 0 8px 2px rgba(255,255,255,0.5);
-        }
-        
-        .mini-star.large {
-            width: 8px;
-            height: 8px;
-            animation: twinkle 1s infinite 0.6s;
-            box-shadow: 0 0 12px 4px rgba(255,255,255,0.6), 0 0 20px 6px rgba(135,206,235,0.3);
-        }
-        
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.3); }
-        }
-        
-        .page-header, .page-content, .form-container { position: relative; z-index: 1; }
-        
-        .page-content {
-            background: rgba(255,255,255,0.92) !important;
-            backdrop-filter: blur(10px);
         }
         
         .page-header {
@@ -325,24 +271,6 @@
     </style>
 </head>
 <body>
-    <!-- 星空背景 -->
-    <div class="star-layer" id="starLayer"></div>
-    <script>
-        (function(){
-            const layer = document.getElementById('starLayer');
-            if(!layer) return;
-            const count = Math.min(200, Math.floor(window.innerWidth * window.innerHeight / 5000));
-            for(let i = 0; i < count; i++){
-                const star = document.createElement('div');
-                star.className = 'mini-star ' + ['small','medium','large'][Math.floor(Math.random()*3)];
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 2 + 's';
-                layer.appendChild(star);
-            }
-        })();
-    </script>
-    
     <!-- 导航栏 -->
     <nav class="navbar">
         <div class="navbar-container">

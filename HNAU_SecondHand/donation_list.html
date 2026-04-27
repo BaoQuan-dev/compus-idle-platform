@@ -8,74 +8,14 @@
     <style>
         /* ========== 公益转赠列表页样式 ========== */
         body {
-            background: linear-gradient(135deg, #0a0a1a, #1a1a3e, #0f0f2e);
+            background: linear-gradient(135deg, #f0f9f0, #e8f5e9);
             min-height: 100vh;
-            position: relative;
-        }
-        
-        /* 星空背景层 */
-        .star-layer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-            background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
-        }
-        
-        .mini-star {
-            position: absolute;
-            background: #fff;
-            border-radius: 50%;
-            opacity: 0.9;
-        }
-        
-        .mini-star.small {
-            width: 3px;
-            height: 3px;
-            animation: twinkle 2s infinite;
-            box-shadow: 0 0 4px 1px rgba(255,255,255,0.4);
-        }
-        
-        .mini-star.medium {
-            width: 5px;
-            height: 5px;
-            animation: twinkle 1.5s infinite 0.3s;
-            box-shadow: 0 0 8px 2px rgba(255,255,255,0.5);
-        }
-        
-        .mini-star.large {
-            width: 8px;
-            height: 8px;
-            animation: twinkle 1s infinite 0.6s;
-            box-shadow: 0 0 12px 4px rgba(255,255,255,0.6), 0 0 20px 6px rgba(135,206,235,0.3);
-        }
-        
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.3); }
-        }
-        
-        /* 确保页面内容在星空之上 */
-        .page-header, .page-container, .stats-row, .donation-card, .modal, .page-content {
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* 页面内容增加半透明背景 */
-        .page-container {
-            background: rgba(20,20,40,0.85) !important;
-            backdrop-filter: blur(10px);
         }
         
         .page-header {
-            background: linear-gradient(135deg, #1a2a4c, #2a3a5c);
-            color: #e0e0e0;
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+            color: #fff;
             padding: 24px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         
         .page-header h1 {
@@ -107,12 +47,11 @@
         }
         
         .stat-card {
-            background: rgba(30,30,60,0.8);
+            background: #fff;
             border-radius: 12px;
             padding: 16px;
             text-align: center;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
         }
         
         .stat-icon {
@@ -123,12 +62,12 @@
         .stat-value {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #4fc3f7;
+            color: #2e7d32;
         }
         
         .stat-label {
             font-size: 0.8rem;
-            color: #b0bec5;
+            color: #888;
         }
         
         /* 操作栏 */
@@ -146,29 +85,29 @@
         
         .filter-tab {
             padding: 8px 16px;
-            background: rgba(30,30,60,0.8);
-            border: 2px solid rgba(255,255,255,0.2);
+            background: #fff;
+            border: 2px solid #c8e6c9;
             border-radius: 20px;
             font-size: 0.9rem;
-            color: #e0e0e0;
+            color: #666;
             cursor: pointer;
             transition: all 0.2s;
         }
         
         .filter-tab.active {
-            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
-            border-color: #4fc3f7;
+            background: #2e7d32;
+            border-color: #2e7d32;
             color: #fff;
         }
         
         .filter-tab:hover:not(.active) {
-            border-color: #4fc3f7;
-            color: #4fc3f7;
+            border-color: #43a047;
+            color: #2e7d32;
         }
         
         .publish-btn {
             padding: 10px 20px;
-            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+            background: linear-gradient(135deg, #66bb6a, #43a047);
             color: #fff;
             border: none;
             border-radius: 20px;
@@ -194,13 +133,12 @@
         }
         
         .donation-card {
-            background: rgba(30,30,60,0.85);
+            background: #fff;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
             transition: all 0.2s;
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.1);
         }
         
         .donation-card:hover {
@@ -211,7 +149,7 @@
         .donation-card-image {
             width: 100%;
             height: 160px;
-            background: linear-gradient(135deg, #2a3a5c, #1a2a4c);
+            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -236,18 +174,18 @@
         }
         
         .status-pending {
-            background: rgba(255,183,77,0.9);
-            color: #fff;
+            background: #fff3e0;
+            color: #e65100;
         }
         
         .status-receiving {
-            background: rgba(79,195,247,0.9);
-            color: #fff;
+            background: #e3f2fd;
+            color: #1565c0;
         }
         
         .status-completed {
-            background: rgba(76,175,80,0.9);
-            color: #fff;
+            background: #e8f5e9;
+            color: #2e7d32;
         }
         
         .donation-card-content {
@@ -257,7 +195,7 @@
         .donation-card-title {
             font-size: 1rem;
             font-weight: bold;
-            color: #e0e0e0;
+            color: #333;
             margin-bottom: 8px;
             display: -webkit-box;
             -webkit-line-clamp: 1;
@@ -270,7 +208,7 @@
             align-items: center;
             gap: 12px;
             font-size: 0.8rem;
-            color: #b0bec5;
+            color: #888;
             margin-bottom: 12px;
         }
         
@@ -278,8 +216,8 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            background: rgba(79,195,247,0.2);
-            color: #4fc3f7;
+            background: #e8f5e9;
+            color: #2e7d32;
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.8rem;
@@ -300,7 +238,7 @@
         
         .donation-card-action {
             padding: 6px 14px;
-            background: #4fc3f7;
+            background: #2e7d32;
             color: #fff;
             border: none;
             border-radius: 16px;
@@ -310,7 +248,7 @@
         }
         
         .donation-card-action:hover {
-            background: #29b6f6;
+            background: #43a047;
         }
         
         .donation-card-action:disabled {
@@ -362,7 +300,7 @@
         }
         
         .detail-content {
-            background: rgba(30,30,60,0.95);
+            background: #fff;
             border-radius: 16px;
             max-width: 500px;
             width: 95%;
@@ -370,7 +308,6 @@
             overflow-y: auto;
             transform: translateY(20px);
             transition: transform 0.3s;
-            border: 1px solid rgba(255,255,255,0.1);
         }
         
         .detail-modal.active .detail-content {
@@ -384,7 +321,7 @@
         .detail-image {
             width: 100%;
             height: 220px;
-            background: linear-gradient(135deg, #2a3a5c, #1a2a4c);
+            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -421,7 +358,7 @@
         .detail-title {
             font-size: 1.2rem;
             font-weight: bold;
-            color: #e0e0e0;
+            color: #333;
             margin-bottom: 12px;
         }
         
@@ -433,19 +370,19 @@
         
         .detail-tag {
             padding: 4px 10px;
-            background: rgba(79,195,247,0.2);
-            color: #4fc3f7;
+            background: #e8f5e9;
+            color: #2e7d32;
             border-radius: 12px;
             font-size: 0.8rem;
         }
         
         .detail-desc {
-            color: #b0bec5;
+            color: #666;
             font-size: 0.95rem;
             line-height: 1.7;
             margin-bottom: 16px;
             padding: 12px;
-            background: rgba(255,255,255,0.05);
+            background: #f9f9f9;
             border-radius: 8px;
         }
         
@@ -457,32 +394,32 @@
         }
         
         .detail-meta-item {
-            background: rgba(255,255,255,0.05);
+            background: #f5f5f5;
             padding: 12px;
             border-radius: 8px;
         }
         
         .detail-meta-label {
             font-size: 0.8rem;
-            color: #78909c;
+            color: #888;
             margin-bottom: 4px;
         }
         
         .detail-meta-value {
             font-size: 0.95rem;
-            color: #4fc3f7;
+            color: #333;
             font-weight: bold;
         }
         
         .detail-action-area {
-            border-top: 1px solid rgba(255,255,255,0.1);
+            border-top: 1px solid #eee;
             padding-top: 16px;
         }
         
         .apply-btn {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+            background: linear-gradient(135deg, #66bb6a, #43a047);
             color: #fff;
             border: none;
             border-radius: 25px;
@@ -494,7 +431,7 @@
         
         .apply-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79,195,247,0.4);
+            box-shadow: 0 6px 20px rgba(67, 160, 71, 0.4);
         }
         
         /* 接收申请弹窗 */
@@ -504,7 +441,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.5);
             z-index: 11000;
             display: flex;
             align-items: center;
@@ -520,14 +457,13 @@
         }
         
         .apply-content {
-            background: rgba(30,30,60,0.95);
+            background: #fff;
             border-radius: 16px;
             padding: 24px;
             max-width: 400px;
             width: 90%;
             transform: translateY(20px);
             transition: transform 0.3s;
-            border: 1px solid rgba(255,255,255,0.1);
         }
         
         .apply-modal.active .apply-content {
@@ -537,7 +473,7 @@
         .apply-title {
             font-size: 1.1rem;
             font-weight: bold;
-            color: #4fc3f7;
+            color: #2e7d32;
             margin-bottom: 16px;
             text-align: center;
         }
@@ -545,18 +481,16 @@
         .apply-input {
             width: 100%;
             padding: 12px 14px;
-            border: 2px solid rgba(79,195,247,0.3);
+            border: 2px solid #e8f5e9;
             border-radius: 10px;
             font-size: 1rem;
             box-sizing: border-box;
             margin-bottom: 16px;
-            background: rgba(255,255,255,0.1);
-            color: #e0e0e0;
         }
         
         .apply-input:focus {
             outline: none;
-            border-color: #4fc3f7;
+            border-color: #43a047;
         }
         
         .apply-btns {
@@ -576,33 +510,13 @@
         }
         
         .apply-btn-cancel {
-            background: rgba(255,255,255,0.1);
-            color: #e0e0e0;
+            background: #f5f5f5;
+            color: #666;
         }
         
         .apply-btn-confirm {
-            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+            background: linear-gradient(135deg, #66bb6a, #43a047);
             color: #fff;
-        }
-        
-        .publish-btn {
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
-            color: #fff;
-            border: none;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-        }
-        
-        .publish-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(79,195,247,0.4);
         }
         
         @media (max-width: 600px) {
@@ -628,25 +542,6 @@
     </style>
 </head>
 <body>
-    <!-- 星空背景 -->
-    <div class="star-layer" id="starLayer"></div>
-    <script>
-        // 生成星星
-        (function(){
-            const layer = document.getElementById('starLayer');
-            if(!layer) return;
-            const count = Math.min(200, Math.floor(window.innerWidth * window.innerHeight / 5000));
-            for(let i = 0; i < count; i++){
-                const star = document.createElement('div');
-                star.className = 'mini-star ' + ['small','medium','large'][Math.floor(Math.random()*3)];
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 2 + 's';
-                layer.appendChild(star);
-            }
-        })();
-    </script>
-    
     <!-- 导航栏 -->
     <nav class="navbar">
         <div class="navbar-container">
@@ -775,7 +670,7 @@
                     </div>
                     <div class="detail-meta-item">
                         <div class="detail-meta-label">转赠价格</div>
-                        <div class="detail-meta-value" style="color: #4fc3f7;">免费</div>
+                        <div class="detail-meta-value" style="color: #2e7d32;">免费</div>
                     </div>
                     <div class="detail-meta-item">
                         <div class="detail-meta-label">当前状态</div>
