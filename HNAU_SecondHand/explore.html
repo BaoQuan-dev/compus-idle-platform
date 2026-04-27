@@ -317,11 +317,13 @@
             justify-content: center;
             gap: 8px;
             transition: all 0.3s;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(var(--card-color-rgb), 0.3);
         }
 
         .enter-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(var(--card-color-rgb), 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(var(--card-color-rgb), 0.5);
         }
 
         .enter-btn svg {
@@ -335,40 +337,54 @@
         /* 底部指示器 */
         .indicators {
             position: fixed;
-            bottom: 40px;
+            bottom: 50px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 100;
             display: flex;
             gap: 12px;
+            padding: 10px 20px;
+            background: rgba(15, 15, 30, 0.7);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
         }
 
         .indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 4px;
-            background: rgba(255,255,255,0.3);
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.4);
             cursor: pointer;
             transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .indicator.active {
-            width: 32px;
-            background: #f5d742;
+            width: 30px;
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+        }
+
+        .indicator:hover {
+            background: rgba(255, 255, 255, 0.6);
         }
 
         /* 拖拽提示 */
         .drag-hint {
             position: fixed;
-            bottom: 80px;
+            bottom: 110px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 100;
-            font-size: 12px;
-            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
             display: flex;
             align-items: center;
             gap: 8px;
+            padding: 8px 16px;
+            background: rgba(15, 15, 30, 0.6);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
         }
 
         .drag-hint svg {
@@ -385,7 +401,7 @@
             50% { transform: translateX(5px); }
         }
 
-        /* 箭头提示 */
+        /* 箭头导航 */
         .arrow-nav {
             position: fixed;
             top: 50%;
@@ -393,30 +409,34 @@
             z-index: 100;
             width: 50px;
             height: 50px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(30, 60, 120, 0.8);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 2px solid rgba(96, 165, 250, 0.5);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
         }
 
         .arrow-nav:hover {
-            background: rgba(255,255,255,0.2);
+            background: rgba(59, 130, 246, 0.9);
+            border-color: rgba(96, 165, 250, 0.8);
+            box-shadow: 0 0 30px rgba(96, 165, 250, 0.5);
+            transform: translateY(-50%) scale(1.1);
         }
 
-        .arrow-nav.prev { left: 20px; }
-        .arrow-nav.next { right: 20px; }
+        .arrow-nav.prev { left: 30px; }
+        .arrow-nav.next { right: 30px; }
 
         .arrow-nav svg {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             fill: none;
             stroke: #fff;
-            stroke-width: 2;
+            stroke-width: 2.5;
         }
 
         /* 移动端适配 */
