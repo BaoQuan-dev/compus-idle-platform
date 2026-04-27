@@ -1718,11 +1718,11 @@
             if (!isLoggedIn) {
                 // 未登录，显示登录提示组件
                 setTimeout(function() {
-                    loginPrompt.classList.add('visible');
+                    loginPrompt.classList.add('show');
                 }, 800);
             } else {
                 // 已登录，隐藏登录提示组件
-                loginPrompt.classList.remove('visible');
+                loginPrompt.classList.remove('show');
             }
         }
         
