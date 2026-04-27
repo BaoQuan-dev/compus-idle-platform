@@ -2738,7 +2738,25 @@ body::before {
         radial-gradient(3px 3px at 250px 50px, rgba(255,255,255,1), transparent),
         radial-gradient(3px 3px at 400px 120px, rgba(200,230,255,1), transparent),
         radial-gradient(3px 3px at 50px 180px, rgba(255,255,255,1), transparent),
-        radial-gradient(3px 3px at 300px 80px, rgba(255,255,255,1), transparent);
+        radial-gradient(3px 3px at 300px 80px, rgba(255,255,255,1), transparent),
+        /* 额外蓝色星星 */
+        radial-gradient(2px 2px at 15px 45px, rgba(135,206,250,1), transparent),
+        radial-gradient(2px 2px at 75px 85px, rgba(173,216,230,1), transparent),
+        radial-gradient(2px 2px at 135px 25px, rgba(135,206,250,1), transparent),
+        radial-gradient(2px 2px at 195px 105px, rgba(173,216,230,1), transparent),
+        radial-gradient(2px 2px at 255px 65px, rgba(135,206,250,1), transparent),
+        radial-gradient(2px 2px at 315px 125px, rgba(173,216,230,1), transparent),
+        radial-gradient(2px 2px at 375px 35px, rgba(135,206,250,1), transparent),
+        radial-gradient(2px 2px at 435px 95px, rgba(173,216,230,1), transparent),
+        /* 更多白色亮点 */
+        radial-gradient(2px 2px at 25px 115px, rgba(255,255,255,0.9), transparent),
+        radial-gradient(2px 2px at 85px 55px, rgba(255,255,255,0.95), transparent),
+        radial-gradient(2px 2px at 145px 95px, rgba(255,255,255,0.85), transparent),
+        radial-gradient(2px 2px at 205px 15px, rgba(255,255,255,0.9), transparent),
+        radial-gradient(2px 2px at 265px 75px, rgba(255,255,255,0.95), transparent),
+        radial-gradient(2px 2px at 325px 135px, rgba(255,255,255,0.85), transparent),
+        radial-gradient(2px 2px at 385px 55px, rgba(255,255,255,0.9), transparent),
+        radial-gradient(2px 2px at 445px 115px, rgba(255,255,255,0.95), transparent);
     background-repeat: repeat !important;
     background-size: 500px 200px !important;
     z-index: -1 !important;
