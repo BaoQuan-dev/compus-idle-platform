@@ -2751,54 +2751,76 @@ body::before {
     50% { opacity: 1 !important; transform: scale(1.02); }
 }
 
-/* 强制深色背景元素 */
+/* 强制深色背景元素 - 半透明玻璃态 */
 .container, .main-content, .content, .page-content,
 .card, .panel, .box, .form-container, .login-box,
 .header, .footer, .sidebar, .wrapper, .inner,
 .main, .page-main, .content-wrapper, .app-container {
-    background: rgba(15, 15, 30, 0.9) !important;
+    background: rgba(25, 25, 50, 0.85) !important;
     backdrop-filter: blur(15px) !important;
+    border: 1px solid rgba(100, 150, 255, 0.2) !important;
 }
 
-/* 强制深色按钮 */
+/* 强制深色按钮 - 蓝色渐变 */
 .btn, .button, button, input[type="submit"],
 .btn-primary, .btn-secondary, .btn-success {
-    background: rgba(30, 30, 60, 0.95) !important;
-    border: 1px solid rgba(100, 150, 255, 0.4) !important;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+    border: 1px solid rgba(100, 150, 255, 0.6) !important;
     color: #fff !important;
-    box-shadow: 0 0 15px rgba(100, 150, 255, 0.2) !important;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4) !important;
+    font-weight: 600 !important;
 }
 
 .btn:hover, .button:hover, button:hover,
 input[type="submit"]:hover {
-    background: rgba(50, 50, 100, 0.95) !important;
-    box-shadow: 0 0 25px rgba(100, 150, 255, 0.4) !important;
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%) !important;
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.6) !important;
 }
 
 /* 强制深色输入框 */
 input, textarea, select, .form-input {
-    background: rgba(20, 20, 45, 0.95) !important;
-    border: 1px solid rgba(100, 150, 255, 0.3) !important;
+    background: rgba(30, 30, 60, 0.9) !important;
+    border: 1px solid rgba(100, 150, 255, 0.4) !important;
     color: #fff !important;
 }
 
 input:focus, textarea:focus, select:focus,
 .form-input:focus {
-    border-color: rgba(100, 150, 255, 0.6) !important;
-    box-shadow: 0 0 15px rgba(100, 150, 255, 0.3) !important;
+    border-color: rgba(59, 130, 246, 0.8) !important;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3) !important;
 }
 
 /* 强制深色表格 */
 table, tr, td, th, .table, .table-row, .table-cell {
-    background: rgba(15, 15, 30, 0.9) !important;
+    background: rgba(25, 25, 55, 0.9) !important;
     color: #fff !important;
-    border-color: rgba(100, 150, 255, 0.2) !important;
+    border-color: rgba(100, 150, 255, 0.3) !important;
+}
+
+/* 表格行悬停效果 */
+tr:hover td, .table-row:hover {
+    background: rgba(59, 130, 246, 0.2) !important;
 }
 
 /* 强制深色下拉框 */
 select option {
     background: #1a1a2e !important;
     color: #fff !important;
+}
+
+/* 表格表头 */
+th {
+    background: rgba(30, 60, 120, 0.9) !important;
+    font-weight: 600 !important;
+}
+
+/* 链接样式 */
+a {
+    color: #60a5fa !important;
+}
+
+a:hover {
+    color: #93c5fd !important;
 }
 
 /* 强制白色文字 */
