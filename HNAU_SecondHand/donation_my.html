@@ -8,12 +8,12 @@
     <style>
         /* ========== 我的公益转赠页样式 ========== */
         body {
-            background: linear-gradient(135deg, #f0f9f0, #e8f5e9);
+            background: linear-gradient(135deg, #0a0a1a, #0f172a);
             min-height: 100vh;
         }
         
         .page-header {
-            background: linear-gradient(135deg, #2e7d32, #43a047);
+            background: linear-gradient(135deg, #1e40af, #2563eb);
             color: #fff;
             padding: 30px 20px;
             text-align: center;
@@ -48,7 +48,7 @@
         .stats-card-title {
             font-size: 1rem;
             font-weight: bold;
-            color: #2e7d32;
+            color: #1e40af;
             margin-bottom: 16px;
             display: flex;
             align-items: center;
@@ -64,19 +64,19 @@
         .stats-item {
             text-align: center;
             padding: 12px;
-            background: #f5f5f5;
+            background: #1e293b;
             border-radius: 12px;
         }
         
         .stats-item-value {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #2e7d32;
+            color: #1e40af;
         }
         
         .stats-item-label {
             font-size: 0.8rem;
-            color: #888;
+            color: #94a3b8;
             margin-top: 4px;
         }
         
@@ -96,14 +96,14 @@
             text-align: center;
             border-radius: 10px;
             font-size: 0.95rem;
-            color: #666;
+            color: #cbd5e1;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
         }
         
         .tab-item.active {
-            background: #2e7d32;
+            background: #1e40af;
             color: #fff;
         }
         
@@ -121,7 +121,7 @@
         
         .tab-item.active .badge {
             background: #fff;
-            color: #2e7d32;
+            color: #1e40af;
         }
         
         /* 转赠记录列表 */
@@ -154,7 +154,7 @@
         .record-title {
             font-size: 1.05rem;
             font-weight: bold;
-            color: #333;
+            color: #e2e8f0;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -178,13 +178,13 @@
         }
         
         .badge-completed {
-            background: #e8f5e9;
-            color: #2e7d32;
+            background: #0f172a;
+            color: #1e40af;
         }
         
         .record-time {
             font-size: 0.8rem;
-            color: #888;
+            color: #94a3b8;
         }
         
         .record-info {
@@ -192,7 +192,7 @@
             gap: 16px;
             margin-bottom: 12px;
             font-size: 0.9rem;
-            color: #666;
+            color: #cbd5e1;
         }
         
         .record-info span {
@@ -203,7 +203,7 @@
         
         .record-desc {
             font-size: 0.9rem;
-            color: #888;
+            color: #94a3b8;
             padding: 12px;
             background: #f9f9f9;
             border-radius: 8px;
@@ -227,13 +227,13 @@
         }
         
         .record-btn-primary {
-            background: linear-gradient(135deg, #66bb6a, #43a047);
+            background: linear-gradient(135deg, #60a5fa, #2563eb);
             color: #fff;
         }
         
         .record-btn-secondary {
-            background: #f5f5f5;
-            color: #666;
+            background: #1e293b;
+            color: #cbd5e1;
         }
         
         .record-btn-edit {
@@ -253,7 +253,7 @@
         
         /* 接收方信息 */
         .receiver-info {
-            background: #e8f5e9;
+            background: #0f172a;
             padding: 12px;
             border-radius: 10px;
             margin-bottom: 16px;
@@ -261,14 +261,14 @@
         
         .receiver-info-title {
             font-size: 0.85rem;
-            color: #2e7d32;
+            color: #1e40af;
             font-weight: bold;
             margin-bottom: 8px;
         }
         
         .receiver-info-content {
             font-size: 0.9rem;
-            color: #333;
+            color: #e2e8f0;
             line-height: 1.6;
         }
         
@@ -289,7 +289,7 @@
         
         .feedback-info-content {
             font-size: 0.9rem;
-            color: #333;
+            color: #e2e8f0;
             line-height: 1.6;
         }
         
@@ -307,7 +307,7 @@
         }
         
         .empty-text {
-            color: #888;
+            color: #94a3b8;
             font-size: 1rem;
             margin-bottom: 20px;
         }
@@ -350,7 +350,7 @@
         }
         
         .certificate-header {
-            background: linear-gradient(135deg, #2e7d32, #43a047);
+            background: linear-gradient(135deg, #1e40af, #2563eb);
             color: #fff;
             padding: 20px;
             text-align: center;
@@ -378,7 +378,7 @@
             border-radius: 10px;
             font-size: 0.9rem;
             line-height: 1.8;
-            color: #333;
+            color: #e2e8f0;
             white-space: pre-wrap;
             margin-bottom: 16px;
         }
@@ -399,13 +399,13 @@
         }
         
         .certificate-btn-copy {
-            background: linear-gradient(135deg, #66bb6a, #43a047);
+            background: linear-gradient(135deg, #60a5fa, #2563eb);
             color: #fff;
         }
         
         .certificate-btn-close {
-            background: #f5f5f5;
-            color: #666;
+            background: #1e293b;
+            color: #cbd5e1;
         }
         
         /* 确认转赠弹窗 */
@@ -454,13 +454,13 @@
             text-align: center;
             font-size: 1.1rem;
             font-weight: bold;
-            color: #333;
+            color: #e2e8f0;
             margin-bottom: 8px;
         }
         
         .confirm-text {
             text-align: center;
-            color: #666;
+            color: #cbd5e1;
             font-size: 0.9rem;
             margin-bottom: 20px;
             line-height: 1.6;
@@ -482,12 +482,12 @@
         }
         
         .confirm-btn-cancel {
-            background: #f5f5f5;
-            color: #666;
+            background: #1e293b;
+            color: #cbd5e1;
         }
         
         .confirm-btn-confirm {
-            background: linear-gradient(135deg, #66bb6a, #43a047);
+            background: linear-gradient(135deg, #60a5fa, #2563eb);
             color: #fff;
         }
         
@@ -530,7 +530,7 @@
         .feedback-title {
             font-size: 1.1rem;
             font-weight: bold;
-            color: #2e7d32;
+            color: #1e40af;
             margin-bottom: 16px;
             text-align: center;
         }
@@ -538,7 +538,7 @@
         .feedback-textarea {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e8f5e9;
+            border: 2px solid #0f172a;
             border-radius: 10px;
             font-size: 0.95rem;
             resize: vertical;
@@ -549,7 +549,7 @@
         
         .feedback-textarea:focus {
             outline: none;
-            border-color: #43a047;
+            border-color: #2563eb;
         }
         
         .feedback-btns {
@@ -583,7 +583,7 @@
         .apply-card-avatar {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -593,33 +593,33 @@
         
         .apply-card-name {
             font-weight: bold;
-            color: #333;
+            color: #e2e8f0;
             font-size: 0.95rem;
         }
         
         .apply-card-id {
             font-size: 0.8rem;
-            color: #888;
+            color: #94a3b8;
         }
         
         .apply-card-time {
             font-size: 0.8rem;
-            color: #888;
+            color: #94a3b8;
         }
         
         .apply-card-reason {
-            background: #f5f5f5;
+            background: #1e293b;
             padding: 12px;
             border-radius: 8px;
             font-size: 0.9rem;
-            color: #666;
+            color: #cbd5e1;
             line-height: 1.6;
             margin-bottom: 12px;
         }
         
         .apply-card-reason-label {
             font-size: 0.8rem;
-            color: #888;
+            color: #94a3b8;
             margin-bottom: 6px;
         }
         
@@ -640,12 +640,12 @@
         }
         
         .apply-card-btn-accept {
-            background: linear-gradient(135deg, #66bb6a, #43a047);
+            background: linear-gradient(135deg, #60a5fa, #2563eb);
             color: #fff;
         }
         
         .apply-card-btn-reject {
-            background: #f5f5f5;
+            background: #1e293b;
             color: #EF4444;
         }
         
@@ -1024,7 +1024,7 @@
             if (currentTab === 'pending') {
                 recordList.innerHTML = filtered.map(function(item) {
                     return '<div class="apply-card" style="margin-bottom: 16px;">' +
-                        '<div style="font-size: 0.9rem; color: #666; margin-bottom: 12px;">您发布的「' + item.itemName + '」收到了新的申请</div>' +
+                        '<div style="font-size: 0.9rem; color: #cbd5e1; margin-bottom: 12px;">您发布的「' + item.itemName + '」收到了新的申请</div>' +
                         '<div class="apply-card-header">' +
                         '<div class="apply-card-user">' +
                         '<div class="apply-card-avatar">👤</div>' +
@@ -1053,7 +1053,7 @@
                     if (currentTab === 'published') {
                         if (item.status === 'pending') {
                             actions = '<button class="record-btn record-btn-edit" onclick="window.location.href=\'donation_publish.html?editId=' + item.id + '\'">✏️ 编辑</button> ' +
-                                      '<span style="color: #888; font-size: 0.85rem;">等待申请...</span>';
+                                      '<span style="color: #94a3b8; font-size: 0.85rem;">等待申请...</span>';
                         } else if (item.status === 'receiving' && item.receiver) {
                             // 有待审核的申请
                             actions = '<button class="record-btn record-btn-primary" onclick="showPendingApplicants(\'' + item.id + '\')">📋 查看申请 (' + (item.receiver ? '1' : '0') + ')</button>';
@@ -1070,7 +1070,7 @@
                             }
                         } else if (item.status === 'completed') {
                             if (item.feedback) {
-                                actions = '<span style="color: #888; font-size: 0.85rem;">已填写反馈</span>';
+                                actions = '<span style="color: #94a3b8; font-size: 0.85rem;">已填写反馈</span>';
                             } else {
                                 actions = '<button class="record-btn record-btn-primary" onclick="showFeedback(\'' + item.id + '\')">💬 填写反馈</button>';
                             }

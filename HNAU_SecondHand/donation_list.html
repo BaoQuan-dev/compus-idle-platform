@@ -8,12 +8,12 @@
     <style>
         /* ========== 公益转赠列表页样式 ========== */
         body {
-            background: linear-gradient(135deg, #f0f9f0, #e8f5e9);
+            background: linear-gradient(135deg, #0a0a1a, #0f172a);
             min-height: 100vh;
         }
         
         .page-header {
-            background: linear-gradient(135deg, #2e7d32, #43a047);
+            background: linear-gradient(135deg, #1e40af, #2563eb);
             color: #fff;
             padding: 24px 20px;
         }
@@ -62,12 +62,12 @@
         .stat-value {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #2e7d32;
+            color: #1e40af;
         }
         
         .stat-label {
             font-size: 0.8rem;
-            color: #888;
+            color: #94a3b8;
         }
         
         /* 操作栏 */
@@ -86,28 +86,28 @@
         .filter-tab {
             padding: 8px 16px;
             background: #fff;
-            border: 2px solid #c8e6c9;
+            border: 2px solid #3b82f6;
             border-radius: 20px;
             font-size: 0.9rem;
-            color: #666;
+            color: #cbd5e1;
             cursor: pointer;
             transition: all 0.2s;
         }
         
         .filter-tab.active {
-            background: #2e7d32;
-            border-color: #2e7d32;
+            background: #1e40af;
+            border-color: #1e40af;
             color: #fff;
         }
         
         .filter-tab:hover:not(.active) {
-            border-color: #43a047;
-            color: #2e7d32;
+            border-color: #2563eb;
+            color: #1e40af;
         }
         
         .publish-btn {
             padding: 10px 20px;
-            background: linear-gradient(135deg, #66bb6a, #43a047);
+            background: linear-gradient(135deg, #60a5fa, #2563eb);
             color: #fff;
             border: none;
             border-radius: 20px;
@@ -149,7 +149,7 @@
         .donation-card-image {
             width: 100%;
             height: 160px;
-            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -184,8 +184,8 @@
         }
         
         .status-completed {
-            background: #e8f5e9;
-            color: #2e7d32;
+            background: #0f172a;
+            color: #1e40af;
         }
         
         .donation-card-content {
@@ -195,7 +195,7 @@
         .donation-card-title {
             font-size: 1rem;
             font-weight: bold;
-            color: #333;
+            color: #e2e8f0;
             margin-bottom: 8px;
             display: -webkit-box;
             -webkit-line-clamp: 1;
@@ -208,7 +208,7 @@
             align-items: center;
             gap: 12px;
             font-size: 0.8rem;
-            color: #888;
+            color: #94a3b8;
             margin-bottom: 12px;
         }
         
@@ -216,8 +216,8 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            background: #e8f5e9;
-            color: #2e7d32;
+            background: #0f172a;
+            color: #1e40af;
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.8rem;
@@ -233,12 +233,12 @@
         
         .donation-card-publisher {
             font-size: 0.8rem;
-            color: #888;
+            color: #94a3b8;
         }
         
         .donation-card-action {
             padding: 6px 14px;
-            background: #2e7d32;
+            background: #1e40af;
             color: #fff;
             border: none;
             border-radius: 16px;
@@ -248,7 +248,7 @@
         }
         
         .donation-card-action:hover {
-            background: #43a047;
+            background: #2563eb;
         }
         
         .donation-card-action:disabled {
@@ -264,7 +264,7 @@
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #888;
+            color: #94a3b8;
         }
         
         .empty-icon {
@@ -321,7 +321,7 @@
         .detail-image {
             width: 100%;
             height: 220px;
-            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -358,7 +358,7 @@
         .detail-title {
             font-size: 1.2rem;
             font-weight: bold;
-            color: #333;
+            color: #e2e8f0;
             margin-bottom: 12px;
         }
         
@@ -370,14 +370,14 @@
         
         .detail-tag {
             padding: 4px 10px;
-            background: #e8f5e9;
-            color: #2e7d32;
+            background: #0f172a;
+            color: #1e40af;
             border-radius: 12px;
             font-size: 0.8rem;
         }
         
         .detail-desc {
-            color: #666;
+            color: #cbd5e1;
             font-size: 0.95rem;
             line-height: 1.7;
             margin-bottom: 16px;
@@ -394,20 +394,20 @@
         }
         
         .detail-meta-item {
-            background: #f5f5f5;
+            background: #1e293b;
             padding: 12px;
             border-radius: 8px;
         }
         
         .detail-meta-label {
             font-size: 0.8rem;
-            color: #888;
+            color: #94a3b8;
             margin-bottom: 4px;
         }
         
         .detail-meta-value {
             font-size: 0.95rem;
-            color: #333;
+            color: #e2e8f0;
             font-weight: bold;
         }
         
@@ -419,7 +419,7 @@
         .apply-btn {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #66bb6a, #43a047);
+            background: linear-gradient(135deg, #60a5fa, #2563eb);
             color: #fff;
             border: none;
             border-radius: 25px;
@@ -473,7 +473,7 @@
         .apply-title {
             font-size: 1.1rem;
             font-weight: bold;
-            color: #2e7d32;
+            color: #1e40af;
             margin-bottom: 16px;
             text-align: center;
         }
@@ -481,7 +481,7 @@
         .apply-input {
             width: 100%;
             padding: 12px 14px;
-            border: 2px solid #e8f5e9;
+            border: 2px solid #0f172a;
             border-radius: 10px;
             font-size: 1rem;
             box-sizing: border-box;
@@ -490,7 +490,7 @@
         
         .apply-input:focus {
             outline: none;
-            border-color: #43a047;
+            border-color: #2563eb;
         }
         
         .apply-btns {
@@ -510,12 +510,12 @@
         }
         
         .apply-btn-cancel {
-            background: #f5f5f5;
-            color: #666;
+            background: #1e293b;
+            color: #cbd5e1;
         }
         
         .apply-btn-confirm {
-            background: linear-gradient(135deg, #66bb6a, #43a047);
+            background: linear-gradient(135deg, #60a5fa, #2563eb);
             color: #fff;
         }
         
@@ -670,7 +670,7 @@
                     </div>
                     <div class="detail-meta-item">
                         <div class="detail-meta-label">转赠价格</div>
-                        <div class="detail-meta-value" style="color: #2e7d32;">免费</div>
+                        <div class="detail-meta-value" style="color: #1e40af;">免费</div>
                     </div>
                     <div class="detail-meta-item">
                         <div class="detail-meta-label">当前状态</div>

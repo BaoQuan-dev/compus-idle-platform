@@ -2859,3 +2859,21 @@ a, li, td, th {
 *[style*="background:white"] {
     background: rgba(15, 15, 30, 0.95) !important;
 }
+
+/* SVG绿色转蓝色滤镜 */
+svg [fill*="#2E7D32"],
+svg [fill*="#4CAF50"],
+svg [fill*="#43A047"],
+svg [fill*="#4ade80"],
+svg [stroke*="#2E7D32"],
+svg [stroke*="#4CAF50"],
+svg [stroke*="#43A047"] {
+    filter: hue-rotate(200deg) saturate(0.8);
+}
+
+/* 通用SVG颜色转换 */
+.module-icon svg,
+.feature-icon svg,
+.icon svg {
+    filter: brightness(0) saturate(100%) invert(36%) sepia(98%) saturate(1476%) hue-rotate(210deg);
+}
