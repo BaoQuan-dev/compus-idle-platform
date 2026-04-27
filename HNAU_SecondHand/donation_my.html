@@ -6,9 +6,24 @@
     <title>我的公益转赠 - 农大闲置</title>
     <link rel="stylesheet" href="./style/main.css">
     <style>
-        /* ========== 我的公益转赠页样式 ========== */
+        /* ========== 星空背景 ========== */
         body {
-            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f23 100%);
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: url('./images/bg-starry.jpg') center center / cover no-repeat;
+        }
+        
+        /* ========== 我的公益转赠页样式 ========== */
+        body.main-bg {
+            background: transparent;
             min-height: 100vh;
         }
         

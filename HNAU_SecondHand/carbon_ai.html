@@ -6,6 +6,16 @@
     <title>AI碳足迹助手 - 农大闲置</title>
     <link rel="stylesheet" href="./style/main.css">
     <style>
+        /* ========== 星空背景 ========== */
+        body { position: relative; }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: url('./images/bg-starry.jpg') center center / cover no-repeat;
+        }
         /* ========== AI碳足迹助手 - 星空玻璃拟态风格 ========== */
         
         .ai-header {
@@ -18,7 +28,7 @@
             margin: 0 0 6px 0; 
             font-size: 26px; 
             font-weight: 700;
-            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            background: transparent;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -36,7 +46,7 @@
         }
         
         .ai-chat-box {
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            background: transparent;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.12);
@@ -75,14 +85,14 @@
         }
         
         .ai-message.user .ai-message-bubble {
-            background: linear-gradient(135deg, rgba(96,165,250,0.6) 0%, rgba(59,130,246,0.6) 100%);
+            background: transparent;
             color: #fff;
             border-bottom-right-radius: 4px;
             border: 1px solid rgba(96,165,250,0.3);
         }
         
         .ai-message.ai .ai-message-bubble {
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            background: transparent;
             backdrop-filter: blur(10px);
             color: rgba(255,255,255,0.9);
             border-bottom-left-radius: 4px;
@@ -101,7 +111,7 @@
         .ai-typing-dots span {
             width: 8px;
             height: 8px;
-            background: linear-gradient(135deg, #60A5FA, #C084FC);
+            background: transparent;
             border-radius: 50%;
             animation: typing 1.4s infinite;
         }
@@ -130,7 +140,7 @@
         
         .ai-quick-questions h4 {
             margin: 0 0 12px 0;
-            background: linear-gradient(135deg, #60A5FA, #C084FC);
+            background: transparent;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -194,7 +204,7 @@
         }
         
         .ai-send-btn {
-            background: linear-gradient(135deg, rgba(96,165,250,0.5) 0%, rgba(59,130,246,0.5) 100%);
+            background: transparent;
             color: #fff;
             border: 1px solid rgba(96,165,250,0.4);
             padding: 12px 24px;
@@ -207,7 +217,7 @@
         .ai-send-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(96,165,250,0.3);
-            background: linear-gradient(135deg, rgba(96,165,250,0.7) 0%, rgba(59,130,246,0.7) 100%);
+            background: transparent;
         }
         
         .ai-send-btn:disabled {
@@ -217,7 +227,7 @@
         }
         
         .ai-stats-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            background: transparent;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.12);
@@ -228,7 +238,7 @@
         }
         
         .ai-stats-card h3 {
-            background: linear-gradient(135deg, #60A5FA, #C084FC);
+            background: transparent;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -253,7 +263,7 @@
         .ai-stat-value {
             font-size: 1.4rem;
             font-weight: bold;
-            background: linear-gradient(135deg, #60A5FA, #C084FC);
+            background: transparent;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -266,7 +276,7 @@
         }
         
         .ai-status {
-            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%);
+            background: transparent;
             backdrop-filter: blur(20px);
             border-radius: 16px;
             padding: 16px;
@@ -281,7 +291,7 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #60A5FA, #34D399);
+            background: transparent;
             box-shadow: 0 0 10px rgba(96,165,250,0.5);
         }
         
@@ -295,7 +305,7 @@
             position: fixed;
             top: 80px;
             left: 16px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 100%);
+            background: transparent;
             backdrop-filter: blur(20px);
             color: #fff;
             border: 1px solid rgba(255,255,255,0.15);
@@ -310,7 +320,7 @@
         }
         
         .ai-back-btn:hover {
-            background: linear-gradient(135deg, rgba(96,165,250,0.3) 0%, rgba(59,130,246,0.3) 100%);
+            background: transparent;
             transform: translateY(-2px);
         }
         
@@ -322,7 +332,7 @@
         }
     </style>
 </head>
-<body style="background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f23 100%) !important;">
+<body style="background: transparent;">
     <div class="cosmos-bg">
         <div class="cosmos-stars"></div>
         <div class="cosmos-nebula"></div>

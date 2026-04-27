@@ -6,9 +6,19 @@
     <title>发布公益转赠 - 农大闲置</title>
     <link rel="stylesheet" href="./style/main.css">
     <style>
+        /* ========== 星空背景 ========== */
+        body { position: relative; }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: url('./images/bg-starry.jpg') center center / cover no-repeat;
+        }
         /* ========== 公益转赠发布页样式 ========== */
         body {
-            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f23 100%);
+            background: transparent;
             min-height: 100vh;
         }
         
@@ -37,7 +47,7 @@
         }
         
         .donation-form {
-            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            background: transparent;
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.15);
             border-radius: 16px;
@@ -54,7 +64,7 @@
         .form-section-title {
             font-size: 1rem;
             font-weight: bold;
-            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            background: transparent;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -141,7 +151,7 @@
         .target-option input:checked + label {
             background: #0f172a;
             border-color: #2563eb;
-            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            background: transparent;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -172,7 +182,7 @@
         .price-display .price {
             font-size: 1.8rem;
             font-weight: bold;
-            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            background: transparent;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -232,7 +242,7 @@
         .submit-btn {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #60a5fa, #2563eb);
+            background: transparent;
             color: #fff;
             border: none;
             border-radius: 25px;
@@ -266,7 +276,7 @@
             align-items: center;
             gap: 4px;
             background: #0f172a;
-            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            background: transparent;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -286,7 +296,7 @@
         }
     </style>
 </head>
-<body style="background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f23 100%) !important;">
+<body style="background: transparent;">
     <div class="cosmos-bg">
         <div class="cosmos-stars"></div>
         <div class="cosmos-nebula"></div>
@@ -471,10 +481,20 @@
     
     <!-- 删除按钮和弹窗样式 -->
     <style>
+        /* ========== 星空背景 ========== */
+        body { position: relative; }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: url('./images/bg-starry.jpg') center center / cover no-repeat;
+        }
         .delete-btn {
             width: 100%;
             padding: 14px 20px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            background: transparent;
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.15);
             border-radius: 16px;
@@ -519,7 +539,7 @@
             visibility: visible;
         }
         .delete-modal {
-            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            background: transparent;
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.15);
             border-radius: 16px;
@@ -589,6 +609,16 @@
     
     <!-- 弹窗样式（内联） -->
     <style>
+        /* ========== 星空背景 ========== */
+        body { position: relative; }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: url('./images/bg-starry.jpg') center center / cover no-repeat;
+        }
         .hnau-modal-overlay {
             position: fixed;
             top: 0;
@@ -611,7 +641,7 @@
         }
         
         .hnau-modal {
-            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            background: transparent;
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.15);
             border-radius: 16px;
@@ -632,7 +662,7 @@
         .hnau-modal-header {
             font-size: 1.1rem;
             font-weight: bold;
-            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            background: transparent;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -651,7 +681,7 @@
         }
         
         .hnau-modal-btn {
-            background: linear-gradient(135deg, #60a5fa, #2563eb);
+            background: transparent;
             color: #fff;
             border: none;
             padding: 12px 32px;
