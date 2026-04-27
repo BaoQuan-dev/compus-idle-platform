@@ -3,176 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="河南农业大学个人中心">
     <title>个人中心 - 农大闲置</title>
     <link rel="stylesheet" href="./style/main.css">
-</head>
-<body style="background: transparent;">
-    <div class="cosmos-bg">
-        <div class="cosmos-stars"></div>
-        <div class="cosmos-nebula"></div>
-    </div>
-    <!-- 导航栏 -->
-
-    <!-- 主内容区域 -->
-    <main class="main-content">
-        <!-- 页面标题 -->
-        <div class="page-header">
-            <div class="container">
-                <h1>👤 个人中心</h1>
-                <p>管理您的信息和发布</p>
-            </div>
-        </div>
-
-        <!-- 个人中心内容区 -->
-        <section class="container" style="padding-top: 30px; padding-bottom: 30px;">
-            <div id="centerContent">
-                <!-- JS渲染 -->
-            </div>
-        </section>
-    </main>
-
-    <!-- 页脚 -->
-    <footer class="footer">
-        <div class="container">
-            <p class="footer-text">🌟 河南农业大学·星空校园闲置循环平台 | 践行双碳目标，共建星空校园</p>
-        </div>
-    </footer>
-
-    <!-- 脚本 -->
-    <script src="./script/common.js"></script>
-    <script src="./script/center.js"></script>
-    <script src="./script/carbon.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    
-    <!-- ========== 碳足迹模块 ========== -->
-    <section id="carbonModule" style="display:none;">
-        <div class="carbon-container">
-            <!-- 碳足迹头部 -->
-            <div class="carbon-header">
-                <h2>🌱 我的碳足迹</h2>
-                <button id="carbonCheckIn" class="carbon-btn carbon-btn-sm">每日签到+5积分</button>
-            </div>
-            
-            <!-- 核心数据卡片 -->
-            <div class="carbon-stats-grid">
-                <div class="carbon-stat-card carbon-stat-primary">
-                    <div class="carbon-stat-icon">🌍</div>
-                    <div class="carbon-stat-value" id="carbonTotalSaved">0</div>
-                    <div class="carbon-stat-label">累计减碳(kg CO₂)</div>
-                </div>
-                <div class="carbon-stat-card">
-                    <div class="carbon-stat-icon">🌳</div>
-                    <div class="carbon-stat-value" id="carbonTrees">0</div>
-                    <div class="carbon-stat-label">等效种树(棵)</div>
-                </div>
-                <div class="carbon-stat-card">
-                    <div class="carbon-stat-icon">💰</div>
-                    <div class="carbon-stat-value" id="carbonPoints">0</div>
-                    <div class="carbon-stat-label">碳积分</div>
-                </div>
-                <div class="carbon-stat-card">
-                    <div class="carbon-stat-icon">📊</div>
-                    <div class="carbon-stat-value" id="carbonTrades">0</div>
-                    <div class="carbon-stat-label">交易次数</div>
-                </div>
-            </div>
-            
-            <!-- 等级与勋章 -->
-            <div class="carbon-level-section">
-                <div class="carbon-level">
-                    <div class="carbon-level-badge" id="carbonLevelBadge">
-                        <span class="carbon-level-icon">🌱</span>
-                        <span class="carbon-level-name">环保新手</span>
-                    </div>
-                    <div class="carbon-level-progress">
-                        <div class="carbon-level-bar" id="carbonLevelBar"></div>
-                    </div>
-                    <div class="carbon-level-tips">再攒<span id="carbonLevelNeed">100</span>积分升级</div>
-                </div>
-                
-                <!-- 勋章墙 -->
-                <div class="carbon-badges">
-                    <div class="carbon-badges-title">🏆 我的勋章</div>
-                    <div class="carbon-badges-grid" id="carbonBadgesGrid">
-                        <span class="carbon-badge-empty">暂无勋章，继续努力！</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 可视化图表 -->
-            <div class="carbon-charts">
-                <div class="carbon-chart-card">
-                    <h3>📈 碳减排趋势</h3>
-                    <canvas id="carbonTrendChart" height="200"></canvas>
-                </div>
-                <div class="carbon-chart-card">
-                    <h3>🥧 品类占比</h3>
-                    <canvas id="carbonPieChart" height="200"></canvas>
-                </div>
-            </div>
-            
-            <!-- 碳足迹明细 -->
-            <div class="carbon-records">
-                <h3>📋 交易明细</h3>
-                <div class="carbon-records-list" id="carbonRecordsList">
-                    <div class="carbon-record-empty">暂无交易记录</div>
-                </div>
-            </div>
-            
-            <!-- 环保成就 -->
-            <div class="carbon-achievements">
-                <h3>🌟 环保贡献</h3>
-                <div class="carbon-achievements-grid">
-                    <div class="carbon-achievement">
-                        <div class="carbon-achievement-icon">💧</div>
-                        <div class="carbon-achievement-value" id="carbonWaterSaved">0</div>
-                        <div class="carbon-achievement-label">节约用水(L)</div>
-                    </div>
-                    <div class="carbon-achievement">
-                        <div class="carbon-achievement-icon">⚡</div>
-                        <div class="carbon-achievement-value" id="carbonEnergySaved">0</div>
-                        <div class="carbon-achievement-label">节约用电(kWh)</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- AI报告入口 -->
-            <div class="carbon-ai-section">
-                <h3>🤖 AI环保助手</h3>
-                <button id="getCarbonReport" class="carbon-btn carbon-btn-primary">
-                    📄 生成我的环保报告
-                </button>
-                <button id="shareCarbon" class="carbon-btn carbon-btn-secondary">
-                    📤 一键分享碳足迹
-                </button>
-            </div>
-        </div>
-    </section>
-    
-    <!-- 统一弹窗 -->
-    <div class="hnau-modal-overlay" id="shareModal">
-        <div class="hnau-modal">
-            <div class="hnau-modal-header" id="modalTitle">分享准备就绪</div>
-            <div class="hnau-modal-content" id="modalContent"></div>
-            <div class="hnau-modal-footer">
-                <button class="hnau-modal-btn" id="modalBtn">确定</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 碳足迹样式 -->
     <style>
-        /* ========== 内嵌星空背景 ========== */
-        body { position: relative; }
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-            background: url('./images/bg-starry.jpg') center center / cover no-repeat;
-        }
         /* ========== 星空背景 ========== */
         body { position: relative; }
         body::before {
@@ -183,523 +16,10 @@
             z-index: -1;
             background: url('./images/bg-starry.jpg') center center / cover no-repeat;
         }
-        /* 统一弹窗样式 */
-        .hnau-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
         
-        .hnau-modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .hnau-modal {
-            background: transparent;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            border-radius: 16px;
-            padding: 24px;
-            max-width: 320px;
-            width: 90%;
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-        }
-        
-        .hnau-modal-overlay.active .hnau-modal {
-            transform: translateY(0);
-        }
-        
-        .hnau-modal-header {
-            font-size: 1.1rem;
-            font-weight: bold;
-            background: transparent;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-        
-        .hnau-modal-content {
-            color: rgba(255,255,255,0.8);
-            font-size: 0.95rem;
-            line-height: 1.8;
-            margin-bottom: 20px;
-        }
-        
-        .hnau-modal-content .check-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .hnau-modal-content .check-item:last-child {
-            margin-bottom: 0;
-        }
-        
-        .hnau-modal-footer {
-            text-align: center;
-        }
-        
-        .hnau-modal-btn {
-            background: transparent;
-            color: #fff;
-            border: none;
-            padding: 12px 32px;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .hnau-modal-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-        
-        .carbon-container {
-            background: transparent;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 30px;
-            border: 1px solid #3b82f6;
-        }
-        
-        .carbon-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .carbon-header h2 {
-            background: transparent;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 0;
-            font-size: 1.5rem;
-        }
-        
-        .carbon-btn {
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-        }
-        
-        .carbon-btn-sm {
-            background: #60A5FA;
-            color: #fff;
-        }
-        
-        .carbon-btn-primary {
-            background: transparent;
-            color: #fff;
-            padding: 12px 24px;
-            font-size: 1rem;
-        }
-        
-        .carbon-btn-secondary {
-            background: transparent;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            color: #60A5FA;
-            border: 2px solid #60A5FA;
-            margin-left: 10px;
-        }
-        
-        .carbon-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-        
-        /* 数据卡片 */
-        .carbon-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        
-        .carbon-stat-card {
-            background: transparent;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border: 1px solid rgba(96, 165, 250, 0.3);
-        }
-        
-        .carbon-stat-primary {
-            background: transparent;
-            color: #fff;
-        }
-        
-        .carbon-stat-primary .carbon-stat-label {
-            color: rgba(255,255,255,0.9);
-        }
-        
-        .carbon-stat-icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-        
-        .carbon-stat-value {
-            font-size: 1.8rem;
-            font-weight: bold;
-            background: transparent;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .carbon-stat-primary .carbon-stat-value {
-            color: #fff;
-        }
-        
-        .carbon-stat-label {
-            color: rgba(255,255,255,0.8);
-            font-size: 0.85rem;
-            margin-top: 4px;
-        }
-        
-        /* 等级与勋章 */
-        .carbon-level-section {
-            background: transparent;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(96, 165, 250, 0.3);
-        }
-        
-        .carbon-level {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-        
-        .carbon-level-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: transparent;
-            padding: 8px 16px;
-            border-radius: 20px;
-            white-space: nowrap;
-        }
-        
-        .carbon-level-icon {
-            font-size: 1.5rem;
-        }
-        
-        .carbon-level-name {
-            background: transparent;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: bold;
-        }
-        
-        .carbon-level-progress {
-            flex: 1;
-            height: 12px;
-            background: #0f172a;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-        
-        .carbon-level-bar {
-            height: 100%;
-            background: transparent;
-            border-radius: 6px;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-        
-        .carbon-level-tips {
-            color: rgba(255,255,255,0.8);
-            font-size: 0.85rem;
-            white-space: nowrap;
-        }
-        
-        .carbon-badges-title {
-            background: transparent;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: bold;
-            margin-bottom: 12px;
-        }
-        
-        .carbon-badges-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        
-        .carbon-badge {
-            background: transparent;
-            padding: 10px 14px;
-            border-radius: 10px;
-            text-align: center;
-            border: 1px solid #60A5FA;
-            min-width: 90px;
-        }
-        
-        .carbon-badge-icon {
-            font-size: 1.5rem;
-            margin-bottom: 4px;
-        }
-        
-        .carbon-badge-name {
-            font-size: 0.8rem;
-            color: #3B82F6;
-            font-weight: bold;
-        }
-        
-        .carbon-badge-empty {
-            color: #999;
-            font-size: 0.9rem;
-        }
-        
-        /* 图表 */
-        .carbon-charts {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-        
-        .carbon-chart-card {
-            background: transparent;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid rgba(96, 165, 250, 0.3);
-        }
-        
-        .carbon-chart-card h3 {
-            background: transparent;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 0 0 16px 0;
-            font-size: 1.1rem;
-        }
-        
-        /* 交易明细 */
-        .carbon-records {
-            background: transparent;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(96, 165, 250, 0.3);
-        }
-        
-        .carbon-records h3 {
-            background: transparent;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 0 0 16px 0;
-        }
-        
-        .carbon-records-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .carbon-record {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid #1e293b;
-            transition: background 0.2s;
-        }
-        
-        .carbon-record:hover {
-            background: rgba(96, 165, 250, 0.1);
-        }
-        
-        .carbon-record:last-child {
-            border-bottom: none;
-        }
-        
-        .carbon-record-info {
-            flex: 1;
-        }
-        
-        .carbon-record-title {
-            color: #fff;
-            font-weight: 500;
-            margin-bottom: 4px;
-        }
-        
-        .carbon-record-meta {
-            font-size: 0.85rem;
-            color: #999;
-        }
-        
-        .carbon-record-value {
-            text-align: right;
-        }
-        
-        .carbon-record-saved {
-            color: #60A5FA;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-        
-        .carbon-record-unit {
-            color: #999;
-            font-size: 0.8rem;
-        }
-        
-        .carbon-record-empty {
-            text-align: center;
-            color: #999;
-            padding: 40px;
-        }
-        
-        /* 环保成就 */
-        .carbon-achievements {
-            background: transparent;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(96, 165, 250, 0.3);
-        }
-        
-        .carbon-achievements h3 {
-            background: transparent;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 0 0 16px 0;
-        }
-        
-        .carbon-achievements-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-        
-        .carbon-achievement {
-            background: transparent;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-        }
-        
-        .carbon-achievement-icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-        
-        .carbon-achievement-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #fff;
-        }
-        
-        .carbon-achievement-label {
-            color: rgba(255,255,255,0.8);
-            font-size: 0.85rem;
-            margin-top: 4px;
-        }
-        
-        /* AI入口 */
-        .carbon-ai-section {
-            background: transparent;
-            border-radius: 12px;
-            padding: 24px;
-            text-align: center;
-            border: 1px solid #2563eb;
-        }
-        
-        .carbon-ai-section h3 {
-            background: transparent;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 0 0 16px 0;
-        }
-        
-        .carbon-ai-section .carbon-btn {
-            margin-top: 12px;
-        }
-        
-        /* 响应式 */
-        @media (max-width: 768px) {
-            .carbon-stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .carbon-charts {
-                grid-template-columns: 1fr;
-            }
-            
-            .carbon-achievements-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .carbon-level {
-                flex-wrap: wrap;
-            }
-            
-            .carbon-level-tips {
-                width: 100%;
-                text-align: center;
-                margin-top: 8px;
-            }
-        }
-    
-        /* 页面头部 */
+        /* ========== 页面头部 ========== */
         .page-header {
-            padding: 80px 20px 20px;
+            padding: 60px 20px 0;
             text-align: left;
             max-width: 900px;
             margin: 0 auto;
@@ -718,446 +38,295 @@
             color: rgba(255,255,255,0.6);
             margin: 0;
         }
+        
+        /* ========== 内容区 ========== */
         .page-container {
             max-width: 900px;
-            margin: 0 auto;
+            margin: 20px auto;
             padding: 0 16px 100px;
         }
-        </style>
-    
-    <!-- 碳足迹逻辑 -->
-    <script>
-    (function() {
-        'use strict';
         
-        var carbonModule = document.getElementById('carbonModule');
-        var trendChart = null;
-        var pieChart = null;
-        
-        // 初始化碳足迹模块
-        function initCarbonModule() {
-            carbonModule.style.display = 'block';
-            
-            // 【新增】初始化碳足迹数据同步
-            if (window.HNAU_Carbon && typeof HNAU_Carbon.initSync === 'function') {
-                HNAU_Carbon.initSync();
-                // 添加数据变更监听器，自动更新UI
-                HNAU_Carbon.addChangeListener(function(stats) {
-                    updateCarbonUI(stats);
-                });
-            }
-            
-            loadCarbonData();
-            initCharts();
-            bindEvents();
-            
-            // 【新增】监听页面可见性变化，当页面从后台切换回来时强制刷新
-            document.addEventListener('visibilitychange', function() {
-                if (!document.hidden) {
-                    // 页面从后台切换回来，强制重新加载数据
-                    console.log('[个人中心] 页面恢复可见，刷新碳足迹数据');
-                    loadCarbonData();
-                    updateCharts(HNAU_Carbon.getStats());
-                }
-            });
+        /* ========== 玻璃拟态卡片 ========== */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         }
         
-        // 【新增】更新碳足迹UI（供监听器回调使用）
-        function updateCarbonUI(stats) {
-            // 更新核心数据
-            document.getElementById('carbonTotalSaved').textContent = stats.totalSaved.toFixed(1);
-            document.getElementById('carbonTrees').textContent = stats.treesEquivalent.toFixed(1);
-            document.getElementById('carbonPoints').textContent = stats.totalPoints;
-            document.getElementById('carbonTrades').textContent = stats.tradeCount;
-            document.getElementById('carbonWaterSaved').textContent = stats.waterSaved.toFixed(1);
-            document.getElementById('carbonEnergySaved').textContent = stats.energySaved.toFixed(1);
-            
-            // 更新等级
-            var level = stats.level;
-            var levelBadge = document.getElementById('carbonLevelBadge');
-            if (levelBadge) {
-                levelBadge.querySelector('.carbon-level-icon').textContent = level.icon === 'seedling' ? '🌱' : 
-                                                                            level.icon === 'leaf' ? '🌿' : 
-                                                                            level.icon === 'tree' ? '🌳' : 
-                                                                            level.icon === 'recycle' ? '♻️' : 
-                                                                            level.icon === 'award' ? '🏆' : '⭐';
-                levelBadge.querySelector('.carbon-level-name').textContent = level.name;
-                levelBadge.style.borderColor = level.color;
-                levelBadge.style.background = level.color + '33';
-            }
-            
-            // 计算进度
-            var levels = [{min: 0}, {min: 100}, {min: 500}, {min: 2000}, {min: 5000}, {min: 10000}];
-            var currentIdx = 0;
-            for (var i = levels.length - 1; i >= 0; i--) {
-                if (stats.totalPoints >= levels[i].min) {
-                    currentIdx = i;
-                    break;
-                }
-            }
-            var currentMin = levels[currentIdx].min;
-            var nextMin = levels[Math.min(currentIdx + 1, levels.length - 1)].min;
-            var progress = ((stats.totalPoints - currentMin) / (nextMin - currentMin)) * 100;
-            var levelBar = document.getElementById('carbonLevelBar');
-            var levelNeed = document.getElementById('carbonLevelNeed');
-            if (levelBar) levelBar.style.width = Math.min(progress, 100) + '%';
-            if (levelNeed) levelNeed.textContent = Math.max(nextMin - stats.totalPoints, 0);
-            
-            // 更新勋章
-            var badgesGrid = document.getElementById('carbonBadgesGrid');
-            if (badgesGrid) {
-                if (stats.badges && stats.badges.length > 0) {
-                    badgesGrid.innerHTML = stats.badges.map(function(b) {
-                        return '<div class="carbon-badge"><div class="carbon-badge-icon">' + b.icon + '</div><div class="carbon-badge-name">' + b.name + '</div></div>';
-                    }).join('');
-                } else {
-                    badgesGrid.innerHTML = '<span class="carbon-badge-empty">暂无勋章，继续努力！</span>';
-                }
-            }
-            
-            // 更新交易记录
-            var recordsList = document.getElementById('carbonRecordsList');
-            if (recordsList) {
-                if (stats.transactions && stats.transactions.length > 0) {
-                    recordsList.innerHTML = stats.transactions.map(function(t) {
-                        return '<div class="carbon-record">' +
-                            '<div class="carbon-record-info">' +
-                            '<div class="carbon-record-title">' + (t.title || '闲置交易') + '</div>' +
-                            '<div class="carbon-record-meta">' + t.date + ' · ' + t.category + '</div>' +
-                            '</div>' +
-                            '<div class="carbon-record-value">' +
-                            '<div class="carbon-record-saved">-' + t.saved + '</div>' +
-                            '<div class="carbon-record-unit">kg CO₂</div>' +
-                            '</div></div>';
-                    }).join('');
-                } else {
-                    recordsList.innerHTML = '<div class="carbon-record-empty">暂无交易记录，开始交易即可累积碳减排！</div>';
-                }
-            }
-            
-            // 更新图表
-            updateCharts(stats);
+        /* 用户信息卡片 */
+        .user-info-card {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .user-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #60A5FA, #C084FC);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        .user-details {
+            flex: 1;
+        }
+        .user-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .user-id {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+        .user-badge {
+            padding: 4px 12px;
+            background: linear-gradient(135deg, rgba(96,165,250,0.3), rgba(192,132,252,0.3));
+            border: 1px solid rgba(96,165,250,0.5);
+            border-radius: 20px;
+            font-size: 12px;
+            color: #fff;
         }
         
-        // 【新增】更新图表（供监听器回调使用）
-        function updateCharts(stats) {
-            var currentYear = new Date().getFullYear();
-            if (trendChart) {
-                var yearlyTrend = stats.yearlyTrend && stats.yearlyTrend[currentYear] ? 
-                                  stats.yearlyTrend[currentYear] : [0,0,0,0,0,0,0,0,0,0,0,0];
-                trendChart.data.datasets[0].data = yearlyTrend;
-                trendChart.update();
-            }
-            if (pieChart) {
-                var categoryData = {};
-                if (stats.transactions) {
-                    stats.transactions.forEach(function(t) {
-                        if (!categoryData[t.category]) {
-                            categoryData[t.category] = 0;
-                        }
-                        categoryData[t.category] += t.saved;
-                    });
-                }
-                pieChart.data.labels = Object.keys(categoryData);
-                pieChart.data.datasets[0].data = Object.values(categoryData);
-                pieChart.update();
-            }
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .stat-card {
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
         }
         
-        // 加载碳数据
-        function loadCarbonData() {
-            var stats = HNAU_Carbon.getStats();
-            
-            // 更新核心数据
-            document.getElementById('carbonTotalSaved').textContent = stats.totalSaved.toFixed(1);
-            document.getElementById('carbonTrees').textContent = stats.treesEquivalent.toFixed(1);
-            document.getElementById('carbonPoints').textContent = stats.totalPoints;
-            document.getElementById('carbonTrades').textContent = stats.tradeCount;
-            document.getElementById('carbonWaterSaved').textContent = stats.waterSaved.toFixed(1);
-            document.getElementById('carbonEnergySaved').textContent = stats.energySaved.toFixed(1);
-            
-            // 更新等级
-            var level = stats.level;
-            var levelBadge = document.getElementById('carbonLevelBadge');
-            levelBadge.querySelector('.carbon-level-icon').textContent = level.icon === 'seedling' ? '🌱' : 
-                                                                        level.icon === 'leaf' ? '🌿' : 
-                                                                        level.icon === 'tree' ? '🌳' : 
-                                                                        level.icon === 'recycle' ? '♻️' : 
-                                                                        level.icon === 'award' ? '🏆' : '⭐';
-            levelBadge.querySelector('.carbon-level-name').textContent = level.name;
-            levelBadge.style.borderColor = level.color;
-            levelBadge.style.background = level.color + '33';
-            
-            // 计算进度
-            var nextLevel = HNAU_Carbon.Points.LEVELS ? HNAU_Carbon.Points.LEVELS[HNAU_Carbon.Points.LEVELS.length - 1] : {min: 10000};
-            var levels = [{min: 0}, {min: 100}, {min: 500}, {min: 2000}, {min: 5000}, {min: 10000}];
-            var currentIdx = 0;
-            for (var i = levels.length - 1; i >= 0; i--) {
-                if (stats.totalPoints >= levels[i].min) {
-                    currentIdx = i;
-                    break;
-                }
-            }
-            var currentMin = levels[currentIdx].min;
-            var nextMin = levels[Math.min(currentIdx + 1, levels.length - 1)].min;
-            var progress = ((stats.totalPoints - currentMin) / (nextMin - currentMin)) * 100;
-            document.getElementById('carbonLevelBar').style.width = Math.min(progress, 100) + '%';
-            document.getElementById('carbonLevelNeed').textContent = Math.max(nextMin - stats.totalPoints, 0);
-            
-            // 更新勋章
-            var badgesGrid = document.getElementById('carbonBadgesGrid');
-            if (stats.badges && stats.badges.length > 0) {
-                badgesGrid.innerHTML = stats.badges.map(function(b) {
-                    return '<div class="carbon-badge"><div class="carbon-badge-icon">' + b.icon + '</div><div class="carbon-badge-name">' + b.name + '</div></div>';
-                }).join('');
-            } else {
-                badgesGrid.innerHTML = '<span class="carbon-badge-empty">暂无勋章，继续努力！</span>';
-            }
-            
-            // 更新交易记录
-            var recordsList = document.getElementById('carbonRecordsList');
-            if (stats.transactions && stats.transactions.length > 0) {
-                recordsList.innerHTML = stats.transactions.map(function(t) {
-                    return '<div class="carbon-record">' +
-                        '<div class="carbon-record-info">' +
-                        '<div class="carbon-record-title">' + (t.title || '闲置交易') + '</div>' +
-                        '<div class="carbon-record-meta">' + t.date + ' · ' + t.category + '</div>' +
-                        '</div>' +
-                        '<div class="carbon-record-value">' +
-                        '<div class="carbon-record-saved">-' + t.saved + '</div>' +
-                        '<div class="carbon-record-unit">kg CO₂</div>' +
-                        '</div></div>';
-                }).join('');
-            } else {
-                recordsList.innerHTML = '<div class="carbon-record-empty">暂无交易记录，开始交易即可累积碳减排！</div>';
-            }
+        /* 功能菜单 */
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .menu-item {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .menu-item:hover {
+            background: rgba(96,165,250,0.1);
+            border-color: rgba(96,165,250,0.3);
+        }
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(96,165,250,0.3), rgba(192,132,252,0.3));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .menu-text {
+            flex: 1;
+        }
+        .menu-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #fff;
+        }
+        .menu-desc {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+        .menu-arrow {
+            color: rgba(255,255,255,0.3);
+            font-size: 18px;
         }
         
-        // 初始化图表
-        function initCharts() {
-            var ctx1 = document.getElementById('carbonTrendChart');
-            var ctx2 = document.getElementById('carbonPieChart');
-            
-            if (!ctx1 || !ctx2) return;
-            
-            // 趋势图
-            var currentYear = new Date().getFullYear();
-            var stats = HNAU_Carbon.getStats();
-            var yearlyTrend = stats.yearlyTrend && stats.yearlyTrend[currentYear] ? 
-                              stats.yearlyTrend[currentYear] : [0,0,0,0,0,0,0,0,0,0,0,0];
-            
-            trendChart = new Chart(ctx1, {
-                type: 'line',
-                data: {
-                    labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-                    datasets: [{
-                        label: '碳减排量(kg)',
-                        data: yearlyTrend,
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
-                }
-            });
-            
-            // 饼图
-            var categoryData = {
-                '教材类': 0,
-                '电子设备': 0,
-                '生活用品': 0,
-                '运动器材': 0,
-                '实验器材': 0,
-                '服装鞋帽': 0,
-                '其他': 0
-            };
-            
-            stats.transactions.forEach(function(t) {
-                var cat = t.category || '其他';
-                if (categoryData.hasOwnProperty(cat)) {
-                    categoryData[cat] += t.saved;
-                } else {
-                    categoryData['其他'] += t.saved;
-                }
-            });
-            
-            pieChart = new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(categoryData),
-                    datasets: [{
-                        data: Object.values(categoryData),
-                        backgroundColor: [
-                            '#60A5FA', '#2563eb', '#3b82f6', 
-                            '#60a5fa', '#3b82f6', '#2563eb', '#3B82F6'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: { font: { size: 10 } }
-                        }
-                    }
-                }
-            });
+        /* ========== 碳足迹模块 ========== */
+        .carbon-section {
+            margin-top: 20px;
+            padding: 20px;
         }
-        
-        // 刷新图表
-        function refreshCharts() {
-            if (trendChart) trendChart.destroy();
-            if (pieChart) pieChart.destroy();
-            initCharts();
+        .carbon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
         }
-        
-        // 绑定事件
-        function bindEvents() {
-            // 签到
-            var checkInBtn = document.getElementById('carbonCheckIn');
-            if (checkInBtn) {
-                checkInBtn.addEventListener('click', function() {
-                    var result = HNAU_Carbon.checkIn();
-                    if (result.success) {
-                        alert('签到成功！+' + result.points + '积分');
-                        loadCarbonData();
-                    } else {
-                        alert(result.message);
-                    }
-                });
-            }
-            
-            // AI报告 - 生成我的环保报告（纯前端模拟）
-            var reportBtn = document.getElementById('getCarbonReport');
-            if (reportBtn) {
-                reportBtn.addEventListener('click', function() {
-                    HNAU_Carbon.addAIReport();
-                    // 纯前端模拟：弹窗提示报告生成成功
-                    alert('✅ 报告生成成功，已保存至本地\n\n📊 您的环保报告包含：\n• 累计碳减排数据\n• 碳积分明细\n• 环保贡献排行榜\n• 绿色校园排名\n\n可在「我的闲置」中查看历史报告');
-                    // 跳转到AI对话页面获取更多建议
-                    window.location.href = 'carbon_ai.html';
-                });
-            }
-            
-            // 分享 - 一键分享碳足迹（纯前端模拟）
-            var shareBtn = document.getElementById('shareCarbon');
-            var modalOverlay = document.getElementById('shareModal');
-            var modalTitle = document.getElementById('modalTitle');
-            var modalContent = document.getElementById('modalContent');
-            var modalBtn = document.getElementById('modalBtn');
-            
-            if (shareBtn && modalOverlay) {
-                shareBtn.addEventListener('click', function() {
-                    HNAU_Carbon.addShare();
-                    
-                    // 显示统一弹窗
-                    modalTitle.textContent = '分享准备就绪';
-                    modalContent.innerHTML = 
-                        '<div class="check-item">✅ 碳足迹分享图片已生成</div>' +
-                        '<div class="check-item">🔗 分享链接已复制到剪贴板</div>' +
-                        '<div style="margin-top: 12px; color: rgba(255,255,255,0.5); font-size: 0.9rem;">' +
-                        '可直接分享到微信、QQ或朋友圈，邀请好友一起参与环保！</div>';
-                    
-                    modalOverlay.classList.add('active');
-                    
-                    // 尝试复制到剪贴板（模拟）
-                    if (navigator.clipboard && navigator.clipboard.writeText) {
-                        navigator.clipboard.writeText('我在农大闲置平台参与绿色交易，累计减碳' + stats.totalSaved.toFixed(1) + 'kg！🌱 #双碳目标 #农大闲置');
-                    }
-                });
-                
-                // 关闭弹窗
-                modalBtn.addEventListener('click', function() {
-                    modalOverlay.classList.remove('active');
-                });
-                
-                // 点击遮罩关闭
-                modalOverlay.addEventListener('click', function(e) {
-                    if (e.target === modalOverlay) {
-                        modalOverlay.classList.remove('active');
-                    }
-                });
-            }
+        .carbon-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
         }
-        
-        // 页面加载完成后初始化
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initCarbonModule);
-        } else {
-            initCarbonModule();
+        .carbon-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(96,165,250,0.5), rgba(59,130,246,0.5));
+            border: 1px solid rgba(96,165,250,0.5);
+            border-radius: 20px;
+            color: #fff;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-    })();
-    </script>
-    
-    <!-- 清除数据按钮（调试用） -->
-    <div style="position:fixed;bottom:20px;right:20px;z-index:9999;">
-        <button onclick="clearAllData()" style="background:#ff4444;color:#fff;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;font-size:12px;box-shadow:0 2px 10px rgba(0,0,0,0.2);">
-            清除所有数据
-        </button>
+        .carbon-btn:hover {
+            background: linear-gradient(135deg, rgba(96,165,250,0.7), rgba(59,130,246,0.7));
+        }
+        .carbon-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .carbon-stat {
+            padding: 16px;
+            text-align: center;
+        }
+        .carbon-stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .carbon-stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+    </style>
+</head>
+<body>
+    <!-- 页面头部 -->
+    <div class="page-header">
+        <h1>👤 个人中心</h1>
+        <p>管理您的信息和发布</p>
     </div>
     
-    <!-- 存储空间警告 -->
-    <div id="storageWarning" style="display:none;background:#fff3cd;color:#856404;padding:10px 15px;border-radius:8px;margin:10px 15px;font-size:12px;text-align:center;cursor:pointer;">
-        存储空间不足，请点击清理
+    <!-- 主内容 -->
+    <div class="page-container">
+        <!-- 用户信息 -->
+        <div class="user-info-card glass-card">
+            <div class="user-avatar">👤</div>
+            <div class="user-details">
+                <div class="user-name" id="userName">农大学子</div>
+                <div class="user-id">ID: 20240001</div>
+            </div>
+            <div class="user-badge">🌟 环保达人</div>
+        </div>
+        
+        <!-- 统计数据 -->
+        <div class="stats-grid">
+            <div class="stat-card glass-card">
+                <div class="stat-value" id="statPublish">0</div>
+                <div class="stat-label">发布闲置</div>
+            </div>
+            <div class="stat-card glass-card">
+                <div class="stat-value" id="statSold">0</div>
+                <div class="stat-label">已售出</div>
+            </div>
+            <div class="stat-card glass-card">
+                <div class="stat-value" id="statViews">0</div>
+                <div class="stat-label">被浏览</div>
+            </div>
+            <div class="stat-card glass-card">
+                <div class="stat-value" id="statStars">0</div>
+                <div class="stat-label">收藏数</div>
+            </div>
+        </div>
+        
+        <!-- 功能菜单 -->
+        <div class="glass-card menu-list">
+            <div class="menu-item" onclick="location.href='stu_check.html'">
+                <div class="menu-icon">🎓</div>
+                <div class="menu-text">
+                    <div class="menu-title">校园认证</div>
+                    <div class="menu-desc">完成认证，解锁更多功能</div>
+                </div>
+                <span class="menu-arrow">›</span>
+            </div>
+            <div class="menu-item" onclick="location.href='release_goods.html'">
+                <div class="menu-icon">📦</div>
+                <div class="menu-text">
+                    <div class="menu-title">发布闲置</div>
+                    <div class="menu-desc">分享你的闲置物品</div>
+                </div>
+                <span class="menu-arrow">›</span>
+            </div>
+            <div class="menu-item" onclick="location.href='donation_my.html'">
+                <div class="menu-icon">🎁</div>
+                <div class="menu-text">
+                    <div class="menu-title">我的公益</div>
+                    <div class="menu-desc">追踪你的爱心足迹</div>
+                </div>
+                <span class="menu-arrow">›</span>
+            </div>
+            <div class="menu-item" onclick="location.href='carbon_ai.html'">
+                <div class="menu-icon">🌱</div>
+                <div class="menu-text">
+                    <div class="menu-title">碳足迹助手</div>
+                    <div class="menu-desc">智能分析你的环保贡献</div>
+                </div>
+                <span class="menu-arrow">›</span>
+            </div>
+            <div class="menu-item" onclick="location.href='user_login.html'">
+                <div class="menu-icon">🚪</div>
+                <div class="menu-text">
+                    <div class="menu-title">退出登录</div>
+                    <div class="menu-desc">切换账号或退出当前账号</div>
+                </div>
+                <span class="menu-arrow">›</span>
+            </div>
+        </div>
+        
+        <!-- 碳足迹预览 -->
+        <div class="carbon-section glass-card">
+            <div class="carbon-header">
+                <div class="carbon-title">🌱 我的碳足迹</div>
+                <button class="carbon-btn" onclick="location.href='carbon_ai.html'">查看详情</button>
+            </div>
+            <div class="carbon-stats">
+                <div class="carbon-stat">
+                    <div class="carbon-stat-value" id="carbonTotal">0</div>
+                    <div class="carbon-stat-label">累计减碳(kg)</div>
+                </div>
+                <div class="carbon-stat">
+                    <div class="carbon-stat-value" id="carbonPoints">0</div>
+                    <div class="carbon-stat-label">碳积分</div>
+                </div>
+            </div>
+        </div>
     </div>
     
+    <script src="./script/common.js"></script>
     <script>
-        function clearAllData() {
-            if (confirm('确定要清除所有登录注册相关数据吗？\n\n包括：\n- 登录状态\n- 用户信息\n- 认证信息\n- 商品数据\n- 需求数据\n- 碳足迹数据\n\n此操作不可恢复！')) {
-                var result = DataCleaner.clearAll();
-                if (result.success) {
-                    alert('已清除 ' + result.cleared.length + ' 项数据');
-                    location.reload();
-                } else {
-                    alert('部分数据清除失败，请重试');
-                }
-            }
-        }
-    </script>
-    
-    <script>
-        // 移动端发布按钮
-        document.addEventListener('DOMContentLoaded', function() {
-            var mobileReleaseBtn = document.getElementById('mobileReleaseBtn');
-            if (mobileReleaseBtn) {
-                mobileReleaseBtn.addEventListener('click', function() {
-                    Auth.requireReleasePermission(function() {
-                        Utils.跳转('release_goods.html');
-                    });
-                });
-            }
-            
-            // 存储空间检查
-            var storageInfo = getStorageUsage();
-            if (storageInfo.percent > 80) {
-                var storageWarning = document.getElementById('storageWarning');
-                if (storageWarning) {
-                    storageWarning.textContent = '存储空间 ' + storageInfo.percent + '% 已满，请点击清理';
-                    storageWarning.style.display = 'block';
-                    storageWarning.addEventListener('click', function() {
-                        if (confirm('确定要清理存储空间吗？这将清除所有本地数据。')) {
-                            var result = DataCleaner.clearAll();
-                            if (result.success) {
-                                alert('存储空间已清理，请重新登录');
-                                location.reload();
-                            } else {
-                                alert('清理失败: ' + result.failed.map(function(f) { return f.key; }).join(', '));
-                            }
-                        }
-                    });
-                }
-            }
-        });
+        // 模拟数据
+        document.getElementById('statPublish').textContent = '12';
+        document.getElementById('statSold').textContent = '8';
+        document.getElementById('statViews').textContent = '1.2k';
+        document.getElementById('statStars').textContent = '23';
+        document.getElementById('carbonTotal').textContent = '45.6';
+        document.getElementById('carbonPoints').textContent = '560';
     </script>
 </body>
 </html>
