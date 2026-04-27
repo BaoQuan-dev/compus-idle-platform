@@ -8,12 +8,12 @@
     <style>
         /* ========== 公益转赠发布页样式 ========== */
         body {
-            background: linear-gradient(135deg, #0a0a1a, #0f172a);
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f23 100%);
             min-height: 100vh;
         }
         
         .page-header {
-            background: linear-gradient(135deg, #1e40af, #2563eb);
+            background: transparent;
             color: #fff;
             padding: calc(var(--nav-height, 64px) + 20px) 20px 24px;
             text-align: center;
@@ -37,7 +37,11 @@
         }
         
         .donation-form {
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border-radius: 16px;
             padding: 24px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -50,7 +54,10 @@
         .form-section-title {
             font-size: 1rem;
             font-weight: bold;
-            color: #1e40af;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 16px;
             padding-bottom: 8px;
             border-bottom: 2px solid #3b82f6;
@@ -63,7 +70,7 @@
         .form-label {
             display: block;
             font-size: 0.9rem;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
             margin-bottom: 6px;
         }
         
@@ -97,7 +104,7 @@
         
         .form-hint {
             font-size: 0.8rem;
-            color: #94a3b8;
+            color: rgba(255,255,255,0.5);
             margin-top: 4px;
         }
         
@@ -134,7 +141,10 @@
         .target-option input:checked + label {
             background: #0f172a;
             border-color: #2563eb;
-            color: #1e40af;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .target-option label:hover {
@@ -162,12 +172,15 @@
         .price-display .price {
             font-size: 1.8rem;
             font-weight: bold;
-            color: #1e40af;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .price-display .price-label {
             font-size: 0.9rem;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
             margin-top: 4px;
         }
         
@@ -192,7 +205,7 @@
         }
         
         .image-upload-text {
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
             font-size: 0.95rem;
         }
         
@@ -253,7 +266,10 @@
             align-items: center;
             gap: 4px;
             background: #0f172a;
-            color: #1e40af;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.8rem;
@@ -271,6 +287,10 @@
     </style>
 </head>
 <body style="background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f23 100%) !important;">
+    <div class="cosmos-bg">
+        <div class="cosmos-stars"></div>
+        <div class="cosmos-nebula"></div>
+    </div>
     <!-- 导航栏 -->
     <nav class="navbar">
         <div class="navbar-container">
@@ -454,7 +474,11 @@
         .delete-btn {
             width: 100%;
             padding: 14px 20px;
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border: 2px solid #e74c3c;
             border-radius: 12px;
             color: #e74c3c;
@@ -495,7 +519,11 @@
             visibility: visible;
         }
         .delete-modal {
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border-radius: 16px;
             padding: 24px;
             width: 85%;
@@ -509,12 +537,12 @@
         .delete-modal-header {
             font-size: 18px;
             font-weight: 600;
-            color: #e2e8f0;
+            color: #fff;
             margin-bottom: 8px;
         }
         .delete-modal-content {
             font-size: 14px;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
             margin-bottom: 20px;
             line-height: 1.5;
         }
@@ -528,7 +556,7 @@
             background: #1e293b;
             border: none;
             border-radius: 8px;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
             font-size: 15px;
             cursor: pointer;
         }
@@ -583,7 +611,11 @@
         }
         
         .hnau-modal {
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border-radius: 16px;
             padding: 24px;
             max-width: 320px;
@@ -600,12 +632,15 @@
         .hnau-modal-header {
             font-size: 1.1rem;
             font-weight: bold;
-            color: #1e40af;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 16px;
         }
         
         .hnau-modal-content {
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
             font-size: 0.95rem;
             line-height: 1.8;
             margin-bottom: 20px;

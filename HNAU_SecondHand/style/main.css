@@ -84,6 +84,228 @@ body::after {
     50% { transform: translate(-2%, -2%); }
 }
 
+/* ========== 增强版深空星云背景 ========== */
+.cosmos-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0a0a1a 0%, #0f1629 50%, #1a1a2e 100%);
+}
+
+/* 星点层 */
+.cosmos-stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        /* 大星点 */
+        radial-gradient(3px 3px at 100px 50px, rgba(255,255,255,0.95), transparent),
+        radial-gradient(3px 3px at 300px 150px, rgba(255,255,255,0.9), transparent),
+        radial-gradient(2px 2px at 500px 80px, rgba(255,255,255,0.85), transparent),
+        radial-gradient(3px 3px at 700px 200px, rgba(255,255,255,0.95), transparent),
+        radial-gradient(2px 2px at 900px 100px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(3px 3px at 1100px 250px, rgba(255,255,255,0.9), transparent),
+        radial-gradient(2px 2px at 1300px 80px, rgba(255,255,255,0.95), transparent),
+        /* 中等星点 */
+        radial-gradient(2px 2px at 200px 300px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(2px 2px at 400px 400px, rgba(255,255,255,0.75), transparent),
+        radial-gradient(2px 2px at 600px 350px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(2px 2px at 800px 450px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(2px 2px at 1000px 380px, rgba(255,255,255,0.75), transparent),
+        radial-gradient(2px 2px at 1200px 420px, rgba(255,255,255,0.7), transparent),
+        /* 小星点 */
+        radial-gradient(1px 1px at 50px 180px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 150px 420px, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 250px 280px, rgba(255,255,255,0.55), transparent),
+        radial-gradient(1px 1px at 350px 520px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 450px 180px, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 550px 480px, rgba(255,255,255,0.55), transparent),
+        radial-gradient(1px 1px at 650px 320px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 750px 120px, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 850px 380px, rgba(255,255,255,0.55), transparent),
+        radial-gradient(1px 1px at 950px 520px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 1050px 180px, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 1150px 320px, rgba(255,255,255,0.55), transparent),
+        radial-gradient(1px 1px at 1250px 480px, rgba(255,255,255,0.6), transparent);
+    background-size: 1400px 600px;
+    animation: starFloat 60s linear infinite;
+}
+
+/* 闪烁星星 */
+.cosmos-twinkle {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(4px 4px at 180px 120px, rgba(96,165,250,1), transparent),
+        radial-gradient(4px 4px at 450px 280px, rgba(192,132,252,1), transparent),
+        radial-gradient(3px 3px at 720px 180px, rgba(96,165,250,1), transparent),
+        radial-gradient(4px 4px at 980px 350px, rgba(52,211,153,1), transparent),
+        radial-gradient(3px 3px at 1180px 120px, rgba(96,165,250,1), transparent);
+    background-size: 1400px 500px;
+    animation: starTwinkle 3s ease-in-out infinite;
+}
+
+/* 星云效果 */
+.cosmos-nebula {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(ellipse at 20% 30%, rgba(96,165,250,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(192,132,252,0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(52,211,153,0.08) 0%, transparent 40%);
+    animation: nebulaGlow 20s ease-in-out infinite;
+}
+
+@keyframes starFloat {
+    from { transform: translateY(0); }
+    to { transform: translateY(-600px); }
+}
+
+@keyframes nebulaGlow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.02); }
+}
+
+/* ========== 玻璃拟态卡片 ========== */
+.glass-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    box-shadow: 
+        0 8px 32px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+}
+
+/* 卡片内发光边框 */
+.glass-card-glow {
+    position: relative;
+}
+
+.glass-card-glow::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    border-radius: 21px;
+    background: linear-gradient(135deg, rgba(96,165,250,0.5), rgba(192,132,252,0.3), rgba(52,211,153,0.5));
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.glass-card-glow:hover::after {
+    opacity: 1;
+}
+
+/* 发光文字效果 */
+.glow-text {
+    background: linear-gradient(135deg, #60A5FA 0%, #C084FC 50%, #34D399 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px rgba(96,165,250,0.5);
+}
+
+/* 发光按钮 */
+.glow-btn {
+    background: linear-gradient(135deg, rgba(96,165,250,0.3) 0%, rgba(59,130,246,0.3) 100%);
+    border: 1px solid rgba(96,165,250,0.5);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.glow-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.glow-btn:hover::before {
+    left: 100%;
+}
+
+.glow-btn:hover {
+    background: linear-gradient(135deg, rgba(96,165,250,0.5) 0%, rgba(59,130,246,0.5) 100%);
+    box-shadow: 0 0 20px rgba(96,165,250,0.4);
+    transform: translateY(-2px);
+}
+
+/* 星空主题渐变边框 */
+.star-border {
+    position: relative;
+}
+
+.star-border::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, #60A5FA, #C084FC, #34D399);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+/* 内嵌标题卡片 */
+.card-header-inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.card-header-inline h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-header-inline h3 .icon {
+    font-size: 18px;
+}
+
 /* ========== CSS变量定义 ========== */
 :root {
     /* 品牌色 - 星空科技风格 */
@@ -513,40 +735,33 @@ body {
     padding-top: var(--nav-height);
 }
 
-/* ========== 页面标题区 ========== */
+/* ========== 页面标题区 - 内嵌星空风格 ========== */
 .page-header {
-    background: var(--gradient-hero);
+    background: transparent;
     color: var(--text-white);
-    padding: calc(var(--nav-height) + 24px) 0 24px;
-    text-align: center;
+    padding: calc(var(--nav-height) + 30px) 20px 20px;
+    text-align: left;
     position: relative;
-    overflow: hidden;
     margin-top: 0;
 }
 
-.page-header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    opacity: 0.5;
-}
-
 .page-header h1 {
-    font-size: var(--font-2xl);
+    font-size: 28px;
     font-weight: 700;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: 8px;
     letter-spacing: -0.02em;
     position: relative;
+    background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .page-header p {
-    font-size: var(--font-md);
-    opacity: 0.9;
+    font-size: 14px;
+    opacity: 0.7;
     position: relative;
+    color: rgba(255,255,255,0.7);
 }
 
 /* ========== 卡片组件 ========== */

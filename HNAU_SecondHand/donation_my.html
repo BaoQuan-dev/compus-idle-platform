@@ -8,12 +8,12 @@
     <style>
         /* ========== 我的公益转赠页样式 ========== */
         body {
-            background: linear-gradient(135deg, #0a0a1a, #0f172a);
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f23 100%);
             min-height: 100vh;
         }
         
         .page-header {
-            background: linear-gradient(135deg, #1e40af, #2563eb);
+            background: transparent;
             color: #fff;
             padding: calc(var(--nav-height, 64px) + 20px) 20px 24px;
             text-align: center;
@@ -38,7 +38,11 @@
         
         /* 统计卡片 */
         .stats-card {
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 20px;
@@ -48,7 +52,10 @@
         .stats-card-title {
             font-size: 1rem;
             font-weight: bold;
-            color: #1e40af;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 16px;
             display: flex;
             align-items: center;
@@ -71,19 +78,26 @@
         .stats-item-value {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #1e40af;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .stats-item-label {
             font-size: 0.8rem;
-            color: #94a3b8;
+            color: rgba(255,255,255,0.5);
             margin-top: 4px;
         }
         
         /* Tab切换 */
         .tab-bar {
             display: flex;
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border-radius: 12px;
             padding: 4px;
             margin-bottom: 20px;
@@ -96,14 +110,14 @@
             text-align: center;
             border-radius: 10px;
             font-size: 0.95rem;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
         }
         
         .tab-item.active {
-            background: #1e40af;
+            background: linear-gradient(135deg, rgba(96,165,250,0.5) 0%, rgba(59,130,246,0.5) 100%);
             color: #fff;
         }
         
@@ -120,8 +134,15 @@
         }
         
         .tab-item.active .badge {
-            background: #fff;
-            color: #1e40af;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         /* 转赠记录列表 */
@@ -132,7 +153,11 @@
         }
         
         .record-card {
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border-radius: 16px;
             padding: 20px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.08);
@@ -154,7 +179,7 @@
         .record-title {
             font-size: 1.05rem;
             font-weight: bold;
-            color: #e2e8f0;
+            color: #fff;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -179,12 +204,15 @@
         
         .badge-completed {
             background: #0f172a;
-            color: #1e40af;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .record-time {
             font-size: 0.8rem;
-            color: #94a3b8;
+            color: rgba(255,255,255,0.5);
         }
         
         .record-info {
@@ -192,7 +220,7 @@
             gap: 16px;
             margin-bottom: 12px;
             font-size: 0.9rem;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
         }
         
         .record-info span {
@@ -203,7 +231,7 @@
         
         .record-desc {
             font-size: 0.9rem;
-            color: #94a3b8;
+            color: rgba(255,255,255,0.5);
             padding: 12px;
             background: #f9f9f9;
             border-radius: 8px;
@@ -233,11 +261,15 @@
         
         .record-btn-secondary {
             background: #1e293b;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
         }
         
         .record-btn-edit {
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border: 1px solid #2196F3;
             color: #2196F3;
         }
@@ -261,14 +293,17 @@
         
         .receiver-info-title {
             font-size: 0.85rem;
-            color: #1e40af;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-weight: bold;
             margin-bottom: 8px;
         }
         
         .receiver-info-content {
             font-size: 0.9rem;
-            color: #e2e8f0;
+            color: #fff;
             line-height: 1.6;
         }
         
@@ -289,7 +324,7 @@
         
         .feedback-info-content {
             font-size: 0.9rem;
-            color: #e2e8f0;
+            color: #fff;
             line-height: 1.6;
         }
         
@@ -297,7 +332,11 @@
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border-radius: 16px;
         }
         
@@ -307,7 +346,7 @@
         }
         
         .empty-text {
-            color: #94a3b8;
+            color: rgba(255,255,255,0.5);
             font-size: 1rem;
             margin-bottom: 20px;
         }
@@ -335,7 +374,11 @@
         }
         
         .certificate-content {
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border-radius: 16px;
             max-width: 450px;
             width: 95%;
@@ -350,7 +393,7 @@
         }
         
         .certificate-header {
-            background: linear-gradient(135deg, #1e40af, #2563eb);
+            background: transparent;
             color: #fff;
             padding: 20px;
             text-align: center;
@@ -378,7 +421,7 @@
             border-radius: 10px;
             font-size: 0.9rem;
             line-height: 1.8;
-            color: #e2e8f0;
+            color: #fff;
             white-space: pre-wrap;
             margin-bottom: 16px;
         }
@@ -405,7 +448,7 @@
         
         .certificate-btn-close {
             background: #1e293b;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
         }
         
         /* 确认转赠弹窗 */
@@ -431,7 +474,11 @@
         }
         
         .confirm-content {
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border-radius: 16px;
             padding: 24px;
             max-width: 380px;
@@ -454,13 +501,13 @@
             text-align: center;
             font-size: 1.1rem;
             font-weight: bold;
-            color: #e2e8f0;
+            color: #fff;
             margin-bottom: 8px;
         }
         
         .confirm-text {
             text-align: center;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
             font-size: 0.9rem;
             margin-bottom: 20px;
             line-height: 1.6;
@@ -483,7 +530,7 @@
         
         .confirm-btn-cancel {
             background: #1e293b;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
         }
         
         .confirm-btn-confirm {
@@ -514,7 +561,11 @@
         }
         
         .feedback-content {
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border-radius: 16px;
             padding: 24px;
             max-width: 380px;
@@ -530,7 +581,10 @@
         .feedback-title {
             font-size: 1.1rem;
             font-weight: bold;
-            color: #1e40af;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 16px;
             text-align: center;
         }
@@ -559,7 +613,11 @@
         
         /* 申请卡片样式 */
         .apply-card {
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border-radius: 16px;
             padding: 16px;
             margin-bottom: 12px;
@@ -593,18 +651,18 @@
         
         .apply-card-name {
             font-weight: bold;
-            color: #e2e8f0;
+            color: #fff;
             font-size: 0.95rem;
         }
         
         .apply-card-id {
             font-size: 0.8rem;
-            color: #94a3b8;
+            color: rgba(255,255,255,0.5);
         }
         
         .apply-card-time {
             font-size: 0.8rem;
-            color: #94a3b8;
+            color: rgba(255,255,255,0.5);
         }
         
         .apply-card-reason {
@@ -612,14 +670,14 @@
             padding: 12px;
             border-radius: 8px;
             font-size: 0.9rem;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
             line-height: 1.6;
             margin-bottom: 12px;
         }
         
         .apply-card-reason-label {
             font-size: 0.8rem;
-            color: #94a3b8;
+            color: rgba(255,255,255,0.5);
             margin-bottom: 6px;
         }
         
@@ -676,7 +734,11 @@
         }
         
         .reject-content {
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border-radius: 16px;
             padding: 24px;
             max-width: 380px;
@@ -732,6 +794,10 @@
     </style>
 </head>
 <body style="background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f23 100%) !important;">
+    <div class="cosmos-bg">
+        <div class="cosmos-stars"></div>
+        <div class="cosmos-nebula"></div>
+    </div>
     <!-- 导航栏 -->
     <nav class="navbar">
         <div class="navbar-container">
@@ -1024,7 +1090,7 @@
             if (currentTab === 'pending') {
                 recordList.innerHTML = filtered.map(function(item) {
                     return '<div class="apply-card" style="margin-bottom: 16px;">' +
-                        '<div style="font-size: 0.9rem; color: #cbd5e1; margin-bottom: 12px;">您发布的「' + item.itemName + '」收到了新的申请</div>' +
+                        '<div style="font-size: 0.9rem; color: rgba(255,255,255,0.8); margin-bottom: 12px;">您发布的「' + item.itemName + '」收到了新的申请</div>' +
                         '<div class="apply-card-header">' +
                         '<div class="apply-card-user">' +
                         '<div class="apply-card-avatar">👤</div>' +
@@ -1053,7 +1119,7 @@
                     if (currentTab === 'published') {
                         if (item.status === 'pending') {
                             actions = '<button class="record-btn record-btn-edit" onclick="window.location.href=\'donation_publish.html?editId=' + item.id + '\'">✏️ 编辑</button> ' +
-                                      '<span style="color: #94a3b8; font-size: 0.85rem;">等待申请...</span>';
+                                      '<span style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">等待申请...</span>';
                         } else if (item.status === 'receiving' && item.receiver) {
                             // 有待审核的申请
                             actions = '<button class="record-btn record-btn-primary" onclick="showPendingApplicants(\'' + item.id + '\')">📋 查看申请 (' + (item.receiver ? '1' : '0') + ')</button>';
@@ -1070,7 +1136,7 @@
                             }
                         } else if (item.status === 'completed') {
                             if (item.feedback) {
-                                actions = '<span style="color: #94a3b8; font-size: 0.85rem;">已填写反馈</span>';
+                                actions = '<span style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">已填写反馈</span>';
                             } else {
                                 actions = '<button class="record-btn record-btn-primary" onclick="showFeedback(\'' + item.id + '\')">💬 填写反馈</button>';
                             }

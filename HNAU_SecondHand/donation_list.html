@@ -6,39 +6,91 @@
     <title>公益转赠通道 - 农大闲置</title>
     <link rel="stylesheet" href="./style/main.css">
     <style>
-        /* ========== 公益转赠列表页样式 ========== */
-        body {
-            background: linear-gradient(135deg, #0a0a1a, #0f172a);
-            min-height: 100vh;
+        /* ========== 公益转赠列表页 - 星空玻璃拟态风格 ========== */
+        
+        /* 星空背景 */
+        .cosmos-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0a1a 0%, #0f1629 50%, #1a1a2e 100%);
         }
         
+        .cosmos-stars {
+            position: absolute;
+            width: 100%;
+            height: 200%;
+            background-image: 
+                radial-gradient(2px 2px at 100px 50px, rgba(255,255,255,0.9), transparent),
+                radial-gradient(3px 3px at 300px 150px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(2px 2px at 500px 80px, rgba(96,165,250,0.9), transparent),
+                radial-gradient(2px 2px at 700px 200px, rgba(255,255,255,0.85), transparent),
+                radial-gradient(3px 3px at 900px 100px, rgba(192,132,252,0.8), transparent),
+                radial-gradient(2px 2px at 1100px 250px, rgba(255,255,255,0.9), transparent),
+                radial-gradient(2px 2px at 200px 350px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(2px 2px at 400px 450px, rgba(52,211,153,0.8), transparent),
+                radial-gradient(1px 1px at 600px 380px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(2px 2px at 800px 500px, rgba(255,255,255,0.75), transparent),
+                radial-gradient(1px 1px at 1000px 420px, rgba(96,165,250,0.7), transparent);
+            background-size: 1200px 600px;
+            animation: starFloat 80s linear infinite;
+        }
+        
+        .cosmos-nebula {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(96,165,250,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(192,132,252,0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(52,211,153,0.08) 0%, transparent 40%);
+            animation: nebulaGlow 20s ease-in-out infinite;
+        }
+        
+        @keyframes starFloat {
+            from { transform: translateY(0); }
+            to { transform: translateY(-50%); }
+        }
+        
+        @keyframes nebulaGlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* 页面头部 - 内嵌标题 */
         .page-header {
-            background: linear-gradient(135deg, #1e40af, #2563eb);
-            color: #fff;
-            padding: calc(var(--nav-height, 64px) + 20px) 20px 24px;
+            background: transparent;
+            padding: calc(var(--nav-height, 64px) + 24px) 20px 0;
+            text-align: left;
         }
         
         .page-header h1 {
-            margin: 0 0 8px 0;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0 0 6px 0;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .page-header p {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
             margin: 0;
-            opacity: 0.9;
-            font-size: 0.9rem;
         }
         
         .page-container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 20px 16px;
+            padding: 20px 16px 100px;
         }
         
-        /* 统计卡片 */
+        /* 玻璃拟态统计卡片 */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -47,27 +99,40 @@
         }
         
         .stat-card {
-            background: #fff;
-            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
             padding: 16px;
             text-align: center;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(96,165,250,0.2);
         }
         
         .stat-icon {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin-bottom: 8px;
         }
         
         .stat-value {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: bold;
-            color: #1e40af;
+            background: linear-gradient(135deg, #60A5FA, #C084FC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .stat-label {
-            font-size: 0.8rem;
-            color: #94a3b8;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 4px;
         }
         
         /* 操作栏 */
@@ -75,57 +140,60 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
         
         .filter-tabs {
             display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
         
         .filter-tab {
             padding: 8px 16px;
-            background: #fff;
-            border: 2px solid #3b82f6;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
             border-radius: 20px;
-            font-size: 0.9rem;
-            color: #cbd5e1;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s ease;
         }
         
         .filter-tab.active {
-            background: #1e40af;
-            border-color: #1e40af;
+            background: linear-gradient(135deg, rgba(96,165,250,0.4) 0%, rgba(59,130,246,0.4) 100%);
+            border-color: rgba(96,165,250,0.6);
             color: #fff;
         }
         
         .filter-tab:hover:not(.active) {
-            border-color: #2563eb;
-            color: #1e40af;
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(96,165,250,0.4);
+            color: #fff;
         }
         
         .publish-btn {
             padding: 10px 20px;
-            background: linear-gradient(135deg, #60a5fa, #2563eb);
-            color: #fff;
-            border: none;
+            background: linear-gradient(135deg, rgba(96,165,250,0.4) 0%, rgba(59,130,246,0.4) 100%);
+            border: 1px solid rgba(96,165,250,0.5);
             border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
         }
         
         .publish-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
+            background: linear-gradient(135deg, rgba(96,165,250,0.6) 0%, rgba(59,130,246,0.6) 100%);
+            box-shadow: 0 8px 24px rgba(96,165,250,0.3);
         }
         
-        /* 物品列表 */
+        /* 玻璃拟态物品卡片 */
         .items-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -133,23 +201,27 @@
         }
         
         .donation-card {
-            background: #fff;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.12);
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-            transition: all 0.2s;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
             cursor: pointer;
         }
         
         .donation-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            box-shadow: 0 16px 48px rgba(96,165,250,0.2);
+            border-color: rgba(96,165,250,0.3);
         }
         
         .donation-card-image {
             width: 100%;
-            height: 160px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            height: 150px;
+            background: linear-gradient(135deg, rgba(96,165,250,0.3) 0%, rgba(192,132,252,0.3) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -169,23 +241,27 @@
             right: 10px;
             padding: 4px 10px;
             border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: bold;
+            font-size: 0.7rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
         }
         
         .status-pending {
-            background: #fff3e0;
-            color: #e65100;
+            background: rgba(251,146,60,0.3);
+            color: #fb923c;
+            border: 1px solid rgba(251,146,60,0.4);
         }
         
         .status-receiving {
-            background: #e3f2fd;
-            color: #1565c0;
+            background: rgba(96,165,250,0.3);
+            color: #60a5fa;
+            border: 1px solid rgba(96,165,250,0.4);
         }
         
         .status-completed {
-            background: #0f172a;
-            color: #1e40af;
+            background: rgba(52,211,153,0.3);
+            color: #34d399;
+            border: 1px solid rgba(52,211,153,0.4);
         }
         
         .donation-card-content {
@@ -193,9 +269,9 @@
         }
         
         .donation-card-title {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #e2e8f0;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #fff;
             margin-bottom: 8px;
             display: -webkit-box;
             -webkit-line-clamp: 1;
@@ -207,8 +283,8 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 0.8rem;
-            color: #94a3b8;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
             margin-bottom: 12px;
         }
         
@@ -216,11 +292,12 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            background: #0f172a;
-            color: #1e40af;
+            background: rgba(96,165,250,0.15);
+            color: #60a5fa;
             padding: 4px 10px;
             border-radius: 12px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            border: 1px solid rgba(96,165,250,0.2);
         }
         
         .donation-card-footer {
@@ -228,63 +305,69 @@
             justify-content: space-between;
             align-items: center;
             padding-top: 12px;
-            border-top: 1px solid #f0f0f0;
+            border-top: 1px solid rgba(255,255,255,0.08);
         }
         
         .donation-card-publisher {
-            font-size: 0.8rem;
-            color: #94a3b8;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
         }
         
         .donation-card-action {
             padding: 6px 14px;
-            background: #1e40af;
+            background: linear-gradient(135deg, rgba(96,165,250,0.4) 0%, rgba(59,130,246,0.4) 100%);
+            border: 1px solid rgba(96,165,250,0.4);
+            border-radius: 14px;
+            font-size: 0.75rem;
             color: #fff;
-            border: none;
-            border-radius: 16px;
-            font-size: 0.8rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s ease;
         }
         
         .donation-card-action:hover {
-            background: #2563eb;
+            background: linear-gradient(135deg, rgba(96,165,250,0.6) 0%, rgba(59,130,246,0.6) 100%);
         }
         
         .donation-card-action:disabled {
-            background: #ccc;
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.4);
             cursor: not-allowed;
         }
         
         .donation-card-action.applied {
-            background: linear-gradient(135deg, #1565c0, #1976d2);
+            background: linear-gradient(135deg, rgba(52,211,153,0.4) 0%, rgba(16,185,129,0.4) 100%);
+            border-color: rgba(52,211,153,0.4);
         }
         
         /* 空状态 */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #94a3b8;
+            color: rgba(255,255,255,0.5);
         }
         
         .empty-icon {
             font-size: 4rem;
             margin-bottom: 16px;
+            opacity: 0.6;
         }
         
         .empty-text {
             font-size: 1rem;
             margin-bottom: 20px;
+            color: rgba(255,255,255,0.6);
         }
         
-        /* 详情弹窗 */
+        /* 详情弹窗 - 玻璃拟态 */
         .detail-modal {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
             z-index: 10000;
             display: flex;
             align-items: center;
@@ -300,14 +383,17 @@
         }
         
         .detail-content {
-            background: #fff;
-            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(30,41,59,0.95) 0%, rgba(15,23,42,0.95) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
             max-width: 500px;
             width: 95%;
             max-height: 90vh;
             overflow-y: auto;
             transform: translateY(20px);
             transition: transform 0.3s;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
         
         .detail-modal.active .detail-content {
@@ -321,7 +407,7 @@
         .detail-image {
             width: 100%;
             height: 220px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: linear-gradient(135deg, rgba(96,165,250,0.4) 0%, rgba(192,132,252,0.4) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -341,7 +427,8 @@
             width: 36px;
             height: 36px;
             background: rgba(0,0,0,0.5);
-            border: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 50%;
             color: #fff;
             font-size: 1.2rem;
@@ -349,6 +436,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.25s ease;
+        }
+        
+        .detail-close:hover {
+            background: rgba(239,68,68,0.6);
         }
         
         .detail-body {
@@ -357,8 +449,8 @@
         
         .detail-title {
             font-size: 1.2rem;
-            font-weight: bold;
-            color: #e2e8f0;
+            font-weight: 600;
+            color: #fff;
             margin-bottom: 12px;
         }
         
@@ -370,20 +462,22 @@
         
         .detail-tag {
             padding: 4px 10px;
-            background: #0f172a;
-            color: #1e40af;
+            background: rgba(96,165,250,0.15);
+            color: #60a5fa;
             border-radius: 12px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            border: 1px solid rgba(96,165,250,0.2);
         }
         
         .detail-desc {
-            color: #cbd5e1;
-            font-size: 0.95rem;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
             line-height: 1.7;
             margin-bottom: 16px;
             padding: 12px;
-            background: #f9f9f9;
-            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
         }
         
         .detail-meta {
@@ -394,44 +488,45 @@
         }
         
         .detail-meta-item {
-            background: #1e293b;
+            background: rgba(255,255,255,0.05);
             padding: 12px;
-            border-radius: 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
         }
         
         .detail-meta-label {
-            font-size: 0.8rem;
-            color: #94a3b8;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
             margin-bottom: 4px;
         }
         
         .detail-meta-value {
-            font-size: 0.95rem;
-            color: #e2e8f0;
-            font-weight: bold;
+            font-size: 0.9rem;
+            color: #fff;
+            font-weight: 600;
         }
         
         .detail-action-area {
-            border-top: 1px solid #eee;
+            border-top: 1px solid rgba(255,255,255,0.1);
             padding-top: 16px;
         }
         
         .apply-btn {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #60a5fa, #2563eb);
+            background: linear-gradient(135deg, rgba(96,165,250,0.5) 0%, rgba(59,130,246,0.5) 100%);
             color: #fff;
-            border: none;
-            border-radius: 25px;
+            border: 1px solid rgba(96,165,250,0.4);
+            border-radius: 14px;
             font-size: 1rem;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
         }
         
         .apply-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(67, 160, 71, 0.4);
+            box-shadow: 0 8px 24px rgba(96,165,250,0.3);
         }
         
         /* 接收申请弹窗 */
@@ -457,13 +552,16 @@
         }
         
         .apply-content {
-            background: #fff;
-            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(30,41,59,0.95) 0%, rgba(15,23,42,0.95) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
             padding: 24px;
             max-width: 400px;
             width: 90%;
             transform: translateY(20px);
             transition: transform 0.3s;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
         
         .apply-modal.active .apply-content {
@@ -472,8 +570,11 @@
         
         .apply-title {
             font-size: 1.1rem;
-            font-weight: bold;
-            color: #1e40af;
+            font-weight: 600;
+            background: linear-gradient(135deg, #60A5FA, #C084FC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 16px;
             text-align: center;
         }
@@ -481,16 +582,24 @@
         .apply-input {
             width: 100%;
             padding: 12px 14px;
-            border: 2px solid #0f172a;
-            border-radius: 10px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
             font-size: 1rem;
+            color: #fff;
             box-sizing: border-box;
             margin-bottom: 16px;
+            transition: all 0.25s ease;
         }
         
         .apply-input:focus {
             outline: none;
-            border-color: #2563eb;
+            border-color: rgba(96,165,250,0.6);
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .apply-input::placeholder {
+            color: rgba(255,255,255,0.4);
         }
         
         .apply-btns {
@@ -503,20 +612,33 @@
             flex: 1;
             padding: 12px;
             border: none;
-            border-radius: 20px;
-            font-size: 1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s ease;
         }
         
         .apply-btn-cancel {
-            background: #1e293b;
-            color: #cbd5e1;
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        
+        .apply-btn-cancel:hover {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
         }
         
         .apply-btn-confirm {
-            background: linear-gradient(135deg, #60a5fa, #2563eb);
+            background: linear-gradient(135deg, rgba(96,165,250,0.5) 0%, rgba(59,130,246,0.5) 100%);
             color: #fff;
+            border: 1px solid rgba(96,165,250,0.4);
+        }
+        
+        .apply-btn-confirm:hover {
+            background: linear-gradient(135deg, rgba(96,165,250,0.7) 0%, rgba(59,130,246,0.7) 100%);
+            box-shadow: 0 8px 24px rgba(96,165,250,0.3);
         }
         
         @media (max-width: 600px) {
@@ -542,6 +664,12 @@
     </style>
 </head>
 <body style="background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f23 100%) !important;">
+    <!-- 星空背景 -->
+    <div class="cosmos-bg">
+        <div class="cosmos-stars"></div>
+        <div class="cosmos-nebula"></div>
+    </div>
+    
     <!-- 导航栏 -->
     <nav class="navbar">
         <div class="navbar-container">
