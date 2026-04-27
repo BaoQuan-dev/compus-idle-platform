@@ -82,7 +82,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
+            z-index: 0;
         }
         
         /* 主界面容器 */
@@ -1342,6 +1342,14 @@
     </style>
 </head>
 <body>
+    <!-- 视频背景 -->
+    <div class="video-bg">
+        <video id="bg-video" autoplay muted loop playsinline>
+            <source src="./images/bg-video.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="video-overlay"></div>
+    
     <!-- Three.js星空背景 -->
     <canvas id="cosmic-canvas"></canvas>
     
@@ -1350,78 +1358,6 @@
     
     <!-- 返回按钮 -->
     <button class="back-btn" id="backBtn" onclick="goBack()">← 返回首页</button>
-    
-    <!-- 登录提示组件 - 可爱的橘猫 -->
-    <div class="login-prompt" id="loginPrompt">
-        <div class="cat-container" onclick="goToLogin()">
-            <!-- 猫咪身体 -->
-            <div class="cat-body">
-                <div class="cat-tail"></div>
-                <div class="cat-paws">
-                    <div class="cat-paw"></div>
-                    <div class="cat-paw"></div>
-                </div>
-            </div>
-            
-            <!-- 猫咪头部 -->
-            <div class="cat-head">
-                <!-- 耳朵 -->
-                <div class="cat-ear left"></div>
-                <div class="cat-ear right"></div>
-                
-                <!-- 眼睛 -->
-                <div class="cat-eyes">
-                    <div class="cat-eye"><div class="cat-eye-pupil"></div></div>
-                    <div class="cat-eye"><div class="cat-eye-pupil"></div></div>
-                </div>
-                
-                <!-- 鼻子和嘴巴 -->
-                <div class="cat-nose"></div>
-                <div class="cat-mouth"></div>
-                
-                <!-- 腮红 -->
-                <div class="cat-blush left"></div>
-                <div class="cat-blush right"></div>
-                
-                <!-- 胡须 -->
-                <div class="cat-whiskers">
-                    <div class="whisker left-1"></div>
-                    <div class="whisker left-2"></div>
-                    <div class="whisker left-3"></div>
-                    <div class="whisker right-1"></div>
-                    <div class="whisker right-2"></div>
-                    <div class="whisker right-3"></div>
-                </div>
-            </div>
-            
-            <!-- 提示气泡 -->
-            <div class="speech-bubble">
-                <span class="typewriter"></span>
-            </div>
-            
-            <!-- 点击详情面板 -->
-            <div class="cat-info-panel" id="catInfoPanel">
-                <button class="close-panel" onclick="event.stopPropagation(); closeCatPanel();">&times;</button>
-                <h4>🐱 欢迎来到农大闲置</h4>
-                <p>登录后可享受：<br>
-                发布闲置物品 · 收藏心仪好物<br>
-                参与校园认证 · 碳积分兑换</p>
-            </div>
-        </div>
-        
-        <!-- 登录按钮 -->
-        <button class="login-btn" onclick="goToLogin()">
-            立即登录
-        </button>
-    </div>
-    
-    <!-- 视频背景 -->
-    <div class="video-bg">
-        <video id="bg-video" autoplay muted loop playsinline>
-            <source src="./images/bg-video.mp4" type="video/mp4">
-        </video>
-    </div>
-    <div class="video-overlay"></div>
     
     <!-- 主界面 -->
     
