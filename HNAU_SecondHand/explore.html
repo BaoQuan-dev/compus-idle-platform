@@ -761,8 +761,9 @@
         });
 
         function updateCarousel() {
+            const cardWidth = 320 + 40; // 卡片宽度 + 左右margin
             const offset = currentIndex - 2;
-            track.style.transform = `translateX(${offset * -340}px)`;
+            track.style.transform = `translateX(${offset * -cardWidth}px)`;
 
             cards.forEach((card, i) => {
                 card.classList.remove('active');
