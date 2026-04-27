@@ -3,2298 +3,384 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HNAU 闲置星球</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.cn/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <title>农大闲置 - 校园循环经济平台</title>
+    <link rel="stylesheet" href="./style/main.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* ========== 视频背景 ========== */
+        body { position: relative; margin: 0; padding: 0; }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: #0a0a1a;
         }
-        
-        body {
-            font-family: 'Noto Sans SC', sans-serif;
-            overflow: hidden;
-            background: #000;
-            color: #fff;
-        }
-        
-        /* 视频背景 */
         .video-bg {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
-        }
-        
-        .video-bg video {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            transform: translate(-50%, -50%);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             object-fit: cover;
+            z-index: -1;
         }
-        
-        /* 视频遮罩 - 让内容更清晰 */
-        .video-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: 1;
-        }
-        
-        /* 过渡动画遮罩 */
-        /* 过渡动画遮罩 - 透明 */
-        .transition-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: none;
-        }
-        
-        .transition-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-        
-        /* Three.js Canvas */
-        #cosmic-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-        }
-        
-        /* 主界面容器 */
-        .main-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            pointer-events: none;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease;
-        }
-        
-        .main-container.zooming {
-            transform: scale(0.3);
-            opacity: 0;
-        }
-        
-        /* 顶部标题 */
-        .header {
-            position: absolute;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
+        /* ========== 主界面 ========== */
+        .home-header {
+            padding: 60px 20px 0;
             text-align: center;
-            opacity: 0;
-            transition: opacity 0.8s ease;
         }
-        
-        .header.visible {
-            opacity: 1;
-        }
-        
-        .header h1 {
-            font-size: 56px;
-            font-weight: 900;
-            letter-spacing: 10px;
-            background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6);
-            background-size: 300% 300%;
+        .home-header h1 {
+            margin: 0 0 8px 0;
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: gradient-shift 5s ease infinite;
-            text-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+        }
+        .home-header p {
+            margin: 0;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+        }
+        /* ========== 功能组件容器 ========== */
+        .home-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px 100px;
             position: relative;
+            z-index: 1;
         }
-        
-        .header h1::before,
-        .header h1::after {
-            content: '✨';
-            position: absolute;
-            -webkit-text-fill-color: initial;
-            font-size: 24px;
-            animation: twinkle 2s ease-in-out infinite;
+        /* ========== 环形功能布局 ========== */
+        .feature-ring {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1;
+            margin: 0 auto;
         }
-        
-        .header h1::before {
-            left: -50px;
-            animation-delay: 0s;
-        }
-        
-        .header h1::after {
-            right: -50px;
-            animation-delay: 1s;
-        }
-        
-        @keyframes twinkle {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
-        }
-        
-        .header p {
-            font-size: 20px;
-            color: rgba(255, 255, 255, 0.8);
-            letter-spacing: 6px;
-            margin-top: 15px;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-        }
-        
-        @keyframes gradient-shift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        
-        /* 中心指示器 */
         .center-indicator {
             position: absolute;
-            top: calc(50% + 80px);
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            text-align: center;
-            pointer-events: auto;
-            cursor: pointer;
-            transition: all 0.5s ease;
-        }
-        
-        .center-indicator.hidden {
-            opacity: 0;
-            transform: translate(-50%, -50%) scale(0);
-        }
-        
-        .center-circle {
-            width: 160px;
-            height: 160px;
-            border: 4px solid rgba(255, 255, 255, 0.4);
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, rgba(96,165,250,0.3), rgba(192,132,252,0.3));
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255,255,255,0.2);
             border-radius: 50%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 15px;
-            animation: pulse-ring 2s ease-in-out infinite;
-            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
-            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-        
-        .center-circle::before {
-            content: '';
+        .center-indicator:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            border-color: rgba(255,255,255,0.4);
+        }
+        .center-indicator .logo {
+            font-size: 24px;
+            margin-bottom: 2px;
+        }
+        .center-indicator .text {
+            font-size: 10px;
+            color: rgba(255,255,255,0.8);
+        }
+        .feature-item {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 2px dashed rgba(255, 255, 255, 0.2);
-            animation: rotate 20s linear infinite;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
         }
-        
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        .feature-item:hover {
+            transform: scale(1.1);
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
-        
-        .center-indicator:hover .center-circle {
-            border-color: rgba(255, 255, 255, 0.9);
-            transform: scale(1.15);
-            box-shadow: 0 0 60px rgba(255, 255, 255, 0.4),
-                        0 0 100px rgba(255, 215, 0, 0.3);
+        .feature-item .icon {
+            font-size: 32px;
+            margin-bottom: 6px;
         }
-        
-        .center-icon {
-            font-size: 50px;
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        .center-text {
-            font-size: 22px;
-            font-weight: 900;
+        .feature-item .label {
+            font-size: 12px;
+            font-weight: 600;
             color: #fff;
-            margin-top: 8px;
-            letter-spacing: 4px;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8),
-                         0 0 40px rgba(255, 215, 0, 0.4);
-            background: linear-gradient(135deg, #ffd700, #ff6b6b, #ffd700);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: text-shine 3s ease-in-out infinite;
         }
-        
-        @keyframes text-shine {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .center-indicator span {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.7);
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-        
-        @keyframes pulse-ring {
-            0%, 100% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.1), 0 0 60px rgba(255, 255, 255, 0.05); }
-            50% { box-shadow: 0 0 50px rgba(255, 255, 255, 0.2), 0 0 100px rgba(255, 255, 255, 0.1); }
-        }
-        
-        /* 模块节点 - 放大版 */
-        .module-node {
-            position: absolute;
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            pointer-events: auto;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.1s ease-out;
-            opacity: 0;
-            transform: scale(0);
-            /* 增强悬浮滑动感 */
-            will-change: transform, opacity, left, top;
-        }
-        
-        .module-node.visible {
-            opacity: 1;
-            transform: scale(1);
-            animation: float-in 0.8s ease-out forwards;
-        }
-        
-        @keyframes float-in {
-            0% {
-                opacity: 0;
-                transform: scale(0) translateY(50px);
-            }
-            60% {
-                transform: scale(1.1) translateY(-5px);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-        
-        /* 鼠标悬浮时的滑动效果 */
-        .module-node:hover {
-            transform: scale(1.15) translateY(-8px);
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
-                        box-shadow 0.3s ease,
-                        border-color 0.3s ease;
-        }
-        
-        .module-node:active {
-            transform: scale(1.05);
-            transition: transform 0.1s ease;
-        }
-        
-        .module-node.dimmed {
-            opacity: 0.15 !important;
-            transform: scale(0.6) translateY(0) !important;
-            filter: blur(3px);
-        }
-        
-        .module-node.active {
-            opacity: 1 !important;
-            transform: scale(1.35) translateY(-15px) !important;
-            z-index: 100;
-            animation: pulse-glow 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulse-glow {
-            0%, 100% {
-                filter: brightness(1) drop-shadow(0 0 20px var(--module-color, rgba(255, 255, 255, 0.5)));
-            }
-            50% {
-                filter: brightness(1.2) drop-shadow(0 0 40px var(--module-color, rgba(255, 255, 255, 0.8)));
-            }
-        }
-        
-        .module-node-bg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(40, 50, 70, 0.95), rgba(15, 20, 35, 0.98));
-            border: 3px solid var(--module-color, rgba(255, 255, 255, 0.3));
-            transition: all 0.5s ease;
-            box-shadow: 0 0 30px var(--module-color, transparent),
-                        inset 0 0 30px rgba(255, 255, 255, 0.05);
-        }
-        
-        .module-node:hover .module-node-bg,
-        .module-node.active .module-node-bg {
-            border-width: 4px;
-            box-shadow: 0 0 60px var(--module-color, rgba(255, 255, 255, 0.5)),
-                        inset 0 0 40px rgba(255, 255, 255, 0.15);
-        }
-        
-        .module-node-ring {
-            position: absolute;
-            width: calc(100% + 15px);
-            height: calc(100% + 15px);
-            border-radius: 50%;
-            border: 2px solid var(--module-color, rgba(255, 255, 255, 0.2));
-            opacity: 0.5;
-            transition: all 0.5s ease;
-        }
-        
-        .module-node:hover .module-node-ring,
-        .module-node.active .module-node-ring {
-            opacity: 1;
-            animation: rotate-ring 6s linear infinite;
-        }
-        
-        @keyframes rotate-ring {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        .module-icon {
-            font-size: 52px;
-            margin-bottom: 8px;
-            filter: drop-shadow(0 0 15px var(--module-color, rgba(255, 255, 255, 0.5)));
-            transition: transform 0.3s ease;
-        }
-        
-        .module-node:hover .module-icon {
-            transform: scale(1.2) rotate(10deg);
-        }
-        
-        .module-title {
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: 3px;
-            text-align: center;
-            margin-top: 12px;
-            position: relative;
-            padding: 8px 16px;
-            background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.6));
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--module-color, rgba(255,255,255,0.2));
-            box-shadow: 0 0 20px var(--module-color, rgba(255,255,255,0.1));
-        }
-        
-        .module-title::before {
-            content: '♦';
-            position: absolute;
-            left: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 10px;
-            color: var(--module-color);
-            animation: sparkle 1.5s ease-in-out infinite;
-        }
-        
-        .module-title::after {
-            content: '♦';
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 10px;
-            color: var(--module-color);
-            animation: sparkle 1.5s ease-in-out infinite 0.75s;
-        }
-        
-        @keyframes sparkle {
-            0%, 100% { opacity: 0.3; transform: translateY(-50%) scale(0.8); }
-            50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
-        }
-        
-        /* 粒子尾迹 */
-        .module-node::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--module-color, transparent) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            animation: particle-pulse 2s ease-in-out infinite;
-        }
-        
-        .module-node:hover::after {
-            opacity: 0.3;
-        }
-        
-        @keyframes particle-pulse {
-            0%, 100% { transform: scale(1); opacity: 0.2; }
-            50% { transform: scale(1.2); opacity: 0.4; }
-        }
-        
-        /* 底部快捷入口 */
-        .bottom-bar {
-            position: absolute;
+        /* 位置 */
+        .feature-item.top { top: 0; left: 50%; transform: translateX(-50%); }
+        .feature-item.top:hover { transform: translateX(-50%) scale(1.1); }
+        .feature-item.left { top: 50%; left: 0; transform: translateY(-50%); }
+        .feature-item.left:hover { transform: translateY(-50%) scale(1.1); }
+        .feature-item.right { top: 50%; right: 0; transform: translateY(-50%); }
+        .feature-item.right:hover { transform: translateY(-50%) scale(1.1); }
+        .feature-item.bottom-left { bottom: 0; left: 10%; }
+        .feature-item.bottom-right { bottom: 0; right: 10%; }
+        /* 发光效果 */
+        .feature-item.top { box-shadow: 0 0 30px rgba(250,204,21,0.3); border-color: rgba(250,204,21,0.3); }
+        .feature-item.left { box-shadow: 0 0 30px rgba(192,132,252,0.3); border-color: rgba(192,132,252,0.3); }
+        .feature-item.right { box-shadow: 0 0 30px rgba(236,72,153,0.3); border-color: rgba(236,72,153,0.3); }
+        .feature-item.bottom-left { box-shadow: 0 0 30px rgba(52,211,153,0.3); border-color: rgba(52,211,153,0.3); }
+        .feature-item.bottom-right { box-shadow: 0 0 30px rgba(59,130,246,0.3); border-color: rgba(59,130,246,0.3); }
+        /* ========== 底部登录按钮 ========== */
+        .login-section {
+            position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.8s ease;
-            pointer-events: auto;
-            width: 90%;
-            max-width: 850px;
+            z-index: 10;
         }
-        
-        .bottom-bar.visible {
-            opacity: 1;
+        .login-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, rgba(236,72,153,0.8), rgba(192,132,252,0.8));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 30px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(236,72,153,0.4);
         }
-        
-        .quick-links {
+        .login-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 30px rgba(236,72,153,0.5);
+        }
+        /* ========== 底部导航 ========== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 20px;
             display: flex;
             justify-content: center;
-            gap: 18px;
-            flex-wrap: wrap;
-        }
-        
-        .quick-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 32px;
-            background: rgba(20, 30, 50, 0.85);
-            border: 2px solid var(--link-color, rgba(255, 255, 255, 0.2));
-            border-radius: 40px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            backdrop-filter: blur(10px);
-            /* 增强滑动感 */
-            will-change: transform, box-shadow;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .quick-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .quick-link:hover::before {
-            left: 100%;
-        }
-        
-        .quick-link:hover {
-            background: rgba(30, 45, 70, 0.95);
-            border-color: var(--link-color, rgba(255, 255, 255, 0.6));
-            transform: translateY(-8px) scale(1.05);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5),
-                        0 0 40px var(--link-color, rgba(255, 255, 255, 0.4));
-        }
-        
-        .quick-link:active {
-            transform: translateY(-2px) scale(0.98);
-            transition: transform 0.1s ease;
-        }
-        
-        .quick-link-icon {
-            font-size: 30px;
-            transition: transform 0.3s ease;
-        }
-        
-        .quick-link:hover .quick-link-icon {
-            transform: scale(1.2) rotate(5deg);
-            animation: bounce-icon 0.6s ease infinite;
-        }
-        
-        .quick-link-text {
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: #fff;
-            text-shadow: 0 0 10px var(--link-color, rgba(255,255,255,0.3));
-        }
-        
-        @keyframes bounce-icon {
-            0%, 100% { transform: scale(1.2) translateY(0); }
-            50% { transform: scale(1.2) translateY(-3px); }
-        }
-        
-        .quick-link-icon {
-            font-size: 24px;
-        }
-        
-        .quick-link-text {
-            font-size: 15px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.95);
-        }
-        
-        /* 底部说明 */
-        .bottom-hint {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.5);
-            letter-spacing: 2px;
-        }
-        
-        /* 返回按钮 */
-        .back-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
+            gap: 20px;
             z-index: 100;
-            padding: 12px 24px;
-            background: rgba(20, 30, 50, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            color: #fff;
-            font-size: 14px;
-            cursor: pointer;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
         }
-        
-        .back-btn.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        .back-btn:hover {
-            background: rgba(40, 60, 100, 0.9);
-            transform: translateX(5px);
-        }
-        
-        /* 响应式 */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 32px;
-                letter-spacing: 4px;
-            }
-            
-            .header p {
-                font-size: 13px;
-            }
-            
-            .module-node {
-                width: 110px;
-                height: 110px;
-            }
-            
-            .module-icon {
-                font-size: 40px;
-            }
-            
-            .module-title {
-                font-size: 14px;
-            }
-            
-            .center-circle {
-                width: 110px;
-                height: 110px;
-            }
-            
-            .center-icon {
-                font-size: 44px;
-            }
-            
-            .quick-link {
-                padding: 12px 20px;
-            }
-            
-            .quick-link-text {
-                font-size: 13px;
-            }
-        }
-        
-        /* ========== 登录提示组件 ========== */
-        .login-prompt {
-            position: fixed;
-            top: auto;
-            bottom: 100px;
-            right: 30px;
-            left: auto;
-            z-index: 200;
-            display: none;
+        .nav-item {
+            display: flex;
             flex-direction: column;
             align-items: center;
-            animation: sleepyBounce 3s ease-in-out infinite;
+            gap: 4px;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 11px;
+            transition: color 0.3s;
         }
-        
-        .login-prompt.show {
-            display: flex;
-        }
-        
-        @keyframes sleepyBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-        
-        /* 猫咪容器 */
-        /* 清新治愈风格 - 柔和的猫咪阴影 */
-        .cat-container {
-            position: relative;
-            width: 140px;
-            height: 110px;
-            cursor: grab;
-            user-select: none;
-            animation: catCute 4s ease-in-out infinite;
-        }
-        
-        @keyframes catCute {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-        }
-        
-        .cat-container:hover {
-            animation: catWake 0.5s ease-in-out infinite;
-        }
-        
-        @keyframes catWake {
-            0%, 100% { transform: scale(1.05); }
-            50% { transform: scale(1.08); }
-        }
-        
-        .cat-container:active {
-            cursor: grabbing;
-        }
-        
-        /* 猫咪身体 - 趴着的椭圆 */
-        .cat-body {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 85px;
-            height: 42px;
-            background: linear-gradient(180deg, #FFECD2 0%, #FCB69F 100%);
-            border-radius: 50% 50% 45% 45%;
-            box-shadow: 
-                0 4px 15px rgba(252, 182, 159, 0.4),
-                inset 0 -5px 15px rgba(255, 154, 123, 0.3);
-        }
-        
-        /* 肚子白色区域 */
-        .cat-body::before {
-            content: '';
-            position: absolute;
-            top: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 55px;
-            height: 26px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,252,248,0.85));
-            border-radius: 50%;
-        }
-        
-        /* 猫咪头 - 趴着的圆圆头 */
-        .cat-head {
-            position: absolute;
-            bottom: 28px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 70px;
-            height: 55px;
-            background: linear-gradient(160deg, #FFFAF0 0%, #FFE4D6 50%, #FFDAB9 100%);
-            border-radius: 50%;
-            box-shadow: 
-                0 4px 15px rgba(255, 218, 185, 0.5),
-                inset 0 -2px 8px rgba(255, 180, 150, 0.2),
-                inset 0 5px 15px rgba(255, 255, 255, 0.6);
-            z-index: 2;
-        }
-        
-        /* 猫咪耳朵 - 小巧的耳朵 */
-        .cat-ear {
-            position: absolute;
-            top: -2px;
-            width: 22px;
-            height: 20px;
-            background: linear-gradient(160deg, #FFE4D6 0%, #FFDAB9 100%);
-            border-radius: 50% 50% 0 0;
-        }
-        
-        .cat-ear.left { 
-            left: 5px; 
-            transform: rotate(-15deg); 
-        }
-        .cat-ear.right { 
-            right: 5px; 
-            transform: rotate(15deg); 
-        }
-        
-        /* 粉色耳内 */
-        .cat-ear::before {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 11px;
-            height: 10px;
-            background: linear-gradient(180deg, #FFB6C1, #FFA0AA);
-            border-radius: 50% 50% 0 0;
-        }
-        
-        .cat-container:hover .cat-ear.left {
-            transform: rotate(-25deg) translateY(-3px);
-        }
-        
-        .cat-container:hover .cat-ear.right {
-            transform: rotate(25deg) translateY(-3px);
-        }
-        
-        /* 猫咪眼睛 - 清澈的蓝眼睛 */
-        .cat-eyes {
-            position: absolute;
-            top: 16px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 16px;
-        }
-        
-        .cat-eye {
-            width: 20px;
-            height: 20px;
-            background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 50%, #FF85A2 100%);
-            border-radius: 50%;
-            position: relative;
-            animation: catBlink 4s ease-in-out infinite;
-            overflow: hidden;
-            border: 2px solid #FF6B9D;
-            box-shadow: inset 0 -2px 4px rgba(0,0,0,0.15), 0 0 8px rgba(255,105,180,0.6);
-        }
-        
-        /* 眼睛瞳孔 */
-        .cat-eye-pupil {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: linear-gradient(135deg, #2d1f3d 0%, #4a3055 50%, #2d1f3d 100%);
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            transition: transform 0.1s ease-out;
-            z-index: 1;
-        }
-        
-        .cat-eye-pupil::after {
-            content: '';
-            position: absolute;
-            top: 1px;
-            left: 2px;
-            width: 4px;
-            height: 4px;
-            background: rgba(255,255,255,0.95);
-            border-radius: 50%;
-        }
-        
-        .cat-eye-pupil::before {
-            content: '';
-            position: absolute;
-            bottom: 1px;
-            right: 2px;
-            width: 2px;
-            height: 2px;
-            background: rgba(255,200,220,0.8);
-            border-radius: 50%;
-        }
-        
-        @keyframes catBlink {
-            0%, 92%, 100% { transform: scaleY(1); }
-            96% { transform: scaleY(0.1); }
-        }
-        
-        /* 猫咪鼻子 - 小三角 - 粉色 */
-        .cat-nose {
-            position: absolute;
-            top: 38px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 4px solid transparent;
-            border-right: 4px solid transparent;
-            border-top: 5px solid #FF9999;
-        }
-        
-        /* 猫咪嘴巴 - 可爱W - 淡淡的颜色 */
-        .cat-mouth {
-            position: absolute;
-            top: 43px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 14px;
-            height: 7px;
-        }
-        
-        .cat-mouth::before,
-        .cat-mouth::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            width: 7px;
-            height: 7px;
-            border-bottom: 2px solid #999;
-            border-radius: 0 0 50% 50%;
-        }
-        
-        .cat-mouth::before {
-            left: 0;
-        }
-        
-        .cat-mouth::after {
-            right: 0;
-        }
-        
-        /* 猫咪胡须 */
-        .cat-whiskers {
-            position: absolute;
-            top: 40px;
-            width: 100%;
-        }
-        
-        .whisker {
-            position: absolute;
-            width: 20px;
-            height: 1.5px;
-            background: linear-gradient(90deg, #666, #999);
-            border-radius: 2px;
-            animation: whiskerWave 3s ease-in-out infinite;
-        }
-        
-        .whisker.left-1 { left: -6px; top: 0; transform: rotate(-5deg); animation-delay: 0s; }
-        .whisker.left-2 { left: -8px; top: 6px; transform: rotate(0deg); animation-delay: 0.3s; }
-        .whisker.left-3 { left: -6px; top: 12px; transform: rotate(5deg); animation-delay: 0.6s; }
-        .whisker.right-1 { right: -6px; top: 0; transform: rotate(5deg); animation-delay: 0.1s; }
-        .whisker.right-2 { right: -8px; top: 6px; transform: rotate(0deg); animation-delay: 0.4s; }
-        .whisker.right-3 { right: -6px; top: 12px; transform: rotate(-5deg); animation-delay: 0.5s; }
-        
-        @keyframes whiskerWave {
-            0%, 100% { transform: rotate(var(--base-rotate, 0deg)); }
-            50% { transform: rotate(calc(var(--base-rotate, 0deg) + 3deg)); }
-        }
-        
-        /* 猫咪腮红 - 更清新的粉色 */
-        .cat-blush {
-            position: absolute;
-            top: 36px;
-            width: 10px;
-            height: 7px;
-            background: radial-gradient(ellipse, rgba(255, 160, 170, 0.6), rgba(255, 180, 190, 0.3));
-            border-radius: 50%;
-            animation: blushPulse 3s ease-in-out infinite;
-        }
-        
-        .cat-blush.left { left: 7px; animation-delay: 0.5s; }
-        .cat-blush.right { right: 7px; animation-delay: 0.8s; }
-        
-        @keyframes blushPulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 0.8; }
-        }
-        
-        .cat-container:hover .cat-blush {
-            background: radial-gradient(ellipse, rgba(255, 130, 150, 0.7), rgba(255, 160, 170, 0.4));
-            width: 16px;
-            height: 10px;
-        }
-        
-        /* 猫咪尾巴 - 粉色的小尾巴 */
-        .cat-tail {
-            position: absolute;
-            bottom: 8px;
-            right: -8px;
-            width: 30px;
-            height: 12px;
-            background: linear-gradient(90deg, #FFDAB9, #FFE4D6, #FFF0F5);
-            border-radius: 20px 20px 20px 12px;
-            transform-origin: left center;
-            animation: tailCurl 3s ease-in-out infinite;
-        }
-        
-        .cat-tail::after {
-            content: '';
-            position: absolute;
-            right: -5px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 11px;
-            height: 11px;
-            background: linear-gradient(135deg, #FFF0F5, #FFE4D6);
-            border-radius: 50%;
-        }
-        
-        @keyframes tailCurl {
-            0%, 100% { transform: rotate(-5deg); }
-            50% { transform: rotate(8deg); }
-        }
-        
-        .cat-container:hover .cat-tail {
-            animation: tailWagFast 0.6s ease-in-out infinite;
-        }
-        
-        @keyframes tailWagFast {
-            0%, 100% { transform: rotate(-10deg); }
-            50% { transform: rotate(10deg); }
-        }
-        
-        /* 猫咪爪子 - 收在身下 - 粉嫩的颜色 */
-        .cat-paws {
-            position: absolute;
-            bottom: -2px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 22px;
-        }
-        
-        .cat-paw {
-            width: 18px;
-            height: 11px;
-            background: linear-gradient(180deg, #FFF0F5, #FFE4D6);
-            border-radius: 50% 50% 40% 40%;
-            position: relative;
-            animation: pawRelax 4s ease-in-out infinite;
-        }
-        
-        .cat-paw:first-child { animation-delay: 0s; }
-        .cat-paw:last-child { animation-delay: 0.5s; }
-        
-        @keyframes pawRelax {
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(0.9); }
-        }
-        
-        /* 肉垫 - 粉粉的 */
-        .cat-paw::before {
-            content: '';
-            position: absolute;
-            bottom: 1px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 9px;
-            height: 5px;
-            background: rgba(255, 180, 180, 0.6);
-            border-radius: 50%;
-        }
-        
-        /* 提示气泡 */
-        .speech-bubble {
-            position: absolute;
-            bottom: 190px;
-            left: 50%;
-            transform: translateX(-50%) scale(0.8);
-            background: linear-gradient(135deg, #fff, #fef9f3);
-            padding: 15px 22px;
-            border-radius: 25px;
-            box-shadow: 
-                0 8px 30px rgba(255, 140, 0, 0.3),
-                0 0 0 3px rgba(255, 180, 100, 0.3);
-            font-size: 15px;
-            color: #555;
-            white-space: nowrap;
-            opacity: 1;
-            transform: translateX(-50%) scale(1);
-            animation: bubbleWobble 2s ease-in-out infinite;
-            pointer-events: none;
-            font-weight: 500;
-        }
-        
-        .speech-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-left: 14px solid transparent;
-            border-right: 14px solid transparent;
-            border-top: 16px solid #fef9f3;
-        }
-        
-        .cat-container:hover .speech-bubble {
-            opacity: 1;
-            transform: translateX(-50%) scale(1);
-            animation: bubbleWobble 1s ease-in-out infinite;
-        }
-        
-        @keyframes bubbleWobble {
-            0%, 100% { transform: translateX(-50%) scale(1) rotate(-1deg); }
-            50% { transform: translateX(-50%) scale(1.02) rotate(1deg); }
-        }
-        
-        /* 登录按钮 */
-        .login-btn {
-            margin-top: 15px;
-            padding: 14px 35px;
-            background: linear-gradient(135deg, #FF7EB3 0%, #FF758C 50%, #FF6B9D 100%);
-            border: none;
-            border-radius: 30px;
-            color: white;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 
-                0 8px 25px rgba(255, 126, 179, 0.5),
-                0 0 0 3px rgba(255, 126, 179, 0.2);
-            transition: all 0.3s ease;
-            animation: btnBounce 2s ease-in-out infinite;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-        
-        @keyframes btnBounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-        }
-        
-        .login-btn:hover {
-            transform: scale(1.08);
-            box-shadow: 
-                0 12px 35px rgba(255, 126, 179, 0.6),
-                0 0 0 5px rgba(255, 126, 179, 0.3);
-            animation: btnBounceFast 0.5s ease-in-out infinite;
-        }
-        
-        @keyframes btnBounceFast {
-            0%, 100% { transform: scale(1.08); }
-            50% { transform: scale(1.12); }
-        }
-        
-        /* ========== 增强交互样式 ========== */
-        
-        /* 害羞脸红加强 */
-        .cat-container:hover .cat-blush {
-            background: rgba(255, 100, 100, 0.7);
-            width: 22px;
-            height: 14px;
-            animation: blushPulse 1s ease-in-out infinite;
-        }
-        
-        @keyframes blushPulse {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
-        }
-        
-        /* 耳朵跟随动画 */
-        .cat-ear {
-            transition: transform 0.3s ease;
-        }
-        
-        .cat-container:hover .cat-ear.left {
-            transform: rotate(-25deg) translateY(-3px);
-        }
-        
-        .cat-container:hover .cat-ear.right {
-            transform: rotate(25deg) translateY(-3px);
-        }
-        
-        /* 点击抖动效果 */
-        .cat-container.shake {
-            animation: catShake 0.7s ease-in-out !important;
-        }
-        
-        @keyframes catShake {
-            0%, 100% { transform: scale(1.1) rotate(0deg) translateY(0); }
-            10% { transform: scale(1.18) rotate(-10deg) translateX(-8px); }
-            20% { transform: scale(1.12) rotate(10deg) translateX(8px); }
-            30% { transform: scale(1.16) rotate(-8deg) translateX(-6px); }
-            40% { transform: scale(1.1) rotate(8deg) translateX(6px); }
-            50% { transform: scale(1.14) rotate(-5deg) translateX(-4px); }
-            60% { transform: scale(1.1) rotate(5deg) translateX(4px); }
-            70% { transform: scale(1.12) rotate(-3deg); }
-            80% { transform: scale(1.1) rotate(3deg); }
-        }
-        
-        /* 点击特效 - 爱心飘落 */
-        .click-effect {
-            position: absolute;
-            pointer-events: none;
-            font-size: 30px;
-            animation: clickEffectFloat 1.3s ease-out forwards;
+        .nav-item:hover, .nav-item.active { color: #fff; }
+        .nav-item .icon { font-size: 22px; }
+        /* 登录弹窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
             z-index: 1000;
-            filter: drop-shadow(0 0 12px rgba(255, 100, 150, 0.7));
         }
-        
-        @keyframes clickEffectFloat {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(0.3) rotate(0deg);
-            }
-            40% {
-                opacity: 1;
-                transform: translateY(-70px) scale(1.3) rotate(180deg);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-120px) scale(0.2) rotate(360deg);
-            }
-        }
-        
-        /* 打字机效果气泡 - 默认显示 */
-        .speech-bubble {
-            opacity: 1 !important;
-            transform: translateX(-50%) translateY(-5px);
-            overflow: hidden;
-        }
-        
-        .speech-bubble .typewriter {
-            display: inline-block;
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: 2px solid #667eea;
-            animation: typing 2s steps(20) forwards, blink 0.5s step-end infinite;
-        }
-        
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-        
-        @keyframes blink {
-            50% { border-color: transparent; }
-        }
-        
-        /* 悬停时的气泡 */
-        .cat-container:hover .speech-bubble {
-            opacity: 1;
-            transform: translateX(-50%) translateY(-5px);
-        }
-        
-        /* 详情展开面板 */
-        .cat-info-panel {
-            position: absolute;
-            bottom: 200px;
-            left: 50%;
-            transform: translateX(-50%) scale(0.8);
-            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
-            backdrop-filter: blur(10px);
-            padding: 20px 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            min-width: 200px;
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: linear-gradient(135deg, rgba(30,30,50,0.95), rgba(20,20,40,0.95));
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 40px;
+            width: 90%;
+            max-width: 380px;
             text-align: center;
-            z-index: 300;
         }
-        
-        .cat-info-panel.show {
-            opacity: 1;
-            transform: translateX(-50%) scale(1);
-            pointer-events: auto;
+        .modal h2 {
+            margin: 0 0 8px 0;
+            font-size: 22px;
+            background: linear-gradient(135deg, #fff, #60A5FA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        
-        .cat-info-panel h4 {
-            margin: 0 0 10px 0;
-            color: #667eea;
+        .modal p {
+            margin: 0 0 24px 0;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+        }
+        .modal-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #60A5FA, #3B82F6);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
             font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: all 0.3s;
         }
-        
-        .cat-info-panel p {
-            margin: 0;
-            color: #666;
-            font-size: 13px;
-            line-height: 1.6;
+        .modal-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(96,165,250,0.4);
         }
-        
-        .cat-info-panel .close-panel {
+        .modal-btn.secondary {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .close-btn {
             position: absolute;
-            top: 8px;
-            right: 12px;
+            top: 16px; right: 16px;
             background: none;
             border: none;
-            font-size: 18px;
+            color: rgba(255,255,255,0.6);
+            font-size: 24px;
             cursor: pointer;
-            color: #999;
-            transition: color 0.2s;
-        }
-        
-        .cat-info-panel .close-panel:hover {
-            color: #667eea;
-        }
-        
-        /* 猫爪点击波纹 */
-        .cat-body::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255,255,255,0.3);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.5s, height 0.5s;
-        }
-        
-        .cat-container:active .cat-body::before {
-            width: 100px;
-            height: 60px;
-        }
-        
-        /* 尾巴兴奋摇动 */
-        .cat-container:hover .cat-tail {
-            animation: tailWagFast 0.3s ease-in-out infinite;
-        }
-        
-        @keyframes tailWagFast {
-            0%, 100% { transform: rotate(-20deg); }
-            50% { transform: rotate(30deg); }
-        }
-        
-        /* 猫咪弹跳入场 */
-        .login-prompt.show .cat-container {
-            animation: catBounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-        
-        @keyframes catBounceIn {
-            0% {
-                opacity: 0;
-                transform: scale(0) translateY(100px);
-            }
-            60% {
-                opacity: 1;
-                transform: scale(1.2) translateY(-20px);
-            }
-            80% {
-                transform: scale(0.9) translateY(10px);
-            }
-            100% {
-                transform: scale(1) translateY(0);
-            }
-        }
-        
-        /* 移动端适配 */
-        @media (max-width: 768px) {
-            .login-prompt {
-                top: 80px;
-                right: 15px;
-            }
-            
-            .cat-container {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .cat-body {
-                width: 60px;
-                height: 35px;
-            }
-            
-            .cat-head {
-                bottom: 22px;
-                width: 55px;
-                height: 45px;
-            }
-            
-            .cat-eye {
-                width: 16px;
-                height: 16px;
-            }
-            
-            .login-btn {
-                padding: 10px 20px;
-                font-size: 13px;
-            }
-            
-            .speech-bubble {
-                font-size: 12px;
-                padding: 10px 15px;
-            }
-            
-            .cat-info-panel {
-                bottom: 180px;
-                min-width: 160px;
-                padding: 15px;
-            }
         }
     </style>
 </head>
 <body>
     <!-- 视频背景 -->
-    <div class="video-bg">
-        <video id="bg-video" autoplay muted loop playsinline>
-            <source src="./images/bg-video.mp4" type="video/mp4">
-        </video>
-    </div>
-    <div class="video-overlay"></div>
-    
-    <!-- Three.js星空背景 -->
-    <canvas id="cosmic-canvas"></canvas>
-    
-    <!-- 过渡动画遮罩 -->
-    <div class="transition-overlay" id="transitionOverlay"></div>
-    
-    <!-- 返回按钮 -->
-    <button class="back-btn" id="backBtn" onclick="goBack()">← 返回首页</button>
+    <video class="video-bg" autoplay muted loop playsinline>
+        <source src="./images/bg-video.mp4" type="video/mp4">
+    </video>
     
     <!-- 主界面 -->
+    <div class="home-header">
+        <h1>🌟 农大闲置</h1>
+        <p>探索校园闲置 开启循环生活</p>
+    </div>
     
-    <div class="main-container" id="mainContainer">
-        <!-- 标题 -->
-        <div class="header" id="header">
-            <h1>🌟 农大闲置 🌟</h1>
-            <p>探索校园闲置 · 开启绿色循环</p>
-        </div>
-        
-        <!-- 中心指示器 -->
-        <div class="center-indicator" id="centerIndicator" onclick="awakenAll()">
-            <div class="center-circle">
-                <span class="center-icon">🎁</span>
-                <span class="center-text">农大闲置</span>
+    <div class="home-container">
+        <div class="feature-ring">
+            <!-- 中心 -->
+            <div class="center-indicator" onclick="awakenAll()">
+                <span class="logo">✨</span>
+                <span class="text">点击唤醒</span>
             </div>
-            <span>点击唤醒全部</span>
+            
+            <!-- 发布闲置 -->
+            <a href="release_goods.html" class="feature-item top">
+                <span class="icon">📦</span>
+                <span class="label">发布闲置</span>
+            </a>
+            
+            <!-- 个人中心 -->
+            <a href="user_center.html" class="feature-item left">
+                <span class="icon">👤</span>
+                <span class="label">个人中心</span>
+            </a>
+            
+            <!-- 公益转赠 -->
+            <a href="donation_list.html" class="feature-item right">
+                <span class="icon">💝</span>
+                <span class="label">公益转赠</span>
+            </a>
+            
+            <!-- 碳足迹 -->
+            <a href="carbon_ai.html" class="feature-item bottom-left">
+                <span class="icon">🌱</span>
+                <span class="label">碳足迹</span>
+            </a>
+            
+            <!-- 需求广场 -->
+            <a href="demand_board.html" class="feature-item bottom-right">
+                <span class="icon">🔍</span>
+                <span class="label">需求广场</span>
+            </a>
         </div>
     </div>
     
-    <!-- 底部快捷入口 -->
-    <div class="bottom-bar" id="bottomBar">
-        <div class="quick-links">
-            <div class="quick-link" style="--link-color: #ffd93d;" onclick="goToPage('user_login.html')">
-                <span class="quick-link-icon">👕</span>
-                <span class="quick-link-text">登录/注册</span>
-            </div>
-            <div class="quick-link" style="--link-color: #6bcb77;" onclick="goToPage('stu_check.html')">
-                <span class="quick-link-icon">📱</span>
-                <span class="quick-link-text">校园认证</span>
-            </div>
-            <div class="quick-link" style="--link-color: #4d96ff;" onclick="goToPage('carbon_ai.html')">
-                <span class="quick-link-icon">💻</span>
-                <span class="quick-link-text">碳足迹AI</span>
-            </div>
-            <div class="quick-link" style="--link-color: #ff9ff3;" onclick="goToPage('donation_list.html')">
-                <span class="quick-link-icon">🎧</span>
-                <span class="quick-link-text">公益转赠</span>
-            </div>
+    <!-- 登录弹窗 -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <h2>登录农大闲置</h2>
+            <p>发现更多校园闲置，开启绿色循环生活</p>
+            <button class="modal-btn" onclick="goToLogin()">立即登录</button>
+            <button class="modal-btn secondary" onclick="goToRegister()">注册账号</button>
         </div>
-        <div class="bottom-hint">点击上方图标快速进入对应功能</div>
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- 底部导航 -->
+    <nav class="bottom-nav">
+        <a href="starfield.html" class="nav-item active">
+            <span class="icon">🏠</span>
+            <span>首页</span>
+        </a>
+        <a href="explore.html" class="nav-item">
+            <span class="icon">✨</span>
+            <span>探索</span>
+        </a>
+        <a href="release_goods.html" class="nav-item">
+            <span class="icon">➕</span>
+            <span>发布</span>
+        </a>
+        <a href="donation_list.html" class="nav-item">
+            <span class="icon">💝</span>
+            <span>公益</span>
+        </a>
+        <a href="user_center.html" class="nav-item">
+            <span class="icon">👤</span>
+            <span>我的</span>
+        </a>
+    </nav>
+    
     <script>
-        // ========== 闲置物品配置 ==========
-        var ITEMS = [
-            '👟', '👕', '👖', '👗', '🧥', '👠', '👡', '👢',
-            '🎒', '👝', '👜', '💼', '🎒', '🕶', '⌚', '📱',
-            '💻', '⌨️', '🖥', '🖨', '📷', '🎮', '🎧', '📚',
-            '🎸', '🎮', '⚽', '🏀', '🎯', '🎲', '🧸', '🎁',
-            '💄', '💍', '🔧', '🔨', '✂️', '📏', '🖊',
-            '🪑', '💡', '🏷️', '📦', '🧲', '🔑', '🎵'
-        ];
-        
-        var ITEM_COLORS = [
-            0xff6b6b, 0xffd93d, 0x6bcb77, 0x4d96ff, 0xff9ff3,
-            0xa29bfe, 0xfd79a8, 0xfdcb6e, 0x00b894, 0x0984e3,
-            0xe17055, 0x00cec9, 0x6c5ce7, 0xfab1a0, 0x74b9ff
-        ];
-        
-        // ========== 模块配置 ==========
-        var CONFIG = {
-            modules: [
-                {
-                    id: 'publish',
-                    icon: '📦',
-                    title: '发布闲置',
-                    color: '#ffd93d',
-                    colorText: '#ffd93d',
-                    desc: '一键发布闲置物品',
-                    url: 'release_goods.html'
-                },
-                {
-                    id: 'donation',
-                    icon: '💝',
-                    title: '公益转赠',
-                    color: '#ff9ff3',
-                    colorText: '#ff9ff3',
-                    desc: '传递爱心温暖',
-                    url: 'donation_list.html'
-                },
-                {
-                    id: 'demand',
-                    icon: '🔍',
-                    title: '需求广场',
-                    color: '#54a0ff',
-                    colorText: '#54a0ff',
-                    desc: '寻找有缘人',
-                    url: 'demand_board.html'
-                },
-                {
-                    id: 'carbon',
-                    icon: '🌱',
-                    title: '碳足迹',
-                    color: '#6bcb77',
-                    colorText: '#6bcb77',
-                    desc: '记录环保行动',
-                    url: 'carbon_ai.html'
-                },
-                {
-                    id: 'profile',
-                    icon: '👤',
-                    title: '个人中心',
-                    color: '#a29bfe',
-                    colorText: '#a29bfe',
-                    desc: '管理我的信息',
-                    url: 'user_center.html'
-                }
-            ]
-        };
-        
-        // ========== 状态 ==========
-        var state = {
-            isAnimating: false,
-            allAwakened: false
-        };
-        
-        // ========== Three.js ==========
-        var scene, camera, renderer;
-        var floatingItems = [];
-        var glowParticles;
-        var mouseX = 0, mouseY = 0;
-        var targetX = 0, targetY = 0;
-        var velocityX = 0, velocityY = 0;
-        var catDragging = false;
-        var lastX = 0, lastY = 0;
-        var dragSensitivity = 3;
-        var returnSpeed = 0.08;
-        
-        function initThree() {
-            scene = new THREE.Scene();
-            
-            camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 8;
-            
-            renderer = new THREE.WebGLRenderer({
-                canvas: document.getElementById('cosmic-canvas'),
-                antialias: true,
-                alpha: true
-            });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.setClearColor(0x000000, 0);
-            
-            // 创建渐变背景
-            createGradientBackground();
-            
-            // 禁用漂浮商品创建
-            // // createFloatingItems(); // 已禁用
-            
-            // 创建发光粒子
-            createGlowParticles();
-            
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mousedown', onDragStart);
-            document.addEventListener('mouseup', onDragEnd);
-            document.addEventListener('mouseleave', onDragEnd);
-            document.addEventListener('touchstart', onTouchStart, { passive: false });
-            document.addEventListener('touchmove', onTouchMove, { passive: false });
-            document.addEventListener('touchend', onDragEnd);
-            window.addEventListener('resize', onResize);
-        }
-        
-        function createGradientBackground() {
-            var canvas = document.createElement('canvas');
-            canvas.width = 2;
-            canvas.height = 512;
-            var ctx = canvas.getContext('2d');
-            
-            var gradient = ctx.createLinearGradient(0, 0, 0, 512);
-            gradient.addColorStop(0, '#1a1a2e');
-            gradient.addColorStop(0.5, '#16213e');
-            gradient.addColorStop(1, '#0f0f23');
-            
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 2, 512);
-            
-            var texture = new THREE.CanvasTexture(canvas);
-            scene.background = texture;
-        }
-        
-        // 创建商品精灵图（emoji + 发光背景）
-        function createGoodsSprite(emoji, color) {
-            var canvas = document.createElement('canvas');
-            canvas.width = 128;
-            canvas.height = 128;
-            var ctx = canvas.getContext('2d');
-            
-            // 发光背景
-            var hex = '#' + color.toString(16).padStart(6, '0');
-            var gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-            gradient.addColorStop(0, hex + 'aa');
-            gradient.addColorStop(0.5, hex + '44');
-            gradient.addColorStop(1, 'transparent');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 128, 128);
-            
-            // 绘制emoji
-            ctx.font = '72px serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(emoji, 64, 64);
-            
-            var texture = new THREE.CanvasTexture(canvas);
-            var material = new THREE.SpriteMaterial({
-                map: texture,
-                transparent: true,
-                opacity: 0.95,
-                depthWrite: false
-            });
-            return new THREE.Sprite(material);
-        }
-        
-        
-        function createGlowParticles() {
-            var geometry = new THREE.BufferGeometry();
-            var count = 1500;
-            var positions = new Float32Array(count * 3);
-            var colors = new Float32Array(count * 3);
-            var sizes = new Float32Array(count);
-            
-            for (var i = 0; i < count; i++) {
-                var i3 = i * 3;
-                positions[i3] = (Math.random() - 0.5) * 80;
-                positions[i3 + 1] = (Math.random() - 0.5) * 50;
-                positions[i3 + 2] = -30 - Math.random() * 30;
-                
-                // 彩色粒子
-                var colorChoice = Math.random();
-                if (colorChoice < 0.25) {
-                    colors[i3] = 1; colors[i3 + 1] = 0.42; colors[i3 + 2] = 0.42; // 红
-                } else if (colorChoice < 0.5) {
-                    colors[i3] = 1; colors[i3 + 1] = 0.85; colors[i3 + 2] = 0.24; // 黄
-                } else if (colorChoice < 0.75) {
-                    colors[i3] = 0.42; colors[i3 + 1] = 0.8; colors[i3 + 2] = 0.47; // 绿
-                } else {
-                    colors[i3] = 0.29; colors[i3 + 1] = 0.59; colors[i3 + 2] = 1; // 蓝
-                }
-                
-                sizes[i] = Math.random() * 2 + 0.5;
-            }
-            
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-            
-            var material = new THREE.PointsMaterial({
-                size: 0.08,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.6,
-                sizeAttenuation: true
-            });
-            
-            glowParticles = new THREE.Points(geometry, material);
-            scene.add(glowParticles);
-        }
-        
-        function onMouseMove(e) {
-            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-        }
-        
-        function onDragStart(e) {
-            catDragging = true;
-            lastX = e.clientX;
-            lastY = e.clientY;
-            velocityX = 0;
-            velocityY = 0;
-            document.body.style.cursor = 'grabbing';
-        }
-        
-        function onDragEnd() {
-            catDragging = false;
-            document.body.style.cursor = 'default';
-        }
-        
-        function onTouchStart(e) {
-            if (e.touches.length === 1) {
-                catDragging = true;
-                lastX = e.touches[0].clientX;
-                lastY = e.touches[0].clientY;
-                velocityX = 0;
-                velocityY = 0;
-            }
-        }
-        
-        function onTouchMove(e) {
-            if (catDragging && e.touches.length === 1) {
-                e.preventDefault();
-                var deltaX = e.touches[0].clientX - lastX;
-                var deltaY = e.touches[0].clientY - lastY;
-                
-                velocityX = deltaX * 0.01;
-                velocityY = -deltaY * 0.01;
-                
-                targetX += velocityX;
-                targetY += velocityY;
-                
-                // 限制范围
-                targetX = Math.max(-3, Math.min(3, targetX));
-                targetY = Math.max(-2, Math.min(2, targetY));
-                
-                lastX = e.touches[0].clientX;
-                lastY = e.touches[0].clientY;
-            }
-        }
-        
-        function onResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-        
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            var time = Date.now() * 0.001;
-            
-            // 鼠标/拖拽驱动的目标位置
-            if (!catDragging) {
-                // 鼠标悬停影响
-                targetX += (mouseX * 2 - targetX) * 0.05;
-                targetY += (-mouseY * 1.5 - targetY) * 0.05;
-                
-                // 添加惯性滑动
-                targetX += velocityX;
-                targetY += velocityY;
-                
-                // 阻力衰减
-                velocityX *= 0.95;
-                velocityY *= 0.95;
-                
-                // 缓慢回归中心
-                targetX *= 0.995;
-                targetY *= 0.995;
-            }
-            
-            // 限制范围
-            targetX = Math.max(-3, Math.min(3, targetX));
-            targetY = Math.max(-2, Math.min(2, targetY));
-            
-            // 相机跟随（增强滑动感）
-            camera.position.x += (targetX - camera.position.x) * 0.1;
-            camera.position.y += (targetY - camera.position.y) * 0.1;
-            
-            // 相机旋转（视差效果）
-            camera.rotation.y = -targetX * 0.08;
-            camera.rotation.x = targetY * 0.05;
-            
-            camera.lookAt(0, 0, 0);
-            
-            // 动画漂浮物品（固定范围浮动，不飘走）
-            floatingItems.forEach(function(item, index) {
-                var data = item.userData;
-                
-                // 无规则浮动动画（基于初始位置浮动，不累积位移）
-                var floatY = Math.sin(time * data.floatSpeed + data.floatOffset) * data.floatRange;
-                var floatX = Math.cos(time * data.floatSpeed * 0.6 + data.floatOffset * 1.3) * data.floatRange * 0.6;
-                
-                // 基于深度的视差效果
-                var depthFactor = Math.max(0.3, 1 - (Math.abs(data.baseX - 0) / 20));
-                var parallaxX = targetX * depthFactor * 1.5;
-                var parallaxY = targetY * depthFactor * 1.2;
-                
-                // 拖拽滑动效果
-                var dragFactor = Math.max(0.2, 0.5 + (Math.abs(data.baseX - 0) / 20) * 0.5);
-                var dragX = catDragging ? velocityX * 50 * dragFactor * 0.03 : 0;
-                var dragY = catDragging ? -velocityY * 30 * dragFactor * 0.03 : 0;
-                
-                // 物品位置 = 初始位置 + 浮动 + 视差 + 拖拽（无累积）
-                item.position.x = data.baseX + floatX * 0.3 + parallaxX + dragX;
-                item.position.y = data.baseY + floatY + parallaxY + dragY;
-                
-                // 物品自旋转（多轴旋转）
-                item.rotation.x = Math.sin(time * data.floatSpeed * 0.7 + data.floatOffset) * 0.3;
-                item.rotation.y = Math.cos(time * data.floatSpeed * 0.5 + data.floatOffset * 0.8) * 0.4;
-                item.rotation.z = Math.sin(time * data.floatSpeed + data.floatOffset) * 0.15;
-            });
-            
-            // 粒子效果（跟随滑动）
-            if (glowParticles) {
-                glowParticles.rotation.y += 0.0005;
-                glowParticles.rotation.x = Math.sin(time * 0.3) * 0.15;
-                glowParticles.rotation.z = Math.cos(time * 0.2) * 0.1;
-                
-                // 粒子视差跟随
-                glowParticles.position.x = targetX * 0.3;
-                glowParticles.position.y = -targetY * 0.2;
-            }
-            
-            renderer.render(scene, camera);
-        }
-        
-        // ========== DOM 操作 ==========
-        function createModuleNodes() {
-            var container = document.getElementById('mainContainer');
-            var radius = window.innerWidth < 768 ? 170 : 240;
-            
-            CONFIG.modules.forEach(function(mod, index) {
-                var node = document.createElement('div');
-                node.className = 'module-node';
-                node.id = 'module-' + mod.id;
-                node.style.cssText = '--module-color: ' + mod.color + '; --module-color-text: ' + mod.colorText + ';';
-                node.innerHTML = 
-                    '<div class="module-node-bg"></div>' +
-                    '<div class="module-node-ring"></div>' +
-                    '<div class="module-icon">' + mod.icon + '</div>' +
-                    '<div class="module-title">' + mod.title + '</div>';
-                
-                var angle = (index / CONFIG.modules.length) * Math.PI * 2 - Math.PI / 2;
-                var x = Math.cos(angle) * radius;
-                var y = Math.sin(angle) * radius;
-                
-                node.style.left = 'calc(50% + ' + x + 'px - 75px)';
-                node.style.top = 'calc(50% + ' + y + 'px - 75px + 80px)'; // 往下偏移80px
-                
-                node.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    zoomAndNavigate(mod, node);
-                });
-                
-                // 也给模块内的文字添加点击
-                var moduleText = node.querySelector('.module-title');
-                if (moduleText) {
-                    moduleText.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        zoomAndNavigate(mod, node);
-                    });
-                }
-                
-                var moduleIcon = node.querySelector('.module-icon');
-                if (moduleIcon) {
-                    moduleIcon.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        zoomAndNavigate(mod, node);
-                    });
-                }
-                
-                node.addEventListener('mouseenter', function() {
-                    dimOtherModules(mod.id);
-                });
-                
-                node.addEventListener('mouseleave', function() {
-                    if (!state.allAwakened) {
-                        resetModules();
-                    }
-                });
-                
-                container.appendChild(node);
-                
-                setTimeout(function() {
-                    node.classList.add('visible');
-                }, 300 + index * 120);
-            });
-        }
-        
-        function dimOtherModules(activeId) {
-            CONFIG.modules.forEach(function(mod) {
-                var node = document.getElementById('module-' + mod.id);
-                if (mod.id !== activeId) {
-                    node.classList.add('dimmed');
-                    node.classList.remove('active');
-                } else {
-                    node.classList.remove('dimmed');
-                    node.classList.add('active');
-                }
-            });
-        }
-        
-        function resetModules() {
-            CONFIG.modules.forEach(function(mod) {
-                var node = document.getElementById('module-' + mod.id);
-                node.classList.remove('dimmed', 'active');
-            });
-        }
-        
+        // 唤醒所有功能
         function awakenAll() {
-            state.allAwakened = true;
-            CONFIG.modules.forEach(function(mod) {
-                var node = document.getElementById('module-' + mod.id);
-                node.classList.remove('dimmed');
-                node.classList.add('active');
+            const items = document.querySelectorAll('.feature-item');
+            items.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.animation = 'pulse 0.5s ease';
+                    setTimeout(() => item.style.animation = '', 500);
+                }, index * 100);
             });
-            
-            setTimeout(function() {
-                state.allAwakened = false;
-                resetModules();
-            }, 3000);
         }
         
-        // ========== 核心：物品漩涡旋转拉近效果 ==========
-        function zoomAndNavigate(module, node) {
-            if (state.isAnimating) return;
-            state.isAnimating = true;
-            
-            var mainContainer = document.getElementById('mainContainer');
-            var overlay = document.getElementById('transitionOverlay');
-            var canvasWrapper = document.getElementById('canvas-wrapper');
-            
-            // 获取点击位置
-            var rect = node.getBoundingClientRect();
-            var clickX = rect.left + rect.width / 2;
-            var clickY = rect.top + rect.height / 2;
-            
-            // 模块节点放大高亮
-            node.style.transform = 'scale(1.3)';
-            node.style.zIndex = '100';
-            
-            // 其他模块变暗缩小
-            document.querySelectorAll('.module-node').forEach(function(m) {
-                if (m !== node) {
-                    m.style.opacity = '0.3';
-                    m.style.transform = 'scale(0.7)';
-                }
-            });
-            
-            // ========== 物品漩涡旋转聚拢动画 ==========
-            var startTime = performance.now();
-            var zoomDuration = 1200; // 1.2秒
-            
-            // 保存物品原始数据
-            var itemsData = floatingItems.map(function(item) {
-                return {
-                    x: item.position.x,
-                    y: item.position.y,
-                    z: item.position.z,
-                    rx: item.rotation.x,
-                    ry: item.rotation.y,
-                    rz: item.rotation.z
-                };
-            });
-            
-            // 目标点（点击位置对应的3D坐标）
-            var targetX = (clickX / window.innerWidth - 0.5) * 30;
-            var targetY = -(clickY / window.innerHeight - 0.5) * 15;
-            
-            function animateVortex(currentTime) {
-                var elapsed = currentTime - startTime;
-                var progress = Math.min(elapsed / zoomDuration, 1);
-                
-                // 平滑缓动
-                var easeProgress = 1 - Math.pow(1 - progress, 3);
-                
-                // 物品漩涡旋转聚拢
-                floatingItems.forEach(function(item, index) {
-                    var data = itemsData[index];
-                    var delay = (index % 10) * 0.05; // 错开延迟
-                    var localProgress = Math.max(0, Math.min(1, (easeProgress - delay) / (1 - delay)));
-                    var easeLocal = 1 - Math.pow(1 - localProgress, 2);
-                    
-                    // 漩涡旋转效果（绕Z轴旋转）
-                    var angle = easeLocal * Math.PI * 4; // 旋转2圈
-                    var radius = (1 - easeLocal) * data.x; // 半径缩小
-                    var spiralX = Math.cos(angle + index * 0.5) * radius;
-                    var spiralY = Math.sin(angle + index * 0.5) * radius;
-                    
-                    // 聚拢到中心点
-                    item.position.x = data.x + (targetX - data.x) * easeLocal * 0.8 + spiralX * (1 - easeLocal);
-                    item.position.y = data.y + (targetY - data.y) * easeLocal * 0.8 + spiralY * (1 - easeLocal);
-                    item.position.z = data.z + easeLocal * 10; // 向镜头靠近
-                    
-                    // 物品自身旋转
-                    item.rotation.x = data.rx + easeLocal * Math.PI * 2;
-                    item.rotation.y = data.ry + easeLocal * Math.PI * 3;
-                    
-                    // 物品缩放（聚拢时变小消失）
-                    var scale = 1 - easeLocal * 0.7;
-                    item.scale.set(scale, scale, scale);
-                    
-                    // 透明度（通过缩放到0实现淡出）
-                    if (easeLocal > 0.7) {
-                        item.visible = false;
-                    }
-                });
-                
-                // 相机拉近
-                if (camera) {
-                    camera.position.z = 15 - easeProgress * 10;
-                }
-                
-                // 标题和底部栏淡出
-                var uiOpacity = 1 - easeProgress;
-                document.getElementById('header').style.opacity = uiOpacity;
-                document.getElementById('bottomBar').style.opacity = uiOpacity;
-                
-                // 遮罩淡入
-                overlay.style.opacity = easeProgress * 0.5;
-                
-                if (progress < 1) {
-                    requestAnimationFrame(animateVortex);
-                } else {
-                    // 恢复物品可见性
-                    floatingItems.forEach(function(item) {
-                        item.visible = true;
-                    });
-                    window.location.href = 'explore.html';
-                }
-            }
-            
-            requestAnimationFrame(animateVortex);
-        }
-        
-        function goBack() {
-            window.location.href = 'starfield.html';
-        }
-        
-        function goToPage(url) {
-            window.location.href = url;
-        }
-        
-        // ========== 初始化 ==========
-        function init() {
-            initThree();
-            createModuleNodes();
-            
-            // 显示标题和底部栏
-            setTimeout(function() {
-                document.getElementById('header').classList.add('visible');
-                document.getElementById('bottomBar').classList.add('visible');
-            }, 200);
-            
-            animate();
-        }
-        
-        init();
-        
-        // ========== 登录状态检查 ==========
-        function checkLoginAndShowPrompt() {
-            // 检查是否已登录（通过localStorage中的用户信息）
-            var isLoggedIn = localStorage.getItem('hnau_login_info') || 
-                            localStorage.getItem('hnau_user_info') ||
-                            localStorage.getItem('hnau_verify_info');
-            
-            var loginPrompt = document.getElementById('loginPrompt');
-            
-            if (!isLoggedIn) {
-                // 未登录，显示登录提示组件
-                setTimeout(function() {
-                    loginPrompt.classList.add('show');
-                }, 800);
-            } else {
-                // 已登录，隐藏登录提示组件
-                loginPrompt.classList.remove('show');
-            }
+        // 登录弹窗
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('show');
         }
         
         function goToLogin() {
             window.location.href = 'user_login.html';
         }
         
-        // ========== 增强猫猫交互 - 自动触发 + 拖动 ==========
-        
-        // 打字机效果文字 - 自动弹出登录提示
-        const speechTexts = [
-            '快来登录吧~',
-            '登录后享受更多功能~',
-            '加入我们一起交易吧~',
-            '登录查看更多好物~'
-        ];
-        let currentTextIndex = 0;
-        let isTyping = false;
-        
-        function typeWriter(element, text, callback) {
-            isTyping = true;
-            element.textContent = '';
-            let i = 0;
-            const interval = setInterval(() => {
-                if (i < text.length) {
-                    element.textContent += text.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(interval);
-                    isTyping = false;
-                    if (callback) callback();
-                }
-            }, 50);
+        function goToRegister() {
+            window.location.href = 'user_register.html';
         }
         
-        function cycleSpeechText() {
-            const speechBubble = document.querySelector('.speech-bubble .typewriter');
-            if (speechBubble && !isTyping) {
-                const currentText = speechTexts[currentTextIndex];
-                typeWriter(speechBubble, currentText, () => {
-                    setTimeout(() => {
-                        currentTextIndex = (currentTextIndex + 1) % speechTexts.length;
-                        cycleSpeechText();
-                    }, 3000);
-                });
-            }
-        }
-        
-        // 眼睛跟随鼠标
-        function initEyeFollow() {
-            const catContainer = document.querySelector('.cat-container');
-            const pupils = document.querySelectorAll('.cat-eye-pupil');
-            
-            if (!catContainer || pupils.length === 0) return;
-            
-            // 鼠标移动时眼睛跟随
-            document.addEventListener('mousemove', function(e) {
-                const rect = catContainer.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
-                
-                const deltaX = e.clientX - centerX;
-                const deltaY = e.clientY - centerY;
-                
-                const angle = Math.atan2(deltaY, deltaX);
-                const distance = Math.min(5, Math.sqrt(deltaX * deltaX + deltaY * deltaY) / 30);
-                
-                const moveX = Math.cos(angle) * distance;
-                const moveY = Math.sin(angle) * distance;
-                
-                pupils.forEach(pupil => {
-                    pupil.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
-                });
-            });
-            
-            // 鼠标离开时眼睛归位
-            document.addEventListener('mouseleave', function() {
-                pupils.forEach(pupil => {
-                    pupil.style.transform = 'translate(-50%, -50%)';
-                });
-            });
-        }
-        
-        // 自动喷发爱心星星
-        function autoSpawnEffects() {
-            const catContainer = document.querySelector('.cat-container');
-            if (!catContainer) return;
-            
-            setInterval(() => {
-                const effects = ['💕', '💖', '✨', '⭐', '🌟', '💗', '💝'];
-                const effect = document.createElement('div');
-                effect.className = 'click-effect';
-                effect.textContent = effects[Math.floor(Math.random() * effects.length)];
-                
-                // 随机位置
-                effect.style.left = (Math.random() * 80 + 40) + 'px';
-                effect.style.top = (Math.random() * 60 + 30) + 'px';
-                
-                catContainer.appendChild(effect);
-                
-                setTimeout(() => {
-                    effect.remove();
-                }, 1300);
-            }, 1500); // 更频繁喷发
-        }
-        
-        // 自动抖动
-        function startAutoShake() {
-            const catContainer = document.querySelector('.cat-container');
-            if (!catContainer) return;
-            
-            setInterval(() => {
-                catContainer.classList.add('shake');
-                setTimeout(() => {
-                    catContainer.classList.remove('shake');
-                }, 700);
-            }, 6000);
-        }
-        
-        // ========== 拖动功能 ==========
-        let dragOffsetX = 0;
-        let dragOffsetY = 0;
-        let loginPrompt = null;
-        let catContainer = null;
-        
-        function initDrag() {
-            loginPrompt = document.getElementById('loginPrompt');
-            catContainer = document.querySelector('.cat-container');
-            
-            if (!loginPrompt || !catContainer) return;
-            
-            // 鼠标拖动
-            catContainer.addEventListener('mousedown', function(e) {
-                if (e.target.closest('.login-btn')) return;
-                catDragging = true;
-                loginPrompt.style.cursor = 'grabbing';
-                
-                const rect = loginPrompt.getBoundingClientRect();
-                dragOffsetX = e.clientX - rect.left;
-                dragOffsetY = e.clientY - rect.top;
-                
-                // 停止浮动动画
-                loginPrompt.style.animation = 'none';
-            });
-            
-            document.addEventListener('mousemove', function(e) {
-                if (!catDragging) return;
-                
-                const x = e.clientX - dragOffsetX;
-                const y = e.clientY - dragOffsetY;
-                
-                // 边界限制
-                const maxX = window.innerWidth - 180;
-                const maxY = window.innerHeight - 300;
-                
-                loginPrompt.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
-                loginPrompt.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
-                loginPrompt.style.right = 'auto';
-                loginPrompt.style.bottom = 'auto';
-            });
-            
-            document.addEventListener('mouseup', function() {
-                if (catDragging) {
-                    catDragging = false;
-                    if (loginPrompt) {
-                        loginPrompt.style.cursor = 'pointer';
-                    }
-                }
-            });
-            
-            // 触摸拖动
-            catContainer.addEventListener('touchstart', function(e) {
-                if (e.target.closest('.login-btn')) return;
-                catDragging = true;
-                
-                const touch = e.touches[0];
-                const rect = loginPrompt.getBoundingClientRect();
-                dragOffsetX = touch.clientX - rect.left;
-                dragOffsetY = touch.clientY - rect.top;
-                
-                loginPrompt.style.animation = 'none';
-                e.preventDefault();
-            });
-            
-            document.addEventListener('touchmove', function(e) {
-                if (!catDragging) return;
-                
-                const touch = e.touches[0];
-                const x = touch.clientX - dragOffsetX;
-                const y = touch.clientY - dragOffsetY;
-                
-                const maxX = window.innerWidth - 180;
-                const maxY = window.innerHeight - 300;
-                
-                loginPrompt.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
-                loginPrompt.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
-                loginPrompt.style.right = 'auto';
-                loginPrompt.style.bottom = 'auto';
-                
-                e.preventDefault();
-            });
-            
-            document.addEventListener('touchend', function() {
-                catDragging = false;
-            });
-            
-            // 双击跳转登录
-            catContainer.addEventListener('dblclick', function() {
-                window.location.href = 'user_login.html';
-            });
-        }
-        
-        // 关闭详情面板
-        function closeCatPanel() {
-            const panel = document.getElementById('catInfoPanel');
-            if (panel) {
-                panel.classList.remove('show');
-            }
-        }
-        
-        // 初始化增强交互 - 自动触发
-        function initCatInteraction() {
-            if (!document.querySelector('.cat-container')) return;
-            
-            // 初始化眼睛跟随
-            initEyeFollow();
-            
-            // 启动自动效果
-            autoSpawnEffects();      // 自动喷发爱心
-            startAutoShake();        // 自动抖动
-            cycleSpeechText();       // 打字机效果
-            
-            // 初始化拖动
-            initDrag();
-            
-            // 点击显示详情面板
-            const catContainer = document.querySelector('.cat-container');
-            catContainer.addEventListener('click', function(e) {
-                if (e.target.closest('.login-btn')) return;
-                
-                const panel = document.getElementById('catInfoPanel');
-                if (panel) {
-                    panel.classList.add('show');
-                }
-            });
-            
-            // 点击外部关闭面板
-            document.addEventListener('click', function(e) {
-                if (!catContainer.contains(e.target) && !e.target.classList.contains('login-btn')) {
-                    closeCatPanel();
-                }
-            });
-        }
-        
-        // 页面加载后初始化交互
-        function initCatInteraction() {
-            if (!document.querySelector('.cat-container')) {
-                // 元素还没显示，延迟再试
-                setTimeout(initCatInteraction, 500);
-                return;
-            }
-            
-            // 初始化眼睛跟随
-            initEyeFollow();
-            
-            // 启动自动效果
-            autoSpawnEffects();      // 自动喷发爱心
-            startAutoShake();        // 自动抖动
-            cycleSpeechText();       // 打字机效果 - 默认显示
-        }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            // 先显示猫组件
-            checkLoginAndShowPrompt();
-            // 延迟启动交互效果
-            setTimeout(initCatInteraction, 1500);
-        });
-        
-        // 页面加载时检查登录状态
-        // checkLoginAndShowPrompt(); // 已移到 DOMContentLoaded 中
-        
-        // 监听storage事件，登录成功后自动隐藏提示
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'hnau_login_info' || 
-                e.key === 'hnau_user_info' || 
-                e.key === 'hnau_verify_info') {
-                checkLoginAndShowPrompt();
+        // 点击弹窗外部关闭
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('show');
             }
         });
+        
+        // 添加脉冲动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.15); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
