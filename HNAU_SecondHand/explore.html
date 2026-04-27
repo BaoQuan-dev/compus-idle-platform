@@ -337,73 +337,7 @@
             stroke-width: 2;
         }
 
-        /* 底部指示器 */
-        .indicators {
-            position: fixed;
-            bottom: 75px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            display: flex;
-            gap: 12px;
-            padding: 10px 20px;
-            background: rgba(15, 15, 30, 0.7);
-            border-radius: 25px;
-            backdrop-filter: blur(10px);
-        }
-
-        .indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.4);
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .indicator.active {
-            width: 30px;
-            background: linear-gradient(135deg, #60a5fa, #3b82f6);
-            box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
-        }
-
-        .indicator:hover {
-            background: rgba(255, 255, 255, 0.6);
-        }
-
         /* 拖拽提示 */
-        .drag-hint {
-            position: fixed;
-            bottom: 110px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.6);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: rgba(15, 15, 30, 0.6);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .drag-hint svg {
-            width: 16px;
-            height: 16px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2;
-            animation: swipe 2s ease-in-out infinite;
-        }
-
-        @keyframes swipe {
-            0%, 100% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-        }
-
         /* 移动端适配 */
         @media (max-width: 768px) {
             .module-card {
@@ -669,15 +603,6 @@
         </div>
     </div>
 
-    <!-- 拖拽提示 -->
-    <div class="drag-hint">
-        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        左右滑动切换
-    </div>
-
-    <!-- 底部指示器 -->
-    <div class="indicators" id="indicators"></div>
-
     <script>
         // 星空背景
         function createStars() {
@@ -697,20 +622,6 @@
         // 轮播逻辑
         const track = document.getElementById('track');
         const cards = document.querySelectorAll('.module-card');
-        const indicators = document.getElementById('indicators');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-
-        let currentIndex = 2; // 默认显示中间卡片
-        const totalCards = cards.length;
-
-        // 创建指示器
-        cards.forEach((_, i) => {
-            const dot = document.createElement('div');
-            dot.className = 'indicator' + (i === currentIndex ? ' active' : '');
-            dot.addEventListener('click', () => goToCard(i));
-            indicators.appendChild(dot);
-        });
 
         function updateCarousel() {
             const offset = currentIndex - 2;
