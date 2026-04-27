@@ -604,8 +604,12 @@
         /* ========== 登录提示组件 ========== */
         .login-prompt {
             position: fixed;
+            /* 初始位置 */
             top: 100px;
             right: 30px;
+            /* 拖动时使用 left/top 定位 */
+            left: auto;
+            bottom: auto;
             z-index: 200;
             display: none;
             flex-direction: column;
@@ -627,12 +631,17 @@
             position: relative;
             width: 150px;
             height: 150px;
-            cursor: pointer;
+            cursor: grab;
             transition: transform 0.3s ease;
+            user-select: none;
         }
         
         .cat-container:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
+        }
+        
+        .cat-container:active {
+            cursor: grabbing;
         }
         
         /* 猫咪身体 */
@@ -1993,7 +2002,7 @@
             window.location.href = 'user_login.html';
         }
         
-        // ========== 增强猫猫交互 ==========
+        // ========== 增强猫猫交互 - 自动触发 + 拖动 ==========
         
         // 打字机效果文字
         const speechTexts = [
@@ -2041,7 +2050,8 @@
             
             if (!catContainer || pupils.length === 0) return;
             
-            catContainer.addEventListener('mousemove', function(e) {
+            // 鼠标移动时眼睛跟随
+            document.addEventListener('mousemove', function(e) {
                 const rect = catContainer.getBoundingClientRect();
                 const centerX = rect.left + rect.width / 2;
                 const centerY = rect.top + rect.height / 2;
@@ -2060,30 +2070,162 @@
                 });
             });
             
-            catContainer.addEventListener('mouseleave', function() {
+            // 鼠标离开时眼睛归位
+            document.addEventListener('mouseleave', function() {
                 pupils.forEach(pupil => {
                     pupil.style.transform = 'translate(-50%, -50%)';
                 });
             });
         }
         
-        // 点击特效 - 爱心星星
-        function createClickEffect(e) {
+        // 自动喷发爱心星星
+        function autoSpawnEffects() {
             const catContainer = document.querySelector('.cat-container');
-            const effects = ['❤️', '⭐', '✨', '🌟', '💕'];
-            const effect = document.createElement('div');
-            effect.className = 'click-effect';
-            effect.textContent = effects[Math.floor(Math.random() * effects.length)];
+            if (!catContainer) return;
             
-            const rect = catContainer.getBoundingClientRect();
-            effect.style.left = (e.clientX - rect.left) + 'px';
-            effect.style.top = (e.clientY - rect.top) + 'px';
+            setInterval(() => {
+                if (Math.random() > 0.6) { // 40%概率触发
+                    const effects = ['❤️', '⭐', '✨', '🌟', '💕'];
+                    const effect = document.createElement('div');
+                    effect.className = 'click-effect';
+                    effect.textContent = effects[Math.floor(Math.random() * effects.length)];
+                    
+                    // 随机位置
+                    const rect = catContainer.getBoundingClientRect();
+                    effect.style.left = (Math.random() * 100 + 30) + 'px';
+                    effect.style.top = (Math.random() * 80 + 20) + 'px';
+                    
+                    catContainer.appendChild(effect);
+                    
+                    setTimeout(() => {
+                        effect.remove();
+                    }, 1000);
+                }
+            }, 2000);
+        }
+        
+        // 自动爱心眼效果
+        let loveEyesInterval;
+        function startLoveEyes() {
+            const catContainer = document.querySelector('.cat-container');
+            if (!catContainer) return;
             
-            catContainer.appendChild(effect);
+            // 每隔几秒自动爱心眼
+            loveEyesInterval = setInterval(() => {
+                catContainer.classList.add('love-eyes');
+                setTimeout(() => {
+                    catContainer.classList.remove('love-eyes');
+                }, 2000);
+            }, 5000);
+        }
+        
+        // 自动抖动
+        function startAutoShake() {
+            const catContainer = document.querySelector('.cat-container');
+            if (!catContainer) return;
             
-            setTimeout(() => {
-                effect.remove();
-            }, 1000);
+            setInterval(() => {
+                if (Math.random() > 0.7) { // 30%概率
+                    catContainer.classList.add('shake');
+                    setTimeout(() => {
+                        catContainer.classList.remove('shake');
+                    }, 500);
+                }
+            }, 8000);
+        }
+        
+        // ========== 拖动功能 ==========
+        let isDragging = false;
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+        let loginPrompt = null;
+        let catContainer = null;
+        
+        function initDrag() {
+            loginPrompt = document.getElementById('loginPrompt');
+            catContainer = document.querySelector('.cat-container');
+            
+            if (!loginPrompt || !catContainer) return;
+            
+            // 鼠标拖动
+            catContainer.addEventListener('mousedown', function(e) {
+                if (e.target.closest('.login-btn')) return;
+                isDragging = true;
+                loginPrompt.style.cursor = 'grabbing';
+                
+                const rect = loginPrompt.getBoundingClientRect();
+                dragOffsetX = e.clientX - rect.left;
+                dragOffsetY = e.clientY - rect.top;
+                
+                // 停止浮动动画
+                loginPrompt.style.animation = 'none';
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (!isDragging) return;
+                
+                const x = e.clientX - dragOffsetX;
+                const y = e.clientY - dragOffsetY;
+                
+                // 边界限制
+                const maxX = window.innerWidth - 180;
+                const maxY = window.innerHeight - 300;
+                
+                loginPrompt.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
+                loginPrompt.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+                loginPrompt.style.right = 'auto';
+                loginPrompt.style.bottom = 'auto';
+            });
+            
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    if (loginPrompt) {
+                        loginPrompt.style.cursor = 'pointer';
+                    }
+                }
+            });
+            
+            // 触摸拖动
+            catContainer.addEventListener('touchstart', function(e) {
+                if (e.target.closest('.login-btn')) return;
+                isDragging = true;
+                
+                const touch = e.touches[0];
+                const rect = loginPrompt.getBoundingClientRect();
+                dragOffsetX = touch.clientX - rect.left;
+                dragOffsetY = touch.clientY - rect.top;
+                
+                loginPrompt.style.animation = 'none';
+                e.preventDefault();
+            });
+            
+            document.addEventListener('touchmove', function(e) {
+                if (!isDragging) return;
+                
+                const touch = e.touches[0];
+                const x = touch.clientX - dragOffsetX;
+                const y = touch.clientY - dragOffsetY;
+                
+                const maxX = window.innerWidth - 180;
+                const maxY = window.innerHeight - 300;
+                
+                loginPrompt.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
+                loginPrompt.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+                loginPrompt.style.right = 'auto';
+                loginPrompt.style.bottom = 'auto';
+                
+                e.preventDefault();
+            });
+            
+            document.addEventListener('touchend', function() {
+                isDragging = false;
+            });
+            
+            // 双击跳转登录
+            catContainer.addEventListener('dblclick', function() {
+                window.location.href = 'user_login.html';
+            });
         }
         
         // 关闭详情面板
@@ -2094,70 +2236,44 @@
             }
         }
         
-        // 初始化增强交互
+        // 初始化增强交互 - 自动触发
         function initCatInteraction() {
-            const catContainer = document.querySelector('.cat-container');
-            const loginPrompt = document.getElementById('loginPrompt');
-            
-            if (!catContainer || !loginPrompt) return;
+            if (!document.querySelector('.cat-container')) return;
             
             // 初始化眼睛跟随
             initEyeFollow();
             
-            // 悬停时变爱心眼
-            catContainer.addEventListener('mouseenter', function() {
-                this.classList.add('love-eyes');
-                cycleSpeechText();
-            });
+            // 启动自动效果
+            autoSpawnEffects();      // 自动喷发爱心
+            startLoveEyes();         // 自动爱心眼
+            startAutoShake();        // 自动抖动
+            cycleSpeechText();       // 打字机效果
             
-            catContainer.addEventListener('mouseleave', function() {
-                this.classList.remove('love-eyes');
-            });
+            // 初始化拖动
+            initDrag();
             
-            // 点击效果和抖动
+            // 点击显示详情面板
+            const catContainer = document.querySelector('.cat-container');
             catContainer.addEventListener('click', function(e) {
-                createClickEffect(e);
-                createClickEffect({ clientX: e.clientX + 10, clientY: e.clientY - 10 });
-                createClickEffect({ clientX: e.clientX - 15, clientY: e.clientY - 5 });
+                if (e.target.closest('.login-btn')) return;
                 
-                this.classList.add('shake');
-                setTimeout(() => {
-                    this.classList.remove('shake');
-                }, 500);
-                
-                // 显示详情面板
                 const panel = document.getElementById('catInfoPanel');
                 if (panel) {
                     panel.classList.add('show');
                 }
             });
             
-            // 点击页面其他区域关闭面板
+            // 点击外部关闭面板
             document.addEventListener('click', function(e) {
                 if (!catContainer.contains(e.target) && !e.target.classList.contains('login-btn')) {
                     closeCatPanel();
                 }
             });
-            
-            // 登录按钮也有交互效果
-            const loginBtn = document.querySelector('.login-btn');
-            if (loginBtn) {
-                loginBtn.addEventListener('mouseenter', function() {
-                    catContainer.classList.add('love-eyes');
-                });
-                loginBtn.addEventListener('mouseleave', function() {
-                    catContainer.classList.remove('love-eyes');
-                });
-                loginBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    createClickEffect(e);
-                });
-            }
         }
         
         // 页面加载后初始化交互
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(initCatInteraction, 1000);
+            setTimeout(initCatInteraction, 1200);
         });
         
         // 页面加载时检查登录状态
