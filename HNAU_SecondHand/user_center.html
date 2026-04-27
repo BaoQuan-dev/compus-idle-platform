@@ -17,53 +17,48 @@
             background: url('./images/bg-starry.jpg') center center / cover no-repeat;
         }
         
-        /* ========== 页面头部 ========== */
-        .page-header {
+        /* ========== 个人中心 - 星空玻璃拟态风格 ========== */
+        
+        .center-header {
             padding: 60px 20px 0;
             text-align: left;
-            max-width: 900px;
-            margin: 0 auto;
         }
-        .page-header h1 {
-            font-size: 28px;
+        
+        .center-header h1 { 
+            margin: 0 0 6px 0; 
+            font-size: 26px; 
             font-weight: 700;
-            margin: 0 0 8px 0;
             background: linear-gradient(135deg, #fff 0%, #60A5FA 50%, #C084FC 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .page-header p {
-            font-size: 14px;
-            color: rgba(255,255,255,0.6);
-            margin: 0;
+        .center-header p { 
+            margin: 0; 
+            color: rgba(255,255,255,0.6); 
+            font-size: 13px; 
         }
         
-        /* ========== 内容区 ========== */
-        .page-container {
-            max-width: 900px;
+        .center-container {
+            max-width: 700px;
             margin: 20px auto;
             padding: 0 16px 100px;
         }
         
-        /* ========== 玻璃拟态卡片 ========== */
-        .glass-card {
+        /* 用户信息卡片 */
+        .user-card {
             background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-        }
-        
-        /* 用户信息卡片 */
-        .user-info-card {
+            border-radius: 20px;
             padding: 24px;
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         }
+        
         .user-avatar {
             width: 64px;
             height: 64px;
@@ -73,27 +68,33 @@
             align-items: center;
             justify-content: center;
             font-size: 28px;
+            border: 3px solid rgba(255,255,255,0.2);
         }
-        .user-details {
+        
+        .user-info {
             flex: 1;
         }
+        
         .user-name {
             font-size: 20px;
             font-weight: 600;
             color: #fff;
-            margin-bottom: 4px;
+            margin: 0 0 4px 0;
         }
+        
         .user-id {
-            font-size: 13px;
+            font-size: 12px;
             color: rgba(255,255,255,0.5);
+            margin: 0;
         }
+        
         .user-badge {
-            padding: 4px 12px;
-            background: linear-gradient(135deg, rgba(96,165,250,0.3), rgba(192,132,252,0.3));
-            border: 1px solid rgba(96,165,250,0.5);
+            background: linear-gradient(135deg, #60A5FA, #3B82F6);
+            color: #fff;
+            padding: 6px 12px;
             border-radius: 20px;
             font-size: 12px;
-            color: #fff;
+            font-weight: 500;
         }
         
         /* 统计卡片 */
@@ -101,44 +102,63 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
-            margin-bottom: 20px;
+            margin-top: 16px;
         }
-        @media (max-width: 600px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-        }
+        
         .stat-card {
-            padding: 16px;
+            background: linear-gradient(135deg, rgba(96,165,250,0.2) 0%, rgba(192,132,252,0.15) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 16px 12px;
             text-align: center;
         }
+        
         .stat-value {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
-            color: #fff;
-            margin-bottom: 4px;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0 0 4px 0;
         }
+        
         .stat-label {
-            font-size: 12px;
+            font-size: 11px;
             color: rgba(255,255,255,0.6);
+            margin: 0;
         }
         
         /* 功能菜单 */
-        .menu-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .menu-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            margin-top: 16px;
+            overflow: hidden;
         }
+        
         .menu-item {
-            padding: 16px 20px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background 0.2s;
         }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        
         .menu-item:hover {
             background: rgba(96,165,250,0.1);
-            border-color: rgba(96,165,250,0.3);
         }
+        
         .menu-icon {
             width: 40px;
             height: 40px;
@@ -148,185 +168,220 @@
             align-items: center;
             justify-content: center;
             font-size: 18px;
+            margin-right: 14px;
         }
+        
         .menu-text {
             flex: 1;
         }
+        
         .menu-title {
             font-size: 15px;
-            font-weight: 500;
             color: #fff;
+            margin: 0 0 2px 0;
+            font-weight: 500;
         }
+        
         .menu-desc {
             font-size: 12px;
             color: rgba(255,255,255,0.5);
+            margin: 0;
         }
+        
         .menu-arrow {
             color: rgba(255,255,255,0.3);
             font-size: 18px;
         }
         
-        /* ========== 碳足迹模块 ========== */
-        .carbon-section {
-            margin-top: 20px;
-            padding: 20px;
+        .menu-item.logout {
+            color: #f87171;
         }
+        
+        .menu-item.logout .menu-title {
+            color: #f87171;
+        }
+        
+        /* 碳足迹模块 */
+        .carbon-card {
+            background: linear-gradient(135deg, rgba(59,130,246,0.3) 0%, rgba(59,130,246,0.1) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(96,165,250,0.3);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+        
         .carbon-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 16px;
         }
+        
         .carbon-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #fff;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+        
         .carbon-btn {
-            padding: 8px 16px;
-            background: linear-gradient(135deg, rgba(96,165,250,0.5), rgba(59,130,246,0.5));
-            border: 1px solid rgba(96,165,250,0.5);
-            border-radius: 20px;
-            color: #fff;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .carbon-btn:hover {
             background: linear-gradient(135deg, rgba(96,165,250,0.7), rgba(59,130,246,0.7));
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
         }
+        
         .carbon-stats {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 12px;
         }
+        
         .carbon-stat {
-            padding: 16px;
             text-align: center;
+            padding: 12px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
         }
-        .carbon-stat-value {
-            font-size: 22px;
+        
+        .carbon-value {
+            font-size: 24px;
             font-weight: 700;
-            color: #fff;
-            margin-bottom: 4px;
+            background: linear-gradient(135deg, #fff 0%, #60A5FA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .carbon-stat-label {
-            font-size: 12px;
+        
+        .carbon-label {
+            font-size: 11px;
             color: rgba(255,255,255,0.6);
+            margin-top: 4px;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .carbon-stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 页面头部 -->
-    <div class="page-header">
-        <h1>👤 个人中心</h1>
+    <!-- 顶部标题 -->
+    <div class="center-header">
+        <h1>个人中心</h1>
         <p>管理您的信息和发布</p>
     </div>
     
     <!-- 主内容 -->
-    <div class="page-container">
-        <!-- 用户信息 -->
-        <div class="user-info-card glass-card">
-            <div class="user-avatar">👤</div>
-            <div class="user-details">
-                <div class="user-name" id="userName">农大学子</div>
-                <div class="user-id">ID: 20240001</div>
+    <div class="center-container">
+        <!-- 用户信息卡片 -->
+        <div class="user-card">
+            <div class="user-avatar">🎓</div>
+            <div class="user-info">
+                <h2 class="user-name">农大学子</h2>
+                <p class="user-id">ID: 20240001</p>
             </div>
             <div class="user-badge">🌟 环保达人</div>
         </div>
         
-        <!-- 统计数据 -->
+        <!-- 统计卡片 -->
         <div class="stats-grid">
-            <div class="stat-card glass-card">
-                <div class="stat-value" id="statPublish">0</div>
+            <div class="stat-card">
+                <div class="stat-value">12</div>
                 <div class="stat-label">发布闲置</div>
             </div>
-            <div class="stat-card glass-card">
-                <div class="stat-value" id="statSold">0</div>
+            <div class="stat-card">
+                <div class="stat-value">8</div>
                 <div class="stat-label">已售出</div>
             </div>
-            <div class="stat-card glass-card">
-                <div class="stat-value" id="statViews">0</div>
+            <div class="stat-card">
+                <div class="stat-value">1.2k</div>
                 <div class="stat-label">被浏览</div>
             </div>
-            <div class="stat-card glass-card">
-                <div class="stat-value" id="statStars">0</div>
+            <div class="stat-card">
+                <div class="stat-value">23</div>
                 <div class="stat-label">收藏数</div>
             </div>
         </div>
         
         <!-- 功能菜单 -->
-        <div class="glass-card menu-list">
+        <div class="menu-card">
             <div class="menu-item" onclick="location.href='stu_check.html'">
-                <div class="menu-icon">🎓</div>
+                <div class="menu-icon">📋</div>
                 <div class="menu-text">
-                    <div class="menu-title">校园认证</div>
-                    <div class="menu-desc">完成认证，解锁更多功能</div>
+                    <p class="menu-title">校园认证</p>
+                    <p class="menu-desc">已完成学生身份认证</p>
                 </div>
                 <span class="menu-arrow">›</span>
             </div>
             <div class="menu-item" onclick="location.href='release_goods.html'">
                 <div class="menu-icon">📦</div>
                 <div class="menu-text">
-                    <div class="menu-title">发布闲置</div>
-                    <div class="menu-desc">分享你的闲置物品</div>
+                    <p class="menu-title">发布闲置</p>
+                    <p class="menu-desc">发布您的闲置物品</p>
                 </div>
                 <span class="menu-arrow">›</span>
             </div>
             <div class="menu-item" onclick="location.href='donation_my.html'">
-                <div class="menu-icon">🎁</div>
+                <div class="menu-icon">💝</div>
                 <div class="menu-text">
-                    <div class="menu-title">我的公益</div>
-                    <div class="menu-desc">追踪你的爱心足迹</div>
+                    <p class="menu-title">我的公益</p>
+                    <p class="menu-desc">查看公益转赠记录</p>
                 </div>
                 <span class="menu-arrow">›</span>
             </div>
             <div class="menu-item" onclick="location.href='carbon_ai.html'">
                 <div class="menu-icon">🌱</div>
                 <div class="menu-text">
-                    <div class="menu-title">碳足迹助手</div>
-                    <div class="menu-desc">智能分析你的环保贡献</div>
+                    <p class="menu-title">碳足迹助手</p>
+                    <p class="menu-desc">AI分析环保贡献</p>
                 </div>
                 <span class="menu-arrow">›</span>
             </div>
-            <div class="menu-item" onclick="location.href='user_login.html'">
+            <div class="menu-item logout" onclick="location.href='user_login.html'">
                 <div class="menu-icon">🚪</div>
                 <div class="menu-text">
-                    <div class="menu-title">退出登录</div>
-                    <div class="menu-desc">切换账号或退出当前账号</div>
+                    <p class="menu-title">退出登录</p>
+                    <p class="menu-desc">切换账号或退出</p>
                 </div>
                 <span class="menu-arrow">›</span>
             </div>
         </div>
         
         <!-- 碳足迹预览 -->
-        <div class="carbon-section glass-card">
+        <div class="carbon-card">
             <div class="carbon-header">
-                <div class="carbon-title">🌱 我的碳足迹</div>
+                <h3 class="carbon-title">🌍 我的碳足迹</h3>
                 <button class="carbon-btn" onclick="location.href='carbon_ai.html'">查看详情</button>
             </div>
             <div class="carbon-stats">
                 <div class="carbon-stat">
-                    <div class="carbon-stat-value" id="carbonTotal">0</div>
-                    <div class="carbon-stat-label">累计减碳(kg)</div>
+                    <div class="carbon-value">32.5</div>
+                    <div class="carbon-label">累计减碳(kg)</div>
                 </div>
                 <div class="carbon-stat">
-                    <div class="carbon-stat-value" id="carbonPoints">0</div>
-                    <div class="carbon-stat-label">碳积分</div>
+                    <div class="carbon-value">15</div>
+                    <div class="carbon-label">闲置物品数</div>
+                </div>
+                <div class="carbon-stat">
+                    <div class="carbon-value">8</div>
+                    <div class="carbon-label">公益转赠数</div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <script src="./script/common.js"></script>
-    <script>
-        // 模拟数据
-        document.getElementById('statPublish').textContent = '12';
-        document.getElementById('statSold').textContent = '8';
-        document.getElementById('statViews').textContent = '1.2k';
-        document.getElementById('statStars').textContent = '23';
-        document.getElementById('carbonTotal').textContent = '45.6';
-        document.getElementById('carbonPoints').textContent = '560';
-    </script>
 </body>
 </html>
