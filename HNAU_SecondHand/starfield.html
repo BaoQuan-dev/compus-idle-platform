@@ -17,8 +17,42 @@
         body {
             font-family: 'Noto Sans SC', sans-serif;
             overflow: hidden;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            background: #000;
             color: #fff;
+        }
+        
+        /* 视频背景 */
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .video-bg video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+        
+        /* 视频遮罩 - 让内容更清晰 */
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
         }
         
         /* 过渡动画遮罩 */
@@ -1378,10 +1412,13 @@
         </button>
     </div>
     
-    <!-- Three.js Canvas 包装器 -->
-    <div id="canvas-wrapper" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; transform-style: preserve-3d;">
-        <canvas id="cosmic-canvas"></canvas>
+    <!-- 视频背景 -->
+    <div class="video-bg">
+        <video id="bg-video" autoplay muted loop playsinline>
+            <source src="./images/bg-video.mp4" type="video/mp4">
+        </video>
     </div>
+    <div class="video-overlay"></div>
     
     <!-- 主界面 -->
     <div class="main-container" id="mainContainer">
