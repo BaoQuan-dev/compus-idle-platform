@@ -160,7 +160,7 @@
         .module-card {
             flex-shrink: 0;
             width: 320px;
-            height: 520px;
+            height: 620px;
             margin: 0 20px;
             background: rgba(20, 20, 35, 0.85);
             backdrop-filter: blur(20px);
@@ -446,7 +446,7 @@
         @media (max-width: 768px) {
             .module-card {
                 width: 280px;
-                height: 480px;
+                height: 560px;
                 margin: 0 15px;
             }
 
@@ -838,49 +838,7 @@
         let startX = 0;
         let isDragging = false;
 
-        track.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            isDragging = true;
-        });
-
-        track.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            e.preventDefault();
-        });
-
-        track.addEventListener('touchend', (e) => {
-            if (!isDragging) return;
-            const endX = e.changedTouches[0].clientX;
-            const diff = startX - endX;
-            if (Math.abs(diff) > 50) {
-                if (diff > 0) nextCard();
-                else prevCard();
-            }
-            isDragging = false;
-        });
-
-        // 鼠标拖拽
-        let mouseStartX = 0;
-        track.addEventListener('mousedown', (e) => {
-            mouseStartX = e.clientX;
-            isDragging = true;
-        });
-
-        document.addEventListener('mouseup', (e) => {
-            if (!isDragging) return;
-            const diff = mouseStartX - e.clientX;
-            if (Math.abs(diff) > 50) {
-                if (diff > 0) nextCard();
-                else prevCard();
-            }
-            isDragging = false;
-        });
-
-        // 键盘控制
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') prevCard();
-            if (e.key === 'ArrowRight') nextCard();
-            if (e.key === 'Enter') {
+        // 自动播放（已移除拖拽切换）
                 const activeCard = document.querySelector('.module-card.active');
                 if (activeCard) {
                     window.location.href = activeCard.dataset.page;
