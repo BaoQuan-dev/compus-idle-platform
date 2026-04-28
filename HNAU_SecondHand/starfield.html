@@ -434,10 +434,35 @@
         const style = document.createElement('style');
         style.textContent = `
             @keyframes pulse {
+            0%, 100% {
+            }
+            50% {
+            }
+        }
+
+        @keyframes oldPulse {
                 0%, 100% { transform: scale(1); }
                 50% { transform: scale(1.15); }
             }
             @keyframes awaken {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(255,255,255,0.1);
+                border-color: rgba(255,255,255,0.15);
+            }
+            50% {
+                transform: scale(1.08);
+                box-shadow: 0 0 60px rgba(96,165,250,0.8), 0 0 120px rgba(192,132,252,0.5);
+                border-color: rgba(96,165,250,0.8);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(96,165,250,0.3), 0 0 40px rgba(192,132,252,0.2);
+                border-color: rgba(96,165,250,0.5);
+            }
+        }
+
+        @keyframes oldAwaken {
                 0% { 
                     transform: scale(1); 
                     box-shadow: 0 0 20px rgba(255,255,255,0.2);
