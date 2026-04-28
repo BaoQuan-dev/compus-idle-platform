@@ -1029,10 +1029,15 @@
         }
         
         // ========== 移动端菜单 ==========
-        document.getElementById('navbarToggle').addEventListener('click', function() {
-            var menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('active');
-        });
+        var navbarToggle = document.getElementById('navbarToggle');
+        if (navbarToggle) {
+            navbarToggle.addEventListener('click', function() {
+                var menu = document.getElementById('mobileMenu');
+                if (menu) {
+                    menu.classList.toggle('active');
+                }
+            });
+        }
         
         console.log('[HNAU Donation] 公益转赠发布页已加载');
     })();
