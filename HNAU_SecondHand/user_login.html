@@ -357,7 +357,7 @@
                                    maxlength="16" autocomplete="new-password">
                             <p class="form-error" id="regConfirmError"></p>
                         </div>
-                        <button type="submit" class="btn-submit" id="registerBtn" disabled>注 册</button>
+                        <button type="submit" class="btn-submit" id="registerBtn">注 册</button>
                     </form>
                     <p class="switch-text">
                         已有账号？<a href="javascript:void(0)" class="switch-link" id="goLogin">立即登录</a>
@@ -405,6 +405,12 @@
             Auth.requireReleasePermission(function() {
                 Utils.跳转('release_goods.html');
             });
+        });
+
+        // 登录表单提交
+        document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            Login.handleLogin();
         });
 
         // 检查预填充账号密码（注册后跳转）

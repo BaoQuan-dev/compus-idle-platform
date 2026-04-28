@@ -242,18 +242,8 @@ const LoginModule = {
      * 更新注册按钮状态
      */
     updateRegisterBtnState() {
-        const username = document.getElementById('regUsername')?.value || '';
-        const password = document.getElementById('regPassword')?.value || '';
-        const confirm = document.getElementById('regConfirmPassword')?.value || '';
-        const submitBtn = document.getElementById('registerBtn');
-
-        const usernameValid = Utils.validateUsername(username).valid;
-        const passwordValid = Utils.validatePassword(password).valid;
-        const confirmValid = confirm === password && password !== '';
-
-        if (submitBtn) {
-            submitBtn.disabled = !(usernameValid && passwordValid && confirmValid);
-        }
+        // 注册按钮始终可用，由表单验证提供反馈
+        // disabled 属性已在 HTML 中移除
     },
 
     /**

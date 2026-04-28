@@ -320,6 +320,12 @@
                 Utils.跳转('release_goods.html');
             });
         });
+
+        // 注册表单提交
+        document.getElementById('registerForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            Login.handleRegister();
+        });
     </script>
 </body>
 </html>

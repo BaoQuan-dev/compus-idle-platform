@@ -1052,6 +1052,13 @@
 
         // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', function() {
+            // 检查登录状态
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                alert('请先登录后再进行校园认证');
+                window.location.href = 'user_login.html';
+                return;
+            }
             updateStepIndicator();
         });
     </script>
