@@ -444,6 +444,208 @@
             margin: 0 auto;
             padding: 0 16px 100px;
         }
+        
+        /* ========== 三级认证步骤指示器 ========== */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+        
+        .step-item.active {
+            opacity: 1;
+        }
+        
+        .step-item.completed {
+            opacity: 1;
+        }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        
+        .step-item.active .step-circle {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .step-item.completed .step-circle {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border-color: #11998e;
+        }
+        
+        .step-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            white-space: nowrap;
+        }
+        
+        .step-item.active .step-label {
+            color: #fff;
+            font-weight: 500;
+        }
+        
+        .step-line {
+            width: 60px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 12px;
+            margin-bottom: 24px;
+        }
+        
+        /* ========== 步骤内容 ========== */
+        .step-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-error {
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+        }
+        
+        .form-input, .form-select {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .form-input:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        
+        .form-hint {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin: -8px 0 12px;
+        }
+        
+        /* ========== 按钮区域 ========== */
+        .form-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .btn-secondary {
+            flex: 0 0 auto;
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .submit-btn {
+            flex: 1;
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn.success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .submit-btn.success:hover {
+            box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* ========== 证件照预览 ========== */
+        .id-upload-area {
+            margin-top: 8px;
+        }
+        
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        /* ========== 隐私提示 ========== */
+        .privacy-tip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 8px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .privacy-icon {
+            font-size: 16px;
+        }
         </style>
 </head>
 <body>
@@ -490,106 +692,355 @@
 
         <!-- 认证表单 -->
         <div class="form-card">
-            <h3>填写认证信息</h3>
-            
-            <!-- 姓名 -->
-            <div class="form-group">
-                <label class="form-label">真实姓名</label>
-                <input type="text" class="form-input" placeholder="请输入您的真实姓名" maxlength="20">
-            </div>
-            
-            <!-- 学号 -->
-            <div class="form-group">
-                <label class="form-label">学号</label>
-                <input type="text" class="form-input" placeholder="请输入您的学号" maxlength="20">
-            </div>
-            
-            <!-- 学院 -->
-            <div class="form-group">
-                <label class="form-label">所属学院</label>
-                <select class="form-select">
-                    <option value="">请选择学院</option>
-                    <option value="农学院">🌾 农学院</option>
-                    <option value="林学院">🌲 林学院</option>
-                    <option value="畜牧兽医学院">🐄 畜牧兽医学院</option>
-                    <option value="机电工程学院">⚙️ 机电工程学院</option>
-                    <option value="经济与管理学院">📊 经济与管理学院</option>
-                    <option value="食品科学技术学院">🍎 食品科学技术学院</option>
-                    <option value="资源与环境学院">🌍 资源与环境学院</option>
-                    <option value="信息与管理科学学院">💻 信息与管理科学学院</option>
-                    <option value="生命科学学院">🧬 生命科学学院</option>
-                    <option value="外国语学院">🌍 外国语学院</option>
-                    <option value="其他">📦 其他</option>
-                </select>
-            </div>
-            
-            <!-- 年级 -->
-            <div class="form-group">
-                <label class="form-label">年级</label>
-                <select class="form-select">
-                    <option value="">请选择年级</option>
-                    <option value="2024">🎒 2024级</option>
-                    <option value="2023">🎒 2023级</option>
-                    <option value="2022">🎒 2022级</option>
-                    <option value="2021">🎒 2021级</option>
-                    <option value="2020">🎒 2020级</option>
-                    <option value="研究生">🎓 研究生</option>
-                </select>
-            </div>
-            
-            <!-- 证件照上传 -->
-            <div class="form-group">
-                <label class="form-label">学生证/校园卡照片</label>
-                <div class="id-upload-area">
-                    <div class="id-upload-item" onclick="document.getElementById('idPhoto').click()">
-                        <span class="id-upload-icon">📷</span>
-                        <span class="id-upload-text">点击上传</span>
-                        <button class="id-upload-remove" onclick="removeIdPhoto(event)">×</button>
-                    </div>
-                    <input type="file" id="idPhoto" accept="image/*" style="display:none" onchange="previewIdPhoto(this)">
+            <!-- 步骤指示器 -->
+            <div class="step-indicator">
+                <div class="step-item active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">基本信息</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-item" data-step="2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">校园信息</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-item" data-step="3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">身份验证</div>
                 </div>
             </div>
             
-            <!-- 提交按钮 -->
-            <button type="button" class="submit-btn" onclick="submitCertification()">
-                🚀 提交认证
-            </button>
+            <h3 id="formTitle">填写基本信息</h3>
             
-            <p class="privacy-tip">您的信息仅用于身份验证，我们将严格保护您的隐私安全</p>
+            <!-- 步骤1：基本信息 -->
+            <div class="step-content active" data-step="1">
+                <div class="form-group">
+                    <label class="form-label">真实姓名</label>
+                    <input type="text" class="form-input" id="realName" placeholder="请输入您的真实姓名" maxlength="20">
+                    <span class="form-error" id="realNameError"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">学号</label>
+                    <input type="text" class="form-input" id="studentId" placeholder="请输入您的学号" maxlength="20">
+                    <span class="form-error" id="studentIdError"></span>
+                </div>
+            </div>
+            
+            <!-- 步骤2：校园信息 -->
+            <div class="step-content" data-step="2">
+                <div class="form-group">
+                    <label class="form-label">所属学院</label>
+                    <select class="form-select" id="college">
+                        <option value="">请选择学院</option>
+                        <option value="农学院">🌾 农学院</option>
+                        <option value="林学院">🌲 林学院</option>
+                        <option value="畜牧兽医学院">🐄 畜牧兽医学院</option>
+                        <option value="机电工程学院">⚙️ 机电工程学院</option>
+                        <option value="经济与管理学院">📊 经济与管理学院</option>
+                        <option value="食品科学技术学院">🍎 食品科学技术学院</option>
+                        <option value="资源与环境学院">🌍 资源与环境学院</option>
+                        <option value="信息与管理科学学院">💻 信息与管理科学学院</option>
+                        <option value="生命科学学院">🧬 生命科学学院</option>
+                        <option value="外国语学院">🌍 外国语学院</option>
+                        <option value="其他">📦 其他</option>
+                    </select>
+                    <span class="form-error" id="collegeError"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">年级</label>
+                    <select class="form-select" id="grade">
+                        <option value="">请选择年级</option>
+                        <option value="2025">🎒 2025级</option>
+                        <option value="2024">🎒 2024级</option>
+                        <option value="2023">🎒 2023级</option>
+                        <option value="2022">🎒 2022级</option>
+                        <option value="2021">🎒 2021级</option>
+                        <option value="研究生">🎓 研究生</option>
+                    </select>
+                    <span class="form-error" id="gradeError"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">专业（选填）</label>
+                    <input type="text" class="form-input" id="major" placeholder="请输入您的专业" maxlength="30">
+                </div>
+            </div>
+            
+            <!-- 步骤3：身份验证 -->
+            <div class="step-content" data-step="3">
+                <div class="form-group">
+                    <label class="form-label">学生证/校园卡照片</label>
+                    <p class="form-hint">请上传清晰的学生证或校园卡照片，用于身份核验</p>
+                    <div class="id-upload-area" id="uploadArea">
+                        <div class="id-upload-item" onclick="document.getElementById('idPhoto').click()">
+                            <span class="id-upload-icon">📷</span>
+                            <span class="id-upload-text">点击上传照片</span>
+                            <input type="file" id="idPhoto" accept="image/*" style="display:none" onchange="previewIdPhoto(this)">
+                        </div>
+                    </div>
+                    <span class="form-error" id="idPhotoError"></span>
+                </div>
+                <div class="privacy-tip">
+                    <span class="privacy-icon">🔒</span>
+                    <span>您的信息仅用于身份验证，我们将严格保护您的隐私安全</span>
+                </div>
+            </div>
+            
+            <!-- 按钮区域 -->
+            <div class="form-buttons">
+                <button type="button" class="btn-secondary" id="prevBtn" onclick="prevStep()" style="display:none">
+                    ← 上一步
+                </button>
+                <button type="button" class="submit-btn" id="nextBtn" onclick="nextStep()">
+                    下一步 →
+                </button>
+                <button type="button" class="submit-btn success" id="submitBtn" onclick="submitCertification()" style="display:none">
+                    🚀 提交认证
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
+        // 三级认证状态管理
+        let currentStep = 1;
+        const totalSteps = 3;
+        let certificationData = {
+            realName: '',
+            studentId: '',
+            college: '',
+            grade: '',
+            major: '',
+            idPhoto: null
+        };
+
+        // 预览证件照片
         function previewIdPhoto(input) {
             if (input.files && input.files[0]) {
+                const file = input.files[0];
+                certificationData.idPhoto = file;
+                
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const item = input.parentElement;
-                    item.classList.add('has-image');
-                    item.innerHTML = `
-                        <img src="${e.target.result}" alt="证件照">
-                        <button class="id-upload-remove" onclick="removeIdPhoto(event)">×</button>
+                    const uploadArea = document.getElementById('uploadArea');
+                    uploadArea.innerHTML = `
+                        <div class="id-upload-item has-image">
+                            <img src="${e.target.result}" alt="证件照" class="preview-image">
+                            <button class="id-upload-remove" onclick="removeIdPhoto(event)">×</button>
+                        </div>
                     `;
+                    document.getElementById('idPhotoError').textContent = '';
                 };
-                reader.readAsDataURL(input.files[0]);
+                reader.readAsDataURL(file);
             }
         }
-        
+
+        // 删除证件照片
         function removeIdPhoto(event) {
             event.stopPropagation();
-            const item = event.target.parentElement;
-            item.classList.remove('has-image');
-            item.innerHTML = `
-                <span class="id-upload-icon">📷</span>
-                <span class="id-upload-text">点击上传</span>
-                <button class="id-upload-remove" onclick="removeIdPhoto(event)">×</button>
+            event.preventDefault();
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.innerHTML = `
+                <div class="id-upload-item" onclick="document.getElementById('idPhoto').click()">
+                    <span class="id-upload-icon">📷</span>
+                    <span class="id-upload-text">点击上传照片</span>
+                    <input type="file" id="idPhoto" accept="image/*" style="display:none" onchange="previewIdPhoto(this)">
+                </div>
             `;
-            document.getElementById('idPhoto').value = '';
+            certificationData.idPhoto = null;
         }
-        
+
+        // 更新步骤指示器
+        function updateStepIndicator() {
+            // 更新步骤圆圈
+            document.querySelectorAll('.step-item').forEach((item, index) => {
+                const step = index + 1;
+                if (step < currentStep) {
+                    item.classList.remove('active');
+                    item.classList.add('completed');
+                    item.querySelector('.step-circle').textContent = '✓';
+                } else if (step === currentStep) {
+                    item.classList.remove('completed');
+                    item.classList.add('active');
+                    item.querySelector('.step-circle').textContent = step;
+                } else {
+                    item.classList.remove('active', 'completed');
+                    item.querySelector('.step-circle').textContent = step;
+                }
+            });
+
+            // 更新步骤内容显示
+            document.querySelectorAll('.step-content').forEach((content, index) => {
+                if (index + 1 === currentStep) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+
+            // 更新标题
+            const titles = ['填写基本信息', '填写校园信息', '上传身份证明'];
+            document.getElementById('formTitle').textContent = titles[currentStep - 1];
+
+            // 更新按钮
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+
+            prevBtn.style.display = currentStep > 1 ? 'inline-block' : 'none';
+            
+            if (currentStep === totalSteps) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'inline-block';
+            } else {
+                nextBtn.style.display = 'inline-block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        // 清除错误提示
+        function clearErrors() {
+            document.querySelectorAll('.form-error').forEach(err => err.textContent = '');
+            document.querySelectorAll('.form-input, .form-select').forEach(input => {
+                input.style.borderColor = '';
+            });
+        }
+
+        // 验证步骤1
+        function validateStep1() {
+            clearErrors();
+            let isValid = true;
+
+            const realName = document.getElementById('realName').value.trim();
+            const studentId = document.getElementById('studentId').value.trim();
+
+            if (!realName) {
+                document.getElementById('realNameError').textContent = '请输入真实姓名';
+                document.getElementById('realName').style.borderColor = '#ff6b6b';
+                isValid = false;
+            } else if (realName.length < 2) {
+                document.getElementById('realNameError').textContent = '姓名至少2个字符';
+                document.getElementById('realName').style.borderColor = '#ff6b6b';
+                isValid = false;
+            }
+
+            if (!studentId) {
+                document.getElementById('studentIdError').textContent = '请输入学号';
+                document.getElementById('studentId').style.borderColor = '#ff6b6b';
+                isValid = false;
+            } else if (!/^\d{6,}$/.test(studentId)) {
+                document.getElementById('studentIdError').textContent = '学号至少6位数字';
+                document.getElementById('studentId').style.borderColor = '#ff6b6b';
+                isValid = false;
+            }
+
+            if (isValid) {
+                certificationData.realName = realName;
+                certificationData.studentId = studentId;
+            }
+
+            return isValid;
+        }
+
+        // 验证步骤2
+        function validateStep2() {
+            clearErrors();
+            let isValid = true;
+
+            const college = document.getElementById('college').value;
+            const grade = document.getElementById('grade').value;
+
+            if (!college) {
+                document.getElementById('collegeError').textContent = '请选择学院';
+                document.getElementById('college').style.borderColor = '#ff6b6b';
+                isValid = false;
+            }
+
+            if (!grade) {
+                document.getElementById('gradeError').textContent = '请选择年级';
+                document.getElementById('grade').style.borderColor = '#ff6b6b';
+                isValid = false;
+            }
+
+            if (isValid) {
+                certificationData.college = college;
+                certificationData.grade = grade;
+                certificationData.major = document.getElementById('major').value.trim();
+            }
+
+            return isValid;
+        }
+
+        // 验证步骤3
+        function validateStep3() {
+            clearErrors();
+            let isValid = true;
+
+            if (!certificationData.idPhoto) {
+                document.getElementById('idPhotoError').textContent = '请上传证件照片';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // 下一步
+        function nextStep() {
+            let isValid = false;
+
+            if (currentStep === 1) {
+                isValid = validateStep1();
+            } else if (currentStep === 2) {
+                isValid = validateStep2();
+            }
+
+            if (isValid && currentStep < totalSteps) {
+                currentStep++;
+                updateStepIndicator();
+            }
+        }
+
+        // 上一步
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepIndicator();
+            }
+        }
+
+        // 提交认证
         function submitCertification() {
-            alert('认证功能开发中...');
+            if (!validateStep3()) {
+                return;
+            }
+
+            // 显示提交中状态
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.textContent = '提交中...';
+            submitBtn.disabled = true;
+
+            // 模拟提交过程（实际项目中这里调用后端API）
+            setTimeout(() => {
+                // 更新状态卡片
+                const statusCard = document.querySelector('.status-card');
+                statusCard.innerHTML = `
+                    <div class="status-icon">⏳</div>
+                    <h3 class="status-title">认证审核中</h3>
+                    <p class="status-desc">我们将在1-3个工作日内完成审核，请耐心等待</p>
+                    <span class="status-badge pending">审核中</span>
+                `;
+
+                // 隐藏表单
+                document.querySelector('.form-card').style.display = 'none';
+
+                // 显示成功提示
+                alert('提交成功！\n\n您的认证信息：\n姓名：' + certificationData.realName + '\n学号：' + certificationData.studentId + '\n学院：' + certificationData.college + '\n年级：' + certificationData.grade + '\n\n我们将在1-3个工作日内完成审核。');
+            }, 1500);
         }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStepIndicator();
+        });
     </script>
 </body>
 </html>
