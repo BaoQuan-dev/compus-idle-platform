@@ -725,112 +725,8 @@
     <!-- 星空漩涡过渡效果样式 -->
     <style>
         /* 五个模块旋转缩小过渡效果 */
-        .modules-transition {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 99999;
-            pointer-events: none;
-            opacity: 0;
-        }
-        
-        .modules-transition.active {
-            opacity: 1;
-        }
-        
-        .modules-transition .ring-wrapper {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 0;
-            height: 0;
-        }
-        
-        .modules-transition.active .ring-wrapper {
-            animation: ringZoom 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        
-        @keyframes ringZoom {
-            0% {
-                width: 0;
-                height: 0;
-                opacity: 1;
-            }
-            100% {
-                width: 600px;
-                height: 600px;
-                opacity: 0;
-            }
-        }
-        
-        .modules-transition .feature-ring {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, transparent 70%);
-        }
-        
-        .modules-transition.active .feature-ring {
-            animation: ringRotate 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        
-        @keyframes ringRotate {
-            0% {
-                transform: translate(-50%, -50%) rotate(0deg) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(-50%, -50%) rotate(1080deg) scale(0.3);
-                opacity: 0;
-            }
-        }
-        
-        .modules-transition .module-item {
-            position: absolute;
-            width: 130px;
-            height: 130px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            color: white;
-            font-size: 14px;
-            font-weight: 500;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
-        }
-        
-        .modules-transition.active .module-item {
-            animation: moduleSpin 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        
-        @keyframes moduleSpin {
-            0% {
-                transform: rotate(0deg) scale(1);
-                opacity: 1;
-            }
-            70% {
-                opacity: 1;
-            }
-            100% {
-                transform: rotate(720deg) scale(0);
-                opacity: 0;
-            }
+        .feature-item {
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 </head>
@@ -1226,9 +1122,6 @@
         
         // 页面加载时检查是否显示引导
         document.addEventListener('DOMContentLoaded', function() {
-            // 生成星空漩涡的星星
-            createVortexStars();
-            
             // 为所有跳转链接添加模块旋转缩小效果
             document.querySelectorAll('a[href="explore.html"]').forEach(link => {
                 link.addEventListener('click', function(e) {
@@ -1272,88 +1165,46 @@
         
         // 五个模块旋转缩小过渡效果
         function triggerModulesZoom(targetUrl) {
-            const homeContainer = document.querySelector('.home-container');
-            const featureRing = document.querySelector('.feature-ring');
-            const modules = document.querySelectorAll('.module-item');
+            const modules = document.querySelectorAll('.feature-item');
+            const header = document.querySelector('.home-header');
+            const loginGuide = document.getElementById('loginGuide');
             
-            if (!homeContainer) {
+            if (modules.length === 0) {
                 window.location.href = targetUrl;
                 return;
             }
             
-            // 隐藏小猫引导卡片
-            const loginGuide = document.getElementById('loginGuide');
+            // 隐藏其他元素
             if (loginGuide) loginGuide.style.opacity = '0';
+            if (header) header.style.opacity = '0';
             
-            // 获取五个模块的当前位置
-            const modulePositions = [];
+            // 获取屏幕中心
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            // 为每个模块添加过渡动画
             modules.forEach((mod, index) => {
                 const rect = mod.getBoundingClientRect();
-                const centerX = window.innerWidth / 2;
-                const centerY = window.innerHeight / 2;
+                // 计算模块中心到屏幕中心的偏移
+                const offsetX = rect.left + rect.width / 2 - centerX;
+                const offsetY = rect.top + rect.height / 2 - centerY;
                 
-                // 计算每个模块相对于中心的位置
-                const positions = [
-                    { x: -140, y: -70 },   // 顶部
-                    { x: 50, y: -130 },    // 右上
-                    { x: 140, y: 30 },     // 右下
-                    { x: 0, y: 130 },      // 底部
-                    { x: -140, y: 30 }     // 左下
-                ];
+                // 设置过渡
+                mod.style.transition = 'all 1s cubic-bezier(0.4, 0, 0.2, 1)';
+                mod.style.zIndex = '10000';
+                mod.style.position = 'fixed';
+                mod.style.top = '50%';
+                mod.style.left = '50%';
+                mod.style.transform = `translate(-50%, -50%) rotate(${360 * (index + 1)}deg) scale(1)`;
+                mod.style.margin = '0';
+                mod.style.opacity = '1';
                 
-                modulePositions.push({
-                    el: mod,
-                    x: rect.left + rect.width / 2 - centerX,
-                    y: rect.top + rect.height / 2 - centerY,
-                    radius: positions[index] ? Math.sqrt(positions[index].x ** 2 + positions[index].y ** 2) : 150
-                });
+                // 延迟移动到中心并缩小消失
+                setTimeout(() => {
+                    mod.style.transform = `translate(-50%, -50%) rotate(${360 * (index + 1) * 3}deg) scale(0)`;
+                    mod.style.opacity = '0';
+                }, 50);
             });
-            
-            // 创建过渡容器
-            let transition = document.querySelector('.modules-transition');
-            if (!transition) {
-                transition = document.createElement('div');
-                transition.className = 'modules-transition';
-                document.body.appendChild(transition);
-            }
-            transition.innerHTML = '';
-            transition.classList.remove('active');
-            transition.offsetHeight;
-            
-            // 隐藏原始模块
-            modules.forEach(mod => mod.style.visibility = 'hidden');
-            const header = document.querySelector('.home-header');
-            if (header) header.style.visibility = 'hidden';
-            
-            // 创建中心旋转容器
-            const wrapper = document.createElement('div');
-            wrapper.className = 'ring-wrapper';
-            
-            const ring = document.createElement('div');
-            ring.className = 'feature-ring';
-            ring.style.position = 'relative';
-            ring.style.top = 'auto';
-            ring.style.left = 'auto';
-            ring.style.transform = 'none';
-            
-            // 克隆模块到过渡容器
-            modulePositions.forEach((data, index) => {
-                const clone = data.el.cloneNode(true);
-                clone.style.position = 'absolute';
-                clone.style.top = '50%';
-                clone.style.left = '50%';
-                clone.style.transform = `translate(${data.x - 65}px, ${data.y - 65}px)`;
-                clone.style.marginLeft = '0';
-                clone.style.marginTop = '0';
-                clone.style.animationDelay = '0s';
-                ring.appendChild(clone);
-            });
-            
-            wrapper.appendChild(ring);
-            transition.appendChild(wrapper);
-            
-            // 触发动画
-            transition.classList.add('active');
             
             // 1.2秒后跳转
             setTimeout(() => {
