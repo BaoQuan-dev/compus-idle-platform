@@ -142,32 +142,37 @@
                 inset 0 0 40px rgba(255, 255, 255, 0.03);
         }
         .feature-item:hover {
-            background: rgba(255, 255, 255, 0.12);
-            outline-color: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.15);
+            outline-color: rgba(139, 92, 246, 0.8);
+            transform: scale(1.1);
             box-shadow: 
-                0 0 50px rgba(139, 92, 246, 0.4),
-                0 0 100px rgba(96, 165, 250, 0.3),
-                inset 0 0 50px rgba(255, 255, 255, 0.08);
+                0 0 80px rgba(139, 92, 246, 0.6),
+                0 0 150px rgba(96, 165, 250, 0.4),
+                0 0 200px rgba(192, 132, 252, 0.3),
+                inset 0 0 60px rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .feature-item .icon {
             font-size: 26px;
             margin-bottom: 4px;
             filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .feature-item:hover .icon {
-            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)) drop-shadow(0 0 30px rgba(139, 92, 246, 0.8));
-            transform: scale(1.1);
+            filter: drop-shadow(0 0 30px rgba(255, 255, 255, 1)) drop-shadow(0 0 50px rgba(139, 92, 246, 1));
+            transform: scale(1.2);
         }
         .feature-item .label {
             font-size: 10px;
             color: rgba(255, 255, 255, 0.95);
-            font-weight: 500;
+            font-weight: 600;
             text-shadow: 0 0 15px rgba(139, 92, 246, 0.8);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .feature-item:hover .label {
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
+            text-shadow: 0 0 30px rgba(255, 255, 255, 1), 0 0 50px rgba(139, 92, 246, 1);
+            transform: scale(1.05);
         }
         .feature-item .glow-ring {
             display: none; /* 星星形状不需要额外glow-ring */
