@@ -404,6 +404,25 @@
             }, 2000);
         }
         
+        // 动态添加唤醒动画样式
+        (function() {
+            const s = document.createElement('style');
+            s.id = 'awaken-dynamic';
+            s.textContent = `
+                .feature-item.awaken { animation: awakenEffect 0.5s ease-in-out 3 !important; }
+                .feature-item.awaken .icon { animation: iconEffect 0.5s ease-in-out 3 !important; }
+                @keyframes awakenEffect {
+                    0%,100% { box-shadow: 0 0 30px rgba(96,165,250,0.2), inset 0 0 30px rgba(255,255,255,0.03); }
+                    50% { box-shadow: 0 0 80px rgba(96,165,250,0.8), 0 0 120px rgba(139,92,246,0.5), inset 0 0 50px rgba(96,165,250,0.2); }
+                }
+                @keyframes iconEffect {
+                    0%,100% { filter: drop-shadow(0 0 8px rgba(255,255,255,0.5)); }
+                    50% { filter: drop-shadow(0 0 25px rgba(255,255,255,1)) drop-shadow(0 0 50px rgba(96,165,250,0.8)); }
+                }
+            `;
+            document.head.appendChild(s);
+        })();
+        
         // 登录弹窗
         function showLoginModal() {
             document.getElementById('loginModal').classList.add('show');
