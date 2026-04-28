@@ -693,7 +693,7 @@
             document.getElementById('statViews').textContent = totalViews;
             
             // 获取发布的需求（兼容 publisher.id 格式）
-            const demandList = JSON.parse(localStorage.getItem('hnau_demand_list') || localStorage.getItem('demandList') || '[]');
+            const demandList = JSON.parse(localStorage.getItem('demandList') || localStorage.getItem('hnau_demand_list') || '[]');
             const myDemands = demandList.filter(d => 
                 // 匹配 publisher.name（username格式）
                 (d.publisher && d.publisher.name === userId) || 
@@ -744,7 +744,7 @@
             }
             
             // 加载发布的需求
-            const demandList = JSON.parse(localStorage.getItem('hnau_demand_list') || localStorage.getItem('demandList') || '[]');
+            const demandList = JSON.parse(localStorage.getItem('demandList') || localStorage.getItem('hnau_demand_list') || '[]');
             const myDemands = demandList.filter(d => 
                 // 匹配 publisher.name（username格式）
                 (d.publisher && d.publisher.name === userId) || 
