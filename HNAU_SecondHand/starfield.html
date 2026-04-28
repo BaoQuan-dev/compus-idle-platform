@@ -364,121 +364,228 @@
             cursor: pointer;
         }
         
-        /* ========== 登录引导悬浮卡片 ========== */
+        /* ========== 登录引导悬浮卡片 - 小猫云朵版 ========== */
         .login-guide-card {
             position: fixed;
             bottom: 100px;
-            right: 16px;
-            background: rgba(30, 30, 60, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 20px;
-            padding: 16px;
-            box-shadow: 
-                0 8px 32px rgba(0,0,0,0.4),
-                0 0 40px rgba(96, 165, 250, 0.15);
+            right: 20px;
             z-index: 90;
-            max-width: 280px;
-            animation: slideInUp 0.5s ease-out;
+            animation: slideInUp 0.6s ease-out;
         }
         
         @keyframes slideInUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(40px) scale(0.9);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
         
-        .guide-close {
+        /* 云朵容器 */
+        .cloud-wrapper {
+            position: relative;
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* 云朵背景 */
+        .cloud-bg {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: rgba(255,255,255,0.6);
-            width: 24px;
-            height: 24px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 60px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-radius: 50%;
-            cursor: pointer;
-            font-size: 16px;
-            line-height: 1;
-            transition: all 0.3s ease;
+            box-shadow: 
+                0 10px 40px rgba(0,0,0,0.2),
+                inset 0 -5px 20px rgba(255,255,255,0.1);
+            animation: cloudFloat 4s ease-in-out infinite;
         }
         
-        .guide-close:hover {
-            background: rgba(255,255,255,0.2);
-            color: #fff;
+        .cloud-bg::before,
+        .cloud-bg::after {
+            content: '';
+            position: absolute;
+            background: inherit;
+            border-radius: 50%;
         }
         
-        .guide-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-            animation: wave 2s ease-in-out infinite;
+        .cloud-bg::before {
+            width: 70px;
+            height: 70px;
+            top: -30px;
+            left: 20px;
         }
         
-        @keyframes wave {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(15deg); }
-            75% { transform: rotate(-15deg); }
+        .cloud-bg::after {
+            width: 50px;
+            height: 50px;
+            top: -20px;
+            right: 25px;
         }
         
-        .guide-content {
+        @keyframes cloudFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-5px); }
+        }
+        
+        /* 小猫图片 */
+        .cat-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255,255,255,0.3);
+            box-shadow: 
+                0 8px 32px rgba(0,0,0,0.3),
+                0 0 60px rgba(147, 112, 219, 0.3);
+            position: relative;
+            z-index: 2;
+            animation: catBounce 3s ease-in-out infinite;
+            transition: transform 0.3s ease;
+        }
+        
+        .cat-avatar:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        @keyframes catBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        /* 对话气泡 */
+        .speech-bubble {
+            position: relative;
+            background: rgba(30, 30, 60, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 16px 20px;
             margin-bottom: 12px;
+            max-width: 240px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
         
-        .guide-content h4 {
-            margin: 0 0 4px 0;
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 10px solid transparent;
+            border-top-color: rgba(30, 30, 60, 0.9);
+            border-bottom: 0;
+        }
+        
+        .speech-bubble h4 {
+            margin: 0 0 6px 0;
             font-size: 15px;
             font-weight: 600;
-            color: #fff;
+            background: linear-gradient(90deg, #fff, #A78BFA, #60A5FA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
-        .guide-content p {
+        .speech-bubble p {
             margin: 0;
-            font-size: 12px;
-            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.4;
         }
         
+        /* 闪烁眼睛效果 */
+        .sparkle-eyes {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 20px;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+        
+        /* 按钮组 */
         .guide-actions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
         }
         
         .guide-btn {
-            flex: 1;
-            padding: 10px 0;
-            border-radius: 20px;
-            font-size: 13px;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
             font-weight: 600;
-            text-align: center;
             text-decoration: none;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         
         .guide-btn.login {
-            background: linear-gradient(135deg, #60A5FA, #A78BFA);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
         }
         
         .guide-btn.login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.4);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
         }
         
         .guide-btn.register {
             background: rgba(255,255,255,0.1);
             color: #fff;
             border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
         }
         
         .guide-btn.register:hover {
-            background: rgba(255,255,255,0.15);
-            transform: translateY(-2px);
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-3px);
+        }
+        
+        /* 关闭按钮 */
+        .guide-close {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 28px;
+            height: 28px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .guide-close:hover {
+            background: rgba(255,100,100,0.7);
+            transform: scale(1.1) rotate(90deg);
         }
         
         /* 隐藏状态 */
@@ -490,9 +597,19 @@
         @media (max-width: 480px) {
             .login-guide-card {
                 bottom: 90px;
-                right: 12px;
-                left: 12px;
-                max-width: none;
+                right: 10px;
+                left: 10px;
+            }
+            .cloud-wrapper {
+                width: 160px;
+            }
+            .cat-avatar {
+                width: 100px;
+                height: 100px;
+            }
+            .speech-bubble {
+                max-width: 200px;
+                padding: 12px 16px;
             }
         }
     </style>
@@ -549,14 +666,26 @@
         </div>
     </div>
     
-    <!-- 登录引导悬浮卡片 -->
+    <!-- 登录引导悬浮卡片 - 小猫云朵版 -->
     <div class="login-guide-card" id="loginGuide">
         <button class="guide-close" onclick="closeLoginGuide()">×</button>
-        <div class="guide-icon">👋</div>
-        <div class="guide-content">
-            <h4>欢迎来到农大闲置</h4>
-            <p>登录后解锁更多功能</p>
+        
+        <div class="cloud-wrapper">
+            <!-- 对话气泡 -->
+            <div class="speech-bubble">
+                <h4>✨ 欢迎来到农大闲置</h4>
+                <p>登录后解锁更多功能，开启你的校园循环之旅~</p>
+                <span class="sparkle-eyes">✨</span>
+            </div>
+            
+            <!-- 小猫头像 -->
+            <img src="./images/cat-guide.jpg" alt="欢迎小猫" class="cat-avatar">
+            
+            <!-- 云朵装饰 -->
+            <div class="cloud-bg"></div>
         </div>
+        
+        <!-- 按钮 -->
         <div class="guide-actions">
             <a href="user_login.html" class="guide-btn login">登录</a>
             <a href="user_register.html" class="guide-btn register">注册</a>
