@@ -721,8 +721,132 @@
             }
         }
     </style>
+    
+    <!-- 星空漩涡过渡效果样式 -->
+    <style>
+        .star-vortex {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99999;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .star-vortex.active {
+            opacity: 1;
+            visibility: visible;
+            animation: vortexExpand 0.8s ease-in-out forwards;
+        }
+        
+        @keyframes vortexExpand {
+            0% {
+                clip-path: circle(0% at 50% 50%);
+                background: radial-gradient(circle at center, rgba(138, 43, 226, 0.3) 0%, transparent 70%);
+            }
+            50% {
+                clip-path: circle(80% at 50% 50%);
+                background: radial-gradient(circle at center, rgba(138, 43, 226, 0.6) 0%, rgba(75, 0, 130, 0.3) 50%, transparent 70%);
+            }
+            100% {
+                clip-path: circle(150% at 50% 50%);
+                background: radial-gradient(circle at center, rgba(255, 255, 255, 1) 0%, rgba(138, 43, 226, 0.8) 30%, transparent 60%);
+            }
+        }
+        
+        .vortex-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+        }
+        
+        .vortex-spiral {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200%;
+            height: 200%;
+            transform: translate(-50%, -50%);
+            background: conic-gradient(from 0deg, transparent, rgba(255, 255, 255, 0.3), transparent, rgba(255, 255, 255, 0.2), transparent, rgba(138, 43, 226, 0.3), transparent);
+            animation: spiralRotate 1s linear forwards;
+            opacity: 0;
+        }
+        
+        .star-vortex.active .vortex-spiral {
+            opacity: 1;
+        }
+        
+        @keyframes spiralRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg) scale(0.5); }
+            to { transform: translate(-50%, -50%) rotate(720deg) scale(2); }
+        }
+        
+        .vortex-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            animation: centerGlow 0.6s ease-out forwards;
+            box-shadow: 0 0 30px 10px rgba(255, 255, 255, 0.8);
+        }
+        
+        .star-vortex.active .vortex-center {
+            animation: centerGlow 0.8s ease-out forwards;
+        }
+        
+        @keyframes centerGlow {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(50); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(200); opacity: 0; }
+        }
+        
+        .vortex-stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .vortex-star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: starFly 0.8s ease-out forwards;
+        }
+        
+        @keyframes starFly {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- 星空漩涡过渡效果 -->
+    <div id="starVortex" class="star-vortex">
+        <div class="vortex-container">
+            <div class="vortex-spiral"></div>
+            <div class="vortex-center"></div>
+        </div>
+        <div class="vortex-stars"></div>
+    </div>
+    
     <!-- 视频背景 -->
     <video class="video-bg" autoplay muted loop playsinline preload="auto" style="image-rendering: auto;">
         <source src="./images/bg-video.mp4" type="video/mp4">
@@ -1111,6 +1235,17 @@
         
         // 页面加载时检查是否显示引导
         document.addEventListener('DOMContentLoaded', function() {
+            // 生成星空漩涡的星星
+            createVortexStars();
+            
+            // 为所有跳转链接添加星空漩涡效果
+            document.querySelectorAll('a[href="explore.html"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    triggerStarVortex('explore.html');
+                });
+            });
+            
             const lastClosed = localStorage.getItem('loginGuideClosed');
             const now = Date.now();
             const sevenDays = 7 * 24 * 60 * 60 * 1000;
@@ -1143,6 +1278,55 @@
                 }
             });
         });
+        
+        // 星空漩涡效果函数
+        function createVortexStars() {
+            const starsContainer = document.querySelector('.vortex-stars');
+            if (!starsContainer) return;
+            
+            for (let i = 0; i < 60; i++) {
+                const star = document.createElement('div');
+                star.className = 'vortex-star';
+                star.style.left = '50%';
+                star.style.top = '50%';
+                star.style.width = (2 + Math.random() * 4) + 'px';
+                star.style.height = star.style.width;
+                
+                const angle = (Math.PI * 2 * i) / 60;
+                const distance = 100 + Math.random() * 300;
+                star.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+                star.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+                
+                star.style.animationDelay = (Math.random() * 0.3) + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        function triggerStarVortex(targetUrl) {
+            const vortex = document.getElementById('starVortex');
+            if (!vortex) {
+                window.location.href = targetUrl;
+                return;
+            }
+            
+            // 重置并激活漩涡
+            vortex.classList.remove('active');
+            vortex.offsetHeight; // 触发重排
+            
+            // 重新生成星星确保每次都有新效果
+            const starsContainer = vortex.querySelector('.vortex-stars');
+            if (starsContainer) {
+                starsContainer.innerHTML = '';
+                createVortexStars();
+            }
+            
+            vortex.classList.add('active');
+            
+            // 动画结束后跳转
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 800);
+        }
     </script>
 </body>
 </html>
