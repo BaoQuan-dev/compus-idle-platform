@@ -529,6 +529,58 @@
             }
         }
     </style>
+    <style>
+        /* 卡片星空点缀 */
+        .card-footer {
+            position: absolute;
+            bottom: 12px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .card-footer span {
+            color: rgba(255,255,255,0.5);
+            font-size: 8px;
+            animation: starTwinkle 2s ease-in-out infinite;
+        }
+        .card-footer span:nth-child(1) { animation-delay: 0s; }
+        .card-footer span:nth-child(2) { animation-delay: 0.3s; }
+        .card-footer span:nth-child(3) { animation-delay: 0.6s; }
+        .card-footer span:nth-child(4) { animation-delay: 0.9s; }
+        .card-footer span:nth-child(5) { animation-delay: 1.2s; }
+        .module-card:hover .card-footer span,
+        .module-card.active .card-footer span {
+            color: rgba(255,255,255,0.9);
+            animation-duration: 1s;
+        }
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        /* 右上角星星装饰 */
+        .module-card::before {
+            content: '✦';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            color: rgba(255,255,255,0.3);
+            font-size: 10px;
+            animation: starTwinkle 3s ease-in-out infinite;
+        }
+        /* 左下角微型星星 */
+        .module-card::after {
+            content: '·';
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            color: rgba(255,255,255,0.2);
+            font-size: 14px;
+            animation: starTwinkle 4s ease-in-out infinite 1s;
+        }
+    </style>
 </head>
 <body style="background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f23 100%) !important;">
     <!-- 星空背景 -->
