@@ -62,7 +62,7 @@
         .home-header p {
             margin: 0;
             color: rgba(255,255,255,0.6);
-            font-size: 14px;
+            font-size: 15px;
         }
         /* ========== 功能组件容器 ========== */
         .home-container {
@@ -105,25 +105,20 @@
             margin-bottom: 2px;
         }
         .center-indicator .text {
-            font-size: 14px;
+            font-size: 15px;
             color: rgba(255,255,255,0.8);
         }
         /* 星星形状的功能模块 */
         .feature-item {
             position: absolute;
-            width: 100px;
-            height: 100px;
+            width: 130px;
+            height: 130px;
             /* 真正的玻璃拟态效果 - 更透明 */
             background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             /* 星星形状边框 */
-            clip-path: polygon(
-                50% 0%, 61% 15%, 85% 15%, 70% 30%, 
-                90% 50%, 70% 70%, 85% 85%, 61% 85%, 
-                50% 100%, 39% 85%, 15% 85%, 30% 70%, 
-                10% 50%, 30% 30%, 15% 15%, 39% 15%
-            );
+            clip-path: polygon(50% 0%, 61% 12%, 88% 12%, 72% 26%, 90% 50%, 72% 74%, 88% 88%, 61% 88%, 50% 100%, 39% 88%, 12% 88%, 28% 74%, 10% 50%, 28% 26%, 12% 12%, 39% 12%);
             /* 发光边框 */
             outline: 3px solid rgba(139, 92, 246, 0.8);
             outline-offset: 8px;
@@ -155,7 +150,7 @@
             transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.5);
         }
         .feature-item .icon {
-            font-size: 26px;
+            font-size: 32px;
             margin-bottom: 4px;
             background: linear-gradient(90deg, #60A5FA, #C084FC, #F472B6, #FBBF24, #34D399, #22D3EE, #60A5FA);
             background-size: 300% 100%;
@@ -170,7 +165,7 @@
             // transform跟随父元素
         }
         .feature-item .label {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             background: linear-gradient(90deg, #fff, #60A5FA, #C084FC, #F472B6, #FBBF24, #34D399, #22D3EE, #fff);
             background-size: 300% 100%;
@@ -299,7 +294,7 @@
             transition: color 0.3s;
         }
         .nav-item:hover, .nav-item.active { color: #fff; }
-        .nav-item .icon { font-size: 26px; }
+        .nav-item .icon { font-size: 32px; }
         /* 登录弹窗 */
         .modal-overlay {
             position: fixed;
@@ -324,7 +319,7 @@
         }
         .modal h2 {
             margin: 0 0 8px 0;
-            font-size: 26px;
+            font-size: 32px;
             background: linear-gradient(135deg, #fff, #60A5FA);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -332,7 +327,7 @@
         .modal p {
             margin: 0 0 24px 0;
             color: rgba(255,255,255,0.6);
-            font-size: 14px;
+            font-size: 15px;
         }
         .modal-btn {
             display: block;
