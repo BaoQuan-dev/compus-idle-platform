@@ -404,20 +404,37 @@
             }, 2000);
         }
         
-        // 动态添加唤醒动画样式
+        // 动态添加唤醒动画样式 - 增强版
         (function() {
             const s = document.createElement('style');
             s.id = 'awaken-dynamic';
             s.textContent = `
-                .feature-item.awaken { animation: awakenEffect 0.5s ease-in-out 3 !important; }
-                .feature-item.awaken .icon { animation: iconEffect 0.5s ease-in-out 3 !important; }
+                .feature-item.awaken { animation: awakenEffect 0.4s ease-in-out 4 !important; }
+                .feature-item.awaken .icon { animation: iconEffect 0.3s ease-in-out 5 !important; }
+                .feature-item.awaken::before { content: '' !important; position: absolute !important; top: -2px !important; left: -2px !important; right: -2px !important; bottom: -2px !important; background: linear-gradient(45deg, #60A5FA, #C084FC, #F472B6, #60A5FA) !important; border-radius: inherit !important; z-index: -1 !important; animation: borderGlow 0.3s linear infinite !important; }
                 @keyframes awakenEffect {
-                    0%,100% { box-shadow: 0 0 30px rgba(96,165,250,0.2), inset 0 0 30px rgba(255,255,255,0.03); }
-                    50% { box-shadow: 0 0 80px rgba(96,165,250,0.8), 0 0 120px rgba(139,92,246,0.5), inset 0 0 50px rgba(96,165,250,0.2); }
+                    0%,100% { 
+                        box-shadow: 0 0 20px rgba(96,165,250,0.1), 0 0 40px rgba(139,92,246,0.05), inset 0 0 20px rgba(255,255,255,0.02);
+                        transform: scale(1);
+                    }
+                    50% { 
+                        box-shadow: 0 0 100px rgba(96,165,250,1), 0 0 200px rgba(139,92,246,0.8), 0 0 300px rgba(244,114,182,0.5), inset 0 0 80px rgba(96,165,250,0.4), inset 0 0 120px rgba(139,92,246,0.2);
+                        transform: scale(1.02);
+                    }
+                }
+                @keyframes borderGlow {
+                    0% { filter: hue-rotate(0deg) brightness(1); }
+                    100% { filter: hue-rotate(360deg) brightness(1.5); }
                 }
                 @keyframes iconEffect {
-                    0%,100% { filter: drop-shadow(0 0 8px rgba(255,255,255,0.5)); }
-                    50% { filter: drop-shadow(0 0 25px rgba(255,255,255,1)) drop-shadow(0 0 50px rgba(96,165,250,0.8)); }
+                    0%,100% { 
+                        filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)) brightness(1);
+                        transform: scale(1);
+                    }
+                    50% { 
+                        filter: drop-shadow(0 0 40px rgba(255,255,255,1)) drop-shadow(0 0 80px rgba(96,165,250,1)) drop-shadow(0 0 120px rgba(139,92,246,0.8)) brightness(1.5);
+                        transform: scale(1.15);
+                    }
                 }
             `;
             document.head.appendChild(s);
