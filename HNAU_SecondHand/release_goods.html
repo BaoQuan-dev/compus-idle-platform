@@ -617,21 +617,7 @@
             height: 340px;
         }
         
-        .debug-btn {
-            position: fixed;
-            bottom: 100px;
-            right: 20px;
-            padding: 10px 20px;
-            background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 9999;
-        }
-        .debug-btn:hover {
-            background: #dc2626;
-        }
+
         </style>
 
         <!-- 发布表单 -->
@@ -1116,21 +1102,7 @@
             loadMyPublications();
         });
         
-        // ========== 添加调试按钮 ==========
-        const debugBtn = document.createElement('button');
-        debugBtn.className = 'debug-btn';
-        debugBtn.textContent = '🧪 测试图片';
-        debugBtn.onclick = function() {
-            console.log('=== 图片上传测试 ===');
-            const uploadItems = document.querySelectorAll('.image-upload-area .upload-item');
-            console.log('上传项数量:', uploadItems.length);
-            uploadItems.forEach((item, index) => {
-                const img = item.querySelector('img');
-                console.log('上传项' + index + '有图片:', !!img, img ? img.src.substring(0, 50) + '...' : '');
-            });
-            alert('请查看控制台日志！');
-        };
-        document.body.appendChild(debugBtn);
+
     </script>
 </body>
 </html>
