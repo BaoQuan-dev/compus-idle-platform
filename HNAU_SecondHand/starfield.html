@@ -414,46 +414,47 @@
                 @keyframes awakenEffect {
                     0%,100% { 
                         box-shadow: 
-                            0 0 30px rgba(96,165,250,0.3),
-                            0 0 5px #60A5FA at 10% 10%,
-                            0 0 5px #818CF8 at 30% 20%,
-                            0 0 5px #C084FC at 50% 5%,
-                            0 0 5px #F472B6 at 70% 15%,
-                            0 0 5px #FB923C at 90% 25%,
-                            0 0 5px #FBBF24 at 15% 85%,
-                            0 0 5px #34D399 at 35% 90%,
-                            0 0 5px #22D3EE at 55% 95%,
-                            0 0 5px #60A5FA at 75% 88%,
-                            0 0 5px #818CF8 at 85% 92%,
-                            0 0 5px #60A5FA at 5% 50%,
-                            0 0 5px #C084FC at 95% 50%;
-                        border-color: rgba(255,255,255,0.3);
-                        background: rgba(255,255,255,0.06);
+                            0 0 40px rgba(96,165,250,0.4),
+                            0 0 8px #60A5FA at 10% 10%,
+                            0 0 8px #818CF8 at 30% 20%,
+                            0 0 8px #C084FC at 50% 5%,
+                            0 0 8px #F472B6 at 70% 15%,
+                            0 0 8px #FB923C at 90% 25%,
+                            0 0 8px #FBBF24 at 15% 85%,
+                            0 0 8px #34D399 at 35% 90%,
+                            0 0 8px #22D3EE at 55% 95%,
+                            0 0 8px #60A5FA at 75% 88%,
+                            0 0 8px #818CF8 at 85% 92%,
+                            0 0 8px #60A5FA at 5% 50%,
+                            0 0 8px #C084FC at 95% 50%;
+                        border-color: rgba(255,255,255,0.4);
+                        background: rgba(255,255,255,0.08);
                     }
                     50% { 
                         box-shadow: 
-                            0 0 100px rgba(96,165,250,0.8),
-                            0 0 150px rgba(139,92,246,0.6),
-                            0 0 30px #60A5FA at 10% 10%,
-                            0 0 35px #818CF8 at 30% 20%,
-                            0 0 40px #C084FC at 50% 5%,
-                            0 0 35px #F472B6 at 70% 15%,
-                            0 0 30px #FB923C at 90% 25%,
-                            0 0 35px #FBBF24 at 15% 85%,
-                            0 0 30px #34D399 at 35% 90%,
-                            0 0 35px #22D3EE at 55% 95%,
-                            0 0 30px #60A5FA at 75% 88%,
-                            0 0 35px #818CF8 at 85% 92%,
-                            0 0 30px #C084FC at 5% 50%,
-                            0 0 35px #F472B6 at 95% 50%;
-                        border-color: rgba(96,165,250,0.9);
-                        background: rgba(255,255,255,0.15);
+                            0 0 200px rgba(255,255,255,0.9),
+                            0 0 300px rgba(96,165,250,1),
+                            0 0 400px rgba(139,92,246,0.8),
+                            0 0 80px #fff at 10% 10%,
+                            0 0 90px #fff at 30% 20%,
+                            0 0 100px #fff at 50% 5%,
+                            0 0 90px #fff at 70% 15%,
+                            0 0 80px #fff at 90% 25%,
+                            0 0 90px #fff at 15% 85%,
+                            0 0 80px #fff at 35% 90%,
+                            0 0 90px #fff at 55% 95%,
+                            0 0 80px #fff at 75% 88%,
+                            0 0 90px #fff at 85% 92%,
+                            0 0 80px #fff at 5% 50%,
+                            0 0 90px #fff at 95% 50%;
+                        border-color: #fff;
+                        background: rgba(255,255,255,0.35);
                     }
                 }
                 @keyframes iconEffect {
-                    0% { filter: drop-shadow(0 0 10px #fff); transform: scale(1); }
-                    50% { filter: drop-shadow(0 0 40px #fff) drop-shadow(0 0 80px rgba(96,165,250,1)); transform: scale(1.1); }
-                    100% { filter: drop-shadow(0 0 10px #fff); transform: scale(1); }
+                    0% { filter: drop-shadow(0 0 20px #fff) drop-shadow(0 0 40px rgba(96,165,250,0.5)); transform: scale(1); }
+                    50% { filter: drop-shadow(0 0 80px #fff) drop-shadow(0 0 150px #60A5FA) drop-shadow(0 0 200px rgba(139,92,246,1)); transform: scale(1.15); }
+                    100% { filter: drop-shadow(0 0 20px #fff) drop-shadow(0 0 40px rgba(96,165,250,0.5)); transform: scale(1); }
                 }
             `;
             document.head.appendChild(s);
