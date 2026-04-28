@@ -495,25 +495,28 @@ const LoginModule = {
 
             // 同步设置explore页面状态标记
             const user = Auth.getCurrentUser();
+            console.log('[登录] 用户信息:', user);
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('isCertified', user ? (user.authStatus === 'approved' ? 'true' : 'false') : 'false');
             localStorage.setItem('username', username);
 
             // 判断是否需要认证
             const needAuth = user ? user.authStatus !== 'approved' : true;
+            console.log('[登录] 需要认证:', needAuth);
             
             if (needAuth) {
                 // 需要认证，跳转到校园认证页面
                 Toast.show('登录成功！请完成校园认证', 'success');
+                console.log('[登录] 准备跳转到认证页面');
                 setTimeout(() => {
-                    Utils.跳转('stu_check.html');
-                }, 1500);
+                    window.location.href = 'stu_check.html';
+                }, 1000);
             } else {
                 // 已认证，跳转到首页
                 Toast.show('登录成功！即将跳转到首页', 'success');
                 setTimeout(() => {
-                    Utils.跳转('starfield.html');
-                }, 1500);
+                    window.location.href = 'starfield.html';
+                }, 1000);
             }
 
         }, 500);
