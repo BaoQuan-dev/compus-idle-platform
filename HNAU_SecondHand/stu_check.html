@@ -1072,9 +1072,6 @@
             }
 
             // 检查认证状态
-            checkAuthStatus();
-
-            // 如果已提交认证，显示审核状态
             const isPending = localStorage.getItem('isPending') === 'true';
             const authStatus = Auth.getUserAuthStatus(Auth.getLoginState().curUser);
 
