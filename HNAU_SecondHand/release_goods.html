@@ -709,11 +709,11 @@
         </div>
         
         <!-- 我的发布区域 -->
-        <div class="my-publications" id="myPublicationsSection">
+        <div class="my-publications" id="myPublicationsSection" style="display: flex; flex-direction: column; gap: 20px;">
             <div class="publications-header">
                 <h2>📦 我的发布</h2>
             </div>
-            <div class="publications-container" id="myPublicationsContainer">
+            <div class="publications-container" id="myPublicationsContainer" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: flex-start;">
                 <div class="loading">加载中...</div>
             </div>
         </div>
@@ -1044,7 +1044,7 @@
             
             // 渲染翻转卡片
             const gridHtml = `
-                <div class="publications-grid">
+                <div class="publications-grid" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: flex-start;">
                     ${myGoods.map(item => {
                         const statusMap = {
                             'selling': { text: '出售中', class: 'status-available' },
@@ -1068,7 +1068,7 @@
                         };
                         
                         return `
-                            <div class="flip-card">
+                            <div class="flip-card" style="flex: 0 0 260px; height: 340px; position: relative; margin: 0;">
                                 <span class="status-badge ${status.class}">${status.text}</span>
                                 <div class="flip-card-inner">
                                     <div class="flip-card-front">
