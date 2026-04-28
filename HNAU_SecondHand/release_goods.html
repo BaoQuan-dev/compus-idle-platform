@@ -1030,7 +1030,7 @@
             myGoods.sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
             
             // 渲染翻转卡片
-            container.innerHTML = `
+            const gridHtml = `
                 <div class="publications-grid">
                     ${myGoods.map(item => {
                         const statusMap = {
@@ -1092,6 +1092,27 @@
                     }).join('')}
                 </div>
             `;
+            
+            // 添加调试信息
+            console.log('[Release] 生成HTML长度:', gridHtml.length);
+            console.log('[Release] 包含publications-grid:', gridHtml.includes('class="publications-grid"'));
+            console.log('[Release] 包含flip-card:', gridHtml.includes('class="flip-card"'));
+            console.log('[Release] HTML预览:', gridHtml.substring(0, 500));
+            
+            // 设置innerHTML
+            container.innerHTML = gridHtml;
+            
+            // 检查DOM是否正确设置
+            const grid = document.querySelector('.publications-grid');
+            console.log('[Release] DOM查询结果:', grid ? '找到publications-grid' : '未找到publications-grid');
+            
+            // 检查CSS样式
+            if (grid) {
+                const style = window.getComputedStyle(grid);
+                console.log('[Release] display:', style.display);
+                console.log('[Release] flex-wrap:', style.flexWrap);
+                console.log('[Release] justify-content:', style.justifyContent);
+            }
             
             console.log('[Release] 渲染完成，共', myGoods.length, '条');
         }
