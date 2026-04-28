@@ -1280,9 +1280,10 @@
         function initUser() {
             var loginState = JSON.parse(localStorage.getItem('hnau_login_state') || '{}');
             if (loginState && loginState.isLoggedIn && loginState.curUser) {
-                currentUser = loginState.curUser;
+                // loginState.curUser 是用户名字符串，需要构造成对象
+                currentUser = { id: loginState.curUser, name: loginState.curUser, username: loginState.curUser };
             } else {
-                currentUser = { id: 'guest_' + Date.now(), name: '游客' };
+                currentUser = { id: 'guest_' + Date.now(), name: '游客', username: '游客' };
             }
         }
         
@@ -1428,7 +1429,7 @@
             listEl.innerHTML = demands.map(function(item) {
                 var priceText = item.price > 0 ? '¥' + item.price + (item.priceNegotiable ? ' 可协商' : '') : '价格面议';
                 var priceClass = item.price > 0 ? '' : 'free';
-                var isOwn = item.publisher && item.publisher.id === currentUser.id;
+                var isOwn = item.publisher && (item.publisher.id === currentUser.id || item.publisher.name === currentUser.username);
                 var isAuth = JSON.parse(localStorage.getItem('hnau_login_state') || '{}').authStatus === 'approved';
                 
                 var actionsHtml = '';
