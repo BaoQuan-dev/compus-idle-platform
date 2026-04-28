@@ -568,7 +568,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">昵称</label>
-                        <input type="text" class="form-input" id="editName" placeholder="请输入昵称" maxlength="20">
+                        <input type="text" class="form-input" id="editNickname" placeholder="请输入昵称" maxlength="20">
                     </div>
                     <div class="form-group">
                         <label class="form-label">学校</label>
@@ -591,6 +591,8 @@
     <!-- Toast 提示 -->
     <div class="toast" id="toast"></div>
     
+    <!-- 引入公共JS -->
+    <script src="./script/common.js"></script>
     <script>
         // 显示提示
         function showToast(message, isError = false) {
@@ -610,15 +612,45 @@
             }
         }
         
-        // 加载用户数据
+        // 加载用户数据 - 使用 Auth 类获取
         function loadUserData() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            // 使用 Auth.getCurrentUser() 获取用户数据
+            const currentUser = Auth.getCurrentUser();
             
-            // 只有当用户明确未登录（无有效ID）时才跳转
-            if (!currentUser || !currentUser.id) {
-                // 不自动跳转，让用户留在当前页面
+            // 如果用户未登录，显示空数据
+            if (!currentUser) {
                 console.log('用户未登录或数据异常');
                 return;
+            }
+            
+            // 同步更新基本信息显示
+            document.getElementById('userName').textContent = currentUser.username || '未设置昵称';
+            document.getElementById('userId').textContent = 'ID: ' + (currentUser.id || '-');
+            
+            // 校园认证状态
+            const authStatusMap = {
+                'verified': { text: '已认证', class: 'verified' },
+                'approved': { text: '已认证', class: 'verified' },
+                'pending': { text: '审核中', class: 'pending' },
+                'rejected': { text: '已拒绝', class: 'rejected' },
+                'unsubmitted': { text: '未认证', class: 'unverified' }
+            };
+            const authStatus = currentUser.authStatus || 'unsubmitted';
+            const authInfo = authStatusMap[authStatus] || authStatusMap['unsubmitted'];
+            const userBadge = document.getElementById('userBadge');
+            userBadge.textContent = authInfo.text;
+            userBadge.className = 'user-badge ' + authInfo.class;
+            
+            // 同步更新修改表单 - 基本信息与表单一致
+            const editNickname = document.getElementById('editNickname');
+            const editSchool = document.getElementById('editSchool');
+            const editContact = document.getElementById('editContact');
+            const editBio = document.getElementById('editBio');
+            
+            if (editNickname) editNickname.value = currentUser.username || '';
+            if (editSchool) editSchool.value = currentUser.campus || currentUser.school || '';
+            if (editContact) editContact.value = currentUser.contact || currentUser.phone || '';
+            if (editBio) editBio.value = currentUser.bio || currentUser.intro || '';
             }
             
             // 更新基本信息
@@ -652,26 +684,26 @@
                 avatar.innerHTML = '<img src="' + currentUser.avatar + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
             }
             
-            // 填充表单
-            document.getElementById('editName').value = currentUser.name || '';
-            document.getElementById('editSchool').value = currentUser.school || '';
-            document.getElementById('editContact').value = currentUser.contact || '';
-            document.getElementById('editBio').value = currentUser.bio || '';
+            // 填充表单 - 基本信息与表单同步
+            document.getElementById('editNickname').value = currentUser.username || '';
+            document.getElementById('editSchool').value = currentUser.campus || currentUser.school || '';
+            document.getElementById('editContact').value = currentUser.contact || currentUser.phone || '';
+            document.getElementById('editBio').value = currentUser.bio || currentUser.intro || '';
             
-            // 加载统计数据
-            loadStats(currentUser.id);
+            // 加载统计数据 - 使用 username 匹配
+            loadStats(currentUser.username);
             
-            // 加载我的发布列表
-            loadMyPublications(currentUser.id);
+            // 加载我的发布列表 - 使用 username 匹配
+            loadMyPublications(currentUser.username);
         }
         
-        // 加载统计真实数据
-        function loadStats(userId) {
+        // 加载统计真实数据 - 使用 username 匹配
+        function loadStats(username) {
             // 获取发布的商品（兼容 publisherId 和 publisher.id 两种格式）
             const goodsList = JSON.parse(localStorage.getItem('goodsList') || '[]');
             const myGoods = goodsList.filter(g => 
-                (g.publisher && g.publisher.id === userId) || 
-                (g.publisherId === userId)
+                (g.publisher && g.publisher.name === username) || 
+                (g.publisherId === username)
             );
             document.getElementById('statPublished').textContent = myGoods.length;
             
@@ -686,19 +718,19 @@
             // 获取发布的需求（兼容 publisher.id 格式）
             const demandList = JSON.parse(localStorage.getItem('demandList') || '[]');
             const myDemands = demandList.filter(d => 
-                (d.publisher && d.publisher.id === userId) || 
-                (d.publisherId === userId)
+                (d.publisher && d.publisher.name === username) || 
+                (d.publisherId === username)
             );
             document.getElementById('statDemands').textContent = myDemands.length;
         }
         
-        // 加载我的发布列表
-        function loadMyPublications(userId) {
+        // 加载我的发布列表 - 使用 username 匹配
+        function loadMyPublications(username) {
             // 加载发布的商品
             const goodsList = JSON.parse(localStorage.getItem('goodsList') || '[]');
             const myGoods = goodsList.filter(g => 
-                (g.publisher && g.publisher.id === userId) || 
-                (g.publisherId === userId)
+                (g.publisher && g.publisher.name === username) || 
+                (g.publisherId === username)
             );
             
             const goodsContainer = document.getElementById('myGoodsList');
@@ -719,11 +751,11 @@
                 `).join('');
             }
             
-            // 加载发布的需求
+            // 加载发布的需求 - 使用 username 匹配
             const demandList = JSON.parse(localStorage.getItem('demandList') || '[]');
             const myDemands = demandList.filter(d => 
-                (d.publisher && d.publisher.id === userId) || 
-                (d.publisherId === userId)
+                (d.publisher && d.publisher.name === username) || 
+                (d.publisherId === username)
             );
             
             const demandsContainer = document.getElementById('myDemandsList');
@@ -782,29 +814,51 @@
         function saveProfile(e) {
             e.preventDefault();
             
-            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            // 使用 Auth 获取当前用户
+            const currentUser = Auth.getCurrentUser();
+            if (!currentUser) {
+                showToast('请先登录', true);
+                return false;
+            }
             
-            // 更新用户信息
-            currentUser.name = document.getElementById('editName').value.trim();
-            currentUser.school = document.getElementById('editSchool').value.trim();
-            currentUser.contact = document.getElementById('editContact').value.trim();
-            currentUser.bio = document.getElementById('editBio').value.trim();
+            // 获取表单数据
+            const newUsername = document.getElementById('editNickname').value.trim();
+            const newSchool = document.getElementById('editSchool').value.trim();
+            const newContact = document.getElementById('editContact').value.trim();
+            const newBio = document.getElementById('editBio').value.trim();
             
-            // 保存到 localStorage
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            // 获取用户列表
+            const userList = Storage.get('userList') || [];
+            const userIndex = userList.findIndex(u => u.username === currentUser.username);
             
-            // 更新用户列表中的信息
-            const userList = JSON.parse(localStorage.getItem('userList') || '[]');
-            const userIndex = userList.findIndex(u => u.id === currentUser.id);
             if (userIndex !== -1) {
-                userList[userIndex] = { ...userList[userIndex], ...currentUser };
-                localStorage.setItem('userList', JSON.stringify(userList));
+                // 更新用户信息
+                userList[userIndex].username = newUsername;
+                userList[userIndex].school = newSchool;
+                userList[userIndex].campus = newSchool;
+                userList[userIndex].contact = newContact;
+                userList[userIndex].phone = newContact;
+                userList[userIndex].bio = newBio;
+                userList[userIndex].intro = newBio;
+                
+                // 保存到 localStorage
+                Storage.set('userList', userList);
             }
             
             // 更新页面显示
-            document.getElementById('userName').textContent = currentUser.name || '未设置昵称';
+            document.getElementById('userName').textContent = newUsername || '未设置昵称';
+            document.getElementById('userId').textContent = 'ID: ' + (currentUser.id || '-');
+            
+            // 触发 storage 事件通知其他页面
+            localStorage.setItem('userProfileUpdated', Date.now().toString());
             
             showToast('修改成功！');
+            
+            // 重新加载页面以刷新所有数据
+            setTimeout(() => {
+                loadUserData();
+            }, 100);
+            
             return false;
         }
         
