@@ -371,6 +371,12 @@
             right: 20px;
             z-index: 90;
             animation: slideInUp 0.6s ease-out;
+            transition: transform 0.3s ease;
+        }
+        
+        /* 鼠标靠近时卡片倾斜 */
+        .login-guide-card:hover {
+            transform: translateY(-5px) rotate(2deg);
         }
         
         @keyframes slideInUp {
@@ -451,11 +457,69 @@
             position: relative;
             z-index: 2;
             animation: catBounce 3s ease-in-out infinite;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
         
         .cat-avatar:hover {
-            transform: scale(1.1) rotate(5deg);
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: 
+                0 12px 40px rgba(0,0,0,0.4),
+                0 0 80px rgba(147, 112, 219, 0.5),
+                0 0 120px rgba(96, 165, 250, 0.3);
+        }
+        
+        /* 点击时的歪头效果 */
+        .cat-avatar.tilt {
+            animation: catTilt 0.5s ease-in-out;
+        }
+        
+        @keyframes catTilt {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg) scale(1.1); }
+            75% { transform: rotate(15deg) scale(1.1); }
+        }
+        
+        /* 点击时的爱心效果 */
+        .cat-avatar.love {
+            animation: catLove 0.6s ease-in-out;
+        }
+        
+        @keyframes catLove {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        /* 星星喷发容器 */
+        .star-burst {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .star-particle {
+            position: absolute;
+            font-size: 16px;
+            animation: starFly 1s ease-out forwards;
+            opacity: 0;
+        }
+        
+        @keyframes starFly {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0);
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(1) rotate(360deg);
+            }
         }
         
         @keyframes catBounce {
@@ -503,6 +567,7 @@
             font-size: 13px;
             color: rgba(255,255,255,0.7);
             line-height: 1.4;
+            transition: opacity 0.15s ease;
         }
         
         /* 闪烁眼睛效果 */
@@ -880,6 +945,151 @@
             // 存储到本地，7天内不再显示
             localStorage.setItem('loginGuideClosed', Date.now().toString());
         }
+        
+        // ========== 小猫互动效果 ==========
+        const catAvatar = document.querySelector('.cat-avatar');
+        let clickCount = 0;
+        
+        if (catAvatar) {
+            // 点击小猫的效果
+            catAvatar.addEventListener('click', function(e) {
+                clickCount++;
+                
+                // 移除之前的动画类
+                this.classList.remove('tilt', 'love');
+                
+                // 交替使用歪头和爱心效果
+                if (clickCount % 2 === 1) {
+                    this.classList.add('tilt');
+                    // 创建星星喷发
+                    createStarBurst(this);
+                    // 更新气泡文字
+                    updateSpeechBubble('喵呜~ 主人想登录吗？🐾');
+                } else {
+                    this.classList.add('love');
+                    // 创建爱心喷发
+                    createHeartBurst(this);
+                    // 更新气泡文字
+                    updateSpeechBubble('喜欢就登录吧~ 💕');
+                }
+                
+                // 动画结束后移除类
+                setTimeout(() => {
+                    this.classList.remove('tilt', 'love');
+                }, 600);
+            });
+            
+            // 鼠标进入时添加光晕
+            catAvatar.addEventListener('mouseenter', function() {
+                this.style.boxShadow = `
+                    0 12px 40px rgba(0,0,0,0.4),
+                    0 0 80px rgba(147, 112, 219, 0.5),
+                    0 0 120px rgba(96, 165, 250, 0.3)
+                `;
+            });
+            
+            // 鼠标离开时恢复
+            catAvatar.addEventListener('mouseleave', function() {
+                this.style.boxShadow = `
+                    0 8px 32px rgba(0,0,0,0.3),
+                    0 0 60px rgba(147, 112, 219, 0.3)
+                `;
+            });
+        }
+        
+        // 创建星星喷发效果
+        function createStarBurst(element) {
+            const stars = ['✨', '⭐', '🌟', '💫', '✦', '✧'];
+            const container = document.createElement('div');
+            container.className = 'star-burst';
+            element.parentElement.appendChild(container);
+            
+            for (let i = 0; i < 12; i++) {
+                const star = document.createElement('span');
+                star.className = 'star-particle';
+                star.textContent = stars[Math.floor(Math.random() * stars.length)];
+                
+                const angle = (i / 12) * Math.PI * 2;
+                const distance = 60 + Math.random() * 40;
+                const tx = Math.cos(angle) * distance + 'px';
+                const ty = Math.sin(angle) * distance - 30 + 'px';
+                
+                star.style.setProperty('--tx', tx);
+                star.style.setProperty('--ty', ty);
+                star.style.animationDelay = (i * 0.03) + 's';
+                
+                container.appendChild(star);
+            }
+            
+            // 1秒后移除容器
+            setTimeout(() => container.remove(), 1000);
+        }
+        
+        // 创建爱心喷发效果
+        function createHeartBurst(element) {
+            const hearts = ['💕', '💖', '💗', '💓', '💝', '💘'];
+            const container = document.createElement('div');
+            container.className = 'star-burst';
+            element.parentElement.appendChild(container);
+            
+            for (let i = 0; i < 8; i++) {
+                const heart = document.createElement('span');
+                heart.className = 'star-particle';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                
+                const angle = (i / 8) * Math.PI * 2;
+                const distance = 50 + Math.random() * 30;
+                const tx = Math.cos(angle) * distance + 'px';
+                const ty = Math.sin(angle) * distance - 20 + 'px';
+                
+                heart.style.setProperty('--tx', tx);
+                heart.style.setProperty('--ty', ty);
+                heart.style.animationDelay = (i * 0.05) + 's';
+                
+                container.appendChild(heart);
+            }
+            
+            setTimeout(() => container.remove(), 1000);
+        }
+        
+        // 更新对话气泡内容
+        function updateSpeechBubble(text) {
+            const speechBubble = document.querySelector('.speech-bubble p');
+            if (speechBubble) {
+                speechBubble.style.opacity = '0';
+                setTimeout(() => {
+                    speechBubble.textContent = text;
+                    speechBubble.style.opacity = '1';
+                }, 150);
+            }
+        }
+        
+        // 小猫轻微跟随鼠标（视差效果）
+        document.addEventListener('mousemove', function(e) {
+            const cat = document.querySelector('.cat-avatar');
+            if (cat && !cat.matches(':hover')) {
+                const rect = cat.getBoundingClientRect();
+                const catCenterX = rect.left + rect.width / 2;
+                const catCenterY = rect.top + rect.height / 2;
+                
+                const deltaX = (e.clientX - catCenterX) / 50;
+                const deltaY = (e.clientY - catCenterY) / 50;
+                
+                // 限制移动范围
+                const moveX = Math.max(-5, Math.min(5, deltaX));
+                const moveY = Math.max(-5, Math.min(5, deltaY));
+                
+                cat.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            }
+        });
+        
+        // 鼠标离开卡片区域时重置位置
+        document.querySelector('.login-guide-card')?.addEventListener('mouseleave', function() {
+            const cat = this.querySelector('.cat-avatar');
+            if (cat) {
+                cat.style.transform = '';
+            }
+        });
         
         // 页面加载时检查是否显示引导
         document.addEventListener('DOMContentLoaded', function() {
