@@ -197,26 +197,22 @@
         .search-wrapper {
             position: relative;
             flex: 1;
-            z-index: 9999;
         }
         
         .search-suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
+            position: fixed;
             background: linear-gradient(180deg, rgba(25,25,45,0.98) 0%, rgba(15,15,35,0.98) 100%);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(96,165,250,0.3);
-            border-top: none;
-            border-radius: 0 0 16px 16px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(96,165,250,0.1);
-            z-index: 10000;
+            border-radius: 12px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 30px rgba(96,165,250,0.15);
+            z-index: 99999;
             display: none;
             max-height: 320px;
             overflow-y: auto;
             animation: slideDown 0.2s ease-out;
+            min-width: 280px;
         }
         
         @keyframes slideDown {
@@ -1485,6 +1481,7 @@
         
         function showSearchSuggestions(keyword) {
             var suggestionsEl = document.getElementById('searchSuggestions');
+            var searchInput = document.getElementById('searchInput');
             var demands = getAllDemandsForSuggestions();
             
             if (!keyword || keyword.length < 1) {
@@ -1499,38 +1496,41 @@
                     '</div>';
                 suggestionsEl.classList.add('active');
                 currentSuggestionIndex = -1;
-                return;
+            } else {
+                keyword = keyword.toLowerCase();
+                var matches = demands.filter(function(d) {
+                    return d.title.toLowerCase().includes(keyword) ||
+                           d.description.toLowerCase().includes(keyword);
+                }).slice(0, 6);  // 最多显示6条
+                
+                if (matches.length === 0) {
+                    suggestionsEl.innerHTML = '<div class="search-no-results">没有找到包含"' + keyword + '"的需求</div>';
+                    suggestionsEl.classList.add('active');
+                } else {
+                    suggestionsEl.innerHTML = '<div class="suggestions-header">📋 匹配的需求 (' + matches.length + ')</div>' +
+                        matches.map(function(item, index) {
+                            // 高亮匹配文字
+                            var highlightedTitle = highlightKeyword(item.title, keyword);
+                            var shortDesc = item.description.length > 30 ? item.description.substring(0, 30) + '...' : item.description;
+                            return '<div class="search-suggestion-item" data-index="' + index + '" data-title="' + item.title + '">' +
+                                   '<span class="suggestion-icon">📋</span>' +
+                                   '<div class="suggestion-content">' +
+                                   '<div class="suggestion-text">' + highlightedTitle + '</div>' +
+                                   '<div class="suggestion-desc">' + shortDesc + '</div>' +
+                                   '</div>' +
+                                   '<span class="suggestion-arrow">›</span>' +
+                                   '</div>';
+                        }).join('');
+                    suggestionsEl.classList.add('active');
+                    currentSuggestionIndex = -1;
+                }
             }
             
-            keyword = keyword.toLowerCase();
-            var matches = demands.filter(function(d) {
-                return d.title.toLowerCase().includes(keyword) ||
-                       d.description.toLowerCase().includes(keyword);
-            }).slice(0, 6);  // 最多显示6条
-            
-            if (matches.length === 0) {
-                suggestionsEl.innerHTML = '<div class="search-no-results">没有找到包含"' + keyword + '"的需求</div>';
-                suggestionsEl.classList.add('active');
-                return;
-            }
-            
-            suggestionsEl.innerHTML = '<div class="suggestions-header">📋 匹配的需求 (' + matches.length + ')</div>' +
-                matches.map(function(item, index) {
-                    // 高亮匹配文字
-                    var highlightedTitle = highlightKeyword(item.title, keyword);
-                    var shortDesc = item.description.length > 30 ? item.description.substring(0, 30) + '...' : item.description;
-                    return '<div class="search-suggestion-item" data-index="' + index + '" data-title="' + item.title + '">' +
-                           '<span class="suggestion-icon">📋</span>' +
-                           '<div class="suggestion-content">' +
-                           '<div class="suggestion-text">' + highlightedTitle + '</div>' +
-                           '<div class="suggestion-desc">' + shortDesc + '</div>' +
-                           '</div>' +
-                           '<span class="suggestion-arrow">›</span>' +
-                           '</div>';
-                }).join('');
-            
-            suggestionsEl.classList.add('active');
-            currentSuggestionIndex = -1;
+            // 定位到搜索框下方
+            var rect = searchInput.getBoundingClientRect();
+            suggestionsEl.style.top = (rect.bottom + 8) + 'px';
+            suggestionsEl.style.left = rect.left + 'px';
+            suggestionsEl.style.width = rect.width + 'px';
         }
         
         function highlightKeyword(text, keyword) {
