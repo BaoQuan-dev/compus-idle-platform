@@ -90,10 +90,10 @@
             position: absolute;
             width: 100px;
             height: 100px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            background: linear-gradient(135deg, rgba(96,165,250,0.25), rgba(59,130,246,0.15));
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.15);
+            border: 1px solid rgba(96,165,250,0.3);
             border-radius: 24px;
             display: flex;
             flex-direction: column;
@@ -103,6 +103,61 @@
             transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
+            box-shadow: 0 0 20px rgba(96,165,250,0.1), inset 0 0 20px rgba(96,165,250,0.05);
+        }
+        .feature-item:hover {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, rgba(96,165,250,0.4), rgba(139,92,246,0.3));
+            border-color: rgba(96,165,250,0.6);
+            box-shadow: 0 0 30px rgba(96,165,250,0.3), 0 0 60px rgba(139,92,246,0.2), inset 0 0 20px rgba(255,255,255,0.1);
+        }
+        .feature-item .icon {
+            font-size: 28px;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
+        }
+        .feature-item .label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.9);
+            font-weight: 500;
+            text-shadow: 0 0 10px rgba(96,165,250,0.5);
+        }
+        .feature-item .glow-ring {
+            position: absolute;
+            inset: -4px;
+            border-radius: 28px;
+            border: 2px solid transparent;
+            background: linear-gradient(135deg, rgba(96,165,250,0.5), rgba(139,92,246,0.5)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .feature-item:hover .glow-ring {
+            opacity: 1;
+        }
+        /* 闪亮动画 */
+        @keyframes sparkle {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(96,165,250,0.2), inset 0 0 20px rgba(96,165,250,0.1);
+                border-color: rgba(96,165,250,0.3);
+            }
+            50% { 
+                box-shadow: 0 0 40px rgba(139,92,246,0.5), 0 0 80px rgba(96,165,250,0.4), inset 0 0 30px rgba(255,255,255,0.2);
+                border-color: rgba(139,92,246,0.8);
+            }
+        }
+        .feature-item.sparkle {
+            animation: sparkle 0.6s ease-in-out;
+        }
+        .feature-item.sparkle .icon {
+            animation: iconGlow 0.6s ease-in-out;
+        }
+        @keyframes iconGlow {
+            0%, 100% { filter: drop-shadow(0 0 8px rgba(255,255,255,0.5)); }
+            50% { filter: drop-shadow(0 0 20px rgba(255,255,255,1)) drop-shadow(0 0 30px rgba(139,92,246,0.8)); }
         }
         .feature-item:hover {
             transform: scale(1.1);
@@ -341,15 +396,18 @@
     </nav>
     
     <script>
-        // 唤醒所有功能
+        // 唤醒所有功能 - 同时闪亮
         function awakenAll() {
             const items = document.querySelectorAll('.feature-item');
-            items.forEach((item, index) => {
-                setTimeout(() => {
-                    item.style.animation = 'pulse 0.5s ease';
-                    setTimeout(() => item.style.animation = '', 500);
-                }, index * 100);
+            items.forEach((item) => {
+                item.classList.add('awaken');
             });
+            // 2秒后移除动画
+            setTimeout(() => {
+                items.forEach((item) => {
+                    item.classList.remove('awaken');
+                });
+            }, 2000);
         }
         
         // 登录弹窗
@@ -378,6 +436,30 @@
             @keyframes pulse {
                 0%, 100% { transform: scale(1); }
                 50% { transform: scale(1.15); }
+            }
+            @keyframes awaken {
+                0% { 
+                    transform: scale(1); 
+                    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+                }
+                50% { 
+                    transform: scale(1.1); 
+                    box-shadow: 0 0 40px rgba(255,255,255,0.8), 0 0 60px rgba(96,165,250,0.5);
+                }
+                100% { 
+                    transform: scale(1); 
+                    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+                }
+            }
+            .feature-item.awaken {
+                animation: awaken 0.8s ease-in-out infinite;
+            }
+            .feature-item.awaken .glow-ring {
+                animation: ringGlow 0.5s ease-in-out infinite alternate;
+            }
+            @keyframes ringGlow {
+                from { opacity: 0.5; transform: scale(1); }
+                to { opacity: 1; transform: scale(1.1); }
             }
         `;
         document.head.appendChild(style);
