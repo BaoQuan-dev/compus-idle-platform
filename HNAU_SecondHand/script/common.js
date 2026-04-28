@@ -274,6 +274,19 @@ const Auth = {
     },
 
     /**
+     * 获取当前登录用户的信息
+     * @returns {Object|null} 用户信息对象
+     */
+    getCurrentUser() {
+        const loginState = this.getLoginState();
+        if (!loginState.isLogin || !loginState.curUser) {
+            return null;
+        }
+        const users = this.getUsers();
+        return users.find(u => u.username === loginState.curUser) || null;
+    },
+
+    /**
      * 获取所有用户
      * @returns {Array} 用户数组
      */
