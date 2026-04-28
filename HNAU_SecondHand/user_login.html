@@ -432,12 +432,14 @@
                     localStorage.removeItem('prefillPassword');
                     
                     // 显示提示
-                    Toast.show('账号密码已填充，请点击登录', 'success');
+                    Toast.show('账号密码已填充，正在登录...', 'success');
                     
-                    // 自动点击登录按钮
+                    // 直接调用登录方法
                     setTimeout(() => {
-                        document.getElementById('loginBtn')?.click();
-                    }, 500);
+                        if (typeof LoginModule !== 'undefined') {
+                            LoginModule.handleLogin();
+                        }
+                    }, 300);
                 }
             }
         })();
