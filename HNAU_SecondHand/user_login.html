@@ -295,7 +295,7 @@
     <!-- 返回按钮 -->
     <a href="starfield.html" class="ai-back-btn">← 返回</a>
     
-    <main class="main-content">
+    <main class="main-content" id="loginContent">
         <div class="login-wrapper">
             <div class="login-card">
                 <!-- 标题 -->
@@ -410,7 +410,7 @@
         // 登录表单提交
         document.getElementById('loginForm')?.addEventListener('submit', function(e) {
             e.preventDefault();
-            Login.handleLogin();
+            LoginModule.handleLogin();
         });
 
         // 检查预填充账号密码（注册后跳转）

@@ -258,7 +258,7 @@
     <!-- 返回按钮 -->
     <a href="starfield.html" class="ai-back-btn">← 返回</a>
     
-    <main class="main-content">
+    <main class="main-content" id="loginContent">
         <div class="register-wrapper">
             <div class="register-card">
                 <!-- 标题 -->
@@ -324,7 +324,7 @@
         // 注册表单提交
         document.getElementById('registerForm')?.addEventListener('submit', function(e) {
             e.preventDefault();
-            Login.handleRegister();
+            LoginModule.handleRegister();
         });
     </script>
 </body>
