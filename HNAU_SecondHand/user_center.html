@@ -825,8 +825,8 @@
             const newContact = document.getElementById('editContact').value.trim();
             const newBio = document.getElementById('editBio').value.trim();
             
-            // 获取用户列表
-            const userList = Storage.get('userList') || [];
+            // 获取用户列表 - 使用与 Auth 一致的 key
+            const userList = Auth.getUsers();
             const userIndex = userList.findIndex(u => u.username === currentUser.username);
             
             if (userIndex !== -1) {
