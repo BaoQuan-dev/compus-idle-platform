@@ -474,8 +474,10 @@
         function loadUserData() {
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
             
-            if (!currentUser) {
-                location.href = 'user_login.html';
+            // 只有当用户明确未登录（无有效ID）时才跳转
+            if (!currentUser || !currentUser.id) {
+                // 不自动跳转，让用户留在当前页面
+                console.log('用户未登录或数据异常');
                 return;
             }
             
