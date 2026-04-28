@@ -406,6 +406,35 @@
                 Utils.跳转('release_goods.html');
             });
         });
+
+        // 检查预填充账号密码（注册后跳转）
+        window.addEventListener('DOMContentLoaded', function() {
+            const prefillUsername = localStorage.getItem('prefillUsername');
+            const prefillPassword = localStorage.getItem('prefillPassword');
+            
+            if (prefillUsername && prefillPassword) {
+                // 自动填充到登录表单
+                const usernameInput = document.getElementById('loginUsername');
+                const passwordInput = document.getElementById('loginPassword');
+                
+                if (usernameInput && passwordInput) {
+                    usernameInput.value = prefillUsername;
+                    passwordInput.value = prefillPassword;
+                    
+                    // 清除预填充数据
+                    localStorage.removeItem('prefillUsername');
+                    localStorage.removeItem('prefillPassword');
+                    
+                    // 显示提示
+                    Toast.show('账号密码已填充，请点击登录', 'success');
+                    
+                    // 自动点击登录按钮
+                    setTimeout(() => {
+                        document.getElementById('loginBtn')?.click();
+                    }, 500);
+                }
+            }
+        });
     </script>
 </body>
 </html>
