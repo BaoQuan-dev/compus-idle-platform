@@ -788,11 +788,12 @@
         
         // 监听 storage 变化，自动刷新数据（当用户在其他页面发布后返回）
         window.addEventListener('storage', function(e) {
-            if (e.key === 'goodsList' || e.key === 'demandList' || e.key === 'currentUser') {
-                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-                if (currentUser && currentUser.id) {
-                    loadStats(currentUser.id);
-                    loadMyPublications(currentUser.id);
+            if (e.key === 'goodsList' || e.key === 'demandList' || e.key === 'hnau_users' || e.key === 'hnau_login_state') {
+                const currentUser = Auth.getCurrentUser();
+                if (currentUser) {
+                    loadUserData();
+                    loadStats(currentUser.id || currentUser.username);
+                    loadMyPublications(currentUser.id || currentUser.username);
                 }
             }
         });
@@ -800,10 +801,11 @@
         // 页面可见性变化时刷新数据（当用户从其他页面返回）
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible') {
-                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-                if (currentUser && currentUser.id) {
+                const currentUser = Auth.getCurrentUser();
+                if (currentUser) {
                     loadUserData();
-                    loadMyPublications(currentUser.id);
+                    loadStats(currentUser.id || currentUser.username);
+                    loadMyPublications(currentUser.id || currentUser.username);
                 }
             }
         });
@@ -839,8 +841,8 @@
                 userList[userIndex].bio = newBio;
                 userList[userIndex].intro = newBio;
                 
-                // 保存到 localStorage
-                Storage.set('userList', userList);
+                // 保存到 localStorage - 使用与 Auth 一致的 key
+                Storage.set(Auth.KEYS.USERS, userList);
             }
             
             // 更新页面显示
