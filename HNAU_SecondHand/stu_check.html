@@ -1070,7 +1070,46 @@
                 window.location.href = 'user_login.html';
                 return;
             }
-            updateStepIndicator();
+
+            // 检查认证状态
+            checkAuthStatus();
+
+            // 如果已提交认证，显示审核状态
+            const isPending = localStorage.getItem('isPending') === 'true';
+            const authStatus = Auth.getUserAuthStatus(Auth.getLoginState().curUser);
+
+            if (isPending || authStatus === 'pending') {
+                // 显示审核中状态
+                const statusCard = document.querySelector('.status-card');
+                const certificationDataStr = localStorage.getItem('certificationData');
+                const certData = certificationDataStr ? JSON.parse(certificationDataStr) : {};
+
+                statusCard.innerHTML = `
+                    <div class="status-icon">⏳</div>
+                    <h3 class="status-title">认证审核中</h3>
+                    <p class="status-desc">我们将在1-3个工作日内完成审核，请耐心等待</p>
+                    <span class="status-badge pending">审核中</span>
+                    <div class="cert-info">
+                        <p>姓名：${certData.realName || ''}</p>
+                        <p>学号：${certData.studentId || ''}</p>
+                        <p>学院：${certData.college || ''}</p>
+                    </div>
+                `;
+                document.querySelector('.form-card').style.display = 'none';
+            } else if (authStatus === 'approved') {
+                // 显示认证成功状态
+                const statusCard = document.querySelector('.status-card');
+                statusCard.innerHTML = `
+                    <div class="status-icon">✅</div>
+                    <h3 class="status-title">认证已通过</h3>
+                    <p class="status-desc">恭喜！您的校园认证已通过审核</p>
+                    <span class="status-badge approved">已认证</span>
+                `;
+                document.querySelector('.form-card').style.display = 'none';
+            } else {
+                // 未提交，显示表单
+                updateStepIndicator();
+            }
         });
     </script>
 </body>

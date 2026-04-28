@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理员后台 - 农大闲置</title>
     <link rel="stylesheet" href="./style/main.css">
+    
+    <!-- 引入公共脚本 -->
+    <script src="./script/common.js"></script>
     <style>
         /* ========== 星空背景 ========== */
         body { position: relative; }
@@ -740,9 +743,12 @@
                     approvedList.push({...approved, status: 'approved'});
                     localStorage.setItem('approvedCertifications', JSON.stringify(approvedList));
                     
-                    // 如果是当前登录用户的认证，设置用户状态
-                    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-                    if (currentUser.studentId === approved.studentId) {
+                    // 使用 Auth 类更新用户认证状态
+                    const loginState = Auth.getLoginState();
+                    if (loginState.isLogin && loginState.curUser) {
+                        // 通过学号找到用户并更新认证状态
+                        Auth.updateUserAuthStatusByStudentId(approved.studentId, 'approved');
+                        // 同步更新 localStorage
                         localStorage.setItem('isCertified', 'true');
                         localStorage.removeItem('isPending');
                     }
