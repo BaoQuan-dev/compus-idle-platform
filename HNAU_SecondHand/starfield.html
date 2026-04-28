@@ -1189,8 +1189,8 @@
                 const offsetX = rect.left + rect.width / 2 - centerX;
                 const offsetY = rect.top + rect.height / 2 - centerY;
                 
-                // 设置过渡
-                mod.style.transition = 'all 1s cubic-bezier(0.4, 0, 0.2, 1)';
+                // 设置过渡 - 放慢动画
+                mod.style.transition = 'all 2s cubic-bezier(0.4, 0, 0.2, 1)';
                 mod.style.zIndex = '10000';
                 mod.style.position = 'fixed';
                 mod.style.top = '50%';
@@ -1203,13 +1203,13 @@
                 setTimeout(() => {
                     mod.style.transform = `translate(-50%, -50%) rotate(${360 * (index + 1) * 3}deg) scale(0)`;
                     mod.style.opacity = '0';
-                }, 50);
+                }, 100);
             });
             
-            // 1.2秒后跳转
+            // 2.5秒后跳转
             setTimeout(() => {
                 window.location.href = targetUrl;
-            }, 1200);
+            }, 2500);
         }
     </script>
 </body>
