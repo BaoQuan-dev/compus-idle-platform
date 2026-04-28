@@ -227,6 +227,119 @@
             color: #f87171;
         }
         
+        /* 我的发布列表 */
+        .my-publications-section {
+            margin-top: 20px;
+        }
+        
+        .section-title {
+            color: #fff;
+            font-size: 18px;
+            margin-bottom: 16px;
+            padding-left: 4px;
+        }
+        
+        .publication-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .publication-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .publication-type {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        
+        .publication-count {
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+        }
+        
+        .publication-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .empty-tip {
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        .publication-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            transition: background 0.2s;
+        }
+        
+        .publication-item:hover {
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .item-title {
+            color: #fff;
+            font-size: 14px;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .item-price {
+            color: #60A5FA;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .item-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            background: rgba(16,185,129,0.2);
+            color: #10B981;
+        }
+        
+        .item-status.sold {
+            background: rgba(107,114,128,0.2);
+            color: #9CA3AF;
+        }
+        
+        .item-status.reserved {
+            background: rgba(251,191,36,0.2);
+            color: #FBBF24;
+        }
+        
+        .item-status.deleted {
+            background: rgba(239,68,68,0.2);
+            color: #EF4444;
+        }
+        
         /* 响应式 */
         @media (max-width: 480px) {
             .stats-grid {
@@ -409,6 +522,33 @@
             </div>
         </div>
         
+        <!-- 我的发布列表 -->
+        <div class="my-publications-section">
+            <h3 class="section-title">📦 我的发布</h3>
+            
+            <!-- 发布闲置列表 -->
+            <div class="publication-card">
+                <div class="publication-header">
+                    <span class="publication-type">🛍️ 发布闲置</span>
+                    <span class="publication-count" id="publishedCount">0 件商品</span>
+                </div>
+                <div class="publication-list" id="myGoodsList">
+                    <div class="empty-tip">暂无发布的闲置物品</div>
+                </div>
+            </div>
+            
+            <!-- 发布需求列表 -->
+            <div class="publication-card">
+                <div class="publication-header">
+                    <span class="publication-type">📋 发布需求</span>
+                    <span class="publication-count" id="demandsCount">0 条需求</span>
+                </div>
+                <div class="publication-list" id="myDemandsList">
+                    <div class="empty-tip">暂无发布的需求</div>
+                </div>
+            </div>
+        </div>
+        
         <!-- 功能菜单 - 只保留退出登录 -->
         <div class="menu-card">
             <div class="menu-item logout" onclick="logout()">
@@ -485,11 +625,21 @@
             document.getElementById('userName').textContent = currentUser.name || '未设置昵称';
             document.getElementById('userId').textContent = 'ID: ' + (currentUser.id || '-');
             
-            // 更新认证状态
+            // 更新认证状态（兼容 verified 和 authStatus 两种字段）
             const badge = document.getElementById('userBadge');
-            if (currentUser.verified) {
+            const isVerified = currentUser.verified === true || currentUser.authStatus === 'approved';
+            const isPending = currentUser.authStatus === 'pending';
+            const isRejected = currentUser.authStatus === 'rejected';
+            
+            if (isVerified) {
                 badge.textContent = '✓ 已认证';
                 badge.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+            } else if (isPending) {
+                badge.textContent = '⏳ 审核中';
+                badge.style.background = 'linear-gradient(135deg, #FBBF24, #F59E0B)';
+            } else if (isRejected) {
+                badge.textContent = '✗ 已拒绝';
+                badge.style.background = 'linear-gradient(135deg, #EF4444, #DC2626)';
             } else {
                 badge.textContent = '未认证';
                 badge.style.background = 'linear-gradient(135deg, #6B7280, #4B5563)';
@@ -510,13 +660,19 @@
             
             // 加载统计数据
             loadStats(currentUser.id);
+            
+            // 加载我的发布列表
+            loadMyPublications(currentUser.id);
         }
         
         // 加载统计真实数据
         function loadStats(userId) {
-            // 获取发布的商品
+            // 获取发布的商品（兼容 publisherId 和 publisher.id 两种格式）
             const goodsList = JSON.parse(localStorage.getItem('goodsList') || '[]');
-            const myGoods = goodsList.filter(g => g.publisher && g.publisher.id === userId);
+            const myGoods = goodsList.filter(g => 
+                (g.publisher && g.publisher.id === userId) || 
+                (g.publisherId === userId)
+            );
             document.getElementById('statPublished').textContent = myGoods.length;
             
             // 获取已售出数量
@@ -527,11 +683,100 @@
             const totalViews = myGoods.reduce((sum, g) => sum + (g.views || 0), 0);
             document.getElementById('statViews').textContent = totalViews;
             
-            // 获取发布的需求
+            // 获取发布的需求（兼容 publisher.id 格式）
             const demandList = JSON.parse(localStorage.getItem('demandList') || '[]');
-            const myDemands = demandList.filter(d => d.publisher && d.publisher.id === userId);
+            const myDemands = demandList.filter(d => 
+                (d.publisher && d.publisher.id === userId) || 
+                (d.publisherId === userId)
+            );
             document.getElementById('statDemands').textContent = myDemands.length;
         }
+        
+        // 加载我的发布列表
+        function loadMyPublications(userId) {
+            // 加载发布的商品
+            const goodsList = JSON.parse(localStorage.getItem('goodsList') || '[]');
+            const myGoods = goodsList.filter(g => 
+                (g.publisher && g.publisher.id === userId) || 
+                (g.publisherId === userId)
+            );
+            
+            const goodsContainer = document.getElementById('myGoodsList');
+            const publishedCount = document.getElementById('publishedCount');
+            publishedCount.textContent = myGoods.length + ' 件商品';
+            
+            if (myGoods.length === 0) {
+                goodsContainer.innerHTML = '<div class="empty-tip">暂无发布的闲置物品</div>';
+            } else {
+                goodsContainer.innerHTML = myGoods.slice(0, 5).map(g => `
+                    <div class="publication-item">
+                        <div class="item-info">
+                            <span class="item-title">${g.name || g.title || '未命名'}</span>
+                            <span class="item-price">¥${g.price || 0}</span>
+                        </div>
+                        <span class="item-status ${g.status || 'available'}">${getStatusText(g.status)}</span>
+                    </div>
+                `).join('');
+            }
+            
+            // 加载发布的需求
+            const demandList = JSON.parse(localStorage.getItem('demandList') || '[]');
+            const myDemands = demandList.filter(d => 
+                (d.publisher && d.publisher.id === userId) || 
+                (d.publisherId === userId)
+            );
+            
+            const demandsContainer = document.getElementById('myDemandsList');
+            const demandsCount = document.getElementById('demandsCount');
+            demandsCount.textContent = myDemands.length + ' 条需求';
+            
+            if (myDemands.length === 0) {
+                demandsContainer.innerHTML = '<div class="empty-tip">暂无发布的需求</div>';
+            } else {
+                demandsContainer.innerHTML = myDemands.slice(0, 5).map(d => `
+                    <div class="publication-item demand-item">
+                        <div class="item-info">
+                            <span class="item-title">${d.title || '未命名'}</span>
+                            <span class="item-price">¥${d.price || 0}</span>
+                        </div>
+                        <span class="item-status">${d.status === 'published' ? '发布中' : '已结束'}</span>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        // 获取状态文字
+        function getStatusText(status) {
+            const statusMap = {
+                'available': '在售',
+                'reserved': '已预约',
+                'sold': '已售出',
+                'deleted': '已删除'
+            };
+            return statusMap[status] || '在售';
+        }
+        
+        // 监听 storage 变化，自动刷新数据（当用户在其他页面发布后返回）
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'goodsList' || e.key === 'demandList' || e.key === 'currentUser') {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                if (currentUser && currentUser.id) {
+                    loadStats(currentUser.id);
+                    loadMyPublications(currentUser.id);
+                }
+            }
+        });
+        
+        // 页面可见性变化时刷新数据（当用户从其他页面返回）
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                if (currentUser && currentUser.id) {
+                    loadUserData();
+                    loadMyPublications(currentUser.id);
+                }
+            }
+        });
         
         // 保存个人信息
         function saveProfile(e) {
