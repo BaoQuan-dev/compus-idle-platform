@@ -471,6 +471,147 @@
             </ul>
         </div>
 
+        <!-- ========== 翻转卡片样式 ========== -->
+        <style>
+        .flip-card {
+            background-color: transparent;
+            width: 280px;
+            height: 360px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+        }
+        
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .flip-card-front {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(59, 130, 246, 0.9));
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .flip-card-front .card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .flip-card-front .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .flip-card-front .card-price {
+            font-size: 24px;
+            color: #fbbf24;
+            font-weight: bold;
+        }
+        
+        .flip-card-front .flip-hint {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 10px;
+        }
+        
+        .flip-card-back {
+            background: linear-gradient(135deg, rgba(30, 30, 50, 0.95), rgba(50, 30, 80, 0.95));
+            color: white;
+            transform: rotateY(180deg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .flip-card-back .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 8px;
+        }
+        
+        .flip-card-back .info-row .label {
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .flip-card-back .info-row .value {
+            color: #a78bfa;
+            font-weight: 500;
+        }
+        
+        .flip-card-back .card-desc {
+            font-size: 13px;
+            line-height: 1.6;
+            color: rgba(255,255,255,0.8);
+            margin-top: 10px;
+            text-align: left;
+        }
+        
+        .flip-card-back .card-contact {
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 13px;
+        }
+        
+        .flip-card-back .card-contact span {
+            color: #fbbf24;
+        }
+        
+        .flip-card .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 10;
+        }
+        
+        .status-available { background: #10b981; }
+        .status-reserved { background: #f59e0b; }
+        .status-sold { background: #ef4444; }
+        
+        .publications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            padding: 20px;
+        }
+        </style>
+
         <!-- 发布表单 -->
         <div class="form-card">
             <!-- 商品图片 -->
@@ -823,27 +964,69 @@
             // 按时间倒序排列
             myGoods.sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
             
-            // 渲染卡片
-            container.innerHTML = myGoods.map(item => {
-                const statusMap = {
-                    'selling': { text: '出售中', class: 'selling' },
-                    'reserved': { text: '已预定', class: 'reserved' },
-                    'sold': { text: '已售出', class: 'sold' }
-                };
-                const status = statusMap[item.status] || statusMap['selling'];
-                const image = item.images && item.images[0] ? item.images[0] : './images/default-goods.png';
-                
-                return `
-                    <div class="publication-card">
-                        <img src="${image}" alt="${item.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 140%22><rect fill=%22%23374151%22 width=%22200%22 height=%22140%22/><text x=%22100%22 y=%2270%22 text-anchor=%22middle%22 fill=%22%239ca3af%22 font-size=%2240%22>📦</text></svg>'">
-                        <div class="card-content">
-                            <div class="card-title">${item.name}</div>
-                            <div class="card-price">¥${item.price.toFixed(2)}</div>
-                            <span class="card-status ${status.class}">${status.text}</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            // 渲染翻转卡片
+            container.innerHTML = `
+                <div class="publications-grid">
+                    ${myGoods.map(item => {
+                        const statusMap = {
+                            'selling': { text: '出售中', class: 'status-available' },
+                            'reserved': { text: '已预定', class: 'status-reserved' },
+                            'sold': { text: '已售出', class: 'status-sold' }
+                        };
+                        const status = statusMap[item.status] || statusMap['selling'];
+                        const image = item.images && item.images[0] ? item.images[0] : 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 140%22><rect fill=%22%23374151%22 width=%22200%22 height=%22140%22/><text x=%22100%22 y=%2270%22 text-anchor=%22middle%22 fill=%22%239ca3af%22 font-size=%2240%22>📦</text></svg>';
+                        
+                        const conditionMap = {
+                            '全新': '✨ 全新',
+                            '几乎全新': '💫 几乎全新',
+                            '轻微使用': '🌟 轻微使用',
+                            '正常使用': '📖 正常使用',
+                            '较旧': '🕐 较旧'
+                        };
+                        const tradeMap = {
+                            '校内': '🏫 校内',
+                            '线上': '📦 邮寄',
+                            '都行': '🤝 校内/邮寄'
+                        };
+                        
+                        return `
+                            <div class="flip-card">
+                                <span class="status-badge ${status.class}">${status.text}</span>
+                                <div class="flip-card-inner">
+                                    <div class="flip-card-front">
+                                        <img src="${image}" alt="${item.name}" class="card-image" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 140%22><rect fill=%22%23374151%22 width=%22200%22 height=%22140%22/><text x=%22100%22 y=%2270%22 text-anchor=%22middle%22 fill=%22%239ca3af%22 font-size=%2240%22>📦</text></svg>'">
+                                        <div class="card-title">${item.name}</div>
+                                        <div class="card-price">¥${item.price.toFixed(2)}</div>
+                                        <div class="flip-hint">👆 悬停查看详情</div>
+                                    </div>
+                                    <div class="flip-card-back">
+                                        <div class="info-row">
+                                            <span class="label">分类</span>
+                                            <span class="value">${item.category}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="label">成色</span>
+                                            <span class="value">${conditionMap[item.condition] || item.condition}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="label">交易</span>
+                                            <span class="value">${tradeMap[item.tradeType] || item.tradeType}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="label">发布时间</span>
+                                            <span class="value">${new Date(item.createTime).toLocaleDateString()}</span>
+                                        </div>
+                                        <div class="card-desc">${item.description || '暂无描述'}</div>
+                                        <div class="card-contact">
+                                            📞 联系: <span>${item.contact}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
             
             console.log('[Release] 渲染完成，共', myGoods.length, '条');
         }
