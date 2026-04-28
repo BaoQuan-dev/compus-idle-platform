@@ -703,6 +703,68 @@
     </div>
 
     <script>
+        // 用户认证状态管理
+        const CertificationManager = {
+            // 获取待审核列表
+            getPending: function() {
+                const pending = localStorage.getItem('pendingCertifications');
+                return pending ? JSON.parse(pending) : [];
+            },
+            
+            // 保存待审核列表
+            setPending: function(list) {
+                localStorage.setItem('pendingCertifications', JSON.stringify(list));
+            },
+            
+            // 添加待审核
+            add: function(data) {
+                const list = this.getPending();
+                list.push({
+                    id: 'C' + Date.now(),
+                    ...data,
+                    time: new Date().toLocaleString()
+                });
+                this.setPending(list);
+            },
+            
+            // 审核通过
+            approve: function(id) {
+                const list = this.getPending();
+                const index = list.findIndex(item => item.id === id);
+                if (index > -1) {
+                    const approved = list.splice(index, 1)[0];
+                    this.setPending(list);
+                    
+                    // 保存到已认证列表
+                    const approvedList = JSON.parse(localStorage.getItem('approvedCertifications') || '[]');
+                    approvedList.push({...approved, status: 'approved'});
+                    localStorage.setItem('approvedCertifications', JSON.stringify(approvedList));
+                    
+                    // 如果是当前登录用户的认证，设置用户状态
+                    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                    if (currentUser.studentId === approved.studentId) {
+                        localStorage.setItem('isCertified', 'true');
+                        localStorage.removeItem('isPending');
+                    }
+                    
+                    return true;
+                }
+                return false;
+            },
+            
+            // 审核拒绝
+            reject: function(id) {
+                const list = this.getPending();
+                const index = list.findIndex(item => item.id === id);
+                if (index > -1) {
+                    list.splice(index, 1);
+                    this.setPending(list);
+                    return true;
+                }
+                return false;
+            }
+        };
+
         function switchTab(tabName) {
             // 移除所有active
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -711,7 +773,85 @@
             // 添加active到当前
             event.target.classList.add('active');
             document.getElementById('tab-' + tabName).classList.add('active');
+            
+            // 如果是认证审核tab，刷新列表
+            if (tabName === 'certifications') {
+                renderPendingCertifications();
+            }
         }
+
+        // 渲染待审核列表
+        function renderPendingCertifications() {
+            const tbody = document.querySelector('#tab-certifications .data-table tbody');
+            const pending = CertificationManager.getPending();
+            
+            if (pending.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#888;">暂无待审核申请</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = pending.map(item => `
+                <tr>
+                    <td>#${item.id}</td>
+                    <td>${item.realName}</td>
+                    <td>${item.studentId}</td>
+                    <td>${item.college}</td>
+                    <td>${item.time}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="action-btn view" onclick="viewCert('${item.id}')">查看</button>
+                            <button class="action-btn approve" onclick="approveCert('${item.id}')">通过</button>
+                            <button class="action-btn reject" onclick="rejectCert('${item.id}')">拒绝</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 查看认证详情
+        function viewCert(id) {
+            const pending = CertificationManager.getPending();
+            const item = pending.find(i => i.id === id);
+            if (item) {
+                alert('认证详情：\n\n姓名：' + item.realName + '\n学号：' + item.studentId + '\n学院：' + item.college + '\n年级：' + item.grade + '\n专业：' + (item.major || '未填'));
+            }
+        }
+
+        // 审核通过
+        function approveCert(id) {
+            if (confirm('确认通过此认证申请？')) {
+                if (CertificationManager.approve(id)) {
+                    alert('审核通过！');
+                    renderPendingCertifications();
+                    // 更新统计
+                    updateStats();
+                }
+            }
+        }
+
+        // 审核拒绝
+        function rejectCert(id) {
+            if (confirm('确认拒绝此认证申请？')) {
+                if (CertificationManager.reject(id)) {
+                    alert('已拒绝');
+                    renderPendingCertifications();
+                }
+            }
+        }
+
+        // 更新统计数据
+        function updateStats() {
+            const pending = CertificationManager.getPending();
+            const approved = JSON.parse(localStorage.getItem('approvedCertifications') || '[]').length;
+            document.querySelector('.stat-value:nth-child(2)').textContent = approved;
+            document.querySelector('.stat-value:nth-child(3)').textContent = pending.length;
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            renderPendingCertifications();
+            updateStats();
+        });
     </script>
 </body>
 </html>

@@ -1041,10 +1041,12 @@
                 document.querySelector('.form-card').style.display = 'none';
 
                 // 设置认证完成标记
-                localStorage.setItem('isCertified', 'true');
+                // 保存认证数据（审核中状态）
+                localStorage.setItem('isPending', 'true'); // 待审核状态
+                localStorage.setItem('certificationData', JSON.stringify(certificationData));
 
                 // 显示成功提示
-                alert('提交成功！\n\n您的认证信息：\n姓名：' + certificationData.realName + '\n学号：' + certificationData.studentId + '\n学院：' + certificationData.college + '\n年级：' + certificationData.grade + '\n\n我们将在1-3个工作日内完成审核。');
+                alert('提交成功！\n\n您的认证信息：\n姓名：' + certificationData.realName + '\n学号：' + certificationData.studentId + '\n学院：' + certificationData.college + '\n年级：' + certificationData.grade + '\n\n请等待管理员审核通过后即可使用全部功能。');
             }, 1500);
         }
 

@@ -924,21 +924,44 @@
             const existing = document.querySelector('.auth-tip-modal');
             if (existing) existing.remove();
             
+            const state = UserState.get();
+            const isPending = localStorage.getItem('isPending') === 'true';
+            
             const modal = document.createElement('div');
             modal.className = 'auth-tip-modal';
+            
+            let icon, title, message, buttons;
+            
+            if (type === 'login') {
+                icon = '🔐';
+                title = '请先登录';
+                message = '登录后可使用更多功能';
+                buttons = `
+                    <a href="user_login.html" class="tip-btn primary">去登录</a>
+                    <a href="user_register.html" class="tip-btn secondary">注册账号</a>
+                `;
+            } else if (isPending) {
+                icon = '⏳';
+                title = '认证待审核';
+                message = '您的认证申请已提交，请等待管理员审核通过';
+                buttons = `
+                    <a href="stu_check.html" class="tip-btn secondary">查看认证状态</a>
+                `;
+            } else {
+                icon = '📋';
+                title = '请先完成校园认证';
+                message = '完成认证审核后即可使用所有功能';
+                buttons = `
+                    <a href="stu_check.html" class="tip-btn primary">去认证</a>
+                `;
+            }
+            
             modal.innerHTML = `
                 <div class="auth-tip-content">
-                    <div class="auth-tip-icon">${type === 'login' ? '🔐' : '📋'}</div>
-                    <h3>${type === 'login' ? '请先登录' : '请先完成认证'}</h3>
-                    <p>${type === 'login' ? '登录后可使用更多功能' : '完成校园认证后才能使用功能'}</p>
-                    <div class="auth-tip-btns">
-                        ${type === 'login' ? `
-                            <a href="user_login.html" class="tip-btn primary">去登录</a>
-                            <a href="user_register.html" class="tip-btn secondary">注册账号</a>
-                        ` : `
-                            <a href="stu_check.html" class="tip-btn primary">去认证</a>
-                        `}
-                    </div>
+                    <div class="auth-tip-icon">${icon}</div>
+                    <h3>${title}</h3>
+                    <p>${message}</p>
+                    <div class="auth-tip-btns">${buttons}</div>
                     <button class="tip-close" onclick="this.closest('.auth-tip-modal').remove()">×</button>
                 </div>
             `;
