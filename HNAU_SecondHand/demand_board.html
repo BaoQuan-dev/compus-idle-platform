@@ -1480,14 +1480,9 @@
         }
         
         function showSearchSuggestions(keyword) {
-            console.log('[Demand] showSearchSuggestions 被调用, keyword:', keyword, '长度:', keyword ? keyword.length : 0);
             var suggestionsEl = document.getElementById('searchSuggestions');
             var searchInput = document.getElementById('searchInput');
             var demands = getAllDemandsForSuggestions();
-            
-            console.log('[Demand] suggestionsEl:', suggestionsEl, 'classList:', suggestionsEl.className);
-            console.log('[Demand] demands数量:', demands ? demands.length : 'demands为空');
-            console.log('[Demand] demands数据:', demands);
             
             // 清空之前的内容
             suggestionsEl.innerHTML = '';
@@ -1503,7 +1498,6 @@
                     '<span class="hot-tag" onclick="selectSuggestion(\'耳机\')">耳机</span>' +
                     '</div>';
                 suggestionsEl.classList.add('active');
-                console.log('[Demand] 显示热门搜索');
                 currentSuggestionIndex = -1;
             } else {
                 keyword = keyword.toLowerCase();
@@ -1511,7 +1505,6 @@
                     return d.title.toLowerCase().includes(keyword) ||
                            d.description.toLowerCase().includes(keyword);
                 }).slice(0, 6);
-                console.log('[Demand] 匹配到的数量:', matches.length);
                 
                 if (matches.length === 0) {
                     suggestionsEl.innerHTML = '<div class="search-no-results">没有找到包含"' + keyword + '"的需求</div>';
@@ -1537,8 +1530,6 @@
             
             // 定位到搜索框下方 - 使用 fixed 定位确保不被遮挡
             var rect = searchInput.getBoundingClientRect();
-            console.log('[Demand] 搜索框位置:', rect);
-            console.log('[Demand] window.scrollY:', window.scrollY);
             
             // 强制使用 fixed 定位并移动到 body 末尾
             suggestionsEl.style.position = 'fixed';
@@ -1552,12 +1543,7 @@
             // 确保在 body 末尾，不被父容器裁剪
             if (suggestionsEl.parentElement !== document.body) {
                 document.body.appendChild(suggestionsEl);
-                console.log('[Demand] 已移动到 body 末尾');
             }
-            
-            console.log('[Demand] 最终样式 - top:', suggestionsEl.style.top, 'left:', suggestionsEl.style.left, 'width:', suggestionsEl.style.width);
-            console.log('[Demand] offsetParent:', suggestionsEl.offsetParent);
-            console.log('[Demand] getBoundingClientRect:', suggestionsEl.getBoundingClientRect());
         }
         
         function highlightKeyword(text, keyword) {
@@ -1595,22 +1581,16 @@
         
         // ========== 绑定事件 ==========
         function bindEvents() {
-            console.log('[Demand] bindEvents 开始执行');
-            
             // 发布按钮
             var publishBtn = document.getElementById('publishBtn');
-            console.log('[Demand] publishBtn:', publishBtn);
             if (publishBtn) {
                 publishBtn.addEventListener('click', function() {
-                    console.log('[Demand] 发布按钮被点击');
                     showPublishModal();
                 });
-                console.log('[Demand] 发布按钮事件绑定成功');
             }
             
             // 【修改】筛选 - 搜索框
             var searchInput = document.getElementById('searchInput');
-            console.log('[Demand] searchInput:', searchInput);
             
             if (!searchInput) {
                 console.error('[Demand] 错误：找不到 searchInput 元素！');
@@ -1618,11 +1598,9 @@
             }
             
             var searchWrapper = searchInput.parentElement;
-            console.log('[Demand] searchWrapper:', searchWrapper);
             
             // input 事件
             searchInput.addEventListener('input', function() {
-                console.log('[Demand] input 事件触发, value:', this.value);
                 var value = this.value.trim();
                 if (value) {
                     searchWrapper.classList.add('has-value');
@@ -1632,14 +1610,11 @@
                 showSearchSuggestions(value);
                 loadDemands();
             });
-            console.log('[Demand] input 事件绑定成功');
             
             // focus 事件
             searchInput.addEventListener('focus', function() {
-                console.log('[Demand] focus 事件触发');
                 showSearchSuggestions(this.value.trim());
             });
-            console.log('[Demand] focus 事件绑定成功');
             
             searchInput.addEventListener('keydown', function(e) {
                 var suggestionsEl = document.getElementById('searchSuggestions');
