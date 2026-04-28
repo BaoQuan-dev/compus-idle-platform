@@ -157,7 +157,12 @@
         .feature-item .icon {
             font-size: 26px;
             margin-bottom: 4px;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
+            background: linear-gradient(90deg, #60A5FA, #C084FC, #F472B6, #FBBF24, #34D399, #22D3EE, #60A5FA);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: iconRainbow 3s ease-in-out infinite;
             transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.5);
         }
         .feature-item:hover .icon {
@@ -166,15 +171,45 @@
         }
         .feature-item .label {
             font-size: 10px;
-            color: rgba(255, 255, 255, 0.95);
             font-weight: 600;
-            text-shadow: 0 0 15px rgba(139, 92, 246, 0.8);
+            background: linear-gradient(90deg, #fff, #60A5FA, #C084FC, #F472B6, #FBBF24, #34D399, #22D3EE, #fff);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: labelRainbow 4s ease-in-out infinite;
             transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.5);
         }
         .feature-item:hover .label {
             text-shadow: 0 0 40px rgba(255, 255, 255, 1), 0 0 80px rgba(139, 92, 246, 1);
             // transform跟随父元素
             color: #fff;
+        }
+        
+        @keyframes iconRainbow {
+            0%, 100% {
+                background-position: 0% 50%;
+                filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.6));
+            }
+            25% {
+                background-position: 25% 0%;
+                filter: drop-shadow(0 0 15px rgba(192, 132, 252, 0.7));
+            }
+            50% {
+                background-position: 50% 50%;
+                filter: drop-shadow(0 0 20px rgba(244, 114, 182, 0.8));
+            }
+            75% {
+                background-position: 75% 100%;
+                filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.7));
+            }
+        }
+        
+        @keyframes labelRainbow {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 25% 0%; }
+            50% { background-position: 50% 50%; }
+            75% { background-position: 75% 100%; }
         }
         .feature-item .glow-ring {
             display: none; /* 星星形状不需要额外glow-ring */
