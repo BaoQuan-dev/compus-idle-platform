@@ -646,6 +646,18 @@ const Auth = {
     },
 
     /**
+     * 设置当前登录用户
+     * @param {Object} userInfo - 用户信息
+     */
+    setCurrentUser(userInfo) {
+        const loginState = this.getLoginState();
+        loginState.isLoggedIn = true;
+        loginState.curUser = userInfo;
+        Storage.set(this.KEYS.LOGIN_STATE, loginState);
+        console.log('[Auth] 设置当前用户:', userInfo.username);
+    },
+
+    /**
      * 注册用户
      * @param {Object} userInfo - 用户信息
      */
@@ -653,6 +665,9 @@ const Auth = {
         const users = this.getUsers();
         users.push(userInfo);
         Storage.set(this.KEYS.USERS, users);
+
+        // 注册成功后自动设置为当前登录用户
+        this.setCurrentUser(userInfo);
     },
 
     /**

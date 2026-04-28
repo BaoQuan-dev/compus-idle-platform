@@ -452,27 +452,11 @@ const LoginModule = {
 
             Auth.registerUser(userInfo);
 
-            Toast.show('注册成功！请切换到登录页登录', 'success');
+            Toast.show('注册成功！已自动登录', 'success');
 
-            // 清空注册表单
-            document.getElementById('regUsername').value = '';
-            document.getElementById('regPassword').value = '';
-            document.getElementById('regConfirmPassword').value = '';
-
-            // 1秒后切换到登录选项卡
+            // 自动登录并跳转首页
             setTimeout(() => {
-                this.switchTab('login');
-                // 自动填充用户名
-                const loginUsername = document.getElementById('loginUsername');
-                if (loginUsername) {
-                    loginUsername.value = username;
-                }
-                // 聚焦密码输入框
-                const loginPassword = document.getElementById('loginPassword');
-                if (loginPassword) {
-                    loginPassword.focus();
-                }
-                this.resetSubmitBtn();
+                Utils.跳转('starfield.html');
             }, 1000);
 
         }, 500);
