@@ -849,8 +849,10 @@
         function updateStats() {
             const pending = CertificationManager.getPending();
             const approved = JSON.parse(localStorage.getItem('approvedCertifications') || '[]').length;
-            document.querySelector('.stat-value:nth-child(2)').textContent = approved;
-            document.querySelector('.stat-value:nth-child(3)').textContent = pending.length;
+            // 使用正确的选择器
+            const statCards = document.querySelectorAll('.stat-card .stat-value');
+            if (statCards[1]) statCards[1].textContent = approved;  // 认证用户
+            if (statCards[2]) statCards[2].textContent = pending.length;  // 待审核
         }
 
         // 页面加载时初始化
