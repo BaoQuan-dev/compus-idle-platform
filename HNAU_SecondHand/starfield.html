@@ -1182,37 +1182,70 @@
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2;
             
-            // 为每个模块添加漩涡旋转缩小动画
+            // 五个模块围绕中心的位置（围成圆圈）
+            const radius = Math.min(window.innerWidth, window.innerHeight) * 0.25;
+            const startAngles = [0, 72, 144, 216, 288]; // 五个模块初始角度（360/5=72度）
+            
+            // 初始化模块位置到圆周上
             modules.forEach((mod, index) => {
-                const rect = mod.getBoundingClientRect();
-                const modCenterX = rect.left + rect.width / 2;
-                const modCenterY = rect.top + rect.height / 2;
+                const angle = (startAngles[index] - 90) * Math.PI / 180; // 转换为弧度，从顶部开始
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
                 
-                // 设置固定定位，保持原位置
                 mod.style.position = 'fixed';
-                mod.style.left = modCenterX + 'px';
-                mod.style.top = modCenterY + 'px';
+                mod.style.left = x + 'px';
+                mod.style.top = y + 'px';
                 mod.style.transform = 'translate(-50%, -50%)';
                 mod.style.zIndex = '10000';
-                mod.style.transition = 'all 4s cubic-bezier(0.6, 0, 0.4, 1)';
-                
-                // 围绕各自中心旋转的同时，向屏幕中心缩小吸入
-                // 每个模块旋转不同圈数，形成漩涡
-                const rotations = [4, 6, 8, 10, 12]; // 每圈360度
-                const targetScale = 0; // 缩小到0
-                
-                setTimeout(() => {
-                    mod.style.left = centerX + 'px';
-                    mod.style.top = centerY + 'px';
-                    mod.style.transform = `translate(-50%, -50%) rotate(${rotations[index] * 360}deg) scale(${targetScale})`;
-                    mod.style.opacity = '0';
-                }, 50);
+                mod.style.transition = 'none';
+                mod.style.opacity = '1';
             });
             
-            // 4.5秒后跳转
-            setTimeout(() => {
-                window.location.href = targetUrl;
-            }, 4500);
+            // 动画参数
+            const duration = 4000; // 4秒
+            const startTime = performance.now();
+            const totalRotation = 6; // 旋转6圈
+            
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // 缓动函数（慢入慢出）
+                const easeProgress = progress < 0.5 
+                    ? 2 * progress * progress 
+                    : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                
+                // 更新半径（从大到小）
+                const currentRadius = radius * (1 - easeProgress);
+                
+                modules.forEach((mod, index) => {
+                    // 计算当前角度 = 初始角度 + 旋转角度
+                    const angle = ((startAngles[index] - 90) + easeProgress * totalRotation * 360) * Math.PI / 180;
+                    const x = centerX + currentRadius * Math.cos(angle);
+                    const y = centerY + currentRadius * Math.sin(angle);
+                    
+                    mod.style.left = x + 'px';
+                    mod.style.top = y + 'px';
+                    
+                    // 自身也旋转
+                    mod.style.transform = `translate(-50%, -50%) rotate(${easeProgress * totalRotation * 360}deg)`;
+                    
+                    // 缩小
+                    const scale = 1 - easeProgress;
+                    mod.style.transform = `translate(-50%, -50%) scale(${scale}) rotate(${easeProgress * totalRotation * 360}deg)`;
+                });
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    // 动画结束，跳转
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 300);
+                }
+            }
+            
+            requestAnimationFrame(animate);
         }
     </script>
 </body>
