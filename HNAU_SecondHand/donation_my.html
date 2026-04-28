@@ -40,7 +40,7 @@
         .page-header {
             background: transparent;
             color: #fff;
-            padding: calc(var(--nav-height, 64px) + 20px) 20px 24px;
+            padding: 80px 20px 10px;
             text-align: center;
         }
         
@@ -59,6 +59,32 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 20px 16px;
+        }
+        
+        /* 返回按钮 - 玻璃拟态风格 */
+        .ai-back-btn {
+            position: fixed;
+            top: 20px;
+            left: 16px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 10px 16px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 100;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .ai-back-btn:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(96,165,250,0.3);
         }
         
         /* 统计卡片 */
@@ -850,15 +876,15 @@
         <div class="cosmos-stars"></div>
         <div class="cosmos-nebula"></div>
     </div>
-    <!-- 导航栏 -->
+    
+    <!-- 返回按钮 -->
+    <a href="explore.html" class="ai-back-btn">← 返回</a>
     
     <!-- 页面头部 -->
     <div class="page-header">
         <h1>🌱 我的公益转赠</h1>
         <p>记录每一份爱心，传递每一份温暖</p>
     </div>
-    
-    <div class="page-header"><h1>我的公益</h1><p>追踪你的爱心足迹</p></div>
         <div class="page-container">
         <!-- 统计卡片 -->
         <div class="stats-card">

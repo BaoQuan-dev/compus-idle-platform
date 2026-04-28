@@ -20,9 +20,10 @@
         /* ========== 管理员后台 - 星空玻璃拟态风格 ========== */
         
         .page-header {
-            background: transparent;
-            padding: calc(var(--nav-height, 64px) + 24px) 20px 0;
+            padding: 80px 20px 10px;
             text-align: left;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
         .page-header h1 {
@@ -45,6 +46,32 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 24px 16px 100px;
+        }
+        
+        /* 返回按钮 - 玻璃拟态风格 */
+        .ai-back-btn {
+            position: fixed;
+            top: 20px;
+            left: 16px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 10px 16px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 100;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .ai-back-btn:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(96,165,250,0.3);
         }
         
         /* ========== 统计卡片 ========== */
@@ -404,17 +431,16 @@
         </style>
 </head>
 <body>
-    <!-- 顶部导航 -->
-
+    <!-- 返回按钮 -->
+    <a href="explore.html" class="ai-back-btn">← 返回</a>
+    
     <!-- 页面标题 -->
     <div class="page-header">
-        <h1>管理员后台</h1>
+        <h1>⚙️ 管理员后台</h1>
         <p>管理平台数据与用户认证审核</p>
     </div>
-
-    <!-- 主内容 -->
-    <div class="page-header"><h1>管理后台</h1><p>平台数据管理与用户审核</p></div>
-        <div class="page-container">
+    
+    <div class="page-container">
         <!-- 统计卡片 -->
         <div class="stats-grid">
             <div class="stat-card">

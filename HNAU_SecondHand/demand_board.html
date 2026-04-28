@@ -57,15 +57,41 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f23 100%);
+            background: transparent;
             min-height: 100vh;
             color: #fff;
+        }
+        
+        /* 返回按钮 - 玻璃拟态风格 */
+        .ai-back-btn {
+            position: fixed;
+            top: 20px;
+            left: 16px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 10px 16px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 100;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .ai-back-btn:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(96,165,250,0.3);
         }
         
         /* ========== 顶部Banner - 改为透明内嵌式 ========== */
         .page-header {
             background: transparent;
-            padding: calc(var(--nav-height, 64px) + 20px) 20px 16px;
+            padding: 80px 20px 10px;
             text-align: center;
             position: relative;
         }
@@ -990,7 +1016,9 @@
         <div class="cosmos-stars"></div>
         <div class="cosmos-nebula"></div>
     </div>
-    <!-- 顶部导航 -->
+    
+    <!-- 返回按钮 -->
+    <a href="explore.html" class="ai-back-btn">← 返回</a>
     
     <!-- 页面内容 -->
     <div class="page-header">
