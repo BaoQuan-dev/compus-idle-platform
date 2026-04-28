@@ -632,35 +632,8 @@
                                 <th>操作</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>#C001</td>
-                                <td>王同学</td>
-                                <td>2023010456</td>
-                                <td>经管学院</td>
-                                <td>2024-01-18 10:30</td>
-                                <td>
-                                    <div class="action-btns">
-                                        <button class="action-btn view">查看</button>
-                                        <button class="action-btn approve">通过</button>
-                                        <button class="action-btn reject">拒绝</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#C002</td>
-                                <td>赵同学</td>
-                                <td>2024010789</td>
-                                <td>林学院</td>
-                                <td>2024-01-18 14:20</td>
-                                <td>
-                                    <div class="action-btns">
-                                        <button class="action-btn view">查看</button>
-                                        <button class="action-btn approve">通过</button>
-                                        <button class="action-btn reject">拒绝</button>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="pendingCertTable">
+                            <tr><td colspan="6" style="text-align:center;padding:20px;color:#999;">暂无待审核申请</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -743,15 +716,13 @@
                     approvedList.push({...approved, status: 'approved'});
                     localStorage.setItem('approvedCertifications', JSON.stringify(approvedList));
                     
-                    // 使用 Auth 类更新用户认证状态
-                    const loginState = Auth.getLoginState();
-                    if (loginState.isLogin && loginState.curUser) {
-                        // 通过学号找到用户并更新认证状态
-                        Auth.updateUserAuthStatusByStudentId(approved.studentId, 'approved');
-                        // 同步更新 localStorage
-                        localStorage.setItem('isCertified', 'true');
-                        localStorage.removeItem('isPending');
+                    // 使用 Auth 类更新用户认证状态（通过用户名查找）
+                    if (approved.username) {
+                        Auth.updateUserAuthStatus(approved.username, 'approved');
                     }
+                    // 同步更新 localStorage
+                    localStorage.setItem('isCertified', 'true');
+                    localStorage.removeItem('isPending');
                     
                     return true;
                 }
@@ -768,8 +739,42 @@
                     return true;
                 }
                 return false;
+            },
+            
+            // 渲染待审核列表
+            render: function() {
+                const pending = this.getPending();
+                const tbody = document.getElementById('pendingCertTable');
+                if (!tbody) return;
+                
+                if (pending.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#999;">暂无待审核申请</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = pending.map(item => `
+                    <tr>
+                        <td>${item.id}</td>
+                        <td>${item.realName || '-'}</td>
+                        <td>${item.studentId || '-'}</td>
+                        <td>${item.college || '-'}</td>
+                        <td>${item.time || '-'}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn view" onclick="viewCert('${item.id}')">查看</button>
+                                <button class="action-btn approve" onclick="approveCert('${item.id}')">通过</button>
+                                <button class="action-btn reject" onclick="rejectCert('${item.id}')">拒绝</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
             }
         };
+        
+        // 渲染待审核认证列表（兼容旧调用）
+        function renderPendingCertifications() {
+            CertificationManager.render();
+        }
 
         function switchTab(tabName) {
             // 移除所有active
