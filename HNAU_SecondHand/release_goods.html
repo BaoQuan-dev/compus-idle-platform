@@ -929,7 +929,7 @@
             console.log('[Release] 商品图片数量:', goods.images.length);
             console.log('[Release] 第一张图片:', goods.images[0] ? goods.images[0].substring(0, 100) + '...' : '无');
             
-            // 同时保存到管理员待审核列表
+            // 同时保存到管理员待审核列表（只保存基本信息，不保存图片节省空间）
             const ADMIN_KEY = 'hnau_admin_pending_goods';
             let adminList = [];
             try {
@@ -938,7 +938,28 @@
                     adminList = JSON.parse(adminSaved);
                 }
             } catch(e) {}
-            adminList.push(goods);
+            
+            // 只保存商品基本信息，不保存图片
+            const adminItem = {
+                id: goods.id,
+                name: goods.name,
+                category: goods.category,
+                price: goods.price,
+                condition: goods.condition,
+                tradeType: goods.tradeType,
+                publisher: goods.publisher,
+                status: 'pending',
+                time: goods.time,
+                hasImages: goods.images && goods.images.length > 0
+            };
+            
+            adminList.push(adminItem);
+            
+            // 限制管理员列表长度
+            if (adminList.length > 100) {
+                adminList = adminList.slice(-99);
+            }
+            
             localStorage.setItem(ADMIN_KEY, JSON.stringify(adminList));
             console.log('[Release] 已同步到管理员待审核列表，长度:', adminList.length);
             
@@ -952,6 +973,12 @@
                 }
             } catch(e) {
                 console.log('[Release] 解析商品列表失败:', e);
+            }
+            
+            // 限制列表长度，最多保存50条，清理旧数据
+            if (goodsList.length >= 50) {
+                goodsList = goodsList.slice(-49);
+                console.log('[Release] 已清理旧数据，当前数量:', goodsList.length);
             }
             
             goodsList.push(goods);
