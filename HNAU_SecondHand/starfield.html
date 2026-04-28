@@ -444,6 +444,19 @@
             50% { transform: translateX(-50%) translateY(-5px); }
         }
         
+        /* 小猫容器 - 整体呼吸动画 */
+        .cat-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            animation: catBreathing 3s ease-in-out infinite;
+        }
+        
+        @keyframes catBreathing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
         /* 小猫图片 */
         .cat-avatar {
             width: 120px;
@@ -456,9 +469,61 @@
                 0 0 60px rgba(147, 112, 219, 0.3);
             position: relative;
             z-index: 2;
-            animation: catBounce 3s ease-in-out infinite;
             transition: all 0.3s ease;
             cursor: pointer;
+        }
+        
+        /* 眨眼覆盖层 */
+        .cat-avatar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(
+                to bottom,
+                transparent 38%,
+                rgba(255,255,255,0.9) 38%,
+                rgba(255,255,255,0.9) 42%,
+                transparent 42%
+            );
+            opacity: 0;
+            animation: catBlink 4s ease-in-out infinite;
+            z-index: 3;
+            pointer-events: none;
+        }
+        
+        @keyframes catBlink {
+            0%, 90%, 100% { opacity: 0; }
+            93%, 97% { opacity: 1; }
+        }
+        
+        /* 招手小爪子 */
+        .cat-paw {
+            position: absolute;
+            bottom: 15px;
+            right: -5px;
+            font-size: 28px;
+            z-index: 4;
+            animation: catWave 2s ease-in-out infinite;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        
+        @keyframes catWave {
+            0%, 100% { transform: rotate(-20deg); }
+            50% { transform: rotate(20deg); }
+        }
+        
+        .cat-avatar:hover ~ .cat-paw,
+        .cat-container:hover .cat-paw {
+            animation: catWaveExcited 0.5s ease-in-out infinite;
+        }
+        
+        @keyframes catWaveExcited {
+            0%, 100% { transform: rotate(-30deg) scale(1.2); }
+            50% { transform: rotate(30deg) scale(1.2); }
         }
         
         .cat-avatar:hover {
@@ -744,7 +809,10 @@
             </div>
             
             <!-- 小猫头像 -->
-            <img src="./images/cat-guide.jpg" alt="欢迎小猫" class="cat-avatar">
+            <div class="cat-container">
+                <img src="./images/cat-guide.jpg" alt="欢迎小猫" class="cat-avatar">
+                <span class="cat-paw">🐾</span>
+            </div>
             
             <!-- 云朵装饰 -->
             <div class="cloud-bg"></div>
@@ -1065,10 +1133,10 @@
         }
         
         // 小猫轻微跟随鼠标（视差效果）
+        const catContainer = document.querySelector('.cat-container');
         document.addEventListener('mousemove', function(e) {
-            const cat = document.querySelector('.cat-avatar');
-            if (cat && !cat.matches(':hover')) {
-                const rect = cat.getBoundingClientRect();
+            if (catContainer && !catContainer.matches(':hover')) {
+                const rect = catContainer.getBoundingClientRect();
                 const catCenterX = rect.left + rect.width / 2;
                 const catCenterY = rect.top + rect.height / 2;
                 
@@ -1079,15 +1147,14 @@
                 const moveX = Math.max(-5, Math.min(5, deltaX));
                 const moveY = Math.max(-5, Math.min(5, deltaY));
                 
-                cat.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                catContainer.style.transform = `translate(${moveX}px, ${moveY}px)`;
             }
         });
         
         // 鼠标离开卡片区域时重置位置
         document.querySelector('.login-guide-card')?.addEventListener('mouseleave', function() {
-            const cat = this.querySelector('.cat-avatar');
-            if (cat) {
-                cat.style.transform = '';
+            if (catContainer) {
+                catContainer.style.transform = '';
             }
         });
         
