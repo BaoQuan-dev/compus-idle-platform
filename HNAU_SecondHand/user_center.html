@@ -665,13 +665,22 @@
             loadMyPublications(currentUser.username);
         }
         
-        // 加载统计真实数据 - 使用 username 匹配
-        function loadStats(username) {
+        // 加载统计真实数据 - 兼容多种用户ID格式
+        function loadStats(userId) {
+            // 确保 userId 是正确的格式
+            const normalizedId = userId.startsWith('user_') ? userId : 'user_' + userId;
+            
             // 获取发布的商品（兼容 publisherId 和 publisher.id 两种格式）
             const goodsList = JSON.parse(localStorage.getItem('goodsList') || '[]');
             const myGoods = goodsList.filter(g => 
-                (g.publisher && g.publisher.name === username) || 
-                (g.publisherId === username)
+                // 匹配 publisher.name（username格式）
+                (g.publisher && g.publisher.name === userId) || 
+                // 匹配 publisherId（user_xxx格式或纯username格式）
+                g.publisherId === normalizedId || 
+                g.publisherId === userId ||
+                // 匹配 publisher.id
+                (g.publisher && g.publisher.id === normalizedId) ||
+                (g.publisher && g.publisher.id === userId)
             );
             document.getElementById('statPublished').textContent = myGoods.length;
             
@@ -686,19 +695,34 @@
             // 获取发布的需求（兼容 publisher.id 格式）
             const demandList = JSON.parse(localStorage.getItem('demandList') || '[]');
             const myDemands = demandList.filter(d => 
-                (d.publisher && d.publisher.name === username) || 
-                (d.publisherId === username)
+                // 匹配 publisher.name（username格式）
+                (d.publisher && d.publisher.name === userId) || 
+                // 匹配 publisherId（user_xxx格式或纯username格式）
+                d.publisherId === normalizedId || 
+                d.publisherId === userId ||
+                // 匹配 publisher.id
+                (d.publisher && d.publisher.id === normalizedId) ||
+                (d.publisher && d.publisher.id === userId)
             );
             document.getElementById('statDemands').textContent = myDemands.length;
         }
         
-        // 加载我的发布列表 - 使用 username 匹配
-        function loadMyPublications(username) {
+        // 加载我的发布列表 - 兼容多种用户ID格式
+        function loadMyPublications(userId) {
+            // 确保 userId 是正确的格式
+            const normalizedId = userId.startsWith('user_') ? userId : 'user_' + userId;
+            
             // 加载发布的商品
             const goodsList = JSON.parse(localStorage.getItem('goodsList') || '[]');
             const myGoods = goodsList.filter(g => 
-                (g.publisher && g.publisher.name === username) || 
-                (g.publisherId === username)
+                // 匹配 publisher.name（username格式）
+                (g.publisher && g.publisher.name === userId) || 
+                // 匹配 publisherId（user_xxx格式或纯username格式）
+                g.publisherId === normalizedId || 
+                g.publisherId === userId ||
+                // 匹配 publisher.id
+                (g.publisher && g.publisher.id === normalizedId) ||
+                (g.publisher && g.publisher.id === userId)
             );
             
             const goodsContainer = document.getElementById('myGoodsList');
@@ -719,11 +743,17 @@
                 `).join('');
             }
             
-            // 加载发布的需求 - 使用 username 匹配
+            // 加载发布的需求
             const demandList = JSON.parse(localStorage.getItem('demandList') || '[]');
             const myDemands = demandList.filter(d => 
-                (d.publisher && d.publisher.name === username) || 
-                (d.publisherId === username)
+                // 匹配 publisher.name（username格式）
+                (d.publisher && d.publisher.name === userId) || 
+                // 匹配 publisherId（user_xxx格式或纯username格式）
+                d.publisherId === normalizedId || 
+                d.publisherId === userId ||
+                // 匹配 publisher.id
+                (d.publisher && d.publisher.id === normalizedId) ||
+                (d.publisher && d.publisher.id === userId)
             );
             
             const demandsContainer = document.getElementById('myDemandsList');
