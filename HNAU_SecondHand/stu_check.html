@@ -1044,6 +1044,20 @@
                     localStorage.setItem('isCertified', 'false');
                 }
 
+                // 【修复】同时保存到管理员待审核列表
+                const pendingList = JSON.parse(localStorage.getItem('pendingCertifications') || '[]');
+                pendingList.push({
+                    id: 'C' + Date.now(),
+                    realName: certificationData.realName,
+                    studentId: certificationData.studentId,
+                    college: certificationData.college,
+                    grade: certificationData.grade,
+                    major: certificationData.major || '',
+                    username: loginState.curUser || '',
+                    time: new Date().toLocaleString()
+                });
+                localStorage.setItem('pendingCertifications', JSON.stringify(pendingList));
+
                 // 更新状态卡片
                 const statusCard = document.querySelector('.status-card');
                 statusCard.innerHTML = `
