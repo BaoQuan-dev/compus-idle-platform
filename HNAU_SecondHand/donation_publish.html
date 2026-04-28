@@ -1108,9 +1108,13 @@
         
         // ========== 成功弹窗 ==========
         successBtn.addEventListener('click', function() {
+            // 关闭弹窗
+            successModal.classList.remove('active');
             // 刷新我的发布列表
             loadMyPublications();
-            window.location.href = 'donation_my.html';
+            // 不跳转，直接在当前页面显示
+            // window.location.href = 'donation_my.html';
+            console.log('[Donation] 已刷新我的发布列表');
         });
         
         // ========== 获取当前用户 ==========
@@ -1173,10 +1177,11 @@
             console.log('[Donation] 全部发布列表数量:', allList.length);
             console.log('[Donation] 当前用户ID:', currentUser.id);
             
-            // 筛选当前用户的发布
+            // 筛选当前用户的发布（publisher 是对象，包含 id 属性）
             var myList = allList.filter(function(item) {
-                console.log('[Donation] 检查项目发布者:', item.publisherId, '对比:', currentUser.id);
-                return item.publisherId === currentUser.id;
+                var pubId = item.publisher && item.publisher.id ? item.publisher.id : (item.publisherId || '');
+                console.log('[Donation] 检查项目:', item.itemName, '发布者ID:', pubId, '当前用户ID:', currentUser.id, '匹配:', pubId === currentUser.id);
+                return pubId === currentUser.id;
             });
             console.log('[Donation] 筛选后我的发布数量:', myList.length);
             
