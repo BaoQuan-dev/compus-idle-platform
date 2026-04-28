@@ -1535,13 +1535,29 @@
                 }
             }
             
-            // 定位到搜索框下方
+            // 定位到搜索框下方 - 使用 fixed 定位确保不被遮挡
             var rect = searchInput.getBoundingClientRect();
             console.log('[Demand] 搜索框位置:', rect);
-            suggestionsEl.style.top = (rect.bottom + 8) + 'px';
-            suggestionsEl.style.left = rect.left + 'px';
+            console.log('[Demand] window.scrollY:', window.scrollY);
+            
+            // 强制使用 fixed 定位并移动到 body 末尾
+            suggestionsEl.style.position = 'fixed';
+            suggestionsEl.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+            suggestionsEl.style.left = (rect.left + window.scrollX) + 'px';
             suggestionsEl.style.width = rect.width + 'px';
-            console.log('[Demand] 设置样式后, display:', getComputedStyle(suggestionsEl).display, 'opacity:', getComputedStyle(suggestionsEl).opacity);
+            suggestionsEl.style.zIndex = '99999';
+            suggestionsEl.style.visibility = 'visible';
+            suggestionsEl.style.opacity = '1';
+            
+            // 确保在 body 末尾，不被父容器裁剪
+            if (suggestionsEl.parentElement !== document.body) {
+                document.body.appendChild(suggestionsEl);
+                console.log('[Demand] 已移动到 body 末尾');
+            }
+            
+            console.log('[Demand] 最终样式 - top:', suggestionsEl.style.top, 'left:', suggestionsEl.style.left, 'width:', suggestionsEl.style.width);
+            console.log('[Demand] offsetParent:', suggestionsEl.offsetParent);
+            console.log('[Demand] getBoundingClientRect:', suggestionsEl.getBoundingClientRect());
         }
         
         function highlightKeyword(text, keyword) {
