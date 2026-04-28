@@ -1480,13 +1480,17 @@
         }
         
         function showSearchSuggestions(keyword) {
-            console.log('[Demand] showSearchSuggestions 被调用, keyword:', keyword);
+            console.log('[Demand] showSearchSuggestions 被调用, keyword:', keyword, '长度:', keyword ? keyword.length : 0);
             var suggestionsEl = document.getElementById('searchSuggestions');
             var searchInput = document.getElementById('searchInput');
             var demands = getAllDemandsForSuggestions();
             
-            console.log('[Demand] suggestionsEl:', suggestionsEl);
-            console.log('[Demand] demands数量:', demands.length);
+            console.log('[Demand] suggestionsEl:', suggestionsEl, 'classList:', suggestionsEl.className);
+            console.log('[Demand] demands数量:', demands ? demands.length : 'demands为空');
+            console.log('[Demand] demands数据:', demands);
+            
+            // 清空之前的内容
+            suggestionsEl.innerHTML = '';
             
             if (!keyword || keyword.length < 1) {
                 // 无关键词时显示热门搜索
@@ -1506,7 +1510,8 @@
                 var matches = demands.filter(function(d) {
                     return d.title.toLowerCase().includes(keyword) ||
                            d.description.toLowerCase().includes(keyword);
-                }).slice(0, 6);  // 最多显示6条
+                }).slice(0, 6);
+                console.log('[Demand] 匹配到的数量:', matches.length);
                 
                 if (matches.length === 0) {
                     suggestionsEl.innerHTML = '<div class="search-no-results">没有找到包含"' + keyword + '"的需求</div>';
@@ -1514,7 +1519,6 @@
                 } else {
                     suggestionsEl.innerHTML = '<div class="suggestions-header">📋 匹配的需求 (' + matches.length + ')</div>' +
                         matches.map(function(item, index) {
-                            // 高亮匹配文字
                             var highlightedTitle = highlightKeyword(item.title, keyword);
                             var shortDesc = item.description.length > 30 ? item.description.substring(0, 30) + '...' : item.description;
                             return '<div class="search-suggestion-item" data-index="' + index + '" data-title="' + item.title + '">' +
@@ -1533,9 +1537,11 @@
             
             // 定位到搜索框下方
             var rect = searchInput.getBoundingClientRect();
+            console.log('[Demand] 搜索框位置:', rect);
             suggestionsEl.style.top = (rect.bottom + 8) + 'px';
             suggestionsEl.style.left = rect.left + 'px';
             suggestionsEl.style.width = rect.width + 'px';
+            console.log('[Demand] 设置样式后, display:', getComputedStyle(suggestionsEl).display, 'opacity:', getComputedStyle(suggestionsEl).opacity);
         }
         
         function highlightKeyword(text, keyword) {
