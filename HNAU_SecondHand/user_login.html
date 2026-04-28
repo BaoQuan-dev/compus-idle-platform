@@ -408,7 +408,7 @@
         });
 
         // 检查预填充账号密码（注册后跳转）
-        window.addEventListener('DOMContentLoaded', function() {
+        (function checkPrefill() {
             const prefillUsername = localStorage.getItem('prefillUsername');
             const prefillPassword = localStorage.getItem('prefillPassword');
             
@@ -434,7 +434,7 @@
                     }, 500);
                 }
             }
-        });
+        })();
     </script>
 </body>
 </html>
