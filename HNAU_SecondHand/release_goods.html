@@ -758,10 +758,6 @@
             item.remove();
         }
         
-        function submitGoods() {
-            alert('发布功能开发中...');
-        }
-        
         // ========== 获取当前用户 ==========
         function getCurrentUser() {
             console.log('[Release] 获取当前用户...');
@@ -836,12 +832,16 @@
             // 获取图片
             const images = [];
             const uploadItems = document.querySelectorAll('.image-upload-area .upload-item');
-            uploadItems.forEach(item => {
+            console.log('[Release] 找到上传项数量:', uploadItems.length);
+            uploadItems.forEach((item, index) => {
                 const img = item.querySelector('img');
                 if (img) {
+                    console.log('[Release] 图片' + index + ':', img.src.substring(0, 50) + '...');
                     images.push(img.src);
                 }
             });
+            console.log('[Release] 获取到的图片数量:', images.length);
+            console.log('[Release] 图片列表:', images);
             
             // 生成商品ID
             const goodsId = 'goods_' + Date.now();
@@ -864,6 +864,8 @@
             };
             
             console.log('[Release] 创建商品对象:', goods);
+            console.log('[Release] 商品图片数量:', goods.images.length);
+            console.log('[Release] 第一张图片:', goods.images[0] ? goods.images[0].substring(0, 100) + '...' : '无');
             
             // 保存到 localStorage
             const STORAGE_KEY = 'hnau_goods_list';
