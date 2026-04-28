@@ -718,6 +718,44 @@
             transform: scale(1.1) rotate(90deg);
         }
         
+        /* 召唤小猫按钮 */
+        .summon-cat-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+            animation: summonPulse 2s ease-in-out infinite;
+        }
+        
+        .summon-cat-btn.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        
+        .summon-cat-btn:hover {
+            transform: scale(1.15) rotate(10deg);
+            box-shadow: 0 0 20px rgba(147, 112, 219, 0.6);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        @keyframes summonPulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(147, 112, 219, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(147, 112, 219, 0.6); }
+        }
+        
         /* 隐藏状态 */
         .login-guide-card.hidden {
             display: none;
@@ -795,6 +833,11 @@
             </a>
         </div>
     </div>
+    
+    <!-- 召唤小猫按钮（关闭引导后显示） -->
+    <button id="summonCat" class="summon-cat-btn" onclick="summonLoginGuide()" title="召唤小猫">
+        🐱
+    </button>
     
     <!-- 登录引导悬浮卡片 - 小猫云朵版 -->
     <div class="login-guide-card" id="loginGuide">
@@ -1012,6 +1055,21 @@
             guide.classList.add('hidden');
             // 存储到本地，7天内不再显示
             localStorage.setItem('loginGuideClosed', Date.now().toString());
+            // 显示召唤按钮
+            const summonBtn = document.getElementById('summonCat');
+            if (summonBtn) {
+                setTimeout(() => summonBtn.classList.add('visible'), 300);
+            }
+        }
+        
+        // 召唤小猫
+        function summonLoginGuide() {
+            const guide = document.getElementById('loginGuide');
+            const summonBtn = document.getElementById('summonCat');
+            guide.classList.remove('hidden');
+            if (summonBtn) {
+                summonBtn.classList.remove('visible');
+            }
         }
         
         // ========== 小猫互动效果 ==========
@@ -1167,6 +1225,11 @@
             // 如果7天内关闭过，不再显示
             if (lastClosed && (now - parseInt(lastClosed)) < sevenDays) {
                 document.getElementById('loginGuide').classList.add('hidden');
+                // 显示召唤按钮
+                const summonBtn = document.getElementById('summonCat');
+                if (summonBtn) {
+                    summonBtn.classList.add('visible');
+                }
             }
         });
     </script>
