@@ -605,10 +605,16 @@
         .status-sold { background: #ef4444; }
         
         .publications-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
             padding: 20px;
+            justify-content: flex-start;
+        }
+        
+        .publications-grid .flip-card {
+            flex: 0 0 260px;
+            height: 340px;
         }
         </style>
 
@@ -746,6 +752,55 @@
                         newInput.style.display = 'none';
                         newInput.onchange = function() { previewImage(this, imageCount); };
                         document.querySelector('.image-upload-area').appendChild(newInput);
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        let imageCount = 0;
+        
+        // ========== 图片预览 ==========
+        function previewImage(input, index) {
+            console.log('[Release] previewImage被调用, index:', index);
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    console.log('[Release] 图片读取完成');
+                    
+                    const area = document.querySelector('.image-upload-area');
+                    const items = area.querySelectorAll('.upload-item');
+                    const item = items[index];
+                    
+                    if (item) {
+                        item.innerHTML = `
+                            <img src="${e.target.result}" alt="商品图片" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+                            <button class="upload-remove" onclick="removeImage(event, ${index})">×</button>
+                        `;
+                        console.log('[Release] 图片预览已添加到DOM');
+                    }
+                    
+                    // 添加新的上传项
+                    if (imageCount < 7) {
+                        imageCount++;
+                        const newItem = document.createElement('div');
+                        newItem.className = 'upload-item';
+                        newItem.onclick = function() { document.getElementById('img' + imageCount).click(); };
+                        newItem.innerHTML = `
+                            <span class="upload-icon">+</span>
+                            <span class="upload-text">添加图片</span>
+                            <button class="upload-remove" onclick="removeImage(event, ${imageCount})">×</button>
+                        `;
+                        area.appendChild(newItem);
+                        
+                        const newInput = document.createElement('input');
+                        newInput.type = 'file';
+                        newInput.id = 'img' + imageCount;
+                        newInput.accept = 'image/*';
+                        newInput.style.display = 'none';
+                        newInput.onchange = function() { previewImage(this, imageCount); };
+                        area.appendChild(newInput);
                     }
                 };
                 reader.readAsDataURL(input.files[0]);
@@ -952,7 +1007,8 @@
             
             // 筛选当前用户的商品
             const myGoods = allGoods.filter(item => {
-                console.log('[Release] 检查商品:', item.name, '发布者ID:', item.publisherId, '当前用户ID:', user.id, '匹配:', item.publisherId === user.id);
+                console.log('[Release] 检查商品:', item.name, '| images:', item.images, '| images长度:', item.images ? item.images.length : 0);
+                console.log('[Release] 发布者ID:', item.publisherId, '当前用户ID:', user.id, '匹配:', item.publisherId === user.id);
                 return item.publisherId === user.id;
             });
             
