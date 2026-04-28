@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>发布闲置 - 农大闲置</title>
     <link rel="stylesheet" href="./style/main.css">
+    <script src="./script/common.js"></script>
     <style>
         /* ========== 星空背景 ========== */
         body { position: relative; }
@@ -290,6 +291,100 @@
             transform: translateY(0);
         }
         
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* ========== 我的发布区域 ========== */
+        .my-publications {
+            margin-top: 40px;
+            padding: 24px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .publications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .publications-header h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #fff;
+        }
+        
+        .publications-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .publications-container .loading,
+        .publications-container .empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .publication-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .publication-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+        
+        .publication-card img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+        }
+        
+        .publication-card .card-content {
+            padding: 12px;
+        }
+        
+        .publication-card .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .publication-card .card-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: #f56565;
+            margin-bottom: 8px;
+        }
+        
+        .publication-card .card-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+        }
+        
+        .publication-card .card-status.selling { background: rgba(72,199,142,0.2); color: #48c78e; }
+        .publication-card .card-status.reserved { background: rgba(96,165,250,0.2); color: #60a5fa; }
+        .publication-card .card-status.sold { background: rgba(156,163,175,0.2); color: #9ca3af; }
+        
         /* ========== 提示卡片 ========== */
         .tips-card {
             background: transparent;
@@ -394,13 +489,13 @@
             <!-- 商品名称 -->
             <div class="form-group">
                 <label class="form-label">商品名称</label>
-                <input type="text" class="form-input" placeholder="请输入商品名称" maxlength="50">
+                <input type="text" class="form-input" id="goodsName" placeholder="请输入商品名称" maxlength="50">
             </div>
 
             <!-- 商品分类 -->
             <div class="form-group">
                 <label class="form-label">商品分类</label>
-                <select class="form-select">
+                <select class="form-select" id="goodsCategory">
                     <option value="">请选择分类</option>
                     <option value="数码">📱 数码电子</option>
                     <option value="书籍">📚 图书教材</option>
@@ -416,7 +511,7 @@
             <!-- 商品描述 -->
             <div class="form-group">
                 <label class="form-label">商品描述</label>
-                <textarea class="form-textarea" placeholder="请详细描述商品的状况、成色、使用情况等信息..."></textarea>
+                <textarea class="form-textarea" id="goodsDesc" placeholder="请详细描述商品的状况、成色、使用情况等信息..."></textarea>
             </div>
 
             <!-- 价格 -->
@@ -424,7 +519,7 @@
                 <label class="form-label">出售价格</label>
                 <div class="price-input-wrapper">
                     <span class="price-symbol">¥</span>
-                    <input type="number" class="form-input price-input" placeholder="0.00" min="0" step="0.01">
+                    <input type="number" class="form-input price-input" id="goodsPrice" placeholder="0.00" min="0" step="0.01">
                     <span class="price-unit">元</span>
                 </div>
             </div>
@@ -432,7 +527,7 @@
             <!-- 新旧程度 -->
             <div class="form-group">
                 <label class="form-label">新旧程度</label>
-                <select class="form-select">
+                <select class="form-select" id="goodsCondition">
                     <option value="">请选择</option>
                     <option value="全新">✨ 全新未使用</option>
                     <option value="几乎全新">💫 几乎全新</option>
@@ -445,7 +540,7 @@
             <!-- 交易方式 -->
             <div class="form-group">
                 <label class="form-label">交易方式</label>
-                <select class="form-select">
+                <select class="form-select" id="goodsTradeType">
                     <option value="校内">🏫 仅限校内交易</option>
                     <option value="线上">📦 支持邮寄</option>
                     <option value="都行">🤝 校内或邮寄均可</option>
@@ -455,13 +550,23 @@
             <!-- 联系方式 -->
             <div class="form-group">
                 <label class="form-label">联系方式</label>
-                <input type="text" class="form-input" placeholder="请输入手机号或微信" maxlength="30">
+                <input type="text" class="form-input" id="goodsContact" placeholder="请输入手机号或微信" maxlength="30">
             </div>
 
             <!-- 提交按钮 -->
-            <button type="button" class="submit-btn" onclick="submitGoods()">
+            <button type="button" class="submit-btn" id="submitBtn" onclick="submitGoods()">
                 🚀 发布闲置
             </button>
+        </div>
+        
+        <!-- 我的发布区域 -->
+        <div class="my-publications" id="myPublicationsSection">
+            <div class="publications-header">
+                <h2>📦 我的发布</h2>
+            </div>
+            <div class="publications-container" id="myPublicationsContainer">
+                <div class="loading">加载中...</div>
+            </div>
         </div>
     </div>
 
@@ -515,6 +620,239 @@
         function submitGoods() {
             alert('发布功能开发中...');
         }
+        
+        // ========== 获取当前用户 ==========
+        function getCurrentUser() {
+            console.log('[Release] 获取当前用户...');
+            
+            // 1. 先检查 Auth 系统
+            const loginState = Auth.getLoginState();
+            if (loginState.isLogin && loginState.curUser) {
+                console.log('[Release] 从 Auth 系统获取用户:', loginState.curUser);
+                return {
+                    id: 'user_' + loginState.curUser,
+                    name: loginState.curUser
+                };
+            }
+            
+            // 2. 检查 hnau_current_user
+            const savedUser = localStorage.getItem('hnau_current_user');
+            if (savedUser) {
+                try {
+                    const user = JSON.parse(savedUser);
+                    console.log('[Release] 从 hnau_current_user 获取用户:', user);
+                    return user;
+                } catch(e) {}
+            }
+            
+            // 3. 检查旧系统
+            const userData = localStorage.getItem('currentUser');
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    console.log('[Release] 从 currentUser 获取用户:', user);
+                    return { id: user.id || user.username, name: user.username || user.name };
+                } catch(e) {}
+            }
+            
+            console.log('[Release] 未找到登录用户');
+            return null;
+        }
+        
+        // ========== 提交发布 ==========
+        function submitGoods() {
+            console.log('[Release] 开始提交发布...');
+            
+            // 获取表单数据
+            const goodsName = document.getElementById('goodsName').value.trim();
+            const goodsCategory = document.getElementById('goodsCategory').value;
+            const goodsDesc = document.getElementById('goodsDesc').value.trim();
+            const goodsPrice = document.getElementById('goodsPrice').value;
+            const goodsCondition = document.getElementById('goodsCondition').value;
+            const goodsTradeType = document.getElementById('goodsTradeType').value;
+            const goodsContact = document.getElementById('goodsContact').value.trim();
+            
+            // 验证必填项
+            if (!goodsName) { alert('请输入商品名称'); return; }
+            if (!goodsCategory) { alert('请选择商品分类'); return; }
+            if (!goodsDesc) { alert('请输入商品描述'); return; }
+            if (!goodsPrice || parseFloat(goodsPrice) <= 0) { alert('请输入有效的出售价格'); return; }
+            if (!goodsCondition) { alert('请选择新旧程度'); return; }
+            if (!goodsContact) { alert('请输入联系方式'); return; }
+            
+            console.log('[Release] 表单验证通过');
+            
+            // 获取当前用户
+            const user = getCurrentUser();
+            if (!user) {
+                alert('请先登录后再发布');
+                window.location.href = 'user_login.html';
+                return;
+            }
+            
+            console.log('[Release] 当前用户:', user);
+            
+            // 获取图片
+            const images = [];
+            const uploadItems = document.querySelectorAll('.image-upload-area .upload-item');
+            uploadItems.forEach(item => {
+                const img = item.querySelector('img');
+                if (img) {
+                    images.push(img.src);
+                }
+            });
+            
+            // 生成商品ID
+            const goodsId = 'goods_' + Date.now();
+            
+            // 创建商品对象
+            const goods = {
+                id: goodsId,
+                name: goodsName,
+                category: goodsCategory,
+                description: goodsDesc,
+                price: parseFloat(goodsPrice),
+                condition: goodsCondition,
+                tradeType: goodsTradeType,
+                contact: goodsContact,
+                images: images,
+                publisher: user,
+                publisherId: user.id,
+                status: 'selling',
+                createTime: new Date().toISOString()
+            };
+            
+            console.log('[Release] 创建商品对象:', goods);
+            
+            // 保存到 localStorage
+            const STORAGE_KEY = 'hnau_goods_list';
+            let goodsList = [];
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    goodsList = JSON.parse(saved);
+                }
+            } catch(e) {
+                console.log('[Release] 解析商品列表失败:', e);
+            }
+            
+            goodsList.push(goods);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(goodsList));
+            
+            console.log('[Release] 已保存商品列表，长度:', goodsList.length);
+            console.log('[Release] 已保存商品:', goods);
+            
+            // 显示成功提示
+            alert('发布成功！');
+            
+            // 清空表单
+            document.getElementById('goodsName').value = '';
+            document.getElementById('goodsCategory').value = '';
+            document.getElementById('goodsDesc').value = '';
+            document.getElementById('goodsPrice').value = '';
+            document.getElementById('goodsCondition').value = '';
+            document.getElementById('goodsTradeType').value = '校内';
+            document.getElementById('goodsContact').value = '';
+            
+            // 重置图片
+            const imageArea = document.querySelector('.image-upload-area');
+            imageArea.innerHTML = `
+                <div class="upload-item" onclick="document.getElementById('img0').click()">
+                    <span class="upload-icon">+</span>
+                    <span class="upload-text">添加图片</span>
+                    <button class="upload-remove" onclick="removeImage(event, 0)">×</button>
+                </div>
+                <input type="file" id="img0" accept="image/*" style="display:none" onchange="previewImage(this, 0)">
+            `;
+            imageCount = 0;
+            
+            // 刷新我的发布列表
+            loadMyPublications();
+        }
+        
+        // ========== 加载我的发布 ==========
+        function loadMyPublications() {
+            console.log('[Release] === 开始加载我的发布 ===');
+            
+            const container = document.getElementById('myPublicationsContainer');
+            if (!container) {
+                console.log('[Release] 容器不存在');
+                return;
+            }
+            
+            container.innerHTML = '<div class="loading">加载中...</div>';
+            
+            // 获取当前用户
+            const user = getCurrentUser();
+            if (!user) {
+                container.innerHTML = '<div class="empty">请先登录后再查看</div>';
+                console.log('[Release] 用户未登录');
+                return;
+            }
+            
+            console.log('[Release] 当前用户:', user);
+            console.log('[Release] 当前用户ID:', user.id);
+            
+            // 获取商品列表
+            const STORAGE_KEY = 'hnau_goods_list';
+            let allGoods = [];
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    allGoods = JSON.parse(saved);
+                }
+            } catch(e) {
+                console.log('[Release] 解析商品列表失败:', e);
+            }
+            
+            console.log('[Release] 全部商品数量:', allGoods.length);
+            
+            // 筛选当前用户的商品
+            const myGoods = allGoods.filter(item => {
+                console.log('[Release] 检查商品:', item.name, '发布者ID:', item.publisherId, '当前用户ID:', user.id, '匹配:', item.publisherId === user.id);
+                return item.publisherId === user.id;
+            });
+            
+            console.log('[Release] 筛选后我的发布数量:', myGoods.length);
+            
+            if (myGoods.length === 0) {
+                container.innerHTML = '<div class="empty">暂无发布的闲置物品</div>';
+                return;
+            }
+            
+            // 按时间倒序排列
+            myGoods.sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
+            
+            // 渲染卡片
+            container.innerHTML = myGoods.map(item => {
+                const statusMap = {
+                    'selling': { text: '出售中', class: 'selling' },
+                    'reserved': { text: '已预定', class: 'reserved' },
+                    'sold': { text: '已售出', class: 'sold' }
+                };
+                const status = statusMap[item.status] || statusMap['selling'];
+                const image = item.images && item.images[0] ? item.images[0] : './images/default-goods.png';
+                
+                return `
+                    <div class="publication-card">
+                        <img src="${image}" alt="${item.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 140%22><rect fill=%22%23374151%22 width=%22200%22 height=%22140%22/><text x=%22100%22 y=%2270%22 text-anchor=%22middle%22 fill=%22%239ca3af%22 font-size=%2240%22>📦</text></svg>'">
+                        <div class="card-content">
+                            <div class="card-title">${item.name}</div>
+                            <div class="card-price">¥${item.price.toFixed(2)}</div>
+                            <span class="card-status ${status.class}">${status.text}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            console.log('[Release] 渲染完成，共', myGoods.length, '条');
+        }
+        
+        // ========== 页面加载时加载我的发布 ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[Release] 页面加载完成，开始加载我的发布...');
+            loadMyPublications();
+        });
     </script>
 </body>
 </html>
