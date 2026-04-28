@@ -515,6 +515,12 @@ const LoginModule = {
             // 登录成功
             Auth.login(username);
 
+            // 同步设置explore页面状态标记
+            const user = Auth.getCurrentUser();
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('isCertified', user ? (user.authStatus === 'approved' ? 'true' : 'false') : 'false');
+            localStorage.setItem('username', username);
+
             Toast.show('登录成功！即将跳转到首页', 'success');
 
             // 1.5秒后跳转到首页

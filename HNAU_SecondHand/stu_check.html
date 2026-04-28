@@ -1040,6 +1040,9 @@
                 // 隐藏表单
                 document.querySelector('.form-card').style.display = 'none';
 
+                // 设置认证完成标记
+                localStorage.setItem('isCertified', 'true');
+
                 // 显示成功提示
                 alert('提交成功！\n\n您的认证信息：\n姓名：' + certificationData.realName + '\n学号：' + certificationData.studentId + '\n学院：' + certificationData.college + '\n年级：' + certificationData.grade + '\n\n我们将在1-3个工作日内完成审核。');
             }, 1500);

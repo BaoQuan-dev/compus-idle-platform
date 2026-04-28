@@ -436,6 +436,9 @@ const Auth = {
             curUser: username
         };
         Storage.set(this.KEYS.LOGIN_STATE, loginState);
+        // 同步设置explore页面使用的状态标记
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('username', username);
     },
 
     /**
@@ -443,6 +446,10 @@ const Auth = {
      */
     logout() {
         Storage.remove(this.KEYS.LOGIN_STATE);
+        // 同步清除explore页面使用的状态标记
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('isCertified');
+        localStorage.removeItem('username');
         // 刷新页面以更新导航栏状态
         location.reload();
     },
