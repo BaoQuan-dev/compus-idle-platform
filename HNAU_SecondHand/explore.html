@@ -156,25 +156,27 @@
             transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* 模块卡片 */
+        /* 模块卡片 - 玻璃拟态风格 */
         .module-card {
             flex-shrink: 0;
             width: 320px;
             height: 620px;
             margin: 0 20px;
-            background: rgba(20, 20, 35, 0.85);
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 100%);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 24px;
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
             padding: 30px;
             display: flex;
             flex-direction: column;
-            opacity: 0.4;
+            opacity: 0.5;
             transform: scale(0.85);
             transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
         }
 
         .module-card::before {
@@ -183,23 +185,28 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
-            background: var(--card-color);
+            height: 3px;
+            background: linear-gradient(90deg, var(--card-color), rgba(255,255,255,0.5), var(--card-color));
+            opacity: 0.8;
         }
 
         .module-card.active {
             opacity: 1;
             transform: scale(1);
-            border-color: var(--card-color);
-            box-shadow: 0 0 60px rgba(var(--card-color-rgb), 0.3);
+            border-color: rgba(255,255,255,0.25);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.2), 0 0 40px rgba(var(--card-color-rgb), 0.15);
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%);
         }
 
         .module-card:hover {
             transform: scale(1.05);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+            border-color: rgba(255,255,255,0.2);
         }
 
         .module-card.active:hover {
             transform: scale(1.08);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 50px rgba(var(--card-color-rgb), 0.2);
         }
 
         /* 卡片头部 */
