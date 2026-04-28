@@ -1168,6 +1168,29 @@
             if (lastClosed && (now - parseInt(lastClosed)) < sevenDays) {
                 document.getElementById('loginGuide').classList.add('hidden');
             }
+            
+            // 双击右下角召唤回小猫
+            document.addEventListener('dblclick', function(e) {
+                const x = e.clientX;
+                const y = e.clientY;
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                
+                // 右下角区域 (右侧1/4 + 底部1/3)
+                if (x > w * 0.75 && y > h * 0.66) {
+                    const guide = document.getElementById('loginGuide');
+                    guide.classList.remove('hidden');
+                    localStorage.removeItem('loginGuideClosed');
+                    
+                    // 添加召唤动画
+                    const card = guide.querySelector('.login-guide-card');
+                    if (card) {
+                        card.style.animation = 'none';
+                        card.offsetHeight; // 触发重排
+                        card.style.animation = 'loginGuideAppear 0.6s ease-out';
+                    }
+                }
+            });
         });
     </script>
 </body>
