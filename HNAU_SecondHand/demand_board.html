@@ -1395,8 +1395,37 @@
                 loadDemands();
             });
             
+            // 显示搜索建议
+            function showSearchSuggestions(keyword) {
+                const suggestions = document.getElementById('searchSuggestions');
+                if (!suggestions) return;
+                
+                if (!keyword) {
+                    suggestions.innerHTML = '';
+                    suggestions.style.display = 'none';
+                    return;
+                }
+                
+                const demands = JSON.parse(localStorage.getItem('hnau_demands') || '[]');
+                const matches = demands.filter(d => 
+                    d.title.includes(keyword) || 
+                    d.description.includes(keyword)
+                ).slice(0, 5);
+                
+                if (matches.length > 0) {
+                    suggestions.innerHTML = matches.map(m => 
+                        `<div class="suggestion-item" onclick="document.getElementById('searchInput').value='${m.title}'; suggestions.style.display='none'; loadDemands();">${m.title}</div>`
+                    ).join('');
+                    suggestions.style.display = 'block';
+                } else {
+                    suggestions.innerHTML = '';
+                    suggestions.style.display = 'none';
+                }
+            }
+            
             searchInput.addEventListener('focus', function() {
                 showSearchSuggestions(this.value.trim());
+            });
             });
             
             searchInput.addEventListener('keydown', function(e) {
