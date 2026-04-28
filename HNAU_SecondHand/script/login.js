@@ -500,6 +500,14 @@ const LoginModule = {
             localStorage.setItem('isCertified', user ? (user.authStatus === 'approved' ? 'true' : 'false') : 'false');
             localStorage.setItem('username', username);
 
+            // 保存用户数据到公益转赠页面使用的 key
+            localStorage.setItem('hnau_current_user', JSON.stringify({
+                id: user ? 'user_' + user.username : 'user_' + username,
+                name: user ? (user.name || username) : username,
+                studentId: user ? (user.studentId || '') : '',
+                college: user ? (user.college || '') : ''
+            }));
+
             // 判断是否需要认证
             const needAuth = user ? user.authStatus !== 'approved' : true;
             console.log('[登录] 需要认证:', needAuth);
