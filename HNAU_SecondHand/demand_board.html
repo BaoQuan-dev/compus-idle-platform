@@ -1368,9 +1368,17 @@
         
         // ========== 绑定事件 ==========
         function bindEvents() {
+            console.log('[Demand] bindEvents 开始执行');
             // 发布按钮
-            document.getElementById('publishBtn').addEventListener('click', showPublishModal);
-            document.getElementById('emptyPublishBtn').addEventListener('click', showPublishModal);
+            var publishBtn = document.getElementById('publishBtn');
+            console.log('[Demand] publishBtn:', publishBtn);
+            if (publishBtn) {
+                publishBtn.addEventListener('click', function() {
+                    console.log('[Demand] 发布按钮被点击');
+                    showPublishModal();
+                });
+                console.log('[Demand] 发布按钮事件绑定成功');
+            }
             
             // 【修改】筛选 - 搜索框
             var searchInput = document.getElementById('searchInput');
@@ -1700,6 +1708,12 @@
                 toast.classList.remove('show');
             }, 2500);
         }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDemands();
+            bindEvents();
+        });
     </script>
 </body>
 </html>
