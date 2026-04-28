@@ -872,10 +872,22 @@
         // 用户状态管理
         const UserState = {
             get() {
+                // 尝试从 Auth 类获取最新的登录状态
+                const loginState = (typeof Auth !== 'undefined') ? Auth.getLoginState() : { isLogin: false };
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || loginState.isLogin;
+                const username = localStorage.getItem('username') || (loginState.curUser || '用户');
+
+                // 如果已登录，同步认证状态
+                let isCertified = localStorage.getItem('isCertified') === 'true';
+                if (isLoggedIn && typeof Auth !== 'undefined') {
+                    const authStatus = Auth.getUserAuthStatus(username === '用户' ? loginState.curUser : username);
+                    isCertified = authStatus === 'approved';
+                }
+
                 return {
-                    isLoggedIn: localStorage.getItem('isLoggedIn') === 'true',
-                    isCertified: localStorage.getItem('isCertified') === 'true',
-                    username: localStorage.getItem('username') || '用户'
+                    isLoggedIn: isLoggedIn,
+                    isCertified: isCertified,
+                    username: username
                 };
             },
             setLoggedIn(username) {

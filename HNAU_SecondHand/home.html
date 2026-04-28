@@ -897,6 +897,16 @@
         
         // ===== 获取当前问候语 =====
         function getGreeting() {
+            // 检查登录状态
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const username = localStorage.getItem('username');
+
+            if (isLoggedIn && username) {
+                // 已登录，显示个性化问候
+                return '欢迎回来，' + username + '!';
+            }
+
+            // 未登录，使用时间问候
             var hour = new Date().getHours();
             for (var i = 0; i < CONFIG.greetings.length; i++) {
                 var g = CONFIG.greetings[i];
