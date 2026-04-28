@@ -1270,6 +1270,7 @@
         // ========== 初始化 ==========
         (function() {
             initUser();
+            initSampleData();
             bindEvents();
             loadDemands();
         })();
@@ -1292,6 +1293,87 @@
         // ========== 保存需求列表 ==========
         function saveDemands(demands) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(demands));
+        }
+        
+        // ========== 初始化示例数据 ==========
+        function initSampleData() {
+            var existing = getDemands();
+            if (existing.length > 0) return; // 已有数据不添加
+            
+            var sampleData = [
+                {
+                    id: 'sample_1',
+                    title: '求购一辆二手自行车',
+                    description: '希望价格在200-500之间，成色七成新以上，品牌不限，最好是捷安特或美利达的。',
+                    price: 350,
+                    priceNegotiable: true,
+                    contact: '138****8000',
+                    contactPublic: true,
+                    note: '最好是碟刹的',
+                    category: '交通工具',
+                    publisher: { id: 'user_1', name: '小明同学' },
+                    publishTime: new Date(Date.now() - 86400000).toISOString(),
+                    status: 'published'
+                },
+                {
+                    id: 'sample_2',
+                    title: '求购高等数学教材',
+                    description: '需要第七版高等数学教材，同济大学版的，出版社不限，有笔记也可以。',
+                    price: 50,
+                    priceNegotiable: true,
+                    contact: '微信：math2024',
+                    contactPublic: true,
+                    note: '',
+                    category: '书籍教材',
+                    publisher: { id: 'user_2', name: '学霸小李' },
+                    publishTime: new Date(Date.now() - 172800000).toISOString(),
+                    status: 'published'
+                },
+                {
+                    id: 'sample_3',
+                    title: '求购无线蓝牙耳机',
+                    description: '想要一款降噪耳机，预算300以内，品牌最好是小米或华为。',
+                    price: 300,
+                    priceNegotiable: true,
+                    contact: 'QQ：123456789',
+                    contactPublic: true,
+                    note: '有购买记录的优先',
+                    category: '数码电子',
+                    publisher: { id: 'user_3', name: '音乐爱好者' },
+                    publishTime: new Date(Date.now() - 259200000).toISOString(),
+                    status: 'published'
+                },
+                {
+                    id: 'sample_4',
+                    title: '求购一台二手笔记本电脑',
+                    description: '学习用，不打游戏，预算1500以内，要求续航好，屏幕14寸以上。',
+                    price: 1500,
+                    priceNegotiable: true,
+                    contact: '手机：139****1234',
+                    contactPublic: true,
+                    note: '最好带充电器',
+                    category: '数码电子',
+                    publisher: { id: 'user_4', name: '编程新手' },
+                    publishTime: new Date(Date.now() - 345600000).toISOString(),
+                    status: 'published'
+                },
+                {
+                    id: 'sample_5',
+                    title: '求购英语四六级资料',
+                    description: '需要历年真题和词汇书，最好是2024年最新版，星火或新东方的都可以。',
+                    price: 80,
+                    priceNegotiable: true,
+                    contact: '微信：study123',
+                    contactPublic: true,
+                    note: '有视频课程更佳',
+                    category: '书籍教材',
+                    publisher: { id: 'user_5', name: '备考学生' },
+                    publishTime: new Date(Date.now() - 432000000).toISOString(),
+                    status: 'published'
+                }
+            ];
+            
+            saveDemands(sampleData);
         }
         
         // ========== 加载需求 ==========
@@ -1463,6 +1545,21 @@
             hideSearchSuggestions();
             loadDemands();
         }
+        
+        // 处理联想列表点击事件（委托）
+        document.addEventListener('click', function(e) {
+            // 处理热门标签点击
+            if (e.target.classList.contains('hot-tag')) {
+                var tagText = e.target.textContent;
+                selectSuggestion(tagText);
+                return;
+            }
+            // 处理建议项点击
+            var suggestionItem = e.target.closest('.search-suggestion-item');
+            if (suggestionItem) {
+                selectSuggestion(suggestionItem.dataset.title);
+            }
+        });
         
         // ========== 绑定事件 ==========
         function bindEvents() {
