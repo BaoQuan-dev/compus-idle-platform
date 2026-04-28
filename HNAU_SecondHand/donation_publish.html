@@ -482,6 +482,16 @@
                 <span>删除发布</span>
             </button>
         </form>
+        
+        <!-- 我的发布区域 -->
+        <div class="my-publications" id="myPublicationsSection">
+            <div class="publications-header">
+                <h2>📦 我的发布</h2>
+            </div>
+            <div class="publications-container" id="myPublicationsContainer">
+                <div class="loading">加载中...</div>
+            </div>
+        </div>
     </div>
     
     <!-- 删除确认弹窗 -->
@@ -550,6 +560,97 @@
         .delete-btn:active {
             transform: scale(0.98);
         }
+        
+        /* 我的发布区域样式 */
+        .my-publications {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .publications-header h2 {
+            font-size: 20px;
+            color: #fff;
+            margin: 0 0 20px 0;
+        }
+        .publications-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+        }
+        .publication-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .publication-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(96, 165, 250, 0.5);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+        .pub-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background: rgba(255,255,255,0.05);
+        }
+        .pub-info {
+            padding: 12px;
+        }
+        .pub-name {
+            font-size: 15px;
+            color: #fff;
+            font-weight: 500;
+            margin-bottom: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .pub-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .pub-category {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .pub-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .status-available {
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.2);
+        }
+        .status-claimed {
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.2);
+        }
+        .pub-time {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+        }
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+        }
+        .loading {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 20px;
+            color: rgba(255,255,255,0.5);
+        }
+        
         .delete-modal-overlay {
             position: fixed;
             top: 0;
@@ -1002,30 +1103,120 @@
         // ========== 页面加载时检查编辑模式 ==========
         checkEditMode();
         
+        // ========== 页面加载时显示我的发布 ==========
+        loadMyPublications();
+        
         // ========== 成功弹窗 ==========
         successBtn.addEventListener('click', function() {
+            // 刷新我的发布列表
+            loadMyPublications();
             window.location.href = 'donation_my.html';
         });
         
         // ========== 获取当前用户 ==========
         function getCurrentUser() {
-            var userStr = localStorage.getItem(USER_KEY);
+            console.log('[Donation] 开始获取当前用户...');
+            
+            // 优先使用 Auth 系统的用户数据
+            var username = localStorage.getItem('username');
+            if (username) {
+                console.log('[Donation] 从 Auth 系统获取用户:', username);
+                return {
+                    id: 'user_' + username,
+                    name: username,
+                    studentId: '',
+                    college: ''
+                };
+            }
+            
+            // 其次使用 hnau_current_user
+            var userStr = localStorage.getItem('hnau_current_user');
             if (userStr) {
+                console.log('[Donation] 从 hnau_current_user 获取用户');
                 return JSON.parse(userStr);
             }
-            // 模拟用户数据
-            return {
-                id: 'user_' + Date.now(),
-                name: '爱心同学',
-                studentId: '2024****',
-                college: '爱心学院'
-            };
+            
+            // 最后使用 USER_KEY
+            var legacyUser = localStorage.getItem(USER_KEY);
+            if (legacyUser) {
+                console.log('[Donation] 从 USER_KEY 获取用户');
+                return JSON.parse(legacyUser);
+            }
+            
+            // 没有用户数据
+            console.log('[Donation] 未找到用户数据!');
+            return null;
         }
         
         // ========== 获取转赠列表 ==========
         function getDonationList() {
             var listStr = localStorage.getItem(STORAGE_KEY);
             return listStr ? JSON.parse(listStr) : [];
+        }
+        
+        // ========== 加载我的发布 ==========
+        function loadMyPublications() {
+            console.log('[Donation] === 开始加载我的发布 ===');
+            var currentUser = getCurrentUser();
+            console.log('[Donation] 当前用户:', currentUser);
+            
+            // 如果用户未登录
+            if (!currentUser) {
+                var container = document.getElementById('myPublicationsContainer');
+                if (container) {
+                    container.innerHTML = '<div class="empty-state">请先登录后再查看发布记录</div>';
+                }
+                return;
+            }
+            
+            var allList = getDonationList();
+            console.log('[Donation] 全部发布列表数量:', allList.length);
+            console.log('[Donation] 当前用户ID:', currentUser.id);
+            
+            // 筛选当前用户的发布
+            var myList = allList.filter(function(item) {
+                console.log('[Donation] 检查项目发布者:', item.publisherId, '对比:', currentUser.id);
+                return item.publisherId === currentUser.id;
+            });
+            console.log('[Donation] 筛选后我的发布数量:', myList.length);
+            
+            // 获取容器
+            var container = document.getElementById('myPublicationsContainer');
+            if (!container) {
+                console.log('[Donation] 未找到myPublicationsContainer');
+                return;
+            }
+            console.log('[Donation] 找到容器，准备渲染');
+            
+            // 渲染列表
+            if (myList.length === 0) {
+                container.innerHTML = '<div class="empty-state">暂无发布的转赠物品</div>';
+            } else {
+                // 按时间倒序排列
+                myList.sort(function(a, b) { return new Date(b.time) - new Date(a.time); });
+                
+                var html = '';
+                myList.forEach(function(item) {
+                    var statusClass = item.status === '可用' ? 'status-available' : 'status-claimed';
+                    var statusText = item.status || '可用';
+                    var images = item.images || [];
+                    var firstImage = images.length > 0 ? images[0] : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="120" height="120"%3E%3Crect fill="%23334155" width="120" height="120"/%3E%3Ctext fill="%23808899" x="50%25" y="50%25" text-anchor="middle" dy=".3em" font-size="14"%3E暂无图片%3C/text%3E%3C/svg%3E';
+                    
+                    html += '<div class="publication-card" data-id="' + item.id + '">' +
+                        '<img src="' + firstImage + '" alt="' + item.name + '" class="pub-image" onerror="this.src=\'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="120" height="120"%3E%3Crect fill="%23334155" width="120" height="120"/%3E%3Ctext fill="%23808899" x="50%25" y="50%25" text-anchor="middle" dy=".3em" font-size="14"%3E图片加载失败%3C/text%3E%3C/svg%3E\'">' +
+                        '<div class="pub-info">' +
+                        '<div class="pub-name">' + item.name + '</div>' +
+                        '<div class="pub-meta">' +
+                        '<span class="pub-category">' + item.category + '</span>' +
+                        '<span class="pub-status ' + statusClass + '">' + statusText + '</span>' +
+                        '</div>' +
+                        '<div class="pub-time">' + item.time + '</div>' +
+                        '</div>' +
+                        '</div>';
+                });
+                container.innerHTML = html;
+                console.log('[Donation] 渲染完成，共' + myList.length + '条');
+            }
         }
         
         // ========== 移动端菜单 ==========
