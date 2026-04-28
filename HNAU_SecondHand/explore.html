@@ -156,15 +156,16 @@
             transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* 模块卡片 */
+        /* 模块卡片 - 星空玻璃拟态 */
         .module-card {
             flex-shrink: 0;
             width: 320px;
             height: 620px;
             margin: 0 20px;
-            background: rgba(20, 20, 35, 0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(15, 15, 30, 0.6);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 24px;
             padding: 30px;
             display: flex;
@@ -175,8 +176,14 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            /* 星空发光边框 */
+            box-shadow: 
+                0 0 30px rgba(147, 112, 219, 0.15),
+                0 0 60px rgba(147, 112, 219, 0.08),
+                inset 0 1px 0 rgba(255,255,255,0.1);
         }
 
+        /* 彩虹渐变顶部边框 */
         .module-card::before {
             content: '';
             position: absolute;
@@ -184,18 +191,45 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: var(--card-color);
+            background: linear-gradient(90deg, 
+                #ff6b6b, #feca57, #48dbfb, #ff9ff3, #ff6b6b);
+            background-size: 200% 100%;
+            animation: rainbowFlow 3s linear infinite;
+        }
+
+        /* 卡片内星星装饰 */
+        .module-card::after {
+            content: '✦ ✧ ✦ ✧';
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.15);
+            letter-spacing: 5px;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        @keyframes rainbowFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
         }
 
         .module-card.active {
             opacity: 1;
             transform: scale(1);
-            border-color: var(--card-color);
-            box-shadow: 0 0 60px rgba(var(--card-color-rgb), 0.3);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 
+                0 0 50px rgba(147, 112, 219, 0.3),
+                0 0 100px rgba(147, 112, 219, 0.15),
+                inset 0 1px 0 rgba(255,255,255,0.2);
         }
 
         .module-card:hover {
             transform: scale(1.05);
+            box-shadow: 
+                0 0 60px rgba(147, 112, 219, 0.4),
+                0 0 120px rgba(147, 112, 219, 0.2),
+                inset 0 1px 0 rgba(255,255,255,0.15);
         }
 
         .module-card.active:hover {
@@ -219,12 +253,24 @@
             justify-content: center;
             font-size: 28px;
             margin-right: 16px;
+            /* 星空发光效果 */
+            box-shadow: 
+                0 0 20px rgba(var(--card-color-rgb), 0.5),
+                0 0 40px rgba(var(--card-color-rgb), 0.3),
+                inset 0 2px 4px rgba(255,255,255,0.3);
+            animation: iconGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes iconGlow {
+            0% { box-shadow: 0 0 20px rgba(var(--card-color-rgb), 0.5), 0 0 40px rgba(var(--card-color-rgb), 0.3); }
+            100% { box-shadow: 0 0 30px rgba(var(--card-color-rgb), 0.7), 0 0 60px rgba(var(--card-color-rgb), 0.4); }
         }
 
         .card-title {
             font-size: 22px;
             font-weight: 700;
             color: #fff;
+            text-shadow: 0 2px 10px rgba(147, 112, 219, 0.5);
         }
 
         .card-subtitle {
@@ -233,7 +279,7 @@
             margin-top: 4px;
         }
 
-        /* 统计数据 */
+        /* 统计数据 - 星空玻璃 */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -242,16 +288,30 @@
         }
 
         .stat-item {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05);
             border-radius: 16px;
             padding: 18px;
             text-align: center;
+            box-shadow: 
+                0 0 20px rgba(var(--card-color-rgb), 0.1),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+
+        .stat-item:hover {
+            background: rgba(255,255,255,0.06);
+            box-shadow: 
+                0 0 30px rgba(var(--card-color-rgb), 0.2),
+                inset 0 1px 0 rgba(255,255,255,0.1);
         }
 
         .stat-value {
             font-size: 28px;
             font-weight: 700;
             color: var(--card-color);
+            text-shadow: 0 0 20px rgba(var(--card-color-rgb), 0.5);
         }
 
         .stat-label {
@@ -260,7 +320,7 @@
             margin-top: 5px;
         }
 
-        /* 功能列表 */
+        /* 功能列表 - 星空玻璃 */
         .feature-list {
             flex: 1;
             display: flex;
@@ -272,19 +332,24 @@
             display: flex;
             align-items: center;
             padding: 14px 16px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.03);
             border-radius: 12px;
             transition: all 0.3s;
         }
 
         .feature-item:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(var(--card-color-rgb), 0.3);
             transform: translateX(5px);
+            box-shadow: 0 0 20px rgba(var(--card-color-rgb), 0.15);
         }
 
         .feature-icon {
             font-size: 20px;
             margin-right: 12px;
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
         }
 
         .feature-text {
@@ -301,7 +366,7 @@
             border-radius: 20px;
         }
 
-        /* 进入按钮 */
+        /* 进入按钮 - 星空发光 */
         .enter-btn {
             margin-top: auto;
             padding: 16px;
@@ -318,14 +383,20 @@
             gap: 8px;
             transition: all 0.3s;
             text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4) !important;
+            box-shadow: 
+                0 4px 15px rgba(var(--card-color-rgb), 0.5),
+                0 0 30px rgba(var(--card-color-rgb), 0.3),
+                inset 0 1px 0 rgba(255,255,255,0.2);
             position: relative;
             z-index: 10;
         }
 
         .enter-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6) !important;
+            box-shadow: 
+                0 8px 25px rgba(var(--card-color-rgb), 0.7),
+                0 0 50px rgba(var(--card-color-rgb), 0.4),
+                inset 0 1px 0 rgba(255,255,255,0.3);
             background: var(--card-color, #60a5fa) !important;
         }
 
