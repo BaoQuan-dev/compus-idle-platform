@@ -227,12 +227,44 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         }
 
+        /* 星空点缀 - 角落星星 */
+        .module-card::before,
+        .module-card::after {
+            content: '✦';
+            position: absolute;
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            animation: twinkle 3s ease-in-out infinite;
+        }
+        .module-card::before {
+            top: 12px;
+            right: 16px;
+            animation-delay: 0s;
+        }
+        .module-card::after {
+            bottom: 80px;
+            left: 14px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.25);
+            animation-delay: 1.5s;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+
         /* 选中卡片 - 简洁玻璃拟态 */
         .module-card.active {
             opacity: 1;
             transform: scale(1);
             border-color: rgba(255,255,255,0.25);
             box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+        }
+
+        .module-card.active::before,
+        .module-card.active::after {
+            color: rgba(255,255,255,0.7);
         }
 
         .module-card:hover {
@@ -274,6 +306,24 @@
             color: rgba(255,255,255,0.5);
             margin-top: 4px;
         }
+
+        /* 底部星空装饰 */
+        .card-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+        .card-footer span {
+            color: rgba(255,255,255,0.3);
+            font-size: 8px;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        .card-footer span:nth-child(2) { animation-delay: 0.3s; }
+        .card-footer span:nth-child(3) { animation-delay: 0.6s; }
+        .card-footer span:nth-child(4) { animation-delay: 0.9s; }
+        .card-footer span:nth-child(5) { animation-delay: 1.2s; }
 
         /* 统计数据 - 玻璃拟态 */
         .stats-grid {
@@ -713,6 +763,7 @@
                     进入中心
                     <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </button>
+                <div class="card-footer"><span>✦</span><span>✦</span><span>✦</span><span>✦</span><span>✦</span></div>
             </div>
         </div>
     </div>
