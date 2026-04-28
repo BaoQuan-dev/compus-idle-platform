@@ -363,6 +363,138 @@
             font-size: 24px;
             cursor: pointer;
         }
+        
+        /* ========== 登录引导悬浮卡片 ========== */
+        .login-guide-card {
+            position: fixed;
+            bottom: 100px;
+            right: 16px;
+            background: rgba(30, 30, 60, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 16px;
+            box-shadow: 
+                0 8px 32px rgba(0,0,0,0.4),
+                0 0 40px rgba(96, 165, 250, 0.15);
+            z-index: 90;
+            max-width: 280px;
+            animation: slideInUp 0.5s ease-out;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .guide-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: rgba(255,255,255,0.6);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .guide-close:hover {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+        
+        .guide-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            animation: wave 2s ease-in-out infinite;
+        }
+        
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            75% { transform: rotate(-15deg); }
+        }
+        
+        .guide-content {
+            margin-bottom: 12px;
+        }
+        
+        .guide-content h4 {
+            margin: 0 0 4px 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .guide-content p {
+            margin: 0;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .guide-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .guide-btn {
+            flex: 1;
+            padding: 10px 0;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .guide-btn.login {
+            background: linear-gradient(135deg, #60A5FA, #A78BFA);
+            color: #fff;
+        }
+        
+        .guide-btn.login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.4);
+        }
+        
+        .guide-btn.register {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .guide-btn.register:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+        
+        /* 隐藏状态 */
+        .login-guide-card.hidden {
+            display: none;
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 480px) {
+            .login-guide-card {
+                bottom: 90px;
+                right: 12px;
+                left: 12px;
+                max-width: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -414,6 +546,20 @@
                 <span class="icon">🔍</span>
                 <span class="label">需求广场</span>
             </a>
+        </div>
+    </div>
+    
+    <!-- 登录引导悬浮卡片 -->
+    <div class="login-guide-card" id="loginGuide">
+        <button class="guide-close" onclick="closeLoginGuide()">×</button>
+        <div class="guide-icon">👋</div>
+        <div class="guide-content">
+            <h4>欢迎来到农大闲置</h4>
+            <p>登录后解锁更多功能</p>
+        </div>
+        <div class="guide-actions">
+            <a href="user_login.html" class="guide-btn login">登录</a>
+            <a href="user_register.html" class="guide-btn register">注册</a>
         </div>
     </div>
     
@@ -597,6 +743,26 @@
             }
         `;
         document.head.appendChild(style);
+        
+        // 关闭登录引导卡片
+        function closeLoginGuide() {
+            const guide = document.getElementById('loginGuide');
+            guide.classList.add('hidden');
+            // 存储到本地，7天内不再显示
+            localStorage.setItem('loginGuideClosed', Date.now().toString());
+        }
+        
+        // 页面加载时检查是否显示引导
+        document.addEventListener('DOMContentLoaded', function() {
+            const lastClosed = localStorage.getItem('loginGuideClosed');
+            const now = Date.now();
+            const sevenDays = 7 * 24 * 60 * 60 * 1000;
+            
+            // 如果7天内关闭过，不再显示
+            if (lastClosed && (now - parseInt(lastClosed)) < sevenDays) {
+                document.getElementById('loginGuide').classList.add('hidden');
+            }
+        });
     </script>
 </body>
 </html>
