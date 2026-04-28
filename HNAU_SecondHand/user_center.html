@@ -651,38 +651,6 @@
             if (editSchool) editSchool.value = currentUser.campus || currentUser.school || '';
             if (editContact) editContact.value = currentUser.contact || currentUser.phone || '';
             if (editBio) editBio.value = currentUser.bio || currentUser.intro || '';
-            }
-            
-            // 更新基本信息
-            document.getElementById('userName').textContent = currentUser.name || '未设置昵称';
-            document.getElementById('userId').textContent = 'ID: ' + (currentUser.id || '-');
-            
-            // 更新认证状态（兼容 verified 和 authStatus 两种字段）
-            const badge = document.getElementById('userBadge');
-            const isVerified = currentUser.verified === true || currentUser.authStatus === 'approved';
-            const isPending = currentUser.authStatus === 'pending';
-            const isRejected = currentUser.authStatus === 'rejected';
-            
-            if (isVerified) {
-                badge.textContent = '✓ 已认证';
-                badge.style.background = 'linear-gradient(135deg, #10B981, #059669)';
-            } else if (isPending) {
-                badge.textContent = '⏳ 审核中';
-                badge.style.background = 'linear-gradient(135deg, #FBBF24, #F59E0B)';
-            } else if (isRejected) {
-                badge.textContent = '✗ 已拒绝';
-                badge.style.background = 'linear-gradient(135deg, #EF4444, #DC2626)';
-            } else {
-                badge.textContent = '未认证';
-                badge.style.background = 'linear-gradient(135deg, #6B7280, #4B5563)';
-            }
-            
-            // 更新头像
-            const avatar = document.getElementById('userAvatar');
-            if (currentUser.avatar) {
-                avatar.textContent = '';
-                avatar.innerHTML = '<img src="' + currentUser.avatar + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-            }
             
             // 填充表单 - 基本信息与表单同步
             document.getElementById('editNickname').value = currentUser.username || '';
