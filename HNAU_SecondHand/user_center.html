@@ -227,80 +227,143 @@
             color: #f87171;
         }
         
-        /* 碳足迹模块 */
-        .carbon-card {
-            background: linear-gradient(135deg, rgba(59,130,246,0.3) 0%, rgba(59,130,246,0.1) 100%);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(96,165,250,0.3);
-            border-radius: 20px;
-            padding: 20px;
-            margin-top: 16px;
-        }
-        
-        .carbon-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-        
-        .carbon-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #fff;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .carbon-btn {
-            background: linear-gradient(135deg, rgba(96,165,250,0.7), rgba(59,130,246,0.7));
-            color: #fff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        
-        .carbon-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-        
-        .carbon-stat {
-            text-align: center;
-            padding: 12px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 12px;
-        }
-        
-        .carbon-value {
-            font-size: 24px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff 0%, #60A5FA 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .carbon-label {
-            font-size: 11px;
-            color: rgba(255,255,255,0.6);
-            margin-top: 4px;
-        }
-        
         /* 响应式 */
         @media (max-width: 480px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-            .carbon-stats {
-                grid-template-columns: repeat(3, 1fr);
-            }
+        }
+        
+        /* 修改信息表单 */
+        .edit-form-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 24px;
+            margin-top: 16px;
+        }
+        
+        .edit-form-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            margin: 0 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 6px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #60A5FA;
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .form-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .form-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #60A5FA, #3B82F6);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+        
+        .form-btn:hover {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(96,165,250,0.4);
+        }
+        
+        .form-btn:active {
+            transform: translateY(0);
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 20px rgba(16,185,129,0.4);
+            z-index: 10000;
+            transition: transform 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .toast.error {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            box-shadow: 0 4px 20px rgba(239,68,68,0.4);
+        }
+        
+        .edit-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        .edit-btn-secondary {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .edit-btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
         }
     </style>
 </head>
@@ -318,69 +381,37 @@
     <div class="center-container">
         <!-- 用户信息卡片 -->
         <div class="user-card">
-            <div class="user-avatar">🎓</div>
+            <div class="user-avatar" id="userAvatar">🎓</div>
             <div class="user-info">
-                <h2 class="user-name">农大学子</h2>
-                <p class="user-id">ID: 20240001</p>
+                <h2 class="user-name" id="userName">加载中...</h2>
+                <p class="user-id" id="userId">ID: -</p>
             </div>
-            <div class="user-badge">🌟 环保达人</div>
+            <div class="user-badge" id="userBadge">未认证</div>
         </div>
         
-        <!-- 统计卡片 -->
+        <!-- 统计卡片 - 真实数据 -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-value">12</div>
+                <div class="stat-value" id="statPublished">0</div>
                 <div class="stat-label">发布闲置</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">8</div>
+                <div class="stat-value" id="statSold">0</div>
                 <div class="stat-label">已售出</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">1.2k</div>
+                <div class="stat-value" id="statViews">0</div>
                 <div class="stat-label">被浏览</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">23</div>
-                <div class="stat-label">收藏数</div>
+                <div class="stat-value" id="statDemands">0</div>
+                <div class="stat-label">发布需求</div>
             </div>
         </div>
         
-        <!-- 功能菜单 -->
+        <!-- 功能菜单 - 只保留退出登录 -->
         <div class="menu-card">
-            <div class="menu-item" onclick="location.href='stu_check.html'">
-                <div class="menu-icon">📋</div>
-                <div class="menu-text">
-                    <p class="menu-title">校园认证</p>
-                    <p class="menu-desc">已完成学生身份认证</p>
-                </div>
-                <span class="menu-arrow">›</span>
-            </div>
-            <div class="menu-item" onclick="location.href='release_goods.html'">
-                <div class="menu-icon">📦</div>
-                <div class="menu-text">
-                    <p class="menu-title">发布闲置</p>
-                    <p class="menu-desc">发布您的闲置物品</p>
-                </div>
-                <span class="menu-arrow">›</span>
-            </div>
-            <div class="menu-item" onclick="location.href='donation_my.html'">
-                <div class="menu-icon">💝</div>
-                <div class="menu-text">
-                    <p class="menu-title">我的公益</p>
-                    <p class="menu-desc">查看公益转赠记录</p>
-                </div>
-                <span class="menu-arrow">›</span>
-            </div>
-            <div class="menu-item" onclick="location.href='carbon_ai.html'">
-                <div class="menu-icon">🌱</div>
-                <div class="menu-text">
-                    <p class="menu-title">碳足迹助手</p>
-                    <p class="menu-desc">AI分析环保贡献</p>
-                </div>
-                <span class="menu-arrow">›</span>
-            </div>
-            <div class="menu-item logout" onclick="location.href='user_login.html'">
+            <div class="menu-item logout" onclick="logout()">
                 <div class="menu-icon">🚪</div>
                 <div class="menu-text">
                     <p class="menu-title">退出登录</p>
@@ -390,27 +421,148 @@
             </div>
         </div>
         
-        <!-- 碳足迹预览 -->
-        <div class="carbon-card">
-            <div class="carbon-header">
-                <h3 class="carbon-title">🌍 我的碳足迹</h3>
-                <button class="carbon-btn" onclick="location.href='carbon_ai.html'">查看详情</button>
-            </div>
-            <div class="carbon-stats">
-                <div class="carbon-stat">
-                    <div class="carbon-value">32.5</div>
-                    <div class="carbon-label">累计减碳(kg)</div>
+        <!-- 修改信息表单 -->
+        <div class="edit-form-card">
+            <h3 class="edit-form-title">✏️ 修改个人信息</h3>
+            <form id="editForm" onsubmit="return saveProfile(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">昵称</label>
+                        <input type="text" class="form-input" id="editName" placeholder="请输入昵称" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">学校</label>
+                        <input type="text" class="form-input" id="editSchool" placeholder="请输入学校" maxlength="50">
+                    </div>
                 </div>
-                <div class="carbon-stat">
-                    <div class="carbon-value">15</div>
-                    <div class="carbon-label">闲置物品数</div>
+                <div class="form-group">
+                    <label class="form-label">联系方式</label>
+                    <input type="text" class="form-input" id="editContact" placeholder="请输入手机号或微信号" maxlength="30">
                 </div>
-                <div class="carbon-stat">
-                    <div class="carbon-value">8</div>
-                    <div class="carbon-label">公益转赠数</div>
+                <div class="form-group">
+                    <label class="form-label">个人简介</label>
+                    <input type="text" class="form-input" id="editBio" placeholder="介绍一下自己..." maxlength="100">
                 </div>
-            </div>
+                <button type="submit" class="form-btn">💾 保存修改</button>
+            </form>
         </div>
     </div>
+    
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // 显示提示
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast' + (isError ? ' error' : '');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('authToken');
+                location.href = 'user_login.html';
+            }
+        }
+        
+        // 加载用户数据
+        function loadUserData() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            
+            if (!currentUser) {
+                location.href = 'user_login.html';
+                return;
+            }
+            
+            // 更新基本信息
+            document.getElementById('userName').textContent = currentUser.name || '未设置昵称';
+            document.getElementById('userId').textContent = 'ID: ' + (currentUser.id || '-');
+            
+            // 更新认证状态
+            const badge = document.getElementById('userBadge');
+            if (currentUser.verified) {
+                badge.textContent = '✓ 已认证';
+                badge.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+            } else {
+                badge.textContent = '未认证';
+                badge.style.background = 'linear-gradient(135deg, #6B7280, #4B5563)';
+            }
+            
+            // 更新头像
+            const avatar = document.getElementById('userAvatar');
+            if (currentUser.avatar) {
+                avatar.textContent = '';
+                avatar.innerHTML = '<img src="' + currentUser.avatar + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+            }
+            
+            // 填充表单
+            document.getElementById('editName').value = currentUser.name || '';
+            document.getElementById('editSchool').value = currentUser.school || '';
+            document.getElementById('editContact').value = currentUser.contact || '';
+            document.getElementById('editBio').value = currentUser.bio || '';
+            
+            // 加载统计数据
+            loadStats(currentUser.id);
+        }
+        
+        // 加载统计真实数据
+        function loadStats(userId) {
+            // 获取发布的商品
+            const goodsList = JSON.parse(localStorage.getItem('goodsList') || '[]');
+            const myGoods = goodsList.filter(g => g.publisher && g.publisher.id === userId);
+            document.getElementById('statPublished').textContent = myGoods.length;
+            
+            // 获取已售出数量
+            const soldCount = myGoods.filter(g => g.status === 'sold').length;
+            document.getElementById('statSold').textContent = soldCount;
+            
+            // 获取总浏览量
+            const totalViews = myGoods.reduce((sum, g) => sum + (g.views || 0), 0);
+            document.getElementById('statViews').textContent = totalViews;
+            
+            // 获取发布的需求
+            const demandList = JSON.parse(localStorage.getItem('demandList') || '[]');
+            const myDemands = demandList.filter(d => d.publisher && d.publisher.id === userId);
+            document.getElementById('statDemands').textContent = myDemands.length;
+        }
+        
+        // 保存个人信息
+        function saveProfile(e) {
+            e.preventDefault();
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            
+            // 更新用户信息
+            currentUser.name = document.getElementById('editName').value.trim();
+            currentUser.school = document.getElementById('editSchool').value.trim();
+            currentUser.contact = document.getElementById('editContact').value.trim();
+            currentUser.bio = document.getElementById('editBio').value.trim();
+            
+            // 保存到 localStorage
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            // 更新用户列表中的信息
+            const userList = JSON.parse(localStorage.getItem('userList') || '[]');
+            const userIndex = userList.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                userList[userIndex] = { ...userList[userIndex], ...currentUser };
+                localStorage.setItem('userList', JSON.stringify(userList));
+            }
+            
+            // 更新页面显示
+            document.getElementById('userName').textContent = currentUser.name || '未设置昵称';
+            
+            showToast('修改成功！');
+            return false;
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', loadUserData);
+    </script>
 </body>
 </html>
