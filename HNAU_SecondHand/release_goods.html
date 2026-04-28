@@ -920,7 +920,7 @@
                 contact: goodsContact,
                 images: images,
                 publisher: user,
-                publisherId: user.id || user.username,
+                publisherId: user.id || (user.name ? 'user_' + user.name : user.username),
                 status: 'selling',
                 createTime: new Date().toISOString()
             };
