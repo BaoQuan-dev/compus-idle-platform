@@ -1256,38 +1256,33 @@
                 
                 var html = '';
                 myList.forEach(function(item) {
-                    var statusClass = item.status === '可用' ? '出售中' : (item.status === '已被领取' ? '已被领取' : item.status);
                     var images = item.images || [];
                     var firstImage = images.length > 0 ? images[0] : '';
-                    var conditionText = item.condition || '未填写';
-                    var tradeText = item.tradeType || '未填写';
-                    var contactText = item.contact || '未填写';
                     
                     html += '<div class="flip-card" style="flex: 0 0 260px; height: 340px; position: relative; margin: 0;">' +
                         '<div class="flip-card-inner">' +
                         // 正面
                         '<div class="flip-card-front">' +
-                        (firstImage ? '<img src="' + firstImage + '" alt="' + item.name + '" style="width: 100%; height: 100%; object-fit: cover;">' : '<div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; color: white;"><span style="font-size: 48px;">🎁</span><span style="margin-top: 10px;">暂无图片</span></div>') +
+                        (firstImage ? '<img src="' + firstImage + '" alt="' + item.itemName + '" style="width: 100%; height: 100%; object-fit: cover;">' : '<div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; color: white;"><span style="font-size: 48px;">🎁</span><span style="margin-top: 10px;">暂无图片</span></div>') +
                         '<div class="price-tag" style="position: absolute; bottom: 60px; left: 10px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; color: white;">免费转赠</div>' +
-                        '<div class="card-title" style="position: absolute; bottom: 15px; left: 10px; right: 10px; text-align: center; font-weight: bold; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 14px;">' + item.name + '</div>' +
+                        '<div class="card-title" style="position: absolute; bottom: 15px; left: 10px; right: 10px; text-align: center; font-weight: bold; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 14px;">' + item.itemName + '</div>' +
                         '</div>' +
                         // 背面
                         '<div class="flip-card-back" style="padding: 15px; color: white; display: flex; flex-direction: column; justify-content: space-between; height: 100%; box-sizing: border-box;">' +
                         '<div>' +
-                        '<h3 style="margin: 0 0 10px 0; font-size: 16px; color: #f093fb;">' + item.name + '</h3>' +
+                        '<h3 style="margin: 0 0 10px 0; font-size: 16px; color: #f093fb;">' + item.itemName + '</h3>' +
                         '<p style="margin: 5px 0; font-size: 12px; color: #a0a0a0;"><strong>📂 分类：</strong>' + (item.category || '未填写') + '</p>' +
-                        '<p style="margin: 5px 0; font-size: 12px; color: #a0a0a0;"><strong>✨ 成色：</strong>' + conditionText + '</p>' +
-                        '<p style="margin: 5px 0; font-size: 12px; color: #a0a0a0;"><strong>🚚 交易：</strong>' + tradeText + '</p>' +
-                        '<p style="margin: 5px 0; font-size: 12px; color: #a0a0a0;"><strong>📅 时间：</strong>' + (item.time || '') + '</p>' +
+                        '<p style="margin: 5px 0; font-size: 12px; color: #a0a0a0;"><strong>🚚 交易：</strong>' + (item.targetType || '未填写') + '</p>' +
+                        '<p style="margin: 5px 0; font-size: 12px; color: #a0a0a0;"><strong>📅 时间：</strong>' + (item.publishTime ? new Date(item.publishTime).toLocaleDateString() : '') + '</p>' +
                         '<p style="margin: 5px 0; font-size: 12px; color: #a0a0a0; word-break: break-all;"><strong>📝 描述：</strong>' + (item.description || '暂无描述') + '</p>' +
                         '</div>' +
                         '<div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.2);">' +
-                        '<p style="margin: 0; font-size: 12px; color: #f5576c;"><strong>📞</strong> ' + contactText + '</p>' +
+                        '<p style="margin: 0; font-size: 12px; color: #f5576c;"><strong>📞</strong> 发布者: ' + (item.publisher ? item.publisher.name : '未知') + '</p>' +
                         '</div>' +
                         '</div>' +
                         '</div>' +
                         // 状态标签
-                        '<span class="status-tag ' + (statusClass === '已被领取' ? 'status-claimed' : 'status-available') + '" style="position: absolute; top: 10px; right: 10px; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 5;">' + statusClass + '</span>' +
+                        '<span class="status-tag status-' + item.status + '" style="position: absolute; top: 10px; right: 10px; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 5;">' + item.status + '</span>' +
                         // 悬停提示
                         '<div style="position: absolute; bottom: 0; left: 0; right: 0; text-align: center; padding: 5px; background: rgba(0,0,0,0.6); font-size: 11px; color: #a0a0a0;">🖱️ 悬停查看详情</div>' +
                         '</div>';
