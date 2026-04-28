@@ -561,8 +561,8 @@
             <!-- 物品管理 -->
             <div id="tab-goods" class="tab-content">
                 <div class="search-bar">
-                    <input type="text" class="search-input" placeholder="搜索物品名称...">
-                    <button class="search-btn">🔍 搜索</button>
+                    <input type="text" class="search-input" id="goodsSearchInput" placeholder="搜索物品名称..." oninput="searchGoods()">
+                    <button class="search-btn" onclick="searchGoods()">🔍 搜索</button>
                 </div>
                 
                 <div class="data-card">
@@ -581,35 +581,8 @@
                                 <th>操作</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>#G001</td>
-                                <td>高数教材</td>
-                                <td>图书教材</td>
-                                <td>¥25</td>
-                                <td>张同学</td>
-                                <td><span class="status-tag active">在售</span></td>
-                                <td>
-                                    <div class="action-btns">
-                                        <button class="action-btn view">查看</button>
-                                        <button class="action-btn reject">下架</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#G002</td>
-                                <td>无线耳机</td>
-                                <td>数码电子</td>
-                                <td>¥120</td>
-                                <td>李同学</td>
-                                <td><span class="status-tag active">在售</span></td>
-                                <td>
-                                    <div class="action-btns">
-                                        <button class="action-btn view">查看</button>
-                                        <button class="action-btn reject">下架</button>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="goodsTableBody">
+                            <!-- 动态加载 -->
                         </tbody>
                     </table>
                 </div>
@@ -859,11 +832,91 @@
             if (statCards[1]) statCards[1].textContent = approved;  // 认证用户
             if (statCards[2]) statCards[2].textContent = pending.length;  // 待审核
         }
+        
+        // ========== 商品管理功能 ==========
+        const GOODS_STORAGE_KEY = 'hnau_goods_list';
+        
+        // 加载商品列表
+        function loadGoodsList() {
+            const goods = JSON.parse(localStorage.getItem(GOODS_STORAGE_KEY) || '[]');
+            renderGoodsTable(goods);
+        }
+        
+        // 渲染商品表格
+        function renderGoodsTable(goods) {
+            const tbody = document.getElementById('goodsTableBody');
+            if (!tbody) return;
+            
+            if (goods.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;">暂无商品</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = goods.map(item => {
+                const status = item.status === 'approved' ? '<span class="status-tag active">在售</span>' : 
+                              item.status === 'reserved' ? '<span class="status-tag warning">已预定</span>' : 
+                              '<span class="status-tag">已下架</span>';
+                return `
+                    <tr>
+                        <td>#${item.id}</td>
+                        <td>${item.name || item.goodsName || '未命名'}</td>
+                        <td>${item.category || '未分类'}</td>
+                        <td>¥${item.price || 0}</td>
+                        <td>${item.publisher ? (item.publisher.name || item.publisherId || '未知') : '未知'}</td>
+                        <td>${status}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn view" onclick="viewGoods('${item.id}')">查看</button>
+                                <button class="action-btn reject" onclick="removeGoods('${item.id}')">下架</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        // 查看商品详情
+        function viewGoods(id) {
+            const goods = JSON.parse(localStorage.getItem(GOODS_STORAGE_KEY) || '[]');
+            const item = goods.find(g => g.id === id);
+            if (item) {
+                const images = item.images && item.images.length > 0 ? 
+                    `<img src="${item.images[0]}" style="max-width:200px;max-height:200px;margin:10px 0;">` : '';
+                alert(`商品详情：\n\n名称：${item.name || item.goodsName}\n分类：${item.category}\n价格：¥${item.price}\n成色：${item.condition || '未填写'}\n交易方式：${item.tradeType || '未填写'}\n发布者：${item.publisher ? (item.publisher.name || item.publisherId) : '未知'}\n\n描述：${item.description || item.goodsDesc || '无'}\n\n${images ? '【图片预览已在上方显示】' : ''}`);
+            }
+        }
+        
+        // 下架商品
+        function removeGoods(id) {
+            if (confirm('确认下架此商品？')) {
+                const goods = JSON.parse(localStorage.getItem(GOODS_STORAGE_KEY) || '[]');
+                const index = goods.findIndex(g => g.id === id);
+                if (index > -1) {
+                    goods.splice(index, 1);
+                    localStorage.setItem(GOODS_STORAGE_KEY, JSON.stringify(goods));
+                    alert('商品已下架');
+                    loadGoodsList();
+                }
+            }
+        }
+        
+        // 搜索商品
+        function searchGoods() {
+            const keyword = document.getElementById('goodsSearchInput').value.toLowerCase();
+            const goods = JSON.parse(localStorage.getItem(GOODS_STORAGE_KEY) || '[]');
+            const filtered = goods.filter(g => 
+                (g.name || g.goodsName || '').toLowerCase().includes(keyword) ||
+                (g.category || '').toLowerCase().includes(keyword) ||
+                (g.publisher ? (g.publisher.name || g.publisherId || '').toLowerCase().includes(keyword) : false)
+            );
+            renderGoodsTable(filtered);
+        }
 
         // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', function() {
             renderPendingCertifications();
             updateStats();
+            loadGoodsList();  // 加载商品列表
         });
     </script>
 </body>

@@ -929,6 +929,19 @@
             console.log('[Release] 商品图片数量:', goods.images.length);
             console.log('[Release] 第一张图片:', goods.images[0] ? goods.images[0].substring(0, 100) + '...' : '无');
             
+            // 同时保存到管理员待审核列表
+            const ADMIN_KEY = 'hnau_admin_pending_goods';
+            let adminList = [];
+            try {
+                const adminSaved = localStorage.getItem(ADMIN_KEY);
+                if (adminSaved) {
+                    adminList = JSON.parse(adminSaved);
+                }
+            } catch(e) {}
+            adminList.push(goods);
+            localStorage.setItem(ADMIN_KEY, JSON.stringify(adminList));
+            console.log('[Release] 已同步到管理员待审核列表，长度:', adminList.length);
+            
             // 保存到 localStorage
             const STORAGE_KEY = 'hnau_goods_list';
             let goodsList = [];
