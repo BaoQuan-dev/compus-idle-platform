@@ -1278,14 +1278,33 @@
         
         // ========== 获取当前用户 ==========
         function initUser() {
-            var loginState = JSON.parse(localStorage.getItem('hnau_login_state') || '{}');
-            if (loginState && loginState.isLoggedIn && loginState.curUser) {
+            // 检查登录状态 - 使用与 login.js 一致的键
+            var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            var username = localStorage.getItem('username');
+            
+            if (isLoggedIn && username) {
                 // 使用 user_ 前缀，与 release_goods.html 保持一致
-                currentUser = { id: 'user_' + loginState.curUser, name: loginState.curUser, username: loginState.curUser };
+                currentUser = { id: 'user_' + username, name: username, username: username };
+                console.log('[Demand] 用户已登录:', currentUser);
             } else {
                 currentUser = { id: 'guest_' + Date.now(), name: '游客', username: '游客' };
+                console.log('[Demand] 用户未登录，设为游客');
             }
         }
+        
+        // ========== 页面可见性变化时重新检查登录状态 ==========
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // 页面可见时重新检查登录状态
+                var prevUser = currentUser ? currentUser.username : '';
+                initUser();
+                // 如果用户发生变化，刷新需求列表
+                if (currentUser.username !== prevUser) {
+                    console.log('[Demand] 用户状态变化，重新加载:', currentUser.username);
+                    loadDemands();
+                }
+            }
+        });
         
         // ========== 获取需求列表 ==========
         function getDemands() {
