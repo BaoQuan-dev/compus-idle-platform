@@ -1163,7 +1163,7 @@
             });
         });
         
-        // 五个模块围绕中心旋转缩小吸入效果
+        // 五个模块：先膨胀再旋转缩小吸入效果
         function triggerModulesZoom(targetUrl) {
             const modules = document.querySelectorAll('.feature-item');
             const header = document.querySelector('.home-header');
@@ -1182,66 +1182,78 @@
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2;
             
-            // 五个模块围绕中心的位置（围成圆圈）
-            const radius = Math.min(window.innerWidth, window.innerHeight) * 0.25;
-            const startAngles = [0, 72, 144, 216, 288]; // 五个模块初始角度（360/5=72度）
+            // 五个模块围绕中心的位置（初始小圆）
+            const smallRadius = Math.min(window.innerWidth, window.innerHeight) * 0.15;
+            const largeRadius = Math.min(window.innerWidth, window.innerHeight) * 0.35; // 膨胀后的大圆
+            const startAngles = [0, 72, 144, 216, 288];
             
-            // 初始化模块位置到圆周上
+            // 初始化模块位置到小圆周上
             modules.forEach((mod, index) => {
-                const angle = (startAngles[index] - 90) * Math.PI / 180; // 转换为弧度，从顶部开始
-                const x = centerX + radius * Math.cos(angle);
-                const y = centerY + radius * Math.sin(angle);
+                const angle = (startAngles[index] - 90) * Math.PI / 180;
+                const x = centerX + smallRadius * Math.cos(angle);
+                const y = centerY + smallRadius * Math.sin(angle);
                 
                 mod.style.position = 'fixed';
                 mod.style.left = x + 'px';
                 mod.style.top = y + 'px';
-                mod.style.transform = 'translate(-50%, -50%)';
+                mod.style.transform = 'translate(-50%, -50%) scale(1)';
                 mod.style.zIndex = '10000';
                 mod.style.transition = 'none';
                 mod.style.opacity = '1';
             });
             
             // 动画参数
-            const duration = 4000; // 4秒
+            const expandDuration = 800;  // 膨胀阶段 0.8秒
+            const shrinkDuration = 3500;  // 缩小吸入阶段 3.5秒
+            const totalDuration = expandDuration + shrinkDuration;
             const startTime = performance.now();
-            const totalRotation = 6; // 旋转6圈
+            const totalRotation = 8; // 旋转8圈
             
             function animate(currentTime) {
                 const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
                 
-                // 缓动函数（慢入慢出）
-                const easeProgress = progress < 0.5 
-                    ? 2 * progress * progress 
-                    : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-                
-                // 更新半径（从大到小）
-                const currentRadius = radius * (1 - easeProgress);
-                
-                modules.forEach((mod, index) => {
-                    // 计算当前角度 = 初始角度 + 旋转角度
-                    const angle = ((startAngles[index] - 90) + easeProgress * totalRotation * 360) * Math.PI / 180;
-                    const x = centerX + currentRadius * Math.cos(angle);
-                    const y = centerY + currentRadius * Math.sin(angle);
+                if (elapsed < expandDuration) {
+                    // 阶段1：向外膨胀
+                    const progress = elapsed / expandDuration;
+                    const easeProgress = 1 - Math.pow(1 - progress, 3); // 缓出
                     
-                    mod.style.left = x + 'px';
-                    mod.style.top = y + 'px';
+                    const currentRadius = smallRadius + (largeRadius - smallRadius) * easeProgress;
                     
-                    // 自身也旋转
-                    mod.style.transform = `translate(-50%, -50%) rotate(${easeProgress * totalRotation * 360}deg)`;
+                    modules.forEach((mod, index) => {
+                        const angle = (startAngles[index] - 90 + progress * 360) * Math.PI / 180;
+                        const x = centerX + currentRadius * Math.cos(angle);
+                        const y = centerY + currentRadius * Math.sin(angle);
+                        
+                        mod.style.left = x + 'px';
+                        mod.style.top = y + 'px';
+                        mod.style.transform = `translate(-50%, -50%) scale(${1 + easeProgress * 0.3})`;
+                    });
                     
-                    // 缩小
-                    const scale = 1 - easeProgress;
-                    mod.style.transform = `translate(-50%, -50%) scale(${scale}) rotate(${easeProgress * totalRotation * 360}deg)`;
-                });
-                
-                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else if (elapsed < totalDuration) {
+                    // 阶段2：旋转缩小吸入
+                    const progress = (elapsed - expandDuration) / shrinkDuration;
+                    const easeProgress = 1 - Math.pow(1 - progress, 2); // 缓出
+                    
+                    const currentRadius = largeRadius * (1 - easeProgress);
+                    
+                    modules.forEach((mod, index) => {
+                        const angle = (startAngles[index] - 90 + 360 + easeProgress * totalRotation * 360) * Math.PI / 180;
+                        const x = centerX + currentRadius * Math.cos(angle);
+                        const y = centerY + currentRadius * Math.sin(angle);
+                        
+                        mod.style.left = x + 'px';
+                        mod.style.top = y + 'px';
+                        mod.style.transform = `translate(-50%, -50%) scale(${1.3 * (1 - easeProgress)})`;
+                    });
+                    
                     requestAnimationFrame(animate);
                 } else {
                     // 动画结束，跳转
+                    modules.forEach(mod => mod.style.opacity = '0');
                     setTimeout(() => {
                         window.location.href = targetUrl;
-                    }, 300);
+                    }, 200);
                 }
             }
             
