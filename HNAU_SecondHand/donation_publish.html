@@ -1139,6 +1139,37 @@
                 
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
                 console.log('[Donation] 保存成功，列表长度:', list.length);
+                
+                // ========== 同步到管理员待审核列表 ==========
+                try {
+                    var ADMIN_DONATION_KEY = 'hnau_admin_pending_donations';
+                    var adminList = JSON.parse(localStorage.getItem(ADMIN_DONATION_KEY) || '[]');
+                    // 只保存基本信息，不保存图片
+                    var adminItem = {
+                        id: formData.id,
+                        itemName: formData.itemName,
+                        category: formData.category,
+                        condition: formData.condition,
+                        tradeType: formData.tradeType,
+                        publisher: formData.publisher,
+                        publisherId: formData.publisherId,
+                        status: formData.status,
+                        publishTime: formData.publishTime
+                    };
+                    // 检查是否已存在
+                    var exists = adminList.some(function(item) { return item.id === adminItem.id; });
+                    if (!exists) {
+                        adminList.unshift(adminItem);
+                        // 限制数量
+                        if (adminList.length > 50) {
+                            adminList = adminList.slice(0, 50);
+                        }
+                        localStorage.setItem(ADMIN_DONATION_KEY, JSON.stringify(adminList));
+                        console.log('[Donation] 已同步到管理员待审核列表');
+                    }
+                } catch (e) {
+                    console.error('[Donation] 同步管理员失败:', e);
+                }
             } catch (err) {
                 console.error('[Donation] 保存失败:', err);
                 alert('存储失败，请清理浏览器缓存后重试');

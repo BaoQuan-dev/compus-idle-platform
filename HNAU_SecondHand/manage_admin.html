@@ -771,7 +771,7 @@
         // 加载公益转赠列表
         function loadDonationsList() {
             const tbody = document.querySelector('#tab-donations .data-table tbody');
-            const donations = JSON.parse(localStorage.getItem('hnau_donations') || '[]');
+            const donations = JSON.parse(localStorage.getItem('hnau_admin_pending_donations') || '[]');
             
             if (donations.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#888;">暂无公益转赠记录</td></tr>';
@@ -795,7 +795,7 @@
         
         // 查看公益转赠详情
         function viewDonation(id) {
-            const donations = JSON.parse(localStorage.getItem('hnau_donations') || '[]');
+            const donations = JSON.parse(localStorage.getItem('hnau_admin_pending_donations') || '[]');
             const item = donations.find(d => d.id == id);
             if (item) {
                 alert('物品名称: ' + (item.itemName || item.name) + '\n分类: ' + (item.category || '未填写') + '\n成色: ' + (item.condition || '未填写') + '\n描述: ' + (item.description || '无') + '\n发布者: ' + (item.publisher?.name || item.publisherName || '未知'));
@@ -805,9 +805,9 @@
         // 删除公益转赠
         function removeDonation(id) {
             if (confirm('确定要删除这条记录吗？')) {
-                let donations = JSON.parse(localStorage.getItem('hnau_donations') || '[]');
+                let donations = JSON.parse(localStorage.getItem('hnau_admin_pending_donations') || '[]');
                 donations = donations.filter(d => d.id != id);
-                localStorage.setItem('hnau_donations', JSON.stringify(donations));
+                localStorage.setItem('hnau_admin_pending_donations', JSON.stringify(donations));
                 loadDonationsList();
             }
         }
