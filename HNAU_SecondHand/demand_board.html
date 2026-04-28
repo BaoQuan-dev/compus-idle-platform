@@ -189,9 +189,10 @@
             border-color: #60A5FA;
         }
         
-        /* ========== 搜索提示词样式 ========== */
+        /* ========== 搜索联想列表样式 ========== */
         .search-wrapper {
             position: relative;
+            flex: 1;
         }
         
         .search-suggestions {
@@ -199,31 +200,48 @@
             top: 100%;
             left: 0;
             right: 0;
-            background: linear-gradient(135deg, rgba(30,30,50,0.95) 0%, rgba(20,20,40,0.95) 100%);
+            background: linear-gradient(180deg, rgba(25,25,45,0.98) 0%, rgba(15,15,35,0.98) 100%);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.15);
+            border: 1px solid rgba(96,165,250,0.3);
+            border-top: none;
             border-radius: 0 0 16px 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            z-index: 100;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(96,165,250,0.1);
+            z-index: 1000;
             display: none;
-            max-height: 240px;
+            max-height: 320px;
             overflow-y: auto;
+            animation: slideDown 0.2s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .search-suggestions.active {
             display: block;
         }
         
-        .search-suggestion-item {
-            padding: 10px 14px;
-            cursor: pointer;
-            transition: background 0.15s;
+        /* 搜索建议头部 */
+        .suggestions-header {
+            padding: 10px 14px 6px;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .search-suggestion-item {
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: rgba(255,255,255,0.8);
+            gap: 10px;
+            color: rgba(255,255,255,0.85);
         }
         
         .search-suggestion-item:last-child {
@@ -232,37 +250,102 @@
         
         .search-suggestion-item:hover,
         .search-suggestion-item.active {
-            background: rgba(96,165,250,0.2);
+            background: linear-gradient(90deg, rgba(96,165,250,0.25) 0%, rgba(192,132,252,0.15) 100%);
+            padding-left: 18px;
         }
         
         .search-suggestion-item .suggestion-icon {
+            width: 28px;
+            height: 28px;
+            background: rgba(96,165,250,0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
             color: #60A5FA;
-            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        
+        .search-suggestion-item .suggestion-content {
+            flex: 1;
+            min-width: 0;
         }
         
         .search-suggestion-item .suggestion-text {
-            flex: 1;
             font-size: 0.9rem;
             color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .search-suggestion-item .suggestion-text mark {
-            background: rgba(96,165,250,0.3);
+            background: linear-gradient(120deg, rgba(96,165,250,0.4) 0%, rgba(192,132,252,0.4) 100%);
             color: #fff;
-            padding: 0 2px;
-            border-radius: 2px;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-weight: 500;
         }
         
-        .search-suggestion-item .suggestion-category {
+        .search-suggestion-item .suggestion-desc {
             font-size: 0.75rem;
             color: rgba(255,255,255,0.5);
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .search-suggestion-item .suggestion-arrow {
+            color: rgba(255,255,255,0.3);
+            font-size: 0.8rem;
+            transition: transform 0.15s;
+        }
+        
+        .search-suggestion-item:hover .suggestion-arrow,
+        .search-suggestion-item.active .suggestion-arrow {
+            color: #60A5FA;
+            transform: translateX(3px);
         }
         
         .search-no-results {
-            padding: 12px 14px;
+            padding: 20px 14px;
             text-align: center;
             color: rgba(255,255,255,0.5);
             font-size: 0.9rem;
+        }
+        
+        .search-no-results::before {
+            content: '🔍';
+            display: block;
+            font-size: 2rem;
+            margin-bottom: 8px;
+            opacity: 0.5;
+        }
+        
+        /* 热门搜索标签 */
+        .hot-search-tags {
+            padding: 10px 14px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .hot-tag {
+            padding: 4px 10px;
+            background: rgba(96,165,250,0.15);
+            border: 1px solid rgba(96,165,250,0.3);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #60A5FA;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .hot-tag:hover {
+            background: rgba(96,165,250,0.3);
+            transform: scale(1.05);
         }
         
         .search-clear {
@@ -1318,7 +1401,17 @@
             var demands = getAllDemandsForSuggestions();
             
             if (!keyword || keyword.length < 1) {
-                suggestionsEl.classList.remove('active');
+                // 无关键词时显示热门搜索
+                suggestionsEl.innerHTML = '<div class="suggestions-header">🔥 热门搜索</div>' +
+                    '<div class="hot-search-tags">' +
+                    '<span class="hot-tag" onclick="selectSuggestion(\'自行车\')">自行车</span>' +
+                    '<span class="hot-tag" onclick="selectSuggestion(\'教材\')">教材</span>' +
+                    '<span class="hot-tag" onclick="selectSuggestion(\'电脑\')">电脑</span>' +
+                    '<span class="hot-tag" onclick="selectSuggestion(\'手机\')">手机</span>' +
+                    '<span class="hot-tag" onclick="selectSuggestion(\'耳机\')">耳机</span>' +
+                    '</div>';
+                suggestionsEl.classList.add('active');
+                currentSuggestionIndex = -1;
                 return;
             }
             
@@ -1326,23 +1419,28 @@
             var matches = demands.filter(function(d) {
                 return d.title.toLowerCase().includes(keyword) ||
                        d.description.toLowerCase().includes(keyword);
-            }).slice(0, 8);  // 最多显示8条
+            }).slice(0, 6);  // 最多显示6条
             
             if (matches.length === 0) {
-                suggestionsEl.innerHTML = '<div class="search-no-results">没有找到匹配的需求</div>';
+                suggestionsEl.innerHTML = '<div class="search-no-results">没有找到包含"' + keyword + '"的需求</div>';
                 suggestionsEl.classList.add('active');
                 return;
             }
             
-            suggestionsEl.innerHTML = matches.map(function(item, index) {
-                // 高亮匹配文字
-                var highlightedTitle = highlightKeyword(item.title, keyword);
-                return '<div class="search-suggestion-item" data-index="' + index + '" data-title="' + item.title + '">' +
-                       '<span class="suggestion-icon">🔍</span>' +
-                       '<span class="suggestion-text">' + highlightedTitle + '</span>' +
-                       '<span class="suggestion-category">' + item.category + '</span>' +
-                       '</div>';
-            }).join('');
+            suggestionsEl.innerHTML = '<div class="suggestions-header">📋 匹配的需求 (' + matches.length + ')</div>' +
+                matches.map(function(item, index) {
+                    // 高亮匹配文字
+                    var highlightedTitle = highlightKeyword(item.title, keyword);
+                    var shortDesc = item.description.length > 30 ? item.description.substring(0, 30) + '...' : item.description;
+                    return '<div class="search-suggestion-item" data-index="' + index + '" data-title="' + item.title + '">' +
+                           '<span class="suggestion-icon">📋</span>' +
+                           '<div class="suggestion-content">' +
+                           '<div class="suggestion-text">' + highlightedTitle + '</div>' +
+                           '<div class="suggestion-desc">' + shortDesc + '</div>' +
+                           '</div>' +
+                           '<span class="suggestion-arrow">›</span>' +
+                           '</div>';
+                }).join('');
             
             suggestionsEl.classList.add('active');
             currentSuggestionIndex = -1;
