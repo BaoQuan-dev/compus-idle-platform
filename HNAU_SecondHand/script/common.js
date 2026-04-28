@@ -676,6 +676,8 @@ const Auth = {
      */
     registerUser(userInfo) {
         const users = this.getUsers();
+        // 为用户添加唯一 id，使用 user_ 前缀保持一致性
+        userInfo.id = 'user_' + userInfo.username;
         users.push(userInfo);
         Storage.set(this.KEYS.USERS, users);
 
