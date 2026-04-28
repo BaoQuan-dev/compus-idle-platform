@@ -1057,6 +1057,11 @@
                     time: new Date().toLocaleString()
                 });
                 localStorage.setItem('pendingCertifications', JSON.stringify(pendingList));
+                
+                // 调试：确认保存成功
+                const saved = localStorage.getItem('pendingCertifications');
+                console.log('【调试】已保存待审核列表:', saved);
+                console.log('【调试】列表长度:', JSON.parse(saved || '[]').length);
 
                 // 更新状态卡片
                 const statusCard = document.querySelector('.status-card');
