@@ -1190,7 +1190,7 @@
                 const offsetY = rect.top + rect.height / 2 - centerY;
                 
                 // 设置过渡 - 放慢动画
-                mod.style.transition = 'all 2s cubic-bezier(0.4, 0, 0.2, 1)';
+                mod.style.transition = 'all 4s cubic-bezier(0.4, 0, 0.2, 1)';
                 mod.style.zIndex = '10000';
                 mod.style.position = 'fixed';
                 mod.style.top = '50%';
@@ -1206,10 +1206,10 @@
                 }, 100);
             });
             
-            // 2.5秒后跳转
+            // 4.5秒后跳转
             setTimeout(() => {
                 window.location.href = targetUrl;
-            }, 2500);
+            }, 4500);
         }
     </script>
 </body>
