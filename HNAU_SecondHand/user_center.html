@@ -671,7 +671,7 @@
             const normalizedId = userId.startsWith('user_') ? userId : 'user_' + userId;
             
             // 获取发布的商品（兼容 publisherId 和 publisher.id 两种格式）
-            const goodsList = JSON.parse(localStorage.getItem('goodsList') || '[]');
+            const goodsList = JSON.parse(localStorage.getItem('hnau_goods_list') || localStorage.getItem('goodsList') || '[]');
             const myGoods = goodsList.filter(g => 
                 // 匹配 publisher.name（username格式）
                 (g.publisher && g.publisher.name === userId) || 
@@ -693,7 +693,7 @@
             document.getElementById('statViews').textContent = totalViews;
             
             // 获取发布的需求（兼容 publisher.id 格式）
-            const demandList = JSON.parse(localStorage.getItem('demandList') || '[]');
+            const demandList = JSON.parse(localStorage.getItem('hnau_demand_list') || localStorage.getItem('demandList') || '[]');
             const myDemands = demandList.filter(d => 
                 // 匹配 publisher.name（username格式）
                 (d.publisher && d.publisher.name === userId) || 
@@ -713,7 +713,7 @@
             const normalizedId = userId.startsWith('user_') ? userId : 'user_' + userId;
             
             // 加载发布的商品
-            const goodsList = JSON.parse(localStorage.getItem('goodsList') || '[]');
+            const goodsList = JSON.parse(localStorage.getItem('hnau_goods_list') || localStorage.getItem('goodsList') || '[]');
             const myGoods = goodsList.filter(g => 
                 // 匹配 publisher.name（username格式）
                 (g.publisher && g.publisher.name === userId) || 
@@ -744,7 +744,7 @@
             }
             
             // 加载发布的需求
-            const demandList = JSON.parse(localStorage.getItem('demandList') || '[]');
+            const demandList = JSON.parse(localStorage.getItem('hnau_demand_list') || localStorage.getItem('demandList') || '[]');
             const myDemands = demandList.filter(d => 
                 // 匹配 publisher.name（username格式）
                 (d.publisher && d.publisher.name === userId) || 
