@@ -399,50 +399,7 @@
             align-items: center;
         }
         
-        /* 云朵背景 */
-        .cloud-bg {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 180px;
-            height: 60px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 50%;
-            box-shadow: 
-                inset 0 -5px 20px rgba(255,255,255,0.1);
-            animation: cloudFloat 4s ease-in-out infinite;
-        }
-        
-        .cloud-bg::before,
-        .cloud-bg::after {
-            content: '';
-            position: absolute;
-            background: inherit;
-            border-radius: 50%;
-        }
-        
-        .cloud-bg::before {
-            width: 70px;
-            height: 70px;
-            top: -30px;
-            left: 20px;
-        }
-        
-        .cloud-bg::after {
-            width: 50px;
-            height: 50px;
-            top: -20px;
-            right: 25px;
-        }
-        
-        @keyframes cloudFloat {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-5px); }
-        }
-        
+        /* 小猫呼吸动画 */
         /* 小猫容器 - 整体呼吸动画 */
         .cat-container {
             position: relative;
@@ -811,9 +768,6 @@
                 <img src="./images/cat-guide.jpg" alt="欢迎小猫" class="cat-avatar">
                 <span class="cat-paw">🐾</span>
             </div>
-            
-            <!-- 云朵装饰 -->
-            <div class="cloud-bg"></div>
         </div>
         
         <!-- 按钮 -->
